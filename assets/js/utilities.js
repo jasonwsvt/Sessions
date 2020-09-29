@@ -3,12 +3,12 @@
 
 class Utilities {
     _utilitiesID = null;
-    _utilities = null;
     _dataManager = null;
-    _session = null;
+    _sessions = null;
+    _buttons = null;
     _linesID = null;
-    _minLinesHeight = 0;
-    _maxLinesHeight = .95 * $(window).height();
+    _minLinesHeight = null;
+    _maxLinesHeight = null;
 
     _userButtonID = "userButton";
     _issuePickerButtonID = "issuePickerButton";
@@ -33,23 +33,23 @@ class Utilities {
     _forgotPasswordID = "forgotPassword";
     _newAccountID = "newAccount";
 
-    constructor (utilitiesID, dataManager, session, linesID, buttons) {
+    constructor (utilitiesID, dataManager, sessions, buttons) {
         const self = this;
         this._utilitiesID = utilitiesID;
-        this._utilities = $("#" + utilitiesID);
         this._dataManager = dataManager;
-        this._session = session;
-        this._linesID = linesID;
+        this._sessions = sessions;
         this._buttons = buttons;
+
+        this._minLinesHeight = 0;
+        this._maxLinesHeight = $(window).height() - Number(this.linesDiv.children().eq(0).height());
 
         this._buildUtilitiesBar();
 
         buttons.adjustDivHeights();
 
         $(document).ready(function() {
-            const lines = $("#" + linesID);
+            const lines = self.linesDiv;
             const lineHeight = Number(lines.children().eq(0).height());
-            console.log(lineHeight);
 
             $("#" + self._slideUpButtonID).on("click", function() {
                 if (parseInt(lines.height()) > self._minLinesHeight) {
@@ -76,6 +76,10 @@ class Utilities {
             });
         });
     }
+
+    get div()      { return $("#" + this._utilitiesID); }
+    get linesDiv() { return this._sessions.linesInstance.div; }
+    
 
     _buildUtilitiesBar() {
         const dotIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-dot my-2' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'/></svg>";
@@ -118,19 +122,19 @@ class Utilities {
         const sessionPickerDiv = "<div id = '" + this._sessionPickerDivID + "' class = 'hidden'></div>";
         const sessionPickerScrollDiv = "<div id = '" + this._sessionPickerScrollDivID + "'></div>";
         
-        this._utilities.append("<span></span><span></span>");
-        this._utilities.children().eq(0).append(loginButton + loginDiv);
+        this.div.append("<span></span><span></span>");
+        this.div.children().eq(0).append(loginButton + loginDiv);
         $("#" + this._loginDivID).append(loginDivUsernameInput + loginDivPasswordInput + loginDivLoginButton + loginDivForgotPasswordButton + loginDivNewAccountButton);
-        this._utilities.children().eq(0).append(dotIcon);
-        this._utilities.children().eq(0).append(issuePickerButton + issueRenameButton + issueAddButton + issuePickerDiv);
+        this.div.children().eq(0).append(dotIcon);
+        this.div.children().eq(0).append(issuePickerButton + issueRenameButton + issueAddButton + issuePickerDiv);
         $("#" + this._issuePickerDivID).append(issuePickerSearchInput + issuePickerScrollDiv);
-        this._utilities.children().eq(0).append(dotIcon);
-        this._utilities.children().eq(0).append(sessionPickerButton + sessionAddButton + sessionPickerDiv);
+        this.div.children().eq(0).append(dotIcon);
+        this.div.children().eq(0).append(sessionPickerButton + sessionAddButton + sessionPickerDiv);
         $("#" + this._sessionPickerDivID).append(sessionPickerScrollDiv);
-        this._utilities.children().eq(1).append(slideUpButton + slideDownButton);
-        this._utilities.children().eq(1).append(dotIcon);
-        this._utilities.children().eq(1).append(importButton + exportButton);
-        this._utilities.children().eq(1).append(dotIcon);
-        this._utilities.children().eq(1).append(configButton + infoButton);
+        this.div.children().eq(1).append(slideUpButton + slideDownButton);
+        this.div.children().eq(1).append(dotIcon);
+        this.div.children().eq(1).append(importButton + exportButton);
+        this.div.children().eq(1).append(dotIcon);
+        this.div.children().eq(1).append(configButton + infoButton);
     }
 }

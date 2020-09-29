@@ -4,26 +4,24 @@
 
 class Lines {
     _containerID = null;
-    _container = null;
     _lineCode = "<div></div>";
     _lastEditedTimestamp = null;
 
     constructor(cID) {
         this._containerID = cID;
-        this._container = $("#" + this._containerID);
-        this._container.append(this._lineCode);
+        this.div.append(this._lineCode);
     }
 
-    get lastEdited() {
-        return this._lastEditedTimestamp;
-    }
+    get ID()         { return this._containerID; }
+    get div()        { return $("#" + this.ID); }
+    get lastEdited() { return this._lastEditedTimestamp; }
 
     updateLastEditedTimestamp() {
         this._lastEditedTimestamp = Math.floor(Date.now() / 1000);
     }
 
     get numLines() {
-        return this._container.children().length;
+        return this.div.children().length;
     }
 
     lineExists(i) {
@@ -31,7 +29,7 @@ class Lines {
     }
 
     line(i) {
-        return (this.lineExists(i)) ? this._container.children().eq(i) : null;
+        return (this.lineExists(i)) ? this.div.children().eq(i) : null;
     }
 
     lineLength(i) {

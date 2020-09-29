@@ -13,10 +13,10 @@ class Sessions {
         this.createContainers();
 
         this._lines = new Lines(this._linesID);
-        this._session = new Session(this._lines, this._linesID);
-        this._dataManager = new DataManager(this._lines, this._linesID);
+        this._session = new Session(this._lines);
+        this._dataManager = new DataManager(this);
         this._buttons = new Buttons(this._buttonsNavID, this._buttonsID, this._dataManager.getButtons());
-        this._utilities = new Utilities(this._utilitiesID, this._dataManager, this._session, this._linesID, this._buttons);
+        this._utilities = new Utilities(this._utilitiesID, this._dataManager, this, this._buttons);
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
@@ -35,6 +35,9 @@ class Sessions {
             });
         });
     }
+
+    get sessionInstance() { return this._session; }
+    get linesInstance()   { return this._session.linesInstance;}
 
     createContainers() {
         var utilitiesCode, linesCode, buttonsContainer, buttonsNavCode, buttonsCode;

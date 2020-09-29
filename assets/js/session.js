@@ -2,8 +2,6 @@
 */
 
 class Session {
-    _linesObject = null;
-    _linesID = null;
     _lines = null;
     _cursorCode = "<span id = 'cursor'></span>";
     _cursor = null;
@@ -12,13 +10,9 @@ class Session {
     _issue = null;
     _lastEditedTimestamp = null;
 
-    constructor(linesObject, linesID, bufferID) {
-        this._linesObject = linesObject;
-        this._linesID = linesID;
-        this._lines = $("#" + linesID);
-        this._bufferID = bufferID;
-        this._buffer = $("#" + bufferID);
-        this._cursor = new Cursor(this._linesObject, this._linesID);
+    constructor(lines) {
+        this._lines = lines;
+        this._cursor = new Cursor(this._lines);
         const self = this;
 
         $(document).ready(function() {
@@ -26,68 +20,56 @@ class Session {
             Mousetrap.bind(['shift+tab'], function(e) { self.outdentLine; return false; });
     
             $(document).on("keyup", function(e) {
-                if (!self.lastEdited || self.lastEdited < linesObject.lastEdited) {
-                    self.setLastEdited(linesObject.lastEdited);
+                if (!self.lastEdited || self.lastEdited < lines.lastEdited) {
+                    self.setLastEdited(lines.lastEdited);
                 }
 
                 if (e.key === "Enter" && self.cursorLineIndex > 0) {
-                    linesObject.line(self.cursorLineIndex).css("paddingLeft", 
-                        linesObject.line(self.cursorLineIndex - 1).css("paddingLeft"));
+                    lines.line(self.cursorLineIndex).css("paddingLeft", 
+                        lines.line(self.cursorLineIndex - 1).css("paddingLeft"));
                 }
             });
 
         });
     }
 
+    get lastEdited()         { return this._lastEditedTimestamp; }
+    setLastEdited(ts)        { this._lastEditedTimestamp = ts; }
+    get linesInstance()      { return this._lines; }
+    get linesID()            { return this._lines.ID; }
+    get linesDiv()           { return this._lines.div; }
+    get cursorLineIndex()    { return this._cursor.lineIndex; }
+    get cursorElementIndex() { return this._cursor.elementIndex; }
+
     insertButton(e) {
         console.log(this.cursorLineIndex + " " + this.cursorElementIndex + " " + e);
-        this._linesObject.insertBefore(this.cursorLineIndex, this.cursorElementIndex, e);
-    }
-
-    setLastEdited(ts) {
-        this._lastEditedTimestamp = ts;
-    }
-
-    get lastEdited() {
-        return this._lastEditedTimestamp;
-    }
-
-    get cursorLineIndex() {
-        return this._cursor.lineIndex;
-    }
-
-    get cursorElementIndex() {
-        return this._cursor.elementIndex;
-    }
-
-    get lastEdited() {
-        return this._lastEditedTimestamp;
+        this._lines.insertBefore(this.cursorLineIndex, this.cursorElementIndex, e);
     }
 
     get indentLine() {
         if (this._cursor.lineIndex != 0) {
-            const prevLinePadding = parseInt(this._linesObject.line(this._cursor.lineIndex - 1).css("paddingLeft"));
-            const curLinePadding = parseInt(this._linesObject.line(this._cursor.lineIndex).css("paddingLeft"));
+            const prevLinePadding = parseInt(this._lines.line(this._cursor.lineIndex - 1).css("paddingLeft"));
+            const curLinePadding = parseInt(this._lines.line(this._cursor.lineIndex).css("paddingLeft"));
             if (curLinePadding <= prevLinePadding) {
-                this._linesObject.line(this._cursor.lineIndex).css("paddingLeft",
+                this._lines.line(this._cursor.lineIndex).css("paddingLeft",
                     String(curLinePadding + this._indent) + "px");
             }
         }
     }
 
     get outdentLine() {
-        const curLinePadding = parseInt(this._linesObject.line(this._cursor.lineIndex).css("paddingLeft"));
+        const curLinePadding = parseInt(this._lines.line(this._cursor.lineIndex).css("paddingLeft"));
         if (curLinePadding >= this._indent) {
-            this._linesObject.line(this._cursor.lineIndex).css("paddingLeft",
+            this._lines.line(this._cursor.lineIndex).css("paddingLeft",
                 String(curLinePadding - this._indent) + "px");
         }
     }
 
     get height() {
-        return this._lines.css("height");
+        return this.linesDiv.css("height");
     }
 
     set height(height) {
-        this._lines.css("height", height);
+        this.linesDiv.css("height", height);
     }
 }

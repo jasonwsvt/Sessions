@@ -6,13 +6,11 @@ class Cursor {
     _cursorCode = "<h2 id = 'cursor'>|</h2>";
     _typedElementCode = "<button type='button' class='btn btn-light typed'></button>";
     _cursor = null;
-    _linesID = null;
     _cursorX = null;
 
-    constructor(lines, linesID) {
+    constructor(lines) {
         const self = this;
         this._lines = lines;
-        this._linesID = linesID;
         this._lines.appendToLine(0, this._cursorCode);
         this._cursor = $("#cursor");
 
@@ -31,6 +29,14 @@ class Cursor {
             $(document).on("keypress", function(e)    { self.type(e.key); return false; });
         });
     }
+
+    get linesID() { return this._lines.ID; }
+
+    get linesDiv() { return this._lines.div; }
+
+    get linesInstance() { return this._lines; }
+
+    get lastEdited() { return this._lastEditedTimestamp; }
 
     get lineIndex() { return this._lineIndex; }
     get elementIndex() { return this._cursorIndex; }
@@ -88,7 +94,7 @@ class Cursor {
     manageHiddenCursor() {
         //return true if top of cursor is below the bottom of the lines div,
         //or the bottom of the cursor is above the top of the lines div
-        const container = $("#" + this._linesID);
+        const container = $("#" + this.linesID);
         const containerTop = container.scrollTop();
         const containerBottom = containerTop + container.height();
         const elementTop = this._cursor.offset().top - container.position().top + containerTop;

@@ -10,25 +10,28 @@
 
 class DataManager {
     _lines = null;
-    _session = null;
     _local = null;
     _server = null;
     _useLocalData = false;
     _useServerData = false;
     _user = null;    
 
-    constructor(lines, linesID) {
+    constructor(sessions) {
         var self = this;
 
-        this._lines = lines;
+        this._sessions = sessions;
         this._session = new SessionDataManager(this._lines);
 
-        $("#" + linesID).on("change", function() {
+        $("#" + this.linesID).on("change", function() {
             self.storeSession();
         });
 
         this.checkLocalDataForUser();
     }
+
+    get linesInstance()   { return this._sessions.linesInstance; }
+    get linesID()         { return this._sessions.linesInstance.ID; }
+    get sessionInstance() { return this._sessions.sessionInstance; }
 
     get activateLocalStorage() {
         if (this._local == null) { this._local = new LocalDataManager(this._lines); }
