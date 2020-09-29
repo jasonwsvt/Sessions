@@ -142,8 +142,14 @@ class SessionDataManager {
         sessionStorage.setItem(creationTimestamp, { "issue": issue; "last edited": lastEditedTimestamp, "lines": lines });
     }
 
-    getSession() {
+    getSession(creationTimestamp) {
+        const session = sessionStorage.getItem(creationTimestamp);
 
+        issue = session["issue"];
+        lastEditedTimestamp = session["last edited"];
+        lines = session["lines"];
+
+        //return info
     }
 }
 
