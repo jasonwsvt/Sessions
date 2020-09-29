@@ -12,16 +12,15 @@ class Sessions {
         var self = this;
         this.createContainers();
 
-        this._lines = new Lines(this._linesID);
-        this._session = new Session(this._lines);
+        this._session = new Session(this._linesID);
         this._dataManager = new DataManager(this);
         this._buttons = new Buttons(this._buttonsNavID, this._buttonsID, this._dataManager.getButtons());
         this._utilities = new Utilities(this._utilitiesID, this._dataManager, this, this._buttons);
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
-                if (!self._session.lastEdited || self._session.lastEdited < self._lines.lastEdited) {
-                    self._lastEdited = self._lines.lastEdited;
+                if (!self._session.lastEdited || self.sessionInstance.lastEdited < self.linesInstance.lastEdited) {
+                    self._lastEdited = self.linesInstance.lastEdited;
                     self._dataManager.storeSession();
                 }
             });

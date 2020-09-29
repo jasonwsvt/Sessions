@@ -10,27 +10,32 @@
 
 class DataManager {
     _lines = null;
-    _local = null;
-    _server = null;
+    _localData = null;
+    _serverData = null;
+    _sessionData = null;
     _useLocalData = false;
     _useServerData = false;
-    _user = null;    
+    _user = null;
+    _sessions = null;
 
     constructor(sessions) {
         var self = this;
 
         this._sessions = sessions;
-        this._session = new SessionDataManager(this._lines);
-
-        $("#" + this.linesID).on("change", function() {
-            self.storeSession();
-        });
+        this._sessionData = new SessionDataManager(this._sessions);
 
         this.checkLocalDataForUser();
+
+        $(document).ready(function() {
+            $("#" + self.linesDiv).on("change", function() {
+                self.storeSession();
+            });
+        });
     }
 
     get linesInstance()   { return this._sessions.linesInstance; }
     get linesID()         { return this._sessions.linesInstance.ID; }
+    get linesDiv()        { return this._sessions.linesInstance.div; }
     get sessionInstance() { return this._sessions.sessionInstance; }
 
     get activateLocalStorage() {
@@ -91,27 +96,50 @@ class DataManager {
     }   
 
     storeSession() {
-        this._session.storeSession();
-        if (this._useLocalData) { this._local.storeSession(); }
-        if (this._useServerData) { this._server.storeSession(); }
+        this._sessionData.storeSession();
+        if (this._useLocalData) { this._localData.storeSession(); }
+        if (this._useServerData) { this._serverData.storeSession(); }
     }
 }
 
 class SessionDataManager {
-    constructor() { 
+    _dataManager = null;
+    constructor(dataManager) {
+        this._dataManager = dataManager; 
     }
 
+    //return all issues stored in session data
     issues() {
-
+        const allSessions = Object.keys(sessionStorage);
+        var allIssues = [];
+        for (i = 0; i < allSessions.length; i++) {
+            if (!allIssues.includes(allSesions[i].issue)) {
+                allIssues.push(allIssues[i].issue);
+            }
+        }
+        return allIssues;
     }
 
+    //return all sessions stored in session data for given issue
     issueSessions(issue) {
-
+        const allSessions = Object.keys(sessionStorage);
+        var allIssueSessions = [];
+        for (i = 0; i < allSessions.length; i++) {
+            if (allSesions[i].issue == issue && !allIssueSessions.includes(i)) {
+                allIssueSessions.push(i);
+            }
+        }
+        return allIssueSessions;        
     }
 
+    //sessionName = { creationTimestamp, lastEditedTimestamp, lines } (no username or password)
     storeSession() {
-        
+        const creationTimestamp = this._dataManager.sessionInstance.creation;
+        const lastEditedTimestamp = this._dataManager.sessionInstance.lastEdited;
+        const issue = this._dataManager.sessions.issue;
+        const lines = this._dataManager.linesDiv.children().toArray();
 
+        sessionStorage.setItem(creationTimestamp, { "issue": issue; "last edited": lastEditedTimestamp, "lines": lines });
     }
 
     getSession() {
@@ -133,6 +161,7 @@ class LocalDataManager {
 
     }
 
+    //user = { sessions }  (store with username and encrypt with optional password)
     storeSession() {
         
     }
@@ -158,7 +187,6 @@ class ServerDataManager {
 
     storeSession() {
         
-
     }
 
     getSession() {
@@ -170,7 +198,6 @@ becauseReasonsButtonsData = [
     {
         "name": "Emotions and Psychological Reversals",
         "tier": 1,
-        "wrap": false,
         "group":
         [
             {
@@ -594,7 +621,6 @@ becauseReasonsButtonsData = [
     {
         "name": "Conscious Systems",
         "tier": 1,
-        "wrap": false,
         "group":
         [
             {

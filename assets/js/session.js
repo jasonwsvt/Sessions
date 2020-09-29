@@ -9,11 +9,13 @@ class Session {
     _session = null;
     _issue = null;
     _lastEditedTimestamp = null;
+    _creationTimestamp = null;
 
-    constructor(lines) {
-        this._lines = lines;
+    constructor(linesID) {
+        this._lines = new Lines(linesID);
         this._cursor = new Cursor(this._lines);
         const self = this;
+        this._creationTimestamp = Math.floor(Date.now() / 1000);
 
         $(document).ready(function() {
             Mousetrap.bind(['tab'], function(e)       { self.indentLine;  return false; });
@@ -35,6 +37,7 @@ class Session {
 
     get lastEdited()         { return this._lastEditedTimestamp; }
     setLastEdited(ts)        { this._lastEditedTimestamp = ts; }
+    get creation()           { return this._creationTimestamp; }
     get linesInstance()      { return this._lines; }
     get linesID()            { return this._lines.ID; }
     get linesDiv()           { return this._lines.div; }
