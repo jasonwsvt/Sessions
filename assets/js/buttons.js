@@ -147,7 +147,7 @@ class Buttons {
                             middle = "</div><div class = 'col col-xl-10 col-lg-9 col-md-8 col-sm-7 col-6'>";
                             closing = "</div></div>";
                             break;
-                    case 3: opening = "<div class = 'row'><div class = 'col col-xl-3 col-lg-4 col-md-5 col-sm-6 col-6'>";
+                    default: opening = "<div class = 'row'><div class = 'col col-xl-3 col-lg-4 col-md-5 col-sm-6 col-6'>";
                             middle = "</div><div class = 'col col-xl-9 col-lg-8 col-md-7 col-sm-6 col-6'>";
                             closing = "</div></div>";
                             break;

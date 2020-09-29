@@ -168,267 +168,6 @@ class ServerDataManager {
 
 becauseReasonsButtonsData = [
     {
-        "name": "Physical Body",			
-        "tier": 1,
-        "group": 
-        [
-            {
-                "name": "Skeletal System",
-                "tier": 2,
-                "group":
-                [
-                    "bones",	
-                    "cartilage",	
-                    "ligaments",	
-                    "tendons"
-                ]
-            },
-            {
-                "name": "Integumentary System",		
-                "tier": 2,
-                "group": 
-                [
-                    "skin",	
-                    "hair",	
-                    "fat",	
-                    "nails"
-                ]
-            },
-            {
-                "name": "Circulatory System",
-                "tier": 2,
-                "group":
-                [		
-                    "capillaries",	
-                    "vessels",	
-                    "arteries"
-                ]
-            },
-            {	
-                "name": "Lymph System",
-                "tier": 2,
-                "group":
-                [	
-                    "lymph fluid",	
-                    "lymph nodes",	
-                    "lymph vessels"
-                ]
-            },
-            {	
-                "name": "Muscular System",		
-                "tier": 2,
-                "group":
-                [
-                    "skeletal muscles",	
-                    "smooth muscles",	
-                    "heart"
-                ]
-            },
-            {
-                "name": "Nervous System",		
-                "tier": 2,
-                "group":
-                [
-                    "brain",	
-                    "spinal cord",	
-                    "peripheral nervous system"
-                ]
-            },
-            {	
-                "name": "Respiratory System",		
-                "tier": 2,
-                "group":
-                [
-                    "larynx",	
-                    "bronchi",	
-                    "lungs",	
-                    "diaphragm"
-                ]
-            },
-            {	
-                "name": "Urinary System",
-                "tier": 2,
-                "group":
-                [		
-                    "kidneys",	
-                    "ureters",	
-                    "bladder",	
-                    "urethra"
-                ]
-            },
-            {	
-                "name": "Digestive System",		
-                "tier": 2,
-                "group":
-                [	
-                    "esophagus",	
-                    "stomach",	
-                    "liver",	
-                    "gallbladder",	
-                    "pancreas"
-                ]
-            },
-            {	
-                "name": "gastrointestinal tract",		
-                "tier": 2,
-                "group":
-                [
-                    "intestines",	
-                    "rectum",	
-                    "anus"
-                ]
-            },
-            {	
-                "name": "Reproductive System",		
-                "tier": 2,
-                "group":
-                [
-                    {
-                        "name": "Male Reproductive System",	
-                        "tier": 3,
-                        "group":
-                        [
-                            "testes",
-                            "vas deferens",
-                            "seminal vessicles",
-                            "prostate"
-                        ]
-                    },
-                    {
-                        "name": "Female Reproductive System",	
-                        "tier": 3,
-                        "group":
-                        [
-                            "fallopian tubes",
-                            "uterus",
-                            "vagina",
-                            "mammary glands"
-                        ]
-                    }
-                ]
-            },
-            {
-                "name": "Endocrine System",		
-                "tier": 2,
-                "group":
-                [
-                    "pancreas",	
-                    "ovaries",	
-                    "testes",	
-                    "hypothalamus",	
-                    "gastrointestinal tract",	
-                    {
-                        "name": "Endocrine Glands",	
-                        "tier": 3,
-                        "group":
-                        [
-                            "pineal",
-                            "pituitary",
-                            "thyroid",
-                            "parathyroid",
-                            "adrenals"
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "name": "Conscious Systems",
-        "tier": 1,
-        "wrap": false,
-        "group":
-        [
-            {
-                "name": "Senses",
-                "tier": 2,
-                "group":
-                [
-                    {
-                        "name": "Vision",
-                        "tier": 3,
-                        "group":
-                        [
-                            "Brightness",
-                            "Color",
-                            "Depth"
-                        ]
-                    },
-                    {
-                        "name": "Taste",
-                        "tier": 3,
-                        "group":
-                        [
-                            "Sour",
-                            "Salty",
-                            "Bitter",
-                            "Sweet",
-                            "Savory",
-                            "Spicy"
-                        ]
-                    },
-                    {
-                        "name": "Somatosensory",
-                        "tier": 3,
-                        "group":
-                        [
-                            "Heat",
-                            "Cold",
-                            "Pain",
-                            "Itch",
-                            "Pressure"
-                        ]
-                    },
-                    "Equilibrioception",
-                    "Olfaction",	
-                    "Hearing",	
-                    "Proprioception",	
-                    "Kinesthesia",	
-                    "Time"
-                ]
-            },
-            {
-                "name": "Memory",
-                "tier": 2,
-                "group":
-                [
-                    "Short Term",	
-                    "Medium term",	
-                    "Long term",	
-                    "Blocked"	
-                ]
-            },
-            {
-                "name": "Pattern",
-                "tier": 2,
-                "group":
-                [
-                    "Thought",
-                    "Behavior",
-                    "Belief system",
-                    "Identification",
-                    "Resistance",
-                    "Attachment",
-                    "Expectation"
-                ]
-            },
-            {
-                "name": "Parts",
-                "tier": 2,
-                "group":
-                [
-                    "Certain parts believe they know X",
-                    "Many parts"        
-                ]
-            },
-            "Behavior",		
-            "Emotions",
-            "Psychological Reversals",
-            "Ego",		
-            "Pain body"		
-        ]
-    },
-    {
         "name": "Emotions and Psychological Reversals",
         "tier": 1,
         "wrap": false,
@@ -796,6 +535,158 @@ becauseReasonsButtonsData = [
         ]
     },
     {
+        "name": "Conjunctions and Characteristics",
+        "tier": 1,
+        "group":
+        [
+            {
+                "name": "Conjunctions",
+                "tier": 2,
+                "group":
+                [
+                    "- (dash)",
+                    ",",
+                    "/ (slash)",
+                    "! (bang)",
+                    "& (ampersand)",
+                    "# (pound)",
+                    "and",
+                    "at",
+                    "at/above",
+                    "at/below",
+                    "at/between",
+                    "above",
+                    "below",
+                    "between",
+                    "cross",
+                    "crossed by",
+                    "nand",
+                    "nor",
+                    "of",
+                    "or",
+                    "section of",
+                    "subset of",
+                    "subset/section of",
+                    "subset|section of",
+                    "with",
+                    "without",
+                    "xnor"
+                ]
+            },
+            {
+                "name": "Characteristics",
+                "tier": 2,
+                "group":
+                [
+                    "of others",
+                    "Negation",
+                    "Extranormal level",
+                    "Deep Level",
+                    "Intervening",
+                    "Recurrent",
+                    "Tradition",
+                    "Remaining",
+                    "Resistance to"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Conscious Systems",
+        "tier": 1,
+        "wrap": false,
+        "group":
+        [
+            {
+                "name": "Senses",
+                "tier": 2,
+                "group":
+                [
+                    {
+                        "name": "Vision",
+                        "tier": 3,
+                        "group":
+                        [
+                            "Brightness",
+                            "Color",
+                            "Depth"
+                        ]
+                    },
+                    {
+                        "name": "Taste",
+                        "tier": 3,
+                        "group":
+                        [
+                            "Sour",
+                            "Salty",
+                            "Bitter",
+                            "Sweet",
+                            "Savory",
+                            "Spicy"
+                        ]
+                    },
+                    {
+                        "name": "Somatosensory",
+                        "tier": 3,
+                        "group":
+                        [
+                            "Heat",
+                            "Cold",
+                            "Pain",
+                            "Itch",
+                            "Pressure"
+                        ]
+                    },
+                    "Equilibrioception",
+                    "Olfaction",	
+                    "Hearing",	
+                    "Proprioception",	
+                    "Kinesthesia",	
+                    "Time"
+                ]
+            },
+            {
+                "name": "Memory",
+                "tier": 2,
+                "group":
+                [
+                    "Short Term",	
+                    "Medium term",	
+                    "Long term",	
+                    "Blocked"	
+                ]
+            },
+            {
+                "name": "Pattern",
+                "tier": 2,
+                "group":
+                [
+                    "Thought",
+                    "Behavior",
+                    "Belief system",
+                    "Identification",
+                    "Resistance",
+                    "Attachment",
+                    "Expectation"
+                ]
+            },
+            {
+                "name": "Parts",
+                "tier": 2,
+                "group":
+                [
+                    "Certain parts believe they know X",
+                    "Many parts"        
+                ]
+            },
+            "Behavior",		
+            "Emotions",
+            "Psychological Reversals",
+            "Ego",		
+            "Pain body"		
+        ]
+    },
+    {
         "name": "Actions",
         "tier": 1,
         "group":
@@ -952,205 +843,677 @@ becauseReasonsButtonsData = [
             "watch"        
         ]
     },
+    {
+        "name": "Location",
+        "tier": 1,
+        "group":
+        [
+            {
+                "name": "Outdoors",
+                "tier": 2,
+                "group":
+                    [
+                        "Desert",
+                        "Forest",
+                        "Hill",
+                        "Mountain",
+                        "Tundra",
+                        "Oasis",
+                        "Canyon",
+                        "Glacier",
+                        "Cosmos",
+                        "Singularity",
+                        "Bog",
+                        "Swamp",
+                        "Marsh",
+                        "Pond",
+                        "Lake",
+                        "Ocean",
+                        "Stream",
+                        "Brook",
+                        "River"                      
+                    ]
+            },
+            {
+                "name": "Terrain",
+                "tier": 2,
+                "group":
+                [
+                    "Steep",
+                    "Rugged",
+                    "Rocky",
+                    "Unstable",
+                    "Rolling",
+                    "Flat",
+                    "Vertical",
+                    "Altitude",
+                    "Depth",
+                    "Nonspecified"                    
+                ]
+            },
+            {
+                "name": "Weather",
+                "tier": 2,
+                "group":
+                [
+                    "Clear",
+                    "Rain",
+                    "Snow",
+                    "Freezing",
+                    "Hot",
+                    "Windy",
+                    "Earthquake",
+                    "Flood"                    
+                ]
+            },
+            {
+                "name": "Civilization",
+                "tier": 2,
+                "group":
+                [
+                    "Nation",
+                    "State",
+                    "Province",
+                    "City",
+                    "Town",
+                    "Street",
+                    "Building",
+                    "Open space"                        
+                ]                        
+            },
+            {
+                "name": "Building",
+                "tier": 2,
+                "group":
+                [
+                    "Commercial",
+                    "Private",
+                    "Business",
+                    "Store",
+                    "Organization",
+                    "Sleeping",
+                    "Restaurant",
+                    "Grocery",
+                    "Home"                    
+                ]
+            },
+            {
+                "name": "Indoors",
+                "tier": 2,
+                "group":
+                [
+                    "Floor",
+                    "Room",
+                    "Furniture",
+                    "Window",
+                    "Ceiling",
+                    "Door",
+                    "Wall"                    
+                ]
+            },
+            {
+                "name": "Spiritual",
+                "wrap": false,
+                "tier": 2
+            }
+        ]
+    },
+    {
+        "name": "Individuals",
+        "tier": 1,
+        "group":
+        [
+            "Sibling",
+            "Parent",
+            "Cousin",
+            "Parent's Sibling",
+            "Grandparent",
+            "Extended",
+            "Child",
+            "Pet",
+            "Intermarital",
+            "Partner",
+            "Best friend",
+            "Close friend",
+            "Friend",
+            "Acquaintence",
+            "Coworker",
+            "Client",
+            "Bystander",
+            "Teacher",
+            "Student",
+            "Classmate",
+            "Enemy",
+            "Competitor"
+        ]
+    },
+    {
+        "name": "Items",
+        "tier": 1,
+        "group":
+        [
+            {
+                "name": "Containers",
+                "tier": 2,
+                "group":
+                [
+                    "Food storage",
+                    "Cooking",
+                    "Recycling",
+                    "Electronic data",
+                    "Waste",
+                    "Fuel",
+                    "Miscellaneous"        
+                ]
+            },
+            {
+                "name": "Vehicles",
+                "tier": 2,
+                "group":
+                [
+                    "Car",
+                    "Train",
+                    "Pedal cycle",
+                    "Amphibious",
+                    "Boat",
+                    "Submarine",
+                    "Plane"  
+                ]
+            },
+            {
+                "name": "Therapy",
+                "tier": 2,
+                "group":
+                [
+                    "Physical",
+                    "Talk",
+                    "Social",
+                    "Energy",
+                    "Medicine",
+                    "Surgery"                                
+                ]
+            },
+            {
+                "name": "Communication",
+                "tier": 2,
+                "group":
+                [
+                    "Letter",
+                    "Social media",
+                    "Kinesiology",
+                    "Phone",
+                    "Videoconference",
+                    "Cellular text",
+                    "PM app",
+                    "Email",
+                    "In person",
+                    "Telepathy"                                
+                ]
+            },
+            {
+                "name": "Creations",
+                "tier": 2,
+                "group":
+                [
+                    "Social",
+                    "Health",
+                    "Sport",
+                    "Music",
+                    "Clothing",
+                    "Literature",
+                    "Craft",
+                    "Art",
+                    "Dance",
+                    "Other"                                
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Item Characteristics",
+        "tier": 1,
+        "group":
+        [
+            {
+                "name": "Amounts",
+                "tier": 2,
+                "group":
+                [
+                    "Single",
+                    "Multiple",
+                    "Each",
+                    "Group",
+                    "0-1",
+                    "1-10",
+                    "10-100",
+                    "Hundreds",
+                    "Thousands",
+                    "Millions",
+                    "Billions",
+                    "Trillions",
+                    "Quadrillions",
+                    "Pentillions",
+                    "Sextillions",
+                    "Septillions",
+                    "Octillions",
+                    "Nonillions",
+                    "X-illions",
+                    "Small Range",
+                    "Large Range",
+                    "Number (in range)",
+                    "All"
+                ]
+            },
+            {
+                "name": "Possessed",
+                "tier": 2,
+                "group":
+                [
+                    "Owned",
+                    "Newly acquired",
+                    "Consider",
+                    "Acquire",
+                    "Sell",
+                    "Donate",
+                    "Give away"
+                ]
+            },
+            {
+                "name": "Condition",
+                "tier": 2,
+                "group":
+                [
+                    "New",
+                    "Modern",
+                    "Fresh",
+                    "Used",
+                    "Old",
+                    "Antiquated",
+                    "Battered",
+                    "Destroyed"
+                ]
+            },
+            {
+                "name": "Size",
+                "tier": 2,
+                "group":
+                [
+                    "Tiny",
+                    "Small",
+                    "Medium",
+                    "Large",
+                    "Huge",
+                    "Gigantic"
+                ]
+            },
+            {
+                "name": "Construction",
+                "tier": 2,
+                "group":
+                [
+                    "Electronic",
+                    "Electric",
+                    "Mechanical",
+                    "Simple",
+                    "Complicated"
+                ]
+            },
+            {
+                "name": "Intended Use",
+                "tier": 2,
+                "group":
+                [
+                    "Material working",
+                    "For the body",
+                    "For the home",
+                    "Entertainment",
+                    "Educational",
+                    "Informational",
+                    "Weapon"
+                ]
+            },
+            {
+                "name": "Materials",
+                "tier": 2,
+                "group":
+                [
+                    "Hide",
+                    "Fabric",
+                    "Plastic",
+                    "Metal",
+                    "Wood",
+                    "Stone"
+                ]
+            },
+            {
+                "name": "Qualities",
+                "tier": 2,
+                "group":
+                [
+                    "Soft",
+                    "Hard",
+                    "Thin",
+                    "Thick",
+                    "Inexpensive",
+                    "Expensive",
+                    "Malleable",
+                    "Cheap",
+                    "Durable"
+                ]
+            }
+        ]
+    },
 	{
         "name": "Bodies",
         "tier": 1,
+        "wrap": false,
         "group":
         [
             "Ego",
             "Pain body",
-            "Physical",
-            "Energy",
-            "Etheric",
-            "Emotional",
-            "Mental",
-            "Astral",
-            "Etheric Template",
-            "Celestial",
-            "Causal"        
-        ]
-    },
-    {
-        "name": "Energy Body",
-        "tier": 1,
-        "group":
-        [
             {
-                "name": "Chakra",
+                "name": "Physical Body",			
                 "tier": 2,
-                "group":
+                "group": 
                 [
-                    "Root",
-                    "Sacral",
-                    "Solar Plexus",
-                    "Heart",
-                    "Throat",
-                    "Third Eye",
-                    "Crown",
-                    "8-105",
-                    "Connection",
-                    "Samskara"
+                    {
+                        "name": "Skeletal System",
+                        "tier": 3,
+                        "group":
+                        [
+                            "bones",	
+                            "cartilage",	
+                            "ligaments",	
+                            "tendons"
+                        ]
+                    },
+                    {
+                        "name": "Integumentary System",		
+                        "tier": 3,
+                        "group": 
+                        [
+                            "skin",	
+                            "hair",	
+                            "fat",	
+                            "nails"
+                        ]
+                    },
+                    {
+                        "name": "Circulatory System",
+                        "tier": 3,
+                        "group":
+                        [		
+                            "capillaries",	
+                            "vessels",	
+                            "arteries"
+                        ]
+                    },
+                    {	
+                        "name": "Lymph System",
+                        "tier": 3,
+                        "group":
+                        [	
+                            "lymph fluid",	
+                            "lymph nodes",	
+                            "lymph vessels"
+                        ]
+                    },
+                    {	
+                        "name": "Muscular System",		
+                        "tier": 3,
+                        "group":
+                        [
+                            "skeletal muscles",	
+                            "smooth muscles",	
+                            "heart"
+                        ]
+                    },
+                    {
+                        "name": "Nervous System",		
+                        "tier": 3,
+                        "group":
+                        [
+                            "brain",	
+                            "spinal cord",	
+                            "peripheral nervous system"
+                        ]
+                    },
+                    {	
+                        "name": "Respiratory System",		
+                        "tier": 3,
+                        "group":
+                        [
+                            "larynx",	
+                            "bronchi",	
+                            "lungs",	
+                            "diaphragm"
+                        ]
+                    },
+                    {	
+                        "name": "Urinary System",
+                        "tier": 3,
+                        "group":
+                        [		
+                            "kidneys",	
+                            "ureters",	
+                            "bladder",	
+                            "urethra"
+                        ]
+                    },
+                    {	
+                        "name": "Digestive System",		
+                        "tier": 3,
+                        "group":
+                        [	
+                            "esophagus",	
+                            "stomach",	
+                            "liver",	
+                            "gallbladder",	
+                            "pancreas"
+                        ]
+                    },
+                    {	
+                        "name": "gastrointestinal tract",		
+                        "tier": 3,
+                        "group":
+                        [
+                            "intestines",	
+                            "rectum",	
+                            "anus"
+                        ]
+                    },
+                    {	
+                        "name": "Reproductive System",		
+                        "tier": 3,
+                        "group":
+                        [
+                            {
+                                "name": "Male Reproductive System",	
+                                "tier": 4,
+                                "group":
+                                [
+                                    "testes",
+                                    "vas deferens",
+                                    "seminal vessicles",
+                                    "prostate"
+                                ]
+                            },
+                            {
+                                "name": "Female Reproductive System",	
+                                "tier": 4,
+                                "group":
+                                [
+                                    "fallopian tubes",
+                                    "uterus",
+                                    "vagina",
+                                    "mammary glands"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Endocrine System",		
+                        "tier": 3,
+                        "group":
+                        [
+                            "pancreas",	
+                            "ovaries",	
+                            "testes",	
+                            "hypothalamus",	
+                            "gastrointestinal tract",	
+                            {
+                                "name": "Endocrine Glands",	
+                                "tier": 4,
+                                "group":
+                                [
+                                    "pineal",
+                                    "pituitary",
+                                    "thyroid",
+                                    "parathyroid",
+                                    "adrenals"
+                                ]
+                            }
+                        ]
+                    }
                 ]
             },
             {
-                "name": "Body",
+                "name": "Energy Body",
                 "tier": 2,
                 "group":
                 [
-                    "Etheric",
-                    "Emotional",
-                    "Mental",
-                    "Astral",
-                    "Etheric",
-                    "Template",
-                    "Celestial",
-                    "Causal"
-                ]			
-            },
-            {
-                "name": "Aspect",
-                "tier": 2,
-                "group":
-                [
-                    "Lower",
-                    "Lower Emotional",
-                    "Lower Mental",
-                    "Higher Mental",
-                    "Higher Physical",
-                    "Emotional",
-                    "Mental"			
+                    {
+                        "name": "Chakra",
+                        "tier": 3,
+                        "group":
+                        [
+                            "Root",
+                            "Sacral",
+                            "Solar Plexus",
+                            "Heart",
+                            "Throat",
+                            "Third Eye",
+                            "Crown",
+                            "8-105",
+                            "Connection",
+                            "Samskara"
+                        ]
+                    },
+                    {
+                        "name": "Body",
+                        "tier": 3,
+                        "group":
+                        [
+                            "Etheric",
+                            "Emotional",
+                            "Mental",
+                            "Astral",
+                            "Etheric",
+                            "Template",
+                            "Celestial",
+                            "Causal"
+                        ]			
+                    },
+                    {
+                        "name": "Aspect",
+                        "tier": 3,
+                        "group":
+                        [
+                            "Lower",
+                            "Lower Emotional",
+                            "Lower Mental",
+                            "Higher Mental",
+                            "Higher Physical",
+                            "Emotional",
+                            "Mental"			
+                        ]
+                    },
+                    {
+                        "name": "Organ",
+                        "tier": 3,
+                        "group":
+                        [
+                            "Adrenal gland",
+                            "Ovaries, Testicles",
+                            "Pancreas",
+                            "Thymus gland",
+                            "Thyroid gland",
+                            "Pituitary gland",
+                            "Pineal gland"			
+                        ]
+                    },
+                    {
+                        "name": "Hara Line",
+                        "tier": 3,
+                        "group":
+                        [
+                            "Earth Star",
+                            "Tan Tien",
+                            "Core Star",
+                            "Soul Seat",
+                            "Individuation Point",
+                            "Soul Star"            
+                        ]
+                    },
+                    {
+                        "name": "Aura",
+                        "tier": 3,
+                        "group":
+                        [
+                            "UL Quadrant",
+                            "UR Quadrant",
+                            "LL Quadrant",
+                            "LR Quadrant",
+                            "Whole"            
+                        ]
+                    },
+                    {
+                        "name": "Meridians",
+                        "tier": 3,
+                        "group":
+                        [
+                            "bladder",
+                            "central",
+                            "circulation-sex",
+                            "gallbladder",
+                            "governing",
+                            "heart",
+                            "kidney",
+                            "large intestine",
+                            "liver",
+                            "lung",
+                            "small intestine",
+                            "spleen",
+                            "stomach",
+                            "triple warmer"
+                        ]
+                    }
                 ]
             },
             {
-                "name": "Organ",
+                "name": "Child Selves",
                 "tier": 2,
                 "group":
                 [
-                    "Adrenal gland",
-                    "Ovaries, Testicles",
-                    "Pancreas",
-                    "Thymus gland",
-                    "Thyroid gland",
-                    "Pituitary gland",
-                    "Pineal gland"			
-                ]
-            },
-            {
-                "name": "Hara Line",
-                "tier": 2,
-                "group":
-                [
-                    "Earth Star",
-                    "Tan Tien",
-                    "Core Star",
-                    "Soul Seat",
-                    "Individuation Point",
-                    "Soul Star"            
-                ]
-            },
-            {
-                "name": "Aura",
-                "tier": 2,
-                "group":
-                [
-                    "UL Quadrant",
-                    "UR Quadrant",
-                    "LL Quadrant",
-                    "LR Quadrant",
-                    "Whole"            
-                ]
-            },
-            {
-                "name": "Meridians",
-                "tier": 2,
-                "group":
-                [
-                    "bladder",
-                    "central",
-                    "circulation-sex",
-                    "gallbladder",
-                    "governing",
-                    "heart",
-                    "kidney",
-                    "large intestine",
-                    "liver",
-                    "lung",
-                    "small intestine",
-                    "spleen",
-                    "stomach",
-                    "triple warmer"
+                    "Source Child Self",
+                    "Maker Child Self",
+                    "Creator One Child Self",
+                    "Creator Parent Child Self",
+                    "Creator Child Self"                
                 ]
             }
         ]
     },
     {
-        "name": "Conjunctions and Characteristics",
+        "name": "Source Creator Chain",
         "tier": 1,
         "group":
         [
-            {
-                "name": "Conjunctions",
-                "tier": 2,
-                "group":
-                [
-                    "- (dash)",
-                    ",",
-                    "/ (slash)",
-                    "! (bang)",
-                    "& (ampersand)",
-                    "# (pound)",
-                    "and",
-                    "at",
-                    "at/above",
-                    "at/below",
-                    "at/between",
-                    "above",
-                    "below",
-                    "between",
-                    "cross",
-                    "crossed by",
-                    "nand",
-                    "nor",
-                    "of",
-                    "or",
-                    "section of",
-                    "subset of",
-                    "subset/section of",
-                    "subset|section of",
-                    "with",
-                    "without",
-                    "xnor"
-                ]
-            },
-            {
-                "name": "Characteristics",
-                "tier": 2,
-                "group":
-                [
-                    "of others",
-                    "Negation",
-                    "Extranormal level",
-                    "Deep Level",
-                    "Intervening",
-                    "Recurrent",
-                    "Tradition",
-                    "Remaining",
-                    "Resistance to"
-                ]
-            }
-        ]
-    },
-	{
-        "name": "Low Energies",
-        "tier": 1,
-        "group":
-        [
-            "Amount of low energies at level in range 1-Max",
-            "Amount of low energies in range 1-Max",
-            "All low energies in range 1-Max",
-            "All low energies",
-            "Transmutation",
-            "Block discovered entrypoints"        
+            "Source",
+            "Maker",
+            "Creator One",
+            "Creator Parent",
+            "Creator"            
         ]
     },
     {
@@ -2368,395 +2731,17 @@ becauseReasonsButtonsData = [
             }
         ]
     },			
-    {
-        "name": "Source Creator Chain and Child Selves",
+	{
+        "name": "Low Energies",
         "tier": 1,
         "group":
         [
-            {
-                "name": "Source Creator Chain",
-                "tier": 2,
-                "group":
-                [
-                    "Source",
-                    "Maker",
-                    "Creator One",
-                    "Creator Parent",
-                    "Creator"            
-                ]
-            },
-            {
-                "name": "Child Selves",
-                "tier": 2,
-                "group":
-                [
-                    "Source Child Self",
-                    "Maker Child Self",
-                    "Creator One Child Self",
-                    "Creator Parent Child Self",
-                    "Creator Child Self"                
-                ]
-            }
-        ]
-    },	
-    {
-        "name": "Location",
-        "tier": 1,
-        "group":
-        [
-            {
-                "name": "Outdoors",
-                "tier": 2,
-                "group":
-                    [
-                        "Desert",
-                        "Forest",
-                        "Hill",
-                        "Mountain",
-                        "Tundra",
-                        "Oasis",
-                        "Canyon",
-                        "Glacier",
-                        "Cosmos",
-                        "Singularity",
-                        "Bog",
-                        "Swamp",
-                        "Marsh",
-                        "Pond",
-                        "Lake",
-                        "Ocean",
-                        "Stream",
-                        "Brook",
-                        "River"                      
-                    ]
-            },
-            {
-                "name": "Terrain",
-                "tier": 2,
-                "group":
-                [
-                    "Steep",
-                    "Rugged",
-                    "Rocky",
-                    "Unstable",
-                    "Rolling",
-                    "Flat",
-                    "Vertical",
-                    "Altitude",
-                    "Depth",
-                    "Nonspecified"                    
-                ]
-            },
-            {
-                "name": "Weather",
-                "tier": 2,
-                "group":
-                [
-                    "Clear",
-                    "Rain",
-                    "Snow",
-                    "Freezing",
-                    "Hot",
-                    "Windy",
-                    "Earthquake",
-                    "Flood"                    
-                ]
-            },
-            {
-                "name": "Civilization",
-                "tier": 2,
-                "group":
-                [
-                    "Nation",
-                    "State",
-                    "Province",
-                    "City",
-                    "Town",
-                    "Street",
-                    "Building",
-                    "Open space"                        
-                ]                        
-            },
-            {
-                "name": "Building",
-                "tier": 2,
-                "group":
-                [
-                    "Commercial",
-                    "Private",
-                    "Business",
-                    "Store",
-                    "Organization",
-                    "Sleeping",
-                    "Restaurant",
-                    "Grocery",
-                    "Home"                    
-                ]
-            },
-            {
-                "name": "Indoors",
-                "tier": 2,
-                "group":
-                [
-                    "Floor",
-                    "Room",
-                    "Furniture",
-                    "Window",
-                    "Ceiling",
-                    "Door",
-                    "Wall"                    
-                ]
-            },
-            {
-                "name": "Spiritual",
-                "wrap": false,
-                "tier": 2
-            }
-        ]
-    },
-    {
-        "name": "Individuals",
-        "tier": 1,
-        "group":
-        [
-            "Sibling",
-            "Parent",
-            "Cousin",
-            "Parent's Sibling",
-            "Grandparent",
-            "Extended",
-            "Child",
-            "Pet",
-            "Intermarital",
-            "Partner",
-            "Best friend",
-            "Close friend",
-            "Friend",
-            "Acquaintence",
-            "Coworker",
-            "Client",
-            "Bystander",
-            "Teacher",
-            "Student",
-            "Classmate",
-            "Enemy",
-            "Competitor"
-        ]
-    },
-    {
-        "name": "Items",
-        "tier": 1,
-        "group":
-        [
-            {
-                "name": "Containers",
-                "tier": 2,
-                "group":
-                [
-                    "Food storage",
-                    "Cooking",
-                    "Recycling",
-                    "Electronic data",
-                    "Waste",
-                    "Fuel",
-                    "Miscellaneous"        
-                ]
-            },
-            {
-                "name": "Vehicles",
-                "tier": 2,
-                "group":
-                [
-                    "Car",
-                    "Train",
-                    "Pedal cycle",
-                    "Amphibious",
-                    "Boat",
-                    "Submarine",
-                    "Plane"  
-                ]
-            },
-            {
-                "name": "Therapy",
-                "tier": 2,
-                "group":
-                [
-                    "Physical",
-                    "Talk",
-                    "Social",
-                    "Energy",
-                    "Medicine",
-                    "Surgery"                                
-                ]
-            },
-            {
-                "name": "Communication",
-                "tier": 2,
-                "group":
-                [
-                    "Letter",
-                    "Social media",
-                    "Kinesiology",
-                    "Phone",
-                    "Videoconference",
-                    "Cellular text",
-                    "PM app",
-                    "Email",
-                    "In person",
-                    "Telepathy"                                
-                ]
-            },
-            {
-                "name": "Creations",
-                "tier": 2,
-                "group":
-                [
-                    "Social",
-                    "Health",
-                    "Sport",
-                    "Music",
-                    "Clothing",
-                    "Literature",
-                    "Craft",
-                    "Art",
-                    "Dance",
-                    "Other"                                
-                ]
-            }
-        ]
-    },
-    {
-        "name": "Item Characteristics",
-        "tier": 1,
-        "group":
-        [
-            {
-                "name": "Amounts",
-                "tier": 2,
-                "group":
-                [
-                    "Single",
-                    "Multiple",
-                    "Each",
-                    "Group",
-                    "0-1",
-                    "1-10",
-                    "10-100",
-                    "Hundreds",
-                    "Thousands",
-                    "Millions",
-                    "Billions",
-                    "Trillions",
-                    "Quadrillions",
-                    "Pentillions",
-                    "Sextillions",
-                    "Septillions",
-                    "Octillions",
-                    "Nonillions",
-                    "X-illions",
-                    "Small Range",
-                    "Large Range",
-                    "Number (in range)",
-                    "All"
-                ]
-            },
-            {
-                "name": "Possessed",
-                "tier": 2,
-                "group":
-                [
-                    "Owned",
-                    "Newly acquired",
-                    "Consider",
-                    "Acquire",
-                    "Sell",
-                    "Donate",
-                    "Give away"
-                ]
-            },
-            {
-                "name": "Condition",
-                "tier": 2,
-                "group":
-                [
-                    "New",
-                    "Modern",
-                    "Fresh",
-                    "Used",
-                    "Old",
-                    "Antiquated",
-                    "Battered",
-                    "Destroyed"
-                ]
-            },
-            {
-                "name": "Size",
-                "tier": 2,
-                "group":
-                [
-                    "Tiny",
-                    "Small",
-                    "Medium",
-                    "Large",
-                    "Huge",
-                    "Gigantic"
-                ]
-            },
-            {
-                "name": "Construction",
-                "tier": 2,
-                "group":
-                [
-                    "Electronic",
-                    "Electric",
-                    "Mechanical",
-                    "Simple",
-                    "Complicated"
-                ]
-            },
-            {
-                "name": "Intended Use",
-                "tier": 2,
-                "group":
-                [
-                    "Material working",
-                    "For the body",
-                    "For the home",
-                    "Entertainment",
-                    "Educational",
-                    "Informational",
-                    "Weapon"
-                ]
-            },
-            {
-                "name": "Materials",
-                "tier": 2,
-                "group":
-                [
-                    "Hide",
-                    "Fabric",
-                    "Plastic",
-                    "Metal",
-                    "Wood",
-                    "Stone"
-                ]
-            },
-            {
-                "name": "Qualities",
-                "tier": 2,
-                "group":
-                [
-                    "Soft",
-                    "Hard",
-                    "Thin",
-                    "Thick",
-                    "Inexpensive",
-                    "Expensive",
-                    "Malleable",
-                    "Cheap",
-                    "Durable"
-                ]
-            }
+            "Amount of low energies at level in range 1-Max",
+            "Amount of low energies in range 1-Max",
+            "All low energies in range 1-Max",
+            "All low energies",
+            "Transmutation",
+            "Block discovered entrypoints"        
         ]
     }
 ];
