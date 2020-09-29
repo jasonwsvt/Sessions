@@ -1209,8 +1209,16 @@ becauseReasonsButtonsData = [
         "wrap": false,
         "group":
         [
-            "Ego",
-            "Pain body",
+            {
+                "name": "Ego Body",
+                "wrap": false,
+                "tier": 2
+            },
+            {
+                "name": "Pain Body",
+                "wrap": false,
+                "tier": 2
+            },
             {
                 "name": "Physical Body",			
                 "tier": 2,
