@@ -1,0 +1,128 @@
+.hidden {
+    display: none;
+    visibility: hidden;
+    transition: all .4s;
+}
+
+#utilities {
+    display: flex;
+    flex: 0 0 auto;
+    /* only manually resize */
+    white-space: nowrap;
+    width: 100%;
+    background-color: #eee;
+    justify-content: space-between;
+}
+
+#pickIssueMenu {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 400px;
+    display: block;
+    visibility: visible;
+    transition-property: display, visibility;
+    transition-duration: .4s;
+}
+
+#renameIssueMenu {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 400px;
+    display: block;
+    visibility: visible;
+    transition-property: display, visibility;
+    transition-duration: .4s;
+}
+
+#newIssueMenu {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 400px;
+    display: block;
+    visibility: visible;
+    transition-property: display, visibility;
+    transition-duration: .4s;
+}
+
+#pickSessionMenu {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 400px;
+    display: block;
+    visibility: visible;
+    transition-property: display, visibility;
+    transition-duration: .4s;
+}
+
+.dropdown {
+    margin: 0px;
+    width: 400px;
+}
+  
+.dropdown-menu {
+    width: 400px;
+    max-height: 20rem;
+    overflow-y: auto;
+}
+
+#cursor {
+    animation:blinkingText 1.2s infinite;
+}
+@keyframes blinkingText {
+    0%{     color: #000;      }
+    49%{    color: #000;      }
+    60%{    color: transparent; }
+    99%{    color: transparent; }
+    100%{   color: #000;      }
+}
+
+#lines {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    width: auto;
+    height: 368px;
+    overflow-y: scroll;
+    background-color: #eee;
+}
+
+#lines div {
+    display: flex;
+    flex: 0 0 auto;
+    padding: 0px 5px 0px 5px;
+    justify-content: start;
+    width: auto;
+    height: 46px !important;
+    flex-wrap: wrap;
+    vertical-align: middle;
+}
+
+#buttonsNav {
+    display: flex;
+    overflow-y: auto;
+    height: auto;
+}
+
+#buttons {
+    display: flex;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    height: auto;
+}
+
+button {
+    padding: 2px;
+    outline: none !important;
+}
+
+button:focus {
+    outline: none !important;
+}
