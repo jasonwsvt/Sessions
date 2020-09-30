@@ -35,35 +35,41 @@ class Buttons {
                 const buttonIndex = $(this).parent().index();
                 const buttonRow = $("#" + buttonsID + " > .container-fluid > .row").eq(buttonIndex);
 
-                //if shift+click, show this and hide all others
-                if (e.shiftKey) {
+                //if ctrl+click, show this and hide all others
+                if (e.ctrlKey) {
                     navButtons.each(function(index) {
                         if (index == buttonIndex) {
                             if (navButtons.eq(index).hasClass("btn-secondary")) {
-                                navButtons.eq(index).trigger("click");
+                                $(this).toggleClass("btn-secondary");
+                                $(this).toggleClass("btn-info");
+                                $("#" + buttonsID + " > .container-fluid > .row").eq(index).toggleClass("hidden");
                             }
                         }
                         else {
                             if (navButtons.eq(index).hasClass("btn-info")) {
-                                $(this).trigger("click");
+                                $(this).toggleClass("btn-secondary");
+                                $(this).toggleClass("btn-info");
+                                $("#" + buttonsID + " > .container-fluid > .row").eq(index).toggleClass("hidden");
                             }
                         }
                     });
                 }
 
-                //if ctrl+click, enable if it isn't, and scroll into view
-                else if (e.ctrlKey) {
-                    if ($(this).hasClass("btn-secondary")) {
-                        $(this).trigger("click");
-                    }
-                    buttonRow[0].scrollIntoView();
-                }
-
-                //if just click, toggle disabled for nav button / hidden for button group
-                else {
+                //if shift+click, toggle disabled for nav button / hidden for button group
+                else if (e.shiftKey) {
                     $(this).toggleClass("btn-secondary");
                     $(this).toggleClass("btn-info");
                     buttonRow.toggleClass("hidden");
+                }
+
+                //if click, enable if it isn't, and scroll into view
+                else {
+                    if ($(this).hasClass("btn-secondary")) {
+                        $(this).toggleClass("btn-secondary");
+                        $(this).toggleClass("btn-info");
+                        buttonRow.toggleClass("hidden");
+                    }
+                    buttonRow[0].scrollIntoView();
                 }
                 $("#" + buttonsID).trigger("scroll");
                 $(document).focus();

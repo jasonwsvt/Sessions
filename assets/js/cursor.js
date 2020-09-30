@@ -44,27 +44,27 @@ class Cursor {
     get _prevElementIndex()  { return this._cursorIndex - 1; }
     get _prevElementExists() { return this._lines.elementExists(this._lineIndex, this._prevElementIndex); }
     get _prevElement()       { return this._lines.element(this._lineIndex, this._prevElementIndex); }
-    get _removePrevElement() { console.log("removePrevElement"); this._lines.removeElement(this._lineIndex, this._prevElementIndex); }
+    get _removePrevElement() { this._lines.removeElement(this._lineIndex, this._prevElementIndex); }
 
-    get _elementsBefore()    { console.log("elementsBefore"); return this._lines.elementsBefore(this._lineIndex, this._cursorIndex); }
+    get _elementsBefore()    { return this._lines.elementsBefore(this._lineIndex, this._cursorIndex); }
     _addElementBefore(e)     { this._lines.insertBefore(this._lineIndex, this._cursorIndex, e); }
     get _cursorIndex()       { return this._cursor.index(); }
     get _detachCursor()      { return this._cursor.detach(); }
-    get _detachCursorToEnd() { console.log("detachCursorToEnd"); return this._lines.detachElementToEnd(this._lineIndex, this._cursorIndex); }
+    get _detachCursorToEnd() { return this._lines.detachElementToEnd(this._lineIndex, this._cursorIndex); }
     _addElementAfter(e)      { this._lines.insertAfter(this._lineIndex, this._cursorIndex, e); }
-    get _elementsAfter()     { console.log("ElementsAfter"); return this._lines.elementsAfter(this._lineIndex, this._cursorIndex); }
+    get _elementsAfter()     { return this._lines.elementsAfter(this._lineIndex, this._cursorIndex); }
 
     get _nextElementIndex()  { return this._cursorIndex + 1; }
     get _nextElementExists() { return this._lines.elementExists(this._lineIndex, this._nextElementIndex); }
     get _nextElement()       { return this._lines.element(this._lineIndex, this._nextElementIndex); }
-    get _removeNextElement() { console.log("removeNextElement"); this._lines.removeElement(this._lineIndex, this._nextElementIndex); }
+    get _removeNextElement() { this._lines.removeElement(this._lineIndex, this._nextElementIndex); }
 
     get _prevLineIndex()     { return this._lineIndex - 1; }
     get _prevLineExists()    { return this._lines.lineExists(this._prevLineIndex); }
     get _prevLine()          { return this._lines.line(this._prevLineIndex); }
     get _prevLineLength()    { return this._lines.lineLength(this._prevLineIndex); }
 
-    get _insertLineAbove()   { console.log("insertLineAbove"); this._lines.insertLineBefore(this._lineIndex); }
+    get _insertLineAbove()   { this._lines.insertLineBefore(this._lineIndex); }
     get _lineIndex()         { return this._cursor.parent().index(); }
     get _lineLength()        { return this._lines.lineLength(this._lineIndex); }
     get _line()              { return this._lines.line(this._lineIndex); }
@@ -184,7 +184,6 @@ class Cursor {
             && (this._nextElementExists
                 || (!this._nextElementExists
                     && (!this._nextLineExists || (this._nextLineExists && this._nextLineLength))))) {
-            console.log("this line has content and the next line either doesn't exist or has content");
             this._insertLineBelow;
             this._lines.appendToLine(this._nextLineIndex, this._detachCursorToEnd);
         }

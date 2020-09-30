@@ -78,7 +78,7 @@ class Utilities {
     }
 
     get div()      { return $("#" + this._utilitiesID); }
-    get linesDiv() { return this._sessions.linesInstance.div; }
+    get linesDiv() { return this._sessions.lines.div; }
     
 
     _buildUtilitiesBar() {

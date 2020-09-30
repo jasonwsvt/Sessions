@@ -9,34 +9,34 @@
 */
 
 class DataManager {
-    _lines = null;
     _localData = null;
     _serverData = null;
     _sessionData = null;
     _useLocalData = false;
     _useServerData = false;
     _user = null;
-    _sessions = null;
+    _sessionsObject = null;
+    _issueName = null;
+    _issueSessions = [];
+    _sessionName = null;
 
-    constructor(sessions) {
+    constructor(sessionsObject) {
         var self = this;
 
-        this._sessions = sessions;
-        this._sessionData = new SessionDataManager(this._sessions);
+        this._sessionsObject = sessionsObject;
+        this._sessionData = new SessionDataManager(this._sessionsObject);
 
         this.checkLocalDataForUser();
 
         $(document).ready(function() {
-            $("#" + self.linesDiv).on("change", function() {
-                self.storeSession();
-            });
+//            self.linesDiv.on("change", function() {
+//                self.storeSession();
+//            });
         });
     }
 
-    get linesInstance()   { return this._sessions.linesInstance; }
-    get linesID()         { return this._sessions.linesInstance.ID; }
-    get linesDiv()        { return this._sessions.linesInstance.div; }
-    get sessionInstance() { return this._sessions.sessionInstance; }
+    get lines()    { return this._sessionsObject.lines; }
+    get session()  { return this._sessionsObject.session; }
 
     get activateLocalStorage() {
         if (this._local == null) { this._local = new LocalDataManager(this._lines); }
@@ -88,115 +88,38 @@ class DataManager {
         
     }
 
-    getIssueSessions(issue) {
+    //if it's available in sessionData, get it.  If not, local (if _useLocalData), if not, server (if _useServerData)
+    pickIssue(issueName) {
+        this._issueName = issueName;
+        this._sessionData.getIssueSessionNames();
+        this._sessionName = mostRecentSession();
+        this._sessionData.getSession();
     }
 
-    getSession(issue, session) {
+    pickSession(sessionName) {
+        this._sessionName = sessionName;
+        this._loadSession(this._sessionData.getSession());
 
-    }   
+    }
+
+    getIssueSessionNames() {
+        this._issueSessions = [];
+        this._sessionData.getIssueSessionNames;
+        this._issueSessions.sort(function(a,b) { return Number(a)-Number(b); });
+    }
+
+    get issueName() {
+        return this._issueName;
+    }
+
+    get sessionName() {
+        return this._sessionName;
+    }
 
     storeSession() {
         this._sessionData.storeSession();
         if (this._useLocalData) { this._localData.storeSession(); }
         if (this._useServerData) { this._serverData.storeSession(); }
-    }
-}
-
-class SessionDataManager {
-    _dataManager = null;
-    constructor(dataManager) {
-        this._dataManager = dataManager; 
-    }
-
-    //return all issues stored in session data
-    issues() {
-        const allSessions = Object.keys(sessionStorage);
-        var allIssues = [];
-        for (i = 0; i < allSessions.length; i++) {
-            if (!allIssues.includes(allSesions[i].issue)) {
-                allIssues.push(allIssues[i].issue);
-            }
-        }
-        return allIssues;
-    }
-
-    //return all sessions stored in session data for given issue
-    issueSessions(issue) {
-        const allSessions = Object.keys(sessionStorage);
-        var allIssueSessions = [];
-        for (i = 0; i < allSessions.length; i++) {
-            if (allSesions[i].issue == issue && !allIssueSessions.includes(i)) {
-                allIssueSessions.push(i);
-            }
-        }
-        return allIssueSessions;        
-    }
-
-    //sessionName = { creationTimestamp, lastEditedTimestamp, lines } (no username or password)
-    storeSession() {
-        const creationTimestamp = this._dataManager.sessionInstance.creation;
-        const lastEditedTimestamp = this._dataManager.sessionInstance.lastEdited;
-        const issue = this._dataManager.sessions.issue;
-        const lines = this._dataManager.linesDiv.children().toArray();
-
-        sessionStorage.setItem(creationTimestamp, { "issue": issue; "last edited": lastEditedTimestamp, "lines": lines });
-    }
-
-    getSession(creationTimestamp) {
-        const session = sessionStorage.getItem(creationTimestamp);
-
-        issue = session["issue"];
-        lastEditedTimestamp = session["last edited"];
-        lines = session["lines"];
-
-        //return info
-    }
-}
-
-//username and password are optional unless it's a shared computer
-//remember username optional
-class LocalDataManager {
-    constructor() { 
-    }
-
-    issues() {
-
-    }
-
-    issueSessions(issue) {
-
-    }
-
-    //user = { sessions }  (store with username and encrypt with optional password)
-    storeSession() {
-        
-    }
-
-    getSession() {
-
-    }
-}
-
-//requires username and password set
-//remember username in localStorage optional
-class ServerDataManager {
-    constructor() { 
-    }
-
-    issues() {
-
-    }
-
-    issueSessions(issue) {
-
-    }
-
-    storeSession() {
-        
-    }
-
-    getSession() {
-
     }
 }
 

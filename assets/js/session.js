@@ -2,7 +2,7 @@
 */
 
 class Session {
-    _lines = null;
+    _linesObject = null;
     _cursorCode = "<span id = 'cursor'></span>";
     _cursor = null;
     _indent = 50;
@@ -10,10 +10,12 @@ class Session {
     _issue = null;
     _lastEditedTimestamp = null;
     _creationTimestamp = null;
+    _issueName = null;
+    _sessionName = null;
 
     constructor(linesID) {
-        this._lines = new Lines(linesID);
-        this._cursor = new Cursor(this._lines);
+        this._linesObject = new Lines(linesID);
+        this._cursor = new Cursor(this._linesObject);
         const self = this;
         this._creationTimestamp = Math.floor(Date.now() / 1000);
 
@@ -22,13 +24,12 @@ class Session {
             Mousetrap.bind(['shift+tab'], function(e) { self.outdentLine; return false; });
     
             $(document).on("keyup", function(e) {
-                if (!self.lastEdited || self.lastEdited < lines.lastEdited) {
-                    self.setLastEdited(lines.lastEdited);
-                }
+                console.log("keyup");
+                self.setLastEdited(Math.floor(Date.now() / 1000));
 
                 if (e.key === "Enter" && self.cursorLineIndex > 0) {
-                    lines.line(self.cursorLineIndex).css("paddingLeft", 
-                        lines.line(self.cursorLineIndex - 1).css("paddingLeft"));
+                    self.lines.line(self.cursorLineIndex).css("paddingLeft", 
+                        self.lines.line(self.cursorLineIndex - 1).css("paddingLeft"));
                 }
             });
 
@@ -38,41 +39,47 @@ class Session {
     get lastEdited()         { return this._lastEditedTimestamp; }
     setLastEdited(ts)        { this._lastEditedTimestamp = ts; }
     get creation()           { return this._creationTimestamp; }
-    get linesInstance()      { return this._lines; }
-    get linesID()            { return this._lines.ID; }
-    get linesDiv()           { return this._lines.div; }
+    get lines()              { return this._linesObject; }
     get cursorLineIndex()    { return this._cursor.lineIndex; }
     get cursorElementIndex() { return this._cursor.elementIndex; }
 
     insertButton(e) {
         console.log(this.cursorLineIndex + " " + this.cursorElementIndex + " " + e);
-        this._lines.insertBefore(this.cursorLineIndex, this.cursorElementIndex, e);
+        this.lines.div.insertBefore(this.cursorLineIndex, this.cursorElementIndex, e);
     }
 
     get indentLine() {
         if (this._cursor.lineIndex != 0) {
-            const prevLinePadding = parseInt(this._lines.line(this._cursor.lineIndex - 1).css("paddingLeft"));
-            const curLinePadding = parseInt(this._lines.line(this._cursor.lineIndex).css("paddingLeft"));
+            const prevLinePadding = parseInt(this.lines.line(this._cursor.lineIndex - 1).css("paddingLeft"));
+            const curLinePadding = parseInt(this.lines.line(this._cursor.lineIndex).css("paddingLeft"));
             if (curLinePadding <= prevLinePadding) {
-                this._lines.line(this._cursor.lineIndex).css("paddingLeft",
+                this.lines.line(this._cursor.lineIndex).css("paddingLeft",
                     String(curLinePadding + this._indent) + "px");
             }
         }
     }
 
     get outdentLine() {
-        const curLinePadding = parseInt(this._lines.line(this._cursor.lineIndex).css("paddingLeft"));
+        const curLinePadding = parseInt(this.lines.line(this._cursor.lineIndex).css("paddingLeft"));
         if (curLinePadding >= this._indent) {
-            this._lines.line(this._cursor.lineIndex).css("paddingLeft",
+            this.lines.line(this._cursor.lineIndex).css("paddingLeft",
                 String(curLinePadding - this._indent) + "px");
         }
     }
 
     get height() {
-        return this.linesDiv.css("height");
+        return this.lines.div.css("height");
     }
 
     set height(height) {
-        this.linesDiv.css("height", height);
+        this.lines.div.css("height", height);
+    }
+
+    get issue() {
+        return this._issueName;
+    }
+
+    get session() {
+        return this._sessionName;
     }
 }

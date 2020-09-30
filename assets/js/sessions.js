@@ -1,6 +1,5 @@
 class Sessions {
-    _lines = null;
-    _session = null;
+    _sessionObject = null;
     _dataManager = null;
     _utilitiesID = "utilities";
     _linesID = "lines";
@@ -12,21 +11,18 @@ class Sessions {
         var self = this;
         this.createContainers();
 
-        this._session = new Session(this._linesID);
+        this._sessionObject = new Session(this._linesID);
         this._dataManager = new DataManager(this);
         this._buttons = new Buttons(this._buttonsNavID, this._buttonsID, this._dataManager.getButtons());
         this._utilities = new Utilities(this._utilitiesID, this._dataManager, this, this._buttons);
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
-                if (!self._session.lastEdited || self.sessionInstance.lastEdited < self.linesInstance.lastEdited) {
-                    self._lastEdited = self.linesInstance.lastEdited;
-                    self._dataManager.storeSession();
-                }
+                self._dataManager.storeSession();
             });
 
             $("#" + self._buttonsID + " button").on("click", function(e) {
-                self._session.insertButton("<button type='button' class='btn btn-light'>" + $(this).text() + "</button>");
+                self.session.insertButton("<button type='button' class='btn btn-light'>" + $(this).text() + "</button>");
             });
 
             $(window).resize(function() {
@@ -35,8 +31,8 @@ class Sessions {
         });
     }
 
-    get sessionInstance() { return this._session; }
-    get linesInstance()   { return this._session.linesInstance;}
+    get session() { return this._sessionObject; }
+    get lines()   { return this._sessionObject.lines;}
 
     createContainers() {
         var utilitiesCode, linesCode, buttonsContainer, buttonsNavCode, buttonsCode;
@@ -48,13 +44,5 @@ class Sessions {
         buttonsContainer = "<div class = 'container-fluid'><div class = 'row'>" + buttonsNavCode + buttonsCode + "</div></div>";
 
         $("body").prepend(utilitiesCode + linesCode + buttonsContainer);
-    }
-
-    getIssues() {
-
-    }
-
-    getIssueSessions() {
-
     }
 }

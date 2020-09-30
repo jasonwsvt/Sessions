@@ -5,7 +5,6 @@
 class Lines {
     _containerID = null;
     _lineCode = "<div></div>";
-    _lastEditedTimestamp = null;
 
     constructor(cID) {
         this._containerID = cID;
@@ -13,12 +12,7 @@ class Lines {
     }
 
     get ID()         { return this._containerID; }
-    get div()        { return $("#" + this.ID); }
-    get lastEdited() { return this._lastEditedTimestamp; }
-
-    updateLastEditedTimestamp() {
-        this._lastEditedTimestamp = Math.floor(Date.now() / 1000);
-    }
+    get div()        { return $("#" + this._containerID); }
 
     get numLines() {
         return this.div.children().length;
@@ -37,35 +31,26 @@ class Lines {
     }
 
     removeLine(i) {
-        this.updateLastEditedTimestamp();
         if (this.lineExists(i)) { console.log("this.line(" + i + ").remove();"); }
         if (this.lineExists(i)) { return this.line(i).detach(); }
     }
     detachLine(i) {
-        if (this.lineExists(i)) { console.log("this.line(" + i + ").children().detach();"); }
         if (this.lineExists(i)) { return this.line(i).children().detach(); }
     }
 
     prependToLine(i, e) {
-        this.updateLastEditedTimestamp();
-        if (this.lineExists(i)) { console.log("this.line(" + i + ").prepend(" + e + ");"); }
         if (this.lineExists(i)) { this.line(i).prepend(e); }
     }
 
     appendToLine(i, e) {
-        this.updateLastEditedTimestamp();
         if (this.lineExists(i)) { this.line(i).append($(e)); }
     }
 
     insertLineAfter(i) {
-        this.updateLastEditedTimestamp();
-        if (this.lineExists(i)) { console.log("this.line(" + i + ").after(" + this._lineCode + "));"); }
         if (this.lineExists(i)) { this.line(i).after(this._lineCode); }
     }
 
     insertLineBefore(i) {
-        this.updateLastEditedTimestamp();
-        if (this.lineExists(i)) { console.log("this.line(" + i + ").before(" + this._lineCode + "));"); }
         if (this.lineExists(i)) { this.line(i).before(this._lineCode); }
     }
 
@@ -74,13 +59,11 @@ class Lines {
     }
 
     element(i, x) {
-        return (this.elementExists(i,x)) ? this.line(i).children().eq(x) : null;
+        return (this.elementExists(i, x)) ? this.line(i).children().eq(x) : null;
     }
 
     removeElement(i, x) {
-        this.updateLastEditedTimestamp();
-        if (this.elementExists(i, x)) { console.log("this.line(" + i + ").children().eq(" + x + ").remove();"); }
-        if (this.elementExists(i,x)) { this.line(i).children().eq(x).remove(); }
+        if (this.elementExists(i, x)) { this.line(i).children().eq(x).remove(); }
     }
 
     elementsBefore(i, x) {
@@ -92,20 +75,16 @@ class Lines {
     }
 
     insertAfter(i, x, e) {
-        console.log("insertAfter");
-        this.updateLastEditedTimestamp();
         if (this.elementExists(i, x)) { this.line(i).children().eq(x).after(e); }
     }
 
     insertBefore(i, x, e) {
-        this.updateLastEditedTimestamp();
         if (this.elementExists(i, x)) { this.line(i).children().eq(x).before(e); }
     }
 
     detachElementToEnd(i, x) {
         if (this.elementExists(i, x)) {
             if (x == 0) {
-                console.log("detaching while line");
                 return this.detachLine(i);
             }
             else if (x > 0) {
