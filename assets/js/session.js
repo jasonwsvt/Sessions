@@ -45,7 +45,7 @@ class Session {
 
     insertButton(e) {
         console.log(this.cursorLineIndex + " " + this.cursorElementIndex + " " + e);
-        this.lines.div.insertBefore(this.cursorLineIndex, this.cursorElementIndex, e);
+        this.lines.insertBefore(this.cursorLineIndex, this.cursorElementIndex, e);
     }
 
     get indentLine() {

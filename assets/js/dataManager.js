@@ -47,10 +47,11 @@ class DataManager {
     }
 
     checkLocalDataForUser() {
-        //see if there's a user record
-        //if it has the remember me checked, get the values for using local and server storage
-        //if ( == true) { this.activateLocalStorage; }
-        //if ( == true) { this.activateServerStorage; }
+        //see if there's a user record (remember me checked), and if so,
+        //  get the values for using local and server storage
+        //  if (localStorage == true) { this.activateLocalStorage; }
+        //  if (serverStorage == true) { this.activateServerStorage; }
+        //  pull issues and sessions for user
     }
 
     //gets a stringified JSON of all the Because Reasons components from the server

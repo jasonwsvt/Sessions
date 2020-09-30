@@ -11,10 +11,10 @@ class Sessions {
         var self = this;
         this.createContainers();
 
-        this._sessionObject = new Session(this._linesID);
         this._dataManager = new DataManager(this);
         this._buttons = new Buttons(this._buttonsNavID, this._buttonsID, this._dataManager.getButtons());
         this._utilities = new Utilities(this._utilitiesID, this._dataManager, this, this._buttons);
+        this._sessionObject = new Session(this._linesID);
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
@@ -32,7 +32,7 @@ class Sessions {
     }
 
     get session() { return this._sessionObject; }
-    get lines()   { return this._sessionObject.lines;}
+    get lines()   { return this._sessionObject.lines; }
 
     createContainers() {
         var utilitiesCode, linesCode, buttonsContainer, buttonsNavCode, buttonsCode;

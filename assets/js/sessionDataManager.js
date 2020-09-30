@@ -50,8 +50,6 @@ class SessionDataManager {
             lines.push($(this)[0].outerHTML);
         });
 
-        console.log(lines);
-
         sessionStorage.setItem(creationTimestamp, JSON.stringify({ issue: issue, lastEdited: lastEditedTimestamp, lines: lines }));
     }
 

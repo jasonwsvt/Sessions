@@ -40,19 +40,19 @@ class Utilities {
         this._sessions = sessions;
         this._buttons = buttons;
 
-        this._minLinesHeight = 0;
-        this._maxLinesHeight = $(window).height() - Number(this.linesDiv.children().eq(0).height());
-
         this._buildUtilitiesBar();
+
+        this._manageIssueUtilities();
+        this._manageSessionUtilities();
 
         buttons.adjustDivHeights();
 
         $(document).ready(function() {
-            const lines = self.linesDiv;
-            const lineHeight = Number(lines.children().eq(0).height());
-
             $("#" + self._slideUpButtonID).on("click", function() {
-                if (parseInt(lines.height()) > self._minLinesHeight) {
+                const lines = self.lines.div;
+                const lineHeight = Number(lines.children().eq(0).height());
+                const minLinesHeight = 0;
+                if (parseInt(lines.height()) > minLinesHeight) {
                     lines.height(String(parseInt(lines.height()) - lineHeight) + "px");
                     buttons.adjustDivHeights();
                 }
@@ -64,7 +64,10 @@ class Utilities {
             });
 
             $("#" + self._slideDownButtonID).on("click", function() {
-                if (parseInt(lines.height()) < self._maxLinesHeight) {
+                const lines = self.lines.div;
+                const lineHeight = Number(lines.children().eq(0).height());
+                const maxLinesHeight = $(window).height() - Number(lines.children().eq(0).height());
+                        if (parseInt(lines.height()) < maxLinesHeight) {
                     lines.height(String(parseInt(lines.height()) + lineHeight) + "px");
                     buttons.adjustDivHeights();
                 }
@@ -78,7 +81,8 @@ class Utilities {
     }
 
     get div()      { return $("#" + this._utilitiesID); }
-    get linesDiv() { return this._sessions.lines.div; }
+    get lines()    { return this.sessions.lines; }
+    get sessions() { return this._sessions; }
     
 
     _buildUtilitiesBar() {
@@ -96,7 +100,7 @@ class Utilities {
         const searchIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-search' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z'/><path fill-rule='evenodd' d='M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z'/></svg>";
 
         const loginButton = "<button id = 'userButton' type = 'button' class = 'btn btn-dark btn-sm'>Click to log in.</button>";
-        const issuePickerButton = "<button id = '" + this._issuePickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm' disabled>No issues.  Create one!</button>";
+        const issuePickerButton = "<button id = '" + this._issuePickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const issueRenameButton = "<button id = '" + this._issueRenameButtonID + "' type = 'button' class = 'btn btn-dark btn-sm' disabled>" + pencilIcon + "</button>";
         const issueAddButton = "<button id = '" + this._issueAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</buton>";
         const sessionPickerButton = "<button id = '" + this._sessionPickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm' disabled>No sessions.  Create an issue!</button>";
@@ -136,5 +140,59 @@ class Utilities {
         this.div.children().eq(1).append(importButton + exportButton);
         this.div.children().eq(1).append(dotIcon);
         this.div.children().eq(1).append(configButton + infoButton);
+    }
+
+    _manageIssueUtilities() {
+        var code = "";
+        var pickerButton = $("#" + this._issuePickerButtonID);
+        var renameButton = $("#" + this._issueRenameButtonID);
+        var issues = this._dataManager.getIssuesNames();
+        var selectedIssue = this._dataManager.getSelectedIssue();
+        var div = $("#" + this._issuePickerScrollDivID);
+        div.empty();
+        if (issues.length) {
+            pickerButton.text(selectedIssue);
+            issues.forEach(function(entry) {
+                code = "<button type='button' class='btn ";
+                if (entry == selectedIssue) { code += "btn-info"; }
+                else { code += "btn-outline-info"; }
+                code += " btn-sm'>" + entry + "</button>";
+                div.append(code);
+            });
+            pickerButton.attr("disabled", false);
+            renameButton.attr("disabled", false);
+        }
+        else {
+            pickerButton.text("No issues.  Create one!");
+            pickerButton.attr("disabled", true);
+            renameButton.attr("disabled", true);
+        }
+    }
+
+    _manageSessionUtilities() {
+        var code = "";
+        var numIssues = this._dataManager.getNumIssues();
+        var pickerButton = $("#" + this._sessionPickerButtonID);
+        var addButton = $("#" + this._sessionAddButtonID);
+        var sessions = this._dataManager.getIssueSessions();
+        var selectedSession = this._dataManager.getSelectedSessionName();
+        var div = $("#" + this._sessionPickerScrollDivID);
+        div.empty();
+        if (sessions.length) {
+            pickerButton.text(selectedSession);
+            sessions.forEach(function(entry) {
+                code = "<button type='button' class='btn ";
+                if (entry == selectedSession) { code += "btn-info"; }
+                else { code += "btn-outline-info"; }
+                code += " btn-sm'>" + entry + "</button>";
+                div.append(code);
+            });
+        }
+        if (sessions.length > 1)  { pickerButton.attr("disabled", false); }
+        else if (sessions.length) { pickerButton.attr("disabled", true); }
+        else                      { pickerButton.text("No sessions.  Create an issue!"); }
+
+        if (numIssues) { addButton.attr("disabled", false); }
+        else           { addButton.attr("disabled", true); }
     }
 }
