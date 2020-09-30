@@ -8,42 +8,38 @@ class SessionDataManager {
         this._dataManager = dataManager; 
     }
 
-    get issue() {
-        return this._dataManager.issue;
-    }
-
     //return all issues stored in session data
-    issues() {
+    pullIssueNames() {
         const allSessions = Object.keys(sessionStorage);
         var allIssues = [];
-        for (i = 0; i < allSessions.length; i++) {
-            if (!allIssues.includes(allSesions[i].issue)) {
-                allIssues.push(allIssues[i].issue);
+        for (var i = 0; i < allSessions.length; i++) {
+            if (!allIssues.includes(allSessions[i].issue)) {
+                allIssues.push(allSessions[i].issue);
             }
         }
+        console.log("pullIssueNames(): " + allIssues);
         return allIssues;
     }
 
     //return all sessions stored in session data for given issue
-    getIissueSessionNames() {
+    pullIissueSessionNames() {
         const allSessions = Object.keys(sessionStorage);
-        const issue = this._dataManager.issueName;
-        const issueSessions = [];
+        const issueName = this._dataManager.issueName;
+        const allIssueSessionNames = [];
 
         for (i = 0; i < allSessions.length; i++) {
-            if (allSesions[i].issue == issue && !allIssueSessions.includes(i)) {
-                issueSessions.push(i);
+            if (allSessions[i].issue == issueName && !allIssueSessionNames.includes(i)) {
+                allIssueSessionNames.push(i);
             }
         }
-
-        return issueSessions;
+        return allIssueSessionNames;
     }
 
     //sessionName = { creationTimestamp, lastEditedTimestamp, lines } (no username or password)
     storeSession() {
         const creationTimestamp = this._dataManager.session.creation;
         const lastEditedTimestamp = this._dataManager.session.lastEdited;
-        const issue = (this._dataManager.issueName) ? this._dataManager.issueName : "Undefined";
+        const issue = this._dataManager._issueName;
         
         var lines = []
         this._dataManager.lines.div.children().each(function() {

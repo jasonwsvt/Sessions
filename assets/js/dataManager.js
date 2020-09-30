@@ -16,8 +16,9 @@ class DataManager {
     _useServerData = false;
     _user = null;
     _sessionsObject = null;
+    _allIssueNames = [];
     _issueName = null;
-    _issueSessions = [];
+    _issueSessionNames = [];
     _sessionName = null;
 
     constructor(sessionsObject) {
@@ -85,35 +86,62 @@ class DataManager {
 
     }
 
-    getIssues() {
-        
+    getSelectedIssueName() {
+        return this._issueName;
+    }
+
+    getSelectedSessionName() {
+        return this._sessionName;
     }
 
     //if it's available in sessionData, get it.  If not, local (if _useLocalData), if not, server (if _useServerData)
     pickIssue(issueName) {
         this._issueName = issueName;
-        this._sessionData.getIssueSessionNames();
-        this._sessionName = mostRecentSession();
-        this._sessionData.getSession();
+        this.pullIssueSessionNames();
+        this.pickSession(mostRecentlyEditedSession());
     }
 
     pickSession(sessionName) {
         this._sessionName = sessionName;
         this._loadSession(this._sessionData.getSession());
+    }
 
+    pullIssueNames() {
+        console.log("pullIssueNames");
+        this._allIssueNames = this._sessionData.pullIssueNames();
+        if (this._allIssueNames.length == 0) { this._allIssueNames.push("Undefined"); }
+        if (this._issueName == null) { this.issueName = this._allIssueNames[0]; }
+        console.log(this._issueName);
+        console.log(this.allIssueNames);
+    }
+
+    getIssueNames() {
+        if (!Array.isArray(this._allIssueNames) || this._allIssueNames.length == 0) {
+            this.pullIssueNames();
+        }
+        console.log("getIssueNames '" + this._allIssueNames + "'");
+        return this._allIssueNames;
+    }
+
+    pullIssueSessionNames() {
+        this._issueSessionNames = this._sessionData.pullIssueSessionNames();
+        console.log("pullIssueSessionNames: " + this._issueSessionNames);
+        this._issueSessionNames.sort(function(a,b) { return Number(a)-Number(b); });
     }
 
     getIssueSessionNames() {
-        this._issueSessions = [];
-        this._sessionData.getIssueSessionNames;
-        this._issueSessions.sort(function(a,b) { return Number(a)-Number(b); });
+        if (!Array.isArray(this._issueSessionNames) || this._issueSessionNames.length == 0) {
+            this.pullIssueSessionNames();
+        }
+        console.log("getIssueSessionNames: " + this._issueSessionNames);
+        return this._issueSessionNames;
     }
 
-    get issueName() {
+    get selectedIssueName() {
         return this._issueName;
     }
 
-    get sessionName() {
+    get selectedSessionName() {
         return this._sessionName;
     }
 

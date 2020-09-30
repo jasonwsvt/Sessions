@@ -10,7 +10,7 @@ class Utilities {
     _minLinesHeight = null;
     _maxLinesHeight = null;
 
-    _userButtonID = "userButton";
+    _loginButtonID = "loginButton";
     _issuePickerButtonID = "issuePickerButton";
     _issueRenameButtonID = "issueRenameButton";
     _issueAddButtonID = "issueAddButton";
@@ -32,6 +32,8 @@ class Utilities {
     _loginID = "login";
     _forgotPasswordID = "forgotPassword";
     _newAccountID = "newAccount";
+    _infoButtonID = "infoButton";
+    _configButtonID = "configButton";
 
     constructor (utilitiesID, dataManager, sessions, buttons) {
         const self = this;
@@ -48,6 +50,30 @@ class Utilities {
         buttons.adjustDivHeights();
 
         $(document).ready(function() {
+            $("#" + self._loginButtonID).on("click", function() {
+
+            });
+
+            $("#" + self._issuePickerButtonID).on("click", function() {
+
+            });
+
+            $("#" + self._issueRenameButtonID).on("click", function() {
+
+            });
+
+            $("#" + self._issueAddButtonID).on("click", function() {
+
+            });
+
+            $("#" + self._sessionPickerButtonID).on("click", function() {
+
+            });
+
+            $("#" + self._sessionAddButtonID).on("click", function() {
+
+            });
+
             $("#" + self._slideUpButtonID).on("click", function() {
                 const lines = self.lines.div;
                 const lineHeight = Number(lines.children().eq(0).height());
@@ -67,7 +93,7 @@ class Utilities {
                 const lines = self.lines.div;
                 const lineHeight = Number(lines.children().eq(0).height());
                 const maxLinesHeight = $(window).height() - Number(lines.children().eq(0).height());
-                        if (parseInt(lines.height()) < maxLinesHeight) {
+                if (parseInt(lines.height()) < maxLinesHeight) {
                     lines.height(String(parseInt(lines.height()) + lineHeight) + "px");
                     buttons.adjustDivHeights();
                 }
@@ -76,6 +102,22 @@ class Utilities {
             Mousetrap.bind(['ctrl+down'], function(e) {
                 $("#" + self._slideDownButtonID).trigger("click");
                 return false;
+            });
+
+            $("#" + self._exportButtonID).on("click", function() {
+
+            });
+    
+            $("#" + self._importButtonID).on("click", function() {
+    
+            });
+    
+            $("#" + self._configButtonID).on("click", function() {
+    
+            });
+    
+            $("#" + self._infoButtonID).on("click", function() {
+
             });
         });
     }
@@ -99,10 +141,10 @@ class Utilities {
         const caretUpIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-up-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/></svg>";
         const searchIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-search' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z'/><path fill-rule='evenodd' d='M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z'/></svg>";
 
-        const loginButton = "<button id = 'userButton' type = 'button' class = 'btn btn-dark btn-sm'>Click to log in.</button>";
+        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>Click to log in.</button>";
         const issuePickerButton = "<button id = '" + this._issuePickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const issueRenameButton = "<button id = '" + this._issueRenameButtonID + "' type = 'button' class = 'btn btn-dark btn-sm' disabled>" + pencilIcon + "</button>";
-        const issueAddButton = "<button id = '" + this._issueAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</buton>";
+        const issueAddButton = "<button id = '" + this._issueAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
         const sessionPickerButton = "<button id = '" + this._sessionPickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm' disabled>No sessions.  Create an issue!</button>";
         const sessionAddButton = "<button id = '" + this._sessionAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm' disabled>" + plusIcon + "</button>";
         const slideUpButton = "<button id = '" + this._slideUpButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + scrollUpIcon + "</button>";
@@ -146,8 +188,10 @@ class Utilities {
         var code = "";
         var pickerButton = $("#" + this._issuePickerButtonID);
         var renameButton = $("#" + this._issueRenameButtonID);
-        var issues = this._dataManager.getIssuesNames();
-        var selectedIssue = this._dataManager.getSelectedIssue();
+        var issues = this._dataManager.getIssueNames();
+        var selectedIssue = this._dataManager.getSelectedIssueName();
+        console.log("issues: " + issues);
+        console.log("selected issue: " + selectedIssue);
         var div = $("#" + this._issuePickerScrollDivID);
         div.empty();
         if (issues.length) {
@@ -171,10 +215,10 @@ class Utilities {
 
     _manageSessionUtilities() {
         var code = "";
-        var numIssues = this._dataManager.getNumIssues();
+        var numIssues = $("#" + this._issuePickerScrollDivID).children().length;
         var pickerButton = $("#" + this._sessionPickerButtonID);
         var addButton = $("#" + this._sessionAddButtonID);
-        var sessions = this._dataManager.getIssueSessions();
+        var sessions = this._dataManager.getIssueSessionNames();
         var selectedSession = this._dataManager.getSelectedSessionName();
         var div = $("#" + this._sessionPickerScrollDivID);
         div.empty();
