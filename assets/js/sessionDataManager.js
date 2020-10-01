@@ -8,25 +8,17 @@ class SessionDataManager {
         this._dataManager = dataManager; 
     }
 
-    mostRecentIssue() {
-        const issues = pullIssueNames();
-        return issues[0];
-    }
-
-    mostRecentIssueSession() {
-        const sessions = this.pullIssueSessionNames();
-        return sessions[0];
-    }
-
     //return all issues stored in session data
-    pullIssueNames() {
+    issues() {
         const sessions = Object.keys(sessionStorage);
-        var issues = [], lastEditeds = [], issues = [], session, max, i;
+        var issues = [], lastEditeds = [], sortedIssues = [], session, issue, lastEdited, max, i;
         for (i = 0; i < sessions.length; i++) {
             session = sessionStorage.getItem(sessions[i]);
-            if (!issues.includes(session.issue)) {
-                issues.push(session.issue);
-                lastEditeds.push(session.lastEdited);
+            issue = session[0];
+            lastEdited = session[1];
+            if (!issues.includes(issue)) {
+                issues.push(issue);
+                lastEditeds.push(lastEdited);
             }
         }
         while (issues.length) {
@@ -41,17 +33,43 @@ class SessionDataManager {
         return sortedIssues;
     }
 
-    //return all sessions stored in session data for given issue
-    pullIssueSessionNames() {
+    sessions() {
         const sessions = Object.keys(sessionStorage);
-        const issue = this._dataManager.getSelectedIssueName;
-        var issueSessions = [], lastEditeds = [], sortedIssueSessions = [], session, max, i;
+        var lastEditeds = [], sortedSessions = [], session, lastEdited, max, i;
+        for (i = 0; i < sessions.length; i++) {
+            session = sessions[i];
+            lastEdited = sessionStorage.getItem(sessions[i])[1];
+            allSessions.push(session);
+            lastEditeds.push(lastEdited);
+        }
+        while (allSessions.length) {
+            max = 0;
+            for (i = 1; i < allSessions.length; i++) {
+                if (lastEditeds[i] > lastEditeds[max]) { max = i; }
+            }
+            sortedSessions.push(issues.splice(max));
+            lastEditeds.splice(max);
+        }
+        console.log("sessions(): " + sortedSessions);
+        return sortedIssues;
+    }
+
+    mostRecentSession() {
+        return this.sessions()[0];
+    }
+
+    //return all sessions stored in session data for given issue
+    issueSessions(issue) {
+        const sessions = Object.keys(sessionStorage);
+        var issueSessions = [], lastEditeds = [], sortedIssueSessions = [], session, lastEdited, max, i;
 
         for (i = 0; i < sessions.length; i++) {
-            session = sessionStorage.getItem(sessions[i]);
-            if (session.issue == issue && !issueSessions.includes(sessions[i])) {
-                issueSessions.push(i);
-                lastEditeds.push(session.lastEdited);
+            session = sessions[i];
+            sessionIssue = sessionStorage.getItem(sessions[i])[0];
+            lastEdited = sessionStorage.getItem(sessions[i])[1];
+            if (sessionIssue == issue && !issueSessions.includes(session)) {
+                issueSessions.push(session);
+                lastEditeds.push(lastEdited);
             }
         }
         while (issueSessions.length) {
@@ -62,28 +80,28 @@ class SessionDataManager {
             sortedIssueSessions.push(issueSessions.splice(max));
             lastEditeds.splice(max);
         }
-        console.log("pullIssueNames(): " + sortedIssueSessions);
+        console.log("pullIssueSessionNames(): " + sortedIssueSessions);
         return sortedIssueSessions;
     }
 
-    //sessionName = { creationTimestamp, lastEditedTimestamp, lines } (no username or password)
-    storeSession() {
-        const creationTimestamp = this._dataManager.session.creation;
-        const lastEditedTimestamp = this._dataManager.session.lastEdited;
-        const issue = this._dataManager._issueName;
-        
-        var lines = []
-        this._dataManager.lines.div.children().each(function() {
-            lines.push($(this)[0].outerHTML);
-        });
-
-        sessionStorage.setItem(creationTimestamp, JSON.stringify({ issue: issue, lastEdited: lastEditedTimestamp, lines: lines }));
+    mostRecentIssueSession(issue) {
+        return this.issueSessions(issue)[0];
     }
 
-//        issue = session["issue"];
-//        lastEditedTimestamp = session["lastEdited"];
-//        lines = session["lines"];
-    getSession(creationTimestamp) {
-        return sessionStorage.getItem(creationTimestamp);
+    sessionIssue(session) {
+        return sessionStorage.getItem(session)[0];
+    }
+
+    sessionLastEdited(session) {
+        return sessionStorage.getItem(session)[1];
+    }
+
+    sessionLines(session) {
+        return sessionStorage.getItem(session)[2];
+    }
+
+    //sessionName = { creationTimestamp, lastEditedTimestamp, lines } (no username or password)
+    storeSession(creation, lastEdited, issue, lines) {
+        sessionStorage.setItem(creation, JSON.stringify([issue, lastEdited, lines]));
     }
 }

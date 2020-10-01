@@ -9,17 +9,13 @@
 */
 
 class DataManager {
+    _user = null;
     _localData = null;
     _serverData = null;
     _sessionData = null;
     _useLocalData = false;
     _useServerData = false;
-    _user = null;
     _sessionsObject = null;
-    _allIssueNames = [];
-    _selectedIssueName = null;
-    _selectedIssueSessionNames = [];
-    _selectedSessionName = null;
 
     constructor(sessionsObject) {
         var self = this;
@@ -27,7 +23,7 @@ class DataManager {
         this._sessionsObject = sessionsObject;
         this._sessionData = new SessionDataManager(this._sessionsObject);
 
-        this.checkLocalDataForUser();
+        this.pullLocalDataForUser();
 
         $(document).ready(function() {
 //            self.linesDiv.on("change", function() {
@@ -40,6 +36,44 @@ class DataManager {
     get session()  { return this._sessionsObject.session; }
     get sessions() { return this._sessionsObject; }
 
+    get issues() {
+        return this._sessionData.issueNames();
+    }
+
+    get sessions() {
+        return this._sessionData.sessions();
+    }
+
+    mostRecentSession() {
+        return this._sessionData.mostRecentSession();
+    }
+
+    issueSessions(issue) {
+        return this._sessionData.issueSessionNames(issue);
+    }
+
+    mostRecentIssueSession(issue) {
+        return this._sessionData.mostRecentIssueSession(issue);
+    }
+
+    sessionLines(session) {
+        return this._sessionData.sessionLines(session);
+    }
+
+    sessionLastEdited(session) {
+        return this._sessionData.sessionLastEdited(session);
+    }
+
+    sessionIssue(session) {
+        return this._sessionData.sessionIssue(session);
+    }
+
+    storeSession(creation, lastEdited, issue, lines) {
+        this._sessionData.storeSession(creation, lastEdited, issue, lines);
+        if (this._useLocalData) { this._localData.storeSession(); }
+        if (this._useServerData) { this._serverData.storeSession(); }
+    }
+
     get activateLocalStorage() {
         if (this._local == null) { this._local = new LocalDataManager(this._lines); }
     }
@@ -48,90 +82,12 @@ class DataManager {
         if (this._server == null) { this._server = new ServerDataManager(this._lines); }
     }
 
-    checkLocalDataForUser() {
+    pullLocalDataForUser() {
         //see if there's a user record (remember me checked), and if so,
         //  get the values for using local and server storage
         //  if (localStorage == true) { this.activateLocalStorage; }
         //  if (serverStorage == true) { this.activateServerStorage; }
         //  pull issues and sessions for user
-    }
-
-    pullIssueNames() {
-        console.log();
-        this._allIssueNames = this._sessionData.pullIssueNames();
-        if (this._allIssueNames.length == 0) { this._allIssueNames.push("Unspecified"); }
-        if (this._selectedIssueName == null) { this._selectedIssueName = this._allIssueNames[0]; }
-        console.log("pullIssueNames" + this._selectedIssueName);
-        console.log("pullIssueNames" + this._allIssueNames);
-    }
-
-    getIssueNames() {
-        if (!Array.isArray(this._allIssueNames) || this._allIssueNames.length == 0) {
-            this.pullIssueNames();
-        }
-        console.log("getIssueNames '" + this._allIssueNames + "'");
-        return this._allIssueNames;
-    }
-
-    mostRecentIssue() {
-        return this._sessionData.getMostRecentIssue();
-    }
-
-    mostRecentIssueSession() {
-        return this._sessionData.getMostRecentIssueSession();
-    }
-
-    //if it's available in sessionData, get it.  If not, local (if _useLocalData), if not, server (if _useServerData)
-    pickIssue(issueName) {
-        this._selectedIssueName = issueName;
-        this.pullIssueSessionNames();
-        this.pickSession(mostRecentlyEditedSession());
-    }
-
-    getSelectedIssueName() {
-        return this._selectedIssueName;
-    }
-
-    pullIssueSessionNames() {
-        this._issueSessionNames = this._sessionData.pullIssueSessionNames();
-        console.log("pullIssueSessionNames: " + this._issueSessionNames);
-        this._issueSessionNames.sort(function(a,b) { return Number(a)-Number(b); });
-    }
-
-    getIssueSessionNames() {
-        if (!Array.isArray(this._issueSessionNames) || this._issueSessionNames.length == 0) {
-            this.pullIssueSessionNames();
-        }
-        console.log("getIssueSessionNames: " + this._issueSessionNames);
-        return this._issueSessionNames;
-    }
-
-    pickSession(sessionName) {
-        this._selectedSessionName = sessionName;
-        this.sessions.loadSession();
-    }
-
-    getSession() {
-        return this._sessionData.getSession();
-    }
-
-//  issue = session["issue"];
-//  lastEditedTimestamp = session["lastEdited"];
-//  lines = session["lines"];
-    getSessionLines() {
-        var session = this._sessionData.getSession();
-        return session.lines;
-    }
-
-    getSelectedSessionName() {
-        if (this._selectedSessionName == "") { this._selectedSessionName = "New"; }
-        return this._selectedSessionName;
-    }
-
-    storeSession() {
-        this._sessionData.storeSession();
-        if (this._useLocalData) { this._localData.storeSession(); }
-        if (this._useServerData) { this._serverData.storeSession(); }
     }
 
     //gets a stringified JSON of all the Because Reasons components from the server

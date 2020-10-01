@@ -5,16 +5,28 @@ class Sessions {
     _linesID = "lines";
     _buttonsNavID = "buttonsNav";
     _buttonsID = "buttons";
-    _issues = null;
+    _currentSession = null;
+    
 
     constructor() {
-        var self = this;
+        var self = this, session;
         this.createContainers();
 
         this._dataManager = new DataManager(this);
         this._buttons = new Buttons(this._buttonsNavID, this._buttonsID, this._dataManager.getButtons());
-        this._utilities = new Utilities(this._utilitiesID, this._dataManager, this, this._buttons);
-        this.loadSession();
+        this._utilities = new Utilities(this._utilitiesID, this._dataManager, this);
+
+        session = this._dataManager.mostRecentSession();
+        if (Number.isInteger(session)) {
+            this.loadSession(session);
+        }
+        else {
+            this.loadSession("New");
+        }
+        
+        this._utilities.update();
+
+        this._buttons.adjustDivHeights();
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
@@ -31,8 +43,9 @@ class Sessions {
         });
     }
 
-    get session() { return this._sessionObject; }
-    get lines()   { return this._sessionObject.lines; }
+    get session()     { return this._sessionObject; }
+    get lines()       { return this._sessionObject.lines; }
+    get sessionName() { return this._currentSession; }
 
     createContainers() {
         var utilitiesCode, linesCode, buttonsContainer, buttonsNavCode, buttonsCode;
@@ -46,9 +59,14 @@ class Sessions {
         $("body").prepend(utilitiesCode + linesCode + buttonsContainer);
     }
 
-    loadSession() {
-        var sessionName = this._dataManager.getSelectedSessionName();
-        var sessionLines = this._dataManager.getSessionLines();
-        this._sessionObject = new Session(this._linesID, sessionName, sessionLines);
+    loadSession(session) {
+        if (!Number.isInteger(session)) {
+            this._currentSession = Math.floor(Date.now() / 1000);
+            this._sessionObject = new Session(this._linesID, []);
+        }
+        else {
+            this._currentSession = session;
+            this._sessionObject = new Session(this._linesID, this._dataManager.sessionLines(session));
+        }
     }
 }

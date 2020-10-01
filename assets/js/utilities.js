@@ -5,8 +5,6 @@ class Utilities {
     _utilitiesID = null;
     _dataManager = null;
     _sessions = null;
-    _buttons = null;
-    _linesID = null;
     _minLinesHeight = null;
     _maxLinesHeight = null;
 
@@ -35,19 +33,13 @@ class Utilities {
     _infoButtonID = "infoButton";
     _configButtonID = "configButton";
 
-    constructor (utilitiesID, dataManager, sessions, buttons) {
+    constructor (utilitiesID, dataManager, sessions) {
         const self = this;
         this._utilitiesID = utilitiesID;
         this._dataManager = dataManager;
         this._sessions = sessions;
-        this._buttons = buttons;
 
         this._buildUtilitiesBar();
-
-        this._manageIssueUtilities();
-        this._manageSessionUtilities();
-
-        buttons.adjustDivHeights();
 
         $(document).ready(function() {
             $("#" + self._loginButtonID).on("click", function() {
@@ -125,6 +117,7 @@ class Utilities {
     get div()      { return $("#" + this._utilitiesID); }
     get lines()    { return this.sessions.lines; }
     get sessions() { return this._sessions; }
+    get data()     { return this._dataManager; }
     
 
     _buildUtilitiesBar() {
@@ -184,12 +177,17 @@ class Utilities {
         this.div.children().eq(1).append(configButton + infoButton);
     }
 
+    update() {
+        this._manageIssueUtilities();
+        this._manageSessionUtilities();
+    }
+
     _manageIssueUtilities() {
         var code = "";
         var pickerButton = $("#" + this._issuePickerButtonID);
         var renameButton = $("#" + this._issueRenameButtonID);
-        var issues = this._dataManager.getIssueNames();
-        var selectedIssue = this._dataManager.getSelectedIssueName();
+        var issues = this.data.issues();
+        var selectedIssue = this.data.sessionIssue(this.sessions.sessionName);
         console.log("issues: " + issues);
         console.log("selected issue: " + selectedIssue);
         var div = $("#" + this._issuePickerScrollDivID);
@@ -218,8 +216,8 @@ class Utilities {
         var numIssues = $("#" + this._issuePickerScrollDivID).children().length;
         var pickerButton = $("#" + this._sessionPickerButtonID);
         var addButton = $("#" + this._sessionAddButtonID);
-        var sessions = this._dataManager.getIssueSessionNames();
-        var selectedSession = this._dataManager.getSelectedSessionName();
+        var selectedSession = this.sessions.sessionName;
+        var sessions = this.data.issueSessions(this.data.sessionIssue(selectedSession));
         var div = $("#" + this._sessionPickerScrollDivID);
         div.empty();
         if (sessions.length) {
