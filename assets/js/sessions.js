@@ -15,6 +15,7 @@ class Sessions {
         this._buttons = new Buttons(this._buttonsNavID, this._buttonsID, this._dataManager.getButtons());
         this._utilities = new Utilities(this._utilitiesID, this._dataManager, this, this._buttons);
         this._sessionObject = new Session(this._linesID);
+        
 
         $(document).ready(function() {
             $(document).on("keyup", function() {

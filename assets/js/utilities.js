@@ -172,10 +172,10 @@ class Utilities {
         this.div.children().eq(0).append(loginButton + loginDiv);
         $("#" + this._loginDivID).append(loginDivUsernameInput + loginDivPasswordInput + loginDivLoginButton + loginDivForgotPasswordButton + loginDivNewAccountButton);
         this.div.children().eq(0).append(dotIcon);
-        this.div.children().eq(0).append(issuePickerButton + issueRenameButton + issueAddButton + issuePickerDiv);
+        this.div.children().eq(0).append(issuePickerButton + issuePickerDiv + issueRenameButton + issueAddButton);
         $("#" + this._issuePickerDivID).append(issuePickerSearchInput + issuePickerScrollDiv);
         this.div.children().eq(0).append(dotIcon);
-        this.div.children().eq(0).append(sessionPickerButton + sessionAddButton + sessionPickerDiv);
+        this.div.children().eq(0).append(sessionPickerButton + sessionPickerDiv + sessionAddButton);
         $("#" + this._sessionPickerDivID).append(sessionPickerScrollDiv);
         this.div.children().eq(1).append(slideUpButton + slideDownButton);
         this.div.children().eq(1).append(dotIcon);

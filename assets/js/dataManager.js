@@ -17,9 +17,9 @@ class DataManager {
     _user = null;
     _sessionsObject = null;
     _allIssueNames = [];
-    _issueName = null;
-    _issueSessionNames = [];
-    _sessionName = null;
+    _selectedIssueName = null;
+    _selectedIssueSessionNames = [];
+    _selectedSessionName = null;
 
     constructor(sessionsObject) {
         var self = this;
@@ -38,6 +38,7 @@ class DataManager {
 
     get lines()    { return this._sessionsObject.lines; }
     get session()  { return this._sessionsObject.session; }
+    get sessions() { return this._sessionsObject; }
 
     get activateLocalStorage() {
         if (this._local == null) { this._local = new LocalDataManager(this._lines); }
@@ -53,6 +54,63 @@ class DataManager {
         //  if (localStorage == true) { this.activateLocalStorage; }
         //  if (serverStorage == true) { this.activateServerStorage; }
         //  pull issues and sessions for user
+    }
+
+    pullIssueNames() {
+        console.log();
+        this._allIssueNames = this._sessionData.pullIssueNames();
+        if (this._allIssueNames.length == 0) { this._allIssueNames.push("Unspecified"); }
+        if (this._selectedIssueName == null) { this._selectedIssueName = this._allIssueNames[0]; }
+        console.log("pullIssueNames" + this._selectedIssueName);
+        console.log("pullIssueNames" + this._allIssueNames);
+    }
+
+    getIssueNames() {
+        if (!Array.isArray(this._allIssueNames) || this._allIssueNames.length == 0) {
+            this.pullIssueNames();
+        }
+        console.log("getIssueNames '" + this._allIssueNames + "'");
+        return this._allIssueNames;
+    }
+
+    //if it's available in sessionData, get it.  If not, local (if _useLocalData), if not, server (if _useServerData)
+    pickIssue(issueName) {
+        this._selectedIssueName = issueName;
+        this.pullIssueSessionNames();
+        this.pickSession(mostRecentlyEditedSession());
+    }
+
+    getSelectedIssueName() {
+        return this._selectedIssueName;
+    }
+
+    pullIssueSessionNames() {
+        this._issueSessionNames = this._sessionData.pullIssueSessionNames();
+        console.log("pullIssueSessionNames: " + this._issueSessionNames);
+        this._issueSessionNames.sort(function(a,b) { return Number(a)-Number(b); });
+    }
+
+    getIssueSessionNames() {
+        if (!Array.isArray(this._issueSessionNames) || this._issueSessionNames.length == 0) {
+            this.pullIssueSessionNames();
+        }
+        console.log("getIssueSessionNames: " + this._issueSessionNames);
+        return this._issueSessionNames;
+    }
+
+    pickSession(sessionName) {
+        this._selectedSessionName = sessionName;
+        this.sessions.loadSession(this._sessionData.getSession());
+    }
+
+    getSelectedSessionName() {
+        return this._selectedSessionName;
+    }
+
+    storeSession() {
+        this._sessionData.storeSession();
+        if (this._useLocalData) { this._localData.storeSession(); }
+        if (this._useServerData) { this._serverData.storeSession(); }
     }
 
     //gets a stringified JSON of all the Because Reasons components from the server
@@ -84,71 +142,6 @@ class DataManager {
 
     synchronizeData() {
 
-    }
-
-    getSelectedIssueName() {
-        return this._issueName;
-    }
-
-    getSelectedSessionName() {
-        return this._sessionName;
-    }
-
-    //if it's available in sessionData, get it.  If not, local (if _useLocalData), if not, server (if _useServerData)
-    pickIssue(issueName) {
-        this._issueName = issueName;
-        this.pullIssueSessionNames();
-        this.pickSession(mostRecentlyEditedSession());
-    }
-
-    pickSession(sessionName) {
-        this._sessionName = sessionName;
-        this._loadSession(this._sessionData.getSession());
-    }
-
-    pullIssueNames() {
-        console.log("pullIssueNames");
-        this._allIssueNames = this._sessionData.pullIssueNames();
-        if (this._allIssueNames.length == 0) { this._allIssueNames.push("Undefined"); }
-        if (this._issueName == null) { this.issueName = this._allIssueNames[0]; }
-        console.log(this._issueName);
-        console.log(this.allIssueNames);
-    }
-
-    getIssueNames() {
-        if (!Array.isArray(this._allIssueNames) || this._allIssueNames.length == 0) {
-            this.pullIssueNames();
-        }
-        console.log("getIssueNames '" + this._allIssueNames + "'");
-        return this._allIssueNames;
-    }
-
-    pullIssueSessionNames() {
-        this._issueSessionNames = this._sessionData.pullIssueSessionNames();
-        console.log("pullIssueSessionNames: " + this._issueSessionNames);
-        this._issueSessionNames.sort(function(a,b) { return Number(a)-Number(b); });
-    }
-
-    getIssueSessionNames() {
-        if (!Array.isArray(this._issueSessionNames) || this._issueSessionNames.length == 0) {
-            this.pullIssueSessionNames();
-        }
-        console.log("getIssueSessionNames: " + this._issueSessionNames);
-        return this._issueSessionNames;
-    }
-
-    get selectedIssueName() {
-        return this._issueName;
-    }
-
-    get selectedSessionName() {
-        return this._sessionName;
-    }
-
-    storeSession() {
-        this._sessionData.storeSession();
-        if (this._useLocalData) { this._localData.storeSession(); }
-        if (this._useServerData) { this._serverData.storeSession(); }
     }
 }
 

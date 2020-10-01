@@ -22,12 +22,12 @@ class SessionDataManager {
     }
 
     //return all sessions stored in session data for given issue
-    pullIissueSessionNames() {
+    pullIssueSessionNames() {
         const allSessions = Object.keys(sessionStorage);
         const issueName = this._dataManager.issueName;
         const allIssueSessionNames = [];
 
-        for (i = 0; i < allSessions.length; i++) {
+        for (var i = 0; i < allSessions.length; i++) {
             if (allSessions[i].issue == issueName && !allIssueSessionNames.includes(i)) {
                 allIssueSessionNames.push(i);
             }
