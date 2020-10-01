@@ -14,8 +14,7 @@ class Sessions {
         this._dataManager = new DataManager(this);
         this._buttons = new Buttons(this._buttonsNavID, this._buttonsID, this._dataManager.getButtons());
         this._utilities = new Utilities(this._utilitiesID, this._dataManager, this, this._buttons);
-        this._sessionObject = new Session(this._linesID);
-        
+        this.loadSession();
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
@@ -45,5 +44,11 @@ class Sessions {
         buttonsContainer = "<div class = 'container-fluid'><div class = 'row'>" + buttonsNavCode + buttonsCode + "</div></div>";
 
         $("body").prepend(utilitiesCode + linesCode + buttonsContainer);
+    }
+
+    loadSession() {
+        var sessionName = this._dataManager.getSelectedSessionName();
+        var sessionLines = this._dataManager.getSessionLines();
+        this._sessionObject = new Session(this._linesID, sessionName, sessionLines);
     }
 }

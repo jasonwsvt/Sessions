@@ -73,6 +73,14 @@ class DataManager {
         return this._allIssueNames;
     }
 
+    mostRecentIssue() {
+        return this._sessionData.getMostRecentIssue();
+    }
+
+    mostRecentIssueSession() {
+        return this._sessionData.getMostRecentIssueSession();
+    }
+
     //if it's available in sessionData, get it.  If not, local (if _useLocalData), if not, server (if _useServerData)
     pickIssue(issueName) {
         this._selectedIssueName = issueName;
@@ -100,10 +108,23 @@ class DataManager {
 
     pickSession(sessionName) {
         this._selectedSessionName = sessionName;
-        this.sessions.loadSession(this._sessionData.getSession());
+        this.sessions.loadSession();
+    }
+
+    getSession() {
+        return this._sessionData.getSession();
+    }
+
+//  issue = session["issue"];
+//  lastEditedTimestamp = session["lastEdited"];
+//  lines = session["lines"];
+    getSessionLines() {
+        var session = this._sessionData.getSession();
+        return session.lines;
     }
 
     getSelectedSessionName() {
+        if (this._selectedSessionName == "") { this._selectedSessionName = "New"; }
         return this._selectedSessionName;
     }
 

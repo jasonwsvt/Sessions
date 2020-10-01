@@ -6,15 +6,15 @@ class Session {
     _cursorCode = "<span id = 'cursor'></span>";
     _cursor = null;
     _indent = 50;
-    _session = null;
     _issue = null;
     _lastEditedTimestamp = null;
     _creationTimestamp = null;
     _issueName = null;
     _sessionName = null;
 
-    constructor(linesID) {
-        this._linesObject = new Lines(linesID);
+    constructor(linesID, sessionName, linesArray) {
+        this._sessionName = sessionName;
+        this._linesObject = new Lines(linesID, linesArray);
         this._cursor = new Cursor(this._linesObject);
         const self = this;
         this._creationTimestamp = Math.floor(Date.now() / 1000);
