@@ -3,28 +3,21 @@
 
 class Session {
     _linesObject = null;
-    _cursorCode = "<span id = 'cursor'></span>";
     _cursor = null;
     _indent = 50;
     _issue = null;
     _lastEditedTimestamp = null;
-    _creationTimestamp = null;
-    _issueName = null;
-    _sessionName = null;
 
-    constructor(linesID, sessionName, linesArray) {
-        this._sessionName = sessionName;
-        this._linesObject = new Lines(linesID, linesArray);
-        this._cursor = new Cursor(this._linesObject);
+    constructor(linesID, linesArray) {
         const self = this;
-        this._creationTimestamp = Math.floor(Date.now() / 1000);
+        this._linesObject = new Lines(linesID, linesArray);
+        this._cursor = new Cursor(this.lines);
 
         $(document).ready(function() {
             Mousetrap.bind(['tab'], function(e)       { self.indentLine;  return false; });
             Mousetrap.bind(['shift+tab'], function(e) { self.outdentLine; return false; });
     
             $(document).on("keyup", function(e) {
-                console.log("keyup");
                 self.setLastEdited(Math.floor(Date.now() / 1000));
 
                 if (e.key === "Enter" && self.cursorLineIndex > 0) {
@@ -73,13 +66,5 @@ class Session {
 
     set height(height) {
         this.lines.div.css("height", height);
-    }
-
-    get issue() {
-        return this._issueName;
-    }
-
-    get session() {
-        return this._sessionName;
     }
 }

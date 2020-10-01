@@ -10,23 +10,24 @@ class SessionDataManager {
 
     //return all issues stored in session data
     issues() {
-        const sessions = Object.keys(sessionStorage);
-        var issues = [], lastEditeds = [], sortedIssues = [], session, issue, lastEdited, max, i;
-        for (i = 0; i < sessions.length; i++) {
-            session = sessionStorage.getItem(sessions[i]);
+        const sessionKeys = Object.keys(sessionStorage);
+        var unsortedIssues = [], lastEditeds = [], sortedIssues = [];
+        var session, issue, lastEdited, max, i;
+        for (i = 0; i < sessionKeys.length; i++) {
+            session = this.session(sessionKeys[i]);
             issue = session[0];
             lastEdited = session[1];
-            if (!issues.includes(issue)) {
-                issues.push(issue);
+            if (!unsortedIssues.includes(issue)) {
+                unsortedIssues.push(issue);
                 lastEditeds.push(lastEdited);
             }
         }
-        while (issues.length) {
+        while (unsortedIssues.length) {
             max = 0;
-            for (i = 1; i < issues.length; i++) {
+            for (i = 1; i < unsortedIssues.length; i++) {
                 if (lastEditeds[i] > lastEditeds[max]) { max = i; }
             }
-            sortedIssues.push(issues.splice(max));
+            sortedIssues.push(unsortedIssues.splice(max));
             lastEditeds.splice(max);
         }
         console.log("pullIssueNames(): " + sortedIssues);
@@ -34,24 +35,26 @@ class SessionDataManager {
     }
 
     sessions() {
-        const sessions = Object.keys(sessionStorage);
-        var lastEditeds = [], sortedSessions = [], session, lastEdited, max, i;
-        for (i = 0; i < sessions.length; i++) {
-            session = sessions[i];
-            lastEdited = sessionStorage.getItem(sessions[i])[1];
-            allSessions.push(session);
+        const sessionKeys = Object.keys(sessionStorage);
+        var unsortedSessions = [], lastEditeds = [], sortedSessions = [];
+        var session, sessionName, lastEdited, max, i;
+        for (i = 0; i < sessionKeys.length; i++) {
+            sessionName = sessionKeys[i];
+            session = this.session(sessionName);
+            lastEdited = session[1];
+            unsortedSessions.push(sessionName);
             lastEditeds.push(lastEdited);
         }
-        while (allSessions.length) {
+        while (unsortedSessions.length) {
             max = 0;
-            for (i = 1; i < allSessions.length; i++) {
+            for (i = 1; i < unsortedSessions.length; i++) {
                 if (lastEditeds[i] > lastEditeds[max]) { max = i; }
             }
-            sortedSessions.push(issues.splice(max));
+            sortedSessions.push(unsortedSessions.splice(max));
             lastEditeds.splice(max);
         }
         console.log("sessions(): " + sortedSessions);
-        return sortedIssues;
+        return sortedSessions;
     }
 
     mostRecentSession() {
@@ -60,27 +63,29 @@ class SessionDataManager {
 
     //return all sessions stored in session data for given issue
     issueSessions(issue) {
-        const sessions = Object.keys(sessionStorage);
-        var issueSessions = [], lastEditeds = [], sortedIssueSessions = [], session, lastEdited, max, i;
+        const sessionKeys = Object.keys(sessionStorage);
+        var unsortedIssueSessions= [], sortedIssueSessions = [], lastEditeds = [];
+        var session, sessionIssue, sessionName, lastEdited, max, i;
 
-        for (i = 0; i < sessions.length; i++) {
-            session = sessions[i];
-            sessionIssue = sessionStorage.getItem(sessions[i])[0];
-            lastEdited = sessionStorage.getItem(sessions[i])[1];
-            if (sessionIssue == issue && !issueSessions.includes(session)) {
-                issueSessions.push(session);
+        for (i = 0; i < sessionKeys.length; i++) {
+            sessionName = sessionKeys[i];
+            session = this.session(sessionName);
+            sessionIssue = session[0];
+            lastEdited = session[1];
+            if (sessionIssue == issue && !unsortedIssueSessions.includes(sessionName)) {
+                unsortedIssueSessions.push(sessionName);
                 lastEditeds.push(lastEdited);
             }
         }
-        while (issueSessions.length) {
+        while (unsortedIssueSessions.length) {
             max = 0;
-            for (i = 1; i < issueSessions.length; i++) {
-                if (allLastEditeds[i] > allLastEditeds[max]) { max = i; }
+            for (i = 1; i < unsortedIssueSessions.length; i++) {
+                if (lastEditeds[i] > lastEditeds[max]) { max = i; }
             }
-            sortedIssueSessions.push(issueSessions.splice(max));
+            sortedIssueSessions.push(unsortedIssueSessions.splice(max));
             lastEditeds.splice(max);
         }
-        console.log("pullIssueSessionNames(): " + sortedIssueSessions);
+        console.log("IssueSession(): " + sortedIssueSessions);
         return sortedIssueSessions;
     }
 
@@ -88,12 +93,16 @@ class SessionDataManager {
         return this.issueSessions(issue)[0];
     }
 
+    session(session) {
+        return JSON.parse(sessionStorage.getItem(session));
+    }
+
     sessionIssue(session) {
-        return sessionStorage.getItem(session)[0];
+        return this.session(session)[0];
     }
 
     sessionLastEdited(session) {
-        return sessionStorage.getItem(session)[1];
+        return this.session(session)[1];
     }
 
     sessionLines(session) {

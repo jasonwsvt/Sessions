@@ -6,6 +6,7 @@ class Sessions {
     _buttonsNavID = "buttonsNav";
     _buttonsID = "buttons";
     _currentSession = null;
+    _currentIssue = null;
     
 
     constructor() {
@@ -17,20 +18,13 @@ class Sessions {
         this._utilities = new Utilities(this._utilitiesID, this._dataManager, this);
 
         session = this._dataManager.mostRecentSession();
-        if (Number.isInteger(session)) {
-            this.loadSession(session);
-        }
-        else {
-            this.loadSession("New");
-        }
+        this.loadSession((Number.isInteger(session)) ? session : "New");
         
-        this._utilities.update();
-
         this._buttons.adjustDivHeights();
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
-                self._dataManager.storeSession();
+                self.storeSession();
             });
 
             $("#" + self._buttonsID + " button").on("click", function(e) {
@@ -46,6 +40,7 @@ class Sessions {
     get session()     { return this._sessionObject; }
     get lines()       { return this._sessionObject.lines; }
     get sessionName() { return this._currentSession; }
+    get issueName()   { return this._currentIssue; }
 
     createContainers() {
         var utilitiesCode, linesCode, buttonsContainer, buttonsNavCode, buttonsCode;
@@ -62,11 +57,22 @@ class Sessions {
     loadSession(session) {
         if (!Number.isInteger(session)) {
             this._currentSession = Math.floor(Date.now() / 1000);
+            this._currentIssue = "Unspecified";
             this._sessionObject = new Session(this._linesID, []);
+            this.storeSession();
         }
         else {
             this._currentSession = session;
+            this._currentIssue = sessionIssue(session);
             this._sessionObject = new Session(this._linesID, this._dataManager.sessionLines(session));
         }
+        this._utilities.update();
+    }
+
+    storeSession() {
+        this._dataManager.storeSession(this.sessionName, 
+                                       this.session.lastEdited,
+                                       this.issueName,
+                                       this.lines.linesArray);
     }
 }

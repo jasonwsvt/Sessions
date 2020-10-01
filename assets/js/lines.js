@@ -6,9 +6,15 @@ class Lines {
     _containerID = null;
     _lineCode = "<div></div>";
 
-    constructor(cID) {
+    constructor(cID, linesArray) {
         this._containerID = cID;
-        this.div.append(this._lineCode);
+
+        linesArray.forEach(function(line) {
+            this.div.append(line);
+        });
+        if (this.numLines == 0) {
+            this.div.append(this._lineCode);
+        }
     }
 
     get ID()         { return this._containerID; }
@@ -31,7 +37,6 @@ class Lines {
     }
 
     removeLine(i) {
-        if (this.lineExists(i)) { console.log("this.line(" + i + ").remove();"); }
         if (this.lineExists(i)) { return this.line(i).detach(); }
     }
     detachLine(i) {
@@ -123,5 +128,13 @@ class Lines {
             }
         }
         else { return false; }
+    }
+
+    get linesArray() {
+        var i, linesArray = [];
+        for (var i = 0; i < this.numLines; i++) {
+            linesArray.push(this.line(i).outerHTML);
+        }
+        return linesArray;
     }
 }

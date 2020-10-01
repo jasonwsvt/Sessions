@@ -36,11 +36,11 @@ class DataManager {
     get session()  { return this._sessionsObject.session; }
     get sessions() { return this._sessionsObject; }
 
-    get issues() {
-        return this._sessionData.issueNames();
+    issues() {
+        return this._sessionData.issues();
     }
 
-    get sessions() {
+    sessions() {
         return this._sessionData.sessions();
     }
 
@@ -49,11 +49,15 @@ class DataManager {
     }
 
     issueSessions(issue) {
-        return this._sessionData.issueSessionNames(issue);
+        return this._sessionData.issueSessions(issue);
     }
 
     mostRecentIssueSession(issue) {
         return this._sessionData.mostRecentIssueSession(issue);
+    }
+
+    session(session) {
+        return this._sessionData.session(session);
     }
 
     sessionLines(session) {

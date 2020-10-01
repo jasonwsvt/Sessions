@@ -119,7 +119,6 @@ class Utilities {
     get sessions() { return this._sessions; }
     get data()     { return this._dataManager; }
     
-
     _buildUtilitiesBar() {
         const dotIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-dot my-2' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'/></svg>";
         const plusIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-plus-square' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path fill-rule='evenodd' d='M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z'/></svg>";
@@ -136,10 +135,10 @@ class Utilities {
 
         const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>Click to log in.</button>";
         const issuePickerButton = "<button id = '" + this._issuePickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
-        const issueRenameButton = "<button id = '" + this._issueRenameButtonID + "' type = 'button' class = 'btn btn-dark btn-sm' disabled>" + pencilIcon + "</button>";
+        const issueRenameButton = "<button id = '" + this._issueRenameButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
         const issueAddButton = "<button id = '" + this._issueAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
-        const sessionPickerButton = "<button id = '" + this._sessionPickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm' disabled>No sessions.  Create an issue!</button>";
-        const sessionAddButton = "<button id = '" + this._sessionAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm' disabled>" + plusIcon + "</button>";
+        const sessionPickerButton = "<button id = '" + this._sessionPickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
+        const sessionAddButton = "<button id = '" + this._sessionAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
         const slideUpButton = "<button id = '" + this._slideUpButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + scrollUpIcon + "</button>";
         const slideDownButton = "<button id = '" + this._slideDownButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + scrollDownIcon + "</button>";
         const importButton = "<button id = '" + this._importButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + importIcon + "</button>";
@@ -219,14 +218,15 @@ class Utilities {
         var selectedSession = this.sessions.sessionName;
         var sessions = this.data.issueSessions(this.data.sessionIssue(selectedSession));
         var div = $("#" + this._sessionPickerScrollDivID);
+        var self = this;
         div.empty();
         if (sessions.length) {
-            pickerButton.text(selectedSession);
+            pickerButton.text(this.dateString(selectedSession));
             sessions.forEach(function(entry) {
                 code = "<button type='button' class='btn ";
                 if (entry == selectedSession) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
-                code += " btn-sm'>" + entry + "</button>";
+                code += " btn-sm'>" + self.dateString(entry) + "</button>";
                 div.append(code);
             });
         }
@@ -236,5 +236,18 @@ class Utilities {
 
         if (numIssues) { addButton.attr("disabled", false); }
         else           { addButton.attr("disabled", true); }
+    }
+
+    dateString(entry) {
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const d = new Date(entry * 1000);
+        const year = String(d.getFullYear());
+        const month = months[d.getMonth()];
+        const day = String(d.getDate());
+        const hour = String((d.getHours() > 12) ? d.getHours() - 12 : d.getHours()).padStart(2, '0');
+        const minute = String(d.getMinutes()).padStart(2, '0');
+        const second = String(d.getSeconds()).padStart(2, '0');
+        const ampm = String((d.getHours() > 12) ? "PM" : "AM");
+        return month + " " + day + ", " + year + " " + hour + ":" + minute + ":" + second + ampm;
     }
 }

@@ -2,17 +2,16 @@
 */
 
 class Cursor {
-    _lines = null;
-    _cursorCode = "<h2 id = 'cursor'>|</h2>";
+    _linesObject = null;
+    _cursorID = "cursor";
+    _cursorCode = "<h2 id = '" + this._cursorID + "'>|</h2>";
     _typedElementCode = "<button type='button' class='btn btn-light typed'></button>";
-    _cursor = null;
     _cursorX = null;
 
-    constructor(lines) {
+    constructor(linesObject) {
         const self = this;
-        this._lines = lines;
-        this._lines.appendToLine(0, this._cursorCode);
-        this._cursor = $("#cursor");
+        this._linesObject = linesObject;
+        if (!this.cursor.length) { this.lines.appendToLine(0, this._cursorCode); }
 
         $(document).ready(function() {
             Mousetrap.bind(['up'], function(e)        { self.up;          return false; });
@@ -30,65 +29,63 @@ class Cursor {
         });
     }
 
-    get linesID() { return this._lines.ID; }
+    get cursor() { return $("#cursor"); }
 
-    get linesDiv() { return this._lines.div; }
-
-    get linesInstance() { return this._lines; }
-
-    get lastEdited() { return this._lastEditedTimestamp; }
+    get linesID() { return this._linesObject.ID; }
+    get linesDiv() { return this._linesObject.div; }
+    get lines() { return this._linesObject; }
 
     get lineIndex() { return this._lineIndex; }
     get elementIndex() { return this._cursorIndex; }
 
     get _prevElementIndex()  { return this._cursorIndex - 1; }
-    get _prevElementExists() { return this._lines.elementExists(this._lineIndex, this._prevElementIndex); }
-    get _prevElement()       { return this._lines.element(this._lineIndex, this._prevElementIndex); }
-    get _removePrevElement() { this._lines.removeElement(this._lineIndex, this._prevElementIndex); }
+    get _prevElementExists() { return this.lines.elementExists(this._lineIndex, this._prevElementIndex); }
+    get _prevElement()       { return this.lines.element(this._lineIndex, this._prevElementIndex); }
+    get _removePrevElement() { this.lines.removeElement(this._lineIndex, this._prevElementIndex); }
 
-    get _elementsBefore()    { return this._lines.elementsBefore(this._lineIndex, this._cursorIndex); }
-    _addElementBefore(e)     { this._lines.insertBefore(this._lineIndex, this._cursorIndex, e); }
-    get _cursorIndex()       { return this._cursor.index(); }
-    get _detachCursor()      { return this._cursor.detach(); }
-    get _detachCursorToEnd() { return this._lines.detachElementToEnd(this._lineIndex, this._cursorIndex); }
-    _addElementAfter(e)      { this._lines.insertAfter(this._lineIndex, this._cursorIndex, e); }
-    get _elementsAfter()     { return this._lines.elementsAfter(this._lineIndex, this._cursorIndex); }
+    get _elementsBefore()    { return this.lines.elementsBefore(this._lineIndex, this._cursorIndex); }
+    _addElementBefore(e)     { this.lines.insertBefore(this._lineIndex, this._cursorIndex, e); }
+    get _cursorIndex()       { return this.cursor.index(); }
+    get _detachCursor()      { return this.cursor.detach(); }
+    get _detachCursorToEnd() { return this.lines.detachElementToEnd(this._lineIndex, this._cursorIndex); }
+    _addElementAfter(e)      { this.lines.insertAfter(this._lineIndex, this._cursorIndex, e); }
+    get _elementsAfter()     { return this.lines.elementsAfter(this._lineIndex, this._cursorIndex); }
 
     get _nextElementIndex()  { return this._cursorIndex + 1; }
-    get _nextElementExists() { return this._lines.elementExists(this._lineIndex, this._nextElementIndex); }
-    get _nextElement()       { return this._lines.element(this._lineIndex, this._nextElementIndex); }
-    get _removeNextElement() { this._lines.removeElement(this._lineIndex, this._nextElementIndex); }
+    get _nextElementExists() { return this.lines.elementExists(this._lineIndex, this._nextElementIndex); }
+    get _nextElement()       { return this.lines.element(this._lineIndex, this._nextElementIndex); }
+    get _removeNextElement() { this.lines.removeElement(this._lineIndex, this._nextElementIndex); }
 
     get _prevLineIndex()     { return this._lineIndex - 1; }
-    get _prevLineExists()    { return this._lines.lineExists(this._prevLineIndex); }
-    get _prevLine()          { return this._lines.line(this._prevLineIndex); }
-    get _prevLineLength()    { return this._lines.lineLength(this._prevLineIndex); }
+    get _prevLineExists()    { return this.lines.lineExists(this._prevLineIndex); }
+    get _prevLine()          { return this.lines.line(this._prevLineIndex); }
+    get _prevLineLength()    { return this.lines.lineLength(this._prevLineIndex); }
 
-    get _insertLineAbove()   { this._lines.insertLineBefore(this._lineIndex); }
-    get _lineIndex()         { return this._cursor.parent().index(); }
-    get _lineLength()        { return this._lines.lineLength(this._lineIndex); }
-    get _line()              { return this._lines.line(this._lineIndex); }
-    get _insertLineBelow()   { this._lines.insertLineAfter(this._lineIndex); }
+    get _insertLineAbove()   { this.lines.insertLineBefore(this._lineIndex); }
+    get _lineIndex()         { return this.cursor.parent().index(); }
+    get _lineLength()        { return this.lines.lineLength(this._lineIndex); }
+    get _line()              { return this.lines.line(this._lineIndex); }
+    get _insertLineBelow()   { this.lines.insertLineAfter(this._lineIndex); }
 
-    get _nextLineIndex()     { return this._lineIndex + 1; }
-    get _nextLineExists()    { return this._lines.lineExists(this._nextLineIndex); }
-    get _nextLine()          { return this._lines.line(this._nextLineIndex); }
-    get _nextLineLength()    { return this._lines.lineLength(this._nextLineIndex); }
+    get _nextLineIndex()     { return this.lineIndex + 1; }
+    get _nextLineExists()    { return this.lines.lineExists(this._nextLineIndex); }
+    get _nextLine()          { return this.lines.line(this._nextLineIndex); }
+    get _nextLineLength()    { return this.lines.lineLength(this._nextLineIndex); }
 
     get _lastElementIndex()  { return this._lineLength - 1; }
-    get _lastLineIndex()     { return this._lines.numLines - 1; }
+    get _lastLineIndex()     { return this.lines.numLines - 1; }
 
     get _cursorX()           { return this._cursorX; }
-    _setCursorX()            { this._cursorX = this._lines.distanceToElement(this._lineIndex, this._cursorIndex); }
+    _setCursorX()            { this._cursorX = this.lines.distanceToElement(this._lineIndex, this._cursorIndex); }
 
     get _prevLineClosestIndex() {
         console.log("prevLineClosestIndex " + this._prevLineIndex + " " + this._cursorX);
-        return this._lines.closestIndex(this._prevLineIndex, this._cursorX);
+        return this.lines.closestIndex(this._prevLineIndex, this._cursorX);
     }
 
     get _nextLineClosestIndex() {
         console.log("nextLineClosestIndex " + this._nextLineIndex + " " + this._cursorX);
-        return this._lines.closestIndex(this._nextLineIndex, this._cursorX);
+        return this.lines.closestIndex(this._nextLineIndex, this._cursorX);
     }
 
     manageHiddenCursor() {
@@ -97,8 +94,8 @@ class Cursor {
         const container = $("#" + this.linesID);
         const containerTop = container.scrollTop();
         const containerBottom = containerTop + container.height();
-        const elementTop = this._cursor.offset().top - container.position().top + containerTop;
-        const elementBottom = elementTop + this._cursor.outerHeight();
+        const elementTop = this.cursor.offset().top - container.position().top + containerTop;
+        const elementBottom = elementTop + this.cursor.outerHeight();
         if (elementTop < containerTop || elementBottom > containerBottom) {
             this._line[0].scrollIntoView({behavior: "smooth", block: "nearest"});
         }
@@ -108,11 +105,11 @@ class Cursor {
         if (this._cursorIndex > 0) {
             const prevElementIndex = this._prevElementIndex;
             const lineIndex = this._lineIndex;
-            this._lines.insertBefore(lineIndex, prevElementIndex, this._detachCursor);
+            this.lines.insertBefore(lineIndex, prevElementIndex, this._detachCursor);
         }
         else if (this._prevLineExists) {
             const lineIndex = this._prevLineIndex;
-            this._lines.appendToLine(lineIndex, this._detachCursor);
+            this.lines.appendToLine(lineIndex, this._detachCursor);
         }
         this.manageHiddenCursor();
         this._setCursorX();
@@ -122,11 +119,11 @@ class Cursor {
         if (this._cursorIndex < this._lastElementIndex) {
             const nextElementIndex = this._cursorIndex;  // same after cursor is detached
             const lineIndex = this._lineIndex;
-            this._lines.insertAfter(lineIndex, nextElementIndex, this._detachCursor);
+            this.lines.insertAfter(lineIndex, nextElementIndex, this._detachCursor);
         }
         else if (this._nextLineExists) {
             const lineIndex = this._nextLineIndex;
-            this._lines.prependToLine(lineIndex, this._detachCursor);
+            this.lines.prependToLine(lineIndex, this._detachCursor);
         }
         this.manageHiddenCursor();
         this._setCursorX();
@@ -143,10 +140,10 @@ class Cursor {
             const x = this._prevLineClosestIndex;
             console.log("this._prevLineClosestIndex: " + x);
             if (x == this._prevLineLength) {
-                this._lines.appendToLine(this._prevLineIndex, this._detachCursor);
+                this.lines.appendToLine(this._prevLineIndex, this._detachCursor);
             }
             else {
-                this._lines.insertBefore(this._prevLineIndex, x, this._detachCursor);
+                this.lines.insertBefore(this._prevLineIndex, x, this._detachCursor);
             }
         }
         this.manageHiddenCursor();
@@ -164,11 +161,11 @@ class Cursor {
             console.log("this._nextLineClosestIndex: " + x);
             if (x == this._nextLineLength) {
                 console.log("insert at end of line");
-                this._lines.appendToLine(this._nextLineIndex, this._detachCursor);
+                this.lines.appendToLine(this._nextLineIndex, this._detachCursor);
             }
             else {
                 console.log("insert before element " + x);
-                this._lines.insertBefore(this._nextLineIndex, x, this._detachCursor);
+                this.lines.insertBefore(this._nextLineIndex, x, this._detachCursor);
             }
         }
         this.manageHiddenCursor();
@@ -185,7 +182,7 @@ class Cursor {
                 || (!this._nextElementExists
                     && (!this._nextLineExists || (this._nextLineExists && this._nextLineLength))))) {
             this._insertLineBelow;
-            this._lines.appendToLine(this._nextLineIndex, this._detachCursorToEnd);
+            this.lines.appendToLine(this._nextLineIndex, this._detachCursorToEnd);
         }
         this.manageHiddenCursor();
         this._setCursorX();
@@ -196,7 +193,7 @@ class Cursor {
     get backspace() {
         if (this._prevElementExists) {
             if (!this._prevElement.hasClass("typed") || (this._prevElement.hasClass("typed") && !this._prevElement.hasClass("space") && this._prevElement.text().length <= 1)) {
-                this._lines.removeElement(this._lineIndex, this._prevElementIndex);
+                this.lines.removeElement(this._lineIndex, this._prevElementIndex);
             }
             else {
                 if (this._prevElement.hasClass("space")) {
@@ -208,8 +205,8 @@ class Cursor {
             }
         }
         else if (this._prevLineExists) {
-            this._lines.appendToLine(this._prevLineIndex, this._detachCursorToEnd);
-            this._lines.removeLine(this._nextLineIndex);
+            this.lines.appendToLine(this._prevLineIndex, this._detachCursorToEnd);
+            this.lines.removeLine(this._nextLineIndex);
         }
         this.manageHiddenCursor();
         this._setCursorX();
@@ -225,7 +222,7 @@ class Cursor {
             console.log("next element exists");
             if (!this._nextElement.hasClass("typed") || (this._nextElement.hasClass("typed") && this._nextElement.text().length == 1)) {
                 console.log("next element not typed or (is typed but has only one character)");
-                this._lines.removeElement(this._lineIndex, this._nextElementIndex);
+                this.lines.removeElement(this._lineIndex, this._nextElementIndex);
             }
             else {
                 console.log("next element is typed and has more than one character");
@@ -234,8 +231,8 @@ class Cursor {
         }
         else if (this._nextLineExists) {
             console.log("next line exists");
-            this._lines.appendToLine(this._lineIndex, this._lines.detachLine(this._nextLineIndex));
-            this._lines.removeLine(this._nextLineIndex);
+            this.lines.appendToLine(this._lineIndex, this.lines.detachLine(this._nextLineIndex));
+            this.lines.removeLine(this._nextLineIndex);
         }
         this._setCursorX();
     }
@@ -243,7 +240,7 @@ class Cursor {
     //move cursor to beginning of line
     get home() {
         console.log("home");
-        this._lines.prependToLine(this._lineIndex, this._detachCursor);
+        this.lines.prependToLine(this._lineIndex, this._detachCursor);
         this.manageHiddenCursor();
         this._setCursorX();
     }
@@ -251,7 +248,7 @@ class Cursor {
     //move cursor to end of line
     get end() {
         console.log("end");
-        this._lines.appendToLine(this._lineIndex, this._detachCursor);
+        this.lines.appendToLine(this._lineIndex, this._detachCursor);
         this.manageHiddenCursor();
         this._setCursorX();
     }
@@ -270,8 +267,8 @@ class Cursor {
     get pagedown() {
         var n;
         console.log("pagedown");
-        if (this._lineIndex + this._numVisibleLines < this._lines.numLines) { n = this._numVisibleLines; }
-        else { n = this._lines.numLines - 1; }
+        if (this._lineIndex + this._numVisibleLines < this.lines.numLines) { n = this._numVisibleLines; }
+        else { n = this.lines.numLines - 1; }
         for (i = 0; i < n; i--) { this.down; }
         this.manageHiddenCursor();
     }
