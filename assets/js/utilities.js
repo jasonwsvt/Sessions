@@ -47,11 +47,24 @@ class Utilities {
             });
 
             $("#" + self._issuePickerButtonID).on("click", function() {
-
+                const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
+                const caretUpIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-up-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/></svg>";
+                const pickerDiv = $("#" + self._issuePickerDivID);
+                const scrollDiv = $("#" + self._issuePickerScrollDivID);
+                const button = $("#" + self._issuePickerButtonID);
+                if (scrollDiv.children().length > 1) {
+                    pickerDiv.css('left',  button.css('left'));
+                    pickerDiv.css('top', button.css('bottom'));
+                    pickerDiv.toggleClass("hidden");
+                }
             });
 
             $("#" + self._issueRenameButtonID).on("click", function() {
-
+                const div = $("#" + self._issueRenameDivID)
+                const button = $("#" + self._issueRenameButtonID);
+                div.css('left',  button.css('left'));
+                div.css('top', button.css('bottom'));
+                div.toggleClass("hidden");
             });
 
             $("#" + self._issueAddButtonID).on("click", function() {
@@ -59,7 +72,16 @@ class Utilities {
             });
 
             $("#" + self._sessionPickerButtonID).on("click", function() {
-
+                const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
+                const caretUpIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-up-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/></svg>";
+                const pickerDiv = $("#" + self._sessionPickerDivID);
+                const scrollDiv = $("#" + self._sessionPickerScrollDivID);
+                const button = $("#" + self._sessionPickerButton);
+                if (scrollDiv.children().length > 1) {
+                    pickerDiv.css('left',  button.css('left'));
+                    pickerDiv.css('top', button.css('bottom'));
+                    pickerDiv.toggleClass("hidden");
+                }
             });
 
             $("#" + self._sessionAddButtonID).on("click", function() {
@@ -129,16 +151,8 @@ class Utilities {
         const scrollDownIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-arrow-bar-down' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z'/></svg>";
         const infoIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-info-square' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path d='M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z'/><circle cx='8' cy='4.5' r='1'/></svg>";
         const configIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-gear' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 0 1 4.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 0 1-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 0 1 1.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 0 1 2.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 0 1 2.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 0 1 1.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 0 1-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 0 1 8.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 0 0 1.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 0 0 .52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 0 0-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 0 0-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 0 0-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 0 0-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 0 0 .52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 0 0 1.255-.52l.094-.319z'/><path fill-rule='evenodd' d='M8 5.754a2.246 2.246 0 1 0 0 4.492 2.246 2.246 0 0 0 0-4.492zM4.754 8a3.246 3.246 0 1 1 6.492 0 3.246 3.246 0 0 1-6.492 0z'/></svg>";
-        const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
-        const caretUpIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-up-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/></svg>";
         const searchIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-search' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z'/><path fill-rule='evenodd' d='M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z'/></svg>";
 
-        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>Click to log in.</button>";
-        const issuePickerButton = "<button id = '" + this._issuePickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
-        const issueRenameButton = "<button id = '" + this._issueRenameButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
-        const issueAddButton = "<button id = '" + this._issueAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
-        const sessionPickerButton = "<button id = '" + this._sessionPickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
-        const sessionAddButton = "<button id = '" + this._sessionAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
         const slideUpButton = "<button id = '" + this._slideUpButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + scrollUpIcon + "</button>";
         const slideDownButton = "<button id = '" + this._slideDownButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + scrollDownIcon + "</button>";
         const importButton = "<button id = '" + this._importButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + importIcon + "</button>";
@@ -146,19 +160,34 @@ class Utilities {
         const infoButton = "<button id = '" + this._infoButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + infoIcon + "</button>";
         const configButton = "<button id = '" + this._configButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + configIcon + "</button>";
 
-        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden'></div>";
+        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>Click to log in.</button>";
+        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'popUpMenu hidden'></div>";
         const loginDivUsernameInput = "<input id = '" + this._usernameID + "' type = 'text' placeholder = 'username'>";
         const loginDivPasswordInput = "<input id = '" + this._passwordID + "' type = 'text' placeholder = 'password'>";
         const loginDivLoginButton = "<button id = '" + this._loginID + "' type = 'button' class = 'btn btn-dark btn-sm'>Set up new account</button>";
         const loginDivForgotPasswordButton = "<button id = '" + this._forgotPasswordID + "' type = 'button' class = 'btn btn-dark btn-sm'>Forgot password?</button>";
         const loginDivNewAccountButton = "<button id = '" + this._newAccountID + "' type = 'button' class = 'btn btn-dark btn-sm'>Set up new account.</button>";
 
-        const issuePickerDiv = "<div id = '" + this._issuePickerDivID + "' class = 'hidden'></div>";
+        const issuePickerButton = "<button id = '" + this._issuePickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
+        const issuePickerDiv = "<div id = '" + this._issuePickerDivID + "' class = 'popUpMenu hidden'></div>";
         const issuePickerSearchInput = searchIcon + "<input placeholder = 'search'>";
         const issuePickerScrollDiv = "<div id = '" + this._issuePickerScrollDivID + "'></div>";
 
-        const sessionPickerDiv = "<div id = '" + this._sessionPickerDivID + "' class = 'hidden'></div>";
+        const issueRenameButton = "<button id = '" + this._issueRenameButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
+        const issueRenameDiv = "<div id = '" + this._issueRenameDivID + "' class = 'popUpMenu hidden'></div>";
+        const issueRenameInput = "<input placeholder = 'rename the selected issue'>";
+
+        const issueAddButton = "<button id = '" + this._issueAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
+        const issueAddDiv = "<div id = '" + this._issueRenameDivID + "' class = 'popUpMenu hidden'></div>";
+        const issueAddInput = "<input placeholder = 'add a new issue'>";
+
+        const sessionPickerButton = "<button id = '" + this._sessionPickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
+        const sessionPickerDiv = "<div id = '" + this._sessionPickerDivID + "' class = 'popUpMenu hidden'></div>";
         const sessionPickerScrollDiv = "<div id = '" + this._sessionPickerScrollDivID + "'></div>";
+
+        const sessionAddButton = "<button id = '" + this._sessionAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
+        const sessionAddDiv = "<div id = '" + this._issueRenameDivID + "' class = 'popUpMenu hidden'></div>";
+        const sessionAddInput = "<input placeholder = 'add a new issue'>";
         
         this.div.append("<span></span><span></span>");
         this.div.children().eq(0).append(loginButton + loginDiv);
@@ -182,17 +211,21 @@ class Utilities {
     }
 
     _manageIssueUtilities() {
-        var code = "";
-        var pickerButton = $("#" + this._issuePickerButtonID);
-        var renameButton = $("#" + this._issueRenameButtonID);
-        var issues = this.data.issues();
-        var selectedIssue = this.data.sessionIssue(this.sessions.sessionName);
-//        console.log("issues: " + issues);
-//        console.log("selected issue: " + selectedIssue);
-        var div = $("#" + this._issuePickerScrollDivID);
+        const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
+        const pickerButton = $("#" + this._issuePickerButtonID);
+//        const renameButton = $("#" + this._issueRenameButtonID);
+        const addButton = $("#" + this._issueAddButtonID);
+        const div = $("#" + this._issuePickerScrollDivID);
+        const issues = this.data.issues();
+        const numIssues = issues.length;
+        const selectedIssue = this.data.sessionIssue(this.sessions.sessionName);
+        var code, pickerButtonText;
         div.empty();
-        if (issues.length) {
-            pickerButton.text(selectedIssue);
+        if (numIssues) {
+            pickerButtonText = selectedIssue;
+            if (numIssues > 1) { pickerButtonText += " " + caretDownIcon; }
+            pickerButton.html(pickerButtonText);
+
             issues.forEach(function(entry) {
                 code = "<button type='button' class='btn ";
                 if (entry == selectedIssue) { code += "btn-info"; }
@@ -200,28 +233,36 @@ class Utilities {
                 code += " btn-sm'>" + entry + "</button>";
                 div.append(code);
             });
-            pickerButton.attr("disabled", false);
-            renameButton.attr("disabled", false);
+//            renameButton.attr("disabled", false);
+//            pickerButton.attr("disabled", false);
         }
-        else {
-            pickerButton.text("No issues.  Create one!");
-            pickerButton.attr("disabled", true);
-            renameButton.attr("disabled", true);
-        }
+//        else {
+//            pickerButton.text("No issues.  Create one!");
+//            pickerButton.attr("disabled", true);
+//            renameButton.attr("disabled", true);
+//        }
+        if (numIssues == 1 && selectedIssue == "Unspecified") { addButton.attr("disabled", true); }
+        else                                                  { addButton.attr("disabled", false); }
+
     }
 
     _manageSessionUtilities() {
-        var code = "";
-        var numIssues = $("#" + this._issuePickerScrollDivID).children().length;
-        var pickerButton = $("#" + this._sessionPickerButtonID);
-        var addButton = $("#" + this._sessionAddButtonID);
-        var selectedSession = this.sessions.sessionName;
-        var sessions = this.data.issueSessions(this.data.sessionIssue(selectedSession));
-        var div = $("#" + this._sessionPickerScrollDivID);
-        var self = this;
+        const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
+        const numIssues = $("#" + this._issuePickerScrollDivID).children().length;
+        const pickerButton = $("#" + this._sessionPickerButtonID);
+        const addButton = $("#" + this._sessionAddButtonID);
+        const selectedSession = this.sessions.sessionName;
+        const selectedIssue = this.data.sessionIssue(selectedSession);
+        const sessions = this.data.issueSessions(this.data.sessionIssue(selectedSession));
+        const div = $("#" + this._sessionPickerScrollDivID);
+        const self = this;
+        var code, sessionPickerText;
         div.empty();
         if (sessions.length) {
-            pickerButton.text(this.dateString(selectedSession));
+            sessionPickerText = this.dateString(selectedSession);
+            if (sessions.length > 1) { sessionPickerText += " " + caretDownIcon; }
+            pickerButton.html(sessionPickerText);
+
             sessions.forEach(function(entry) {
                 code = "<button type='button' class='btn ";
                 if (entry == selectedSession) { code += "btn-info"; }
@@ -230,12 +271,12 @@ class Utilities {
                 div.append(code);
             });
         }
-        if (sessions.length > 1)  { pickerButton.attr("disabled", false); }
-        else if (sessions.length) { pickerButton.attr("disabled", true); }
-        else                      { pickerButton.text("No sessions.  Create an issue!"); }
+//        if (sessions.length > 1)  { pickerButton.attr("disabled", false); }
+//        else if (sessions.length) { pickerButton.attr("disabled", true); }
+//        else                      { pickerButton.text("No sessions.  Create an issue!"); }
 
-        if (numIssues) { addButton.attr("disabled", false); }
-        else           { addButton.attr("disabled", true); }
+        if (numIssues == 1 && selectedIssue == "Unspecified") { addButton.attr("disabled", true); }
+        else                                                  { addButton.attr("disabled", false); }
     }
 
     dateString(entry) {

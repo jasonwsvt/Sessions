@@ -18,7 +18,7 @@ class Sessions {
         this._utilities = new Utilities(this._utilitiesID, this._dataManager, this);
 
         session = this._dataManager.mostRecentSession();
-        console.log("most recent session: " + session);
+//        console.log("most recent session: " + session);
         this.loadSession((Number(session)) ? session : "New");
         
         this._buttons.adjustDivHeights();
@@ -72,13 +72,9 @@ class Sessions {
     }
 
     storeSession() {
-        console.log("session name: " + this.sessionName);
-        console.log("this.session.lastEdited: " + this.session.lastEdited);
-        console.log("this.issueName: " + this.issueName);
-        console.log("this.lines.linesArray: " + this.lines.linesArray);
         this.data.storeSession(this.sessionName, 
-                                       this.session.lastEdited,
-                                       this.issueName,
-                                       this.lines.linesArray);
+                               this.session.lastEdited,
+                               this.issueName,
+                               this.lines.linesArray);
     }
 }

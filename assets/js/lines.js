@@ -13,7 +13,7 @@ class Lines {
         linesArray.forEach(function(line) {
             self.div.append(line);
         });
-        
+
         if (this.numLines == 0) {
             this.div.append(this._lineCode);
         }
@@ -40,7 +40,7 @@ class Lines {
     insertAfter(i, x, e)  { return (this.elementExists(i, x)) ? this.element(i, x).after(e) : null; }
     insertBefore(i, x, e) { return (this.elementExists(i, x)) ? this.element(i, x).before(e) : null; }
 
-    detachElementToEnd(i, x) {
+    detachElementToEnd(i, x) { 
         if (this.elementExists(i, x)) {
             if (x == 0) {
                 return this.detachLine(i);
@@ -51,6 +51,7 @@ class Lines {
         }
     }
 
+    
     distanceToElement(i, x) {
         let width = 0;
         if (this.elementExists(i, x)) {

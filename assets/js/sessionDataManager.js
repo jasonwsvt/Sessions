@@ -85,7 +85,7 @@ class SessionDataManager {
             sortedIssueSessions.push(unsortedIssueSessions.splice(max));
             lastEditeds.splice(max);
         }
-        console.log("issueSessions(): " + sortedIssueSessions);
+//        console.log("issueSessions(): " + sortedIssueSessions);
         return sortedIssueSessions;
     }
 

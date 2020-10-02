@@ -14,7 +14,7 @@
     justify-content: space-between;
 }
 
-#pickIssueMenu {
+.utilityDiv {
     z-index: 1;
     position: absolute;
     left: 0;
@@ -24,53 +24,6 @@
     visibility: visible;
     transition-property: display, visibility;
     transition-duration: .4s;
-}
-
-#renameIssueMenu {
-    z-index: 1;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 400px;
-    display: block;
-    visibility: visible;
-    transition-property: display, visibility;
-    transition-duration: .4s;
-}
-
-#newIssueMenu {
-    z-index: 1;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 400px;
-    display: block;
-    visibility: visible;
-    transition-property: display, visibility;
-    transition-duration: .4s;
-}
-
-#pickSessionMenu {
-    z-index: 1;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 400px;
-    display: block;
-    visibility: visible;
-    transition-property: display, visibility;
-    transition-duration: .4s;
-}
-
-.dropdown {
-    margin: 0px;
-    width: 400px;
-}
-  
-.dropdown-menu {
-    width: 400px;
-    max-height: 20rem;
-    overflow-y: auto;
 }
 
 #cursor {
