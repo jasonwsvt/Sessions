@@ -8,15 +8,6 @@ class Lines {
 
     constructor(cID, linesArray) {
         this._containerID = cID;
-        const self = this;
-
-        linesArray.forEach(function(line) {
-            self.div.append(line);
-        });
-
-        if (this.numLines == 0) {
-            this.div.append(this._lineCode);
-        }
     }
 
     get ID()         { return this._containerID; }
@@ -90,5 +81,18 @@ class Lines {
             linesArray.push(this.line(i)[0].outerHTML);
         }
         return linesArray;
+    }
+
+    newLinesArray(linesArray) {
+        const self = this;
+        this.div.empty();
+        linesArray.forEach(function(line) {
+            self.div.append(line);
+        });
+
+        if (this.numLines == 0) {
+            this.div.append(this._lineCode);
+        }
+
     }
 }

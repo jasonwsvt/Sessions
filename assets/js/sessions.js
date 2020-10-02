@@ -16,10 +16,10 @@ class Sessions {
         this._dataManager = new DataManager(this);
         this._buttons = new Buttons(this._buttonsNavID, this._buttonsID, this._dataManager.getButtons());
         this._utilities = new Utilities(this._utilitiesID, this._dataManager, this);
+        this._sessionObject = new Session(this._linesID, []);
 
-        session = this._dataManager.mostRecentSession();
-//        console.log("most recent session: " + session);
-        this.loadSession((Number(session)) ? session : "New");
+        session = this.data.mostRecentSession();
+        if (Number(session)) { this.loadSession(session); } else { this.newSession(); }
         
         this._buttons.adjustDivHeights();
 
@@ -44,6 +44,7 @@ class Sessions {
     get buttons()     { return this._buttons; }
     get sessionName() { return this._currentSession; }
     get issueName()   { return this._currentIssue; }
+    get utilities()   { return this._utilities; }
 
     createContainers() {
         var utilitiesCode, linesCode, buttonsContainer, buttonsNavCode, buttonsCode;
@@ -58,21 +59,28 @@ class Sessions {
     }
 
     loadSession(session) {
-        if (this._currentSession) {
-            this.storeSession();
-        }
-        if (!Number(session)) {
-            this._currentSession = Math.floor(Date.now() / 1000);
-            this._currentIssue = "Unspecified";
-            this._sessionObject = new Session(this._linesID, []);
-            this.storeSession();
-        }
-        else {
-            this._currentSession = session;
-            this._currentIssue = this.data.sessionIssue(session);
-            this._sessionObject = new Session(this._linesID, this.data.sessionLines(session));
-        }
-        this._utilities.update();
+        if (this.currentSession) { this.storeSession(); }
+        this._currentSession = session;
+        this._currentIssue = this.data.sessionIssue(session);
+        this.lines.newLinesArray(this.data.sessionLines(session));
+        this.utilities.update();
+    }
+
+    newIssue(newIssue) {
+        this._currentIssue = newIssue;
+        this.newSession();
+    }
+
+    renameIssue(issueName) {
+        this.data.renameIssue(this._currentIssue, issueName);
+        this._currentIssue = issueName;
+    }
+
+    newSession() {
+        this._currentSession = Math.floor(Date.now() / 1000);
+        if (this._currentIssue == null) { this._currentIssue = "Unspecified"; }
+        this.lines.newLinesArray([]);
+        this.storeSession();
     }
 
     storeSession() {
@@ -80,10 +88,5 @@ class Sessions {
                                this.session.lastEdited,
                                this.issueName,
                                this.lines.linesArray);
-    }
-
-    renameIssue(issueName) {
-        this.data.renameIssue(this._currentIssue, issueName);
-        this._currentIssue = issueName;
     }
 }

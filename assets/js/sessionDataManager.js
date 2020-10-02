@@ -61,6 +61,10 @@ class SessionDataManager {
         return this.sessions()[0];
     }
 
+    mostRecentIssue() {
+        return this.sessionIssue(this.mostRecentSession());
+    }
+
     //return all sessions stored in session data for given issue
     issueSessions(issue) {
         const sessionKeys = Object.keys(sessionStorage);

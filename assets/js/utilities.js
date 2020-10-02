@@ -108,6 +108,18 @@ class Utilities {
                 div.toggleClass("popUpMenu");
             });
 
+            $("#" + self._issueAddInputID).on("keypress", function(e) {
+                const div = $("#" + self._issueAddDivID);
+                const pickerButton = $("#" + self._issuePickerButtonID);
+                if (e.key == "Enter") {
+                    div.addClass("hidden");
+                    div.removeClass("popUpMenu");
+                    self.sessions.newIssue(this.value);
+                    self._manageIssueUtilities();
+                }
+                e.stopPropagation();
+            });
+
             $("#" + self._sessionPickerButtonID).on("click", function() {
                 const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
                 const caretUpIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-up-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/></svg>";
@@ -123,7 +135,8 @@ class Utilities {
             });
 
             $("#" + self._sessionAddButtonID).on("click", function() {
-                self.sessions.loadSession();
+                console.log("here");
+                self.sessions.newSession();
             });
 
             $("#" + self._slideUpButtonID).on("click", function() {

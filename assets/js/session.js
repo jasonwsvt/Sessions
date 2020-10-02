@@ -68,4 +68,9 @@ class Session {
     set height(height) {
         this.lines.div.css("height", height);
     }
+
+    newSession(linesArray) {
+        this.lines.newLinesArray(linesArray);
+        if (!this._cursor.cursor.length) { this.lines.prependToLine(0, this._cursorCode); }
+    }
 }
