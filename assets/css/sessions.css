@@ -25,6 +25,15 @@
     padding: 12px 16px;
 }
 
+.popUpMenu div {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    width: auto;
+    height: 200px;
+    overflow-y: auto;
+}
+
 #cursor {
     animation:blinkingText 1.2s infinite;
 }

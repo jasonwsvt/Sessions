@@ -115,7 +115,7 @@ class Utilities {
                     div.addClass("hidden");
                     div.removeClass("popUpMenu");
                     self.sessions.newIssue(this.value);
-                    self._manageIssueUtilities();
+                    self.update();
                 }
                 e.stopPropagation();
             });
@@ -125,18 +125,33 @@ class Utilities {
                 const caretUpIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-up-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/></svg>";
                 const pickerDiv = $("#" + self._sessionPickerDivID);
                 const scrollDiv = $("#" + self._sessionPickerScrollDivID);
-                const button = $("#" + self._sessionPickerButton);
+                const button = $("#" + self._sessionPickerButtonID);
+                console.log(button.position().left);
                 if (scrollDiv.children().length > 1) {
-                    pickerDiv.toggleClass("hidden");
-                    pickerDiv.css("left", String(button.position().left) + "px");
-                    pickerDiv.css("top", String(button.position().top + button.outerHeight()) + "px");
-                    pickerDiv.toggleClass("popUpMenu");
+                    if (pickerDiv.hasClass("hidden")) {
+                        pickerDiv.removeClass("hidden");
+                        pickerDiv.css("left", String(button.position().left) + "px");
+                        pickerDiv.css("top", String(button.position().top + button.outerHeight()) + "px");
+                        pickerDiv.addClass("popUpMenu");
+                    }
+                    else {
+                        pickerDiv.addClass("hidden");
+                        pickerDiv.removeClass("popUpMenu");
+                    }
                 }
+            });
+
+            $("#" + self._sessionPickerDivID).find("button").on("click", function() {
+                const pickerDiv = $("#" + self._sessionPickerDivID);
+                self.sessions.loadSession(this.value);
+                pickerDiv.addClass("hidden");
+                pickerDiv.removeClass("popUpMenu");        
             });
 
             $("#" + self._sessionAddButtonID).on("click", function() {
                 console.log("here");
                 self.sessions.newSession();
+                self.update();
             });
 
             $("#" + self._slideUpButtonID).on("click", function() {
@@ -279,15 +294,16 @@ class Utilities {
             pickerButtonText = selectedIssue;
             if (numIssues > 1) { pickerButtonText += " " + caretDownIcon; }
             pickerButton.html(pickerButtonText);
-
+            div.append("<div style='display: grid'>");
             issues.forEach(function(entry) {
-                code = "<button type='button' class='btn ";
+                code = "<div class = 'row'><button type='button' class='btn ";
                 if (entry == selectedIssue) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
-                code += " btn-sm'>" + entry + "</button>";
+                code += " btn-sm'>" + entry + "</button></div>";
                 div.append(code);
             });
-//            renameButton.attr("disabled", false);
+            div.append("</div>");
+            //            renameButton.attr("disabled", false);
 //            pickerButton.attr("disabled", false);
         }
 //        else {
@@ -321,7 +337,7 @@ class Utilities {
                 code = "<button type='button' class='btn ";
                 if (entry == selectedSession) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
-                code += " btn-sm'>" + self.dateString(entry) + "</button>";
+                code += " btn-sm' value = '" + entry + "'>" + self.dateString(entry) + "</button>";
                 div.append(code);
             });
         }

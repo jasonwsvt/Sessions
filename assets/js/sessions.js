@@ -20,6 +20,7 @@ class Sessions {
 
         session = this.data.mostRecentSession();
         if (Number(session)) { this.loadSession(session); } else { this.newSession(); }
+        this.utilities.update();
         
         this._buttons.adjustDivHeights();
 
@@ -63,7 +64,6 @@ class Sessions {
         this._currentSession = session;
         this._currentIssue = this.data.sessionIssue(session);
         this.session.newSession(this.data.sessionLines(session));
-        this.utilities.update();
     }
 
     newSession() {
@@ -80,12 +80,6 @@ class Sessions {
     renameIssue(issueName) {
         this.data.renameIssue(this._currentIssue, issueName);
         this._currentIssue = issueName;
-    }
-
-    newSession() {
-        if (this._currentIssue == null) { this._currentIssue = "Unspecified"; }
-        this.lines.newLinesArray([]);
-        this.storeSession();
     }
 
     storeSession() {
