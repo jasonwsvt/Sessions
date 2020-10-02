@@ -8,10 +8,12 @@ class Lines {
 
     constructor(cID, linesArray) {
         this._containerID = cID;
+        const self = this;
 
         linesArray.forEach(function(line) {
-            this.div.append(line);
+            self.div.append(line);
         });
+        
         if (this.numLines == 0) {
             this.div.append(this._lineCode);
         }
@@ -20,72 +22,23 @@ class Lines {
     get ID()         { return this._containerID; }
     get div()        { return $("#" + this._containerID); }
 
-    get numLines() {
-        return this.div.children().length;
-    }
-
-    lineExists(i) {
-        return (i >= 0 && i < this.numLines);
-    }
-
-    line(i) {
-        return (this.lineExists(i)) ? this.div.children().eq(i) : null;
-    }
-
-    lineLength(i) {
-        return (this.lineExists(i)) ? this.line(i).children().length : null;
-    }
-
-    removeLine(i) {
-        if (this.lineExists(i)) { return this.line(i).detach(); }
-    }
-    detachLine(i) {
-        if (this.lineExists(i)) { return this.line(i).children().detach(); }
-    }
-
-    prependToLine(i, e) {
-        if (this.lineExists(i)) { this.line(i).prepend(e); }
-    }
-
-    appendToLine(i, e) {
-        if (this.lineExists(i)) { this.line(i).append($(e)); }
-    }
-
-    insertLineAfter(i) {
-        if (this.lineExists(i)) { this.line(i).after(this._lineCode); }
-    }
-
-    insertLineBefore(i) {
-        if (this.lineExists(i)) { this.line(i).before(this._lineCode); }
-    }
-
-    elementExists(i, x) {
-        return (this.lineExists(i) && x >= 0 && x < this.lineLength(i));
-    }
-
-    element(i, x) {
-        return (this.elementExists(i, x)) ? this.line(i).children().eq(x) : null;
-    }
-
-    removeElement(i, x) {
-        if (this.elementExists(i, x)) { this.line(i).children().eq(x).remove(); }
-    }
-
-    elementsBefore(i, x) {
-        return (this.elementExists(i, x)) ? this.line(i).children().eq(x).prevAll() : null;
-    }
-
-    elementsAfter(i, x) {
-        return (this.elementExists(i, x)) ? this.line(i).children().eq(x).nextAll() : null;
-    }
-
-    insertAfter(i, x, e) {
-        if (this.elementExists(i, x)) { this.line(i).children().eq(x).after(e); }
-    }
-
-    insertBefore(i, x, e) {
-        if (this.elementExists(i, x)) { this.line(i).children().eq(x).before(e); }
-    }
+    get numLines()        { return this.div.children().length; }
+    lineExists(i)         { return (i >= 0 && i < this.numLines); }
+    elementExists(i, x)   { return (this.lineExists(i) && x >= 0 && x < this.lineLength(i)); }
+    line(i)               { return (this.lineExists(i)) ? this.div.children().eq(i) : null; }
+    lineLength(i)         { return (this.lineExists(i)) ? this.line(i).children().length : null; }
+    removeLine(i)         { return (this.lineExists(i)) ? this.line(i).detach() : null; }
+    detachLine(i)         { return (this.lineExists(i)) ? this.line(i).children().detach() : null; }
+    prependToLine(i, e)   { return (this.lineExists(i)) ? this.line(i).prepend(e) : null; }
+    appendToLine(i, e)    { return (this.lineExists(i)) ? this.line(i).append($(e)) : null; }
+    insertLineAfter(i)    { return (this.lineExists(i)) ? this.line(i).after(this._lineCode) : null; }
+    insertLineBefore(i)   { return (this.lineExists(i)) ? this.line(i).before(this._lineCode) : null; }
+    element(i, x)         { return (this.elementExists(i, x)) ? this.line(i).children().eq(x) : null; }
+    elementsBefore(i, x)  { return (this.elementExists(i, x)) ? this.element(i, x).prevAll() : null; }
+    elementsAfter(i, x)   { return (this.elementExists(i, x)) ? this.element(i, x).nextAll() : null; }
+    removeElement(i, x)   { return (this.elementExists(i, x)) ? this.element(i, x).remove() : null; }
+    insertAfter(i, x, e)  { return (this.elementExists(i, x)) ? this.element(i, x).after(e) : null; }
+    insertBefore(i, x, e) { return (this.elementExists(i, x)) ? this.element(i, x).before(e) : null; }
 
     detachElementToEnd(i, x) {
         if (this.elementExists(i, x)) {
@@ -112,7 +65,7 @@ class Lines {
     }
 
     closestIndex(i, width) {
-        var x, rWidth = 0, lWidth = 0;
+        var x, rWidth, lWidth;
         if (this.lineExists(i)) {
             if (this.lineLength(i) == 0) { return 0; }
             for (x = 0; x < this.lineLength(i); x++) {
@@ -133,7 +86,7 @@ class Lines {
     get linesArray() {
         var i, linesArray = [];
         for (var i = 0; i < this.numLines; i++) {
-            linesArray.push(this.line(i).outerHTML);
+            linesArray.push(this.line(i)[0].outerHTML);
         }
         return linesArray;
     }

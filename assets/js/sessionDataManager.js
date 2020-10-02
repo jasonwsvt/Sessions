@@ -30,7 +30,7 @@ class SessionDataManager {
             sortedIssues.push(unsortedIssues.splice(max));
             lastEditeds.splice(max);
         }
-        console.log("pullIssueNames(): " + sortedIssues);
+//        console.log("pullIssueNames(): " + sortedIssues);
         return sortedIssues;
     }
 
@@ -50,10 +50,10 @@ class SessionDataManager {
             for (i = 1; i < unsortedSessions.length; i++) {
                 if (lastEditeds[i] > lastEditeds[max]) { max = i; }
             }
-            sortedSessions.push(unsortedSessions.splice(max));
-            lastEditeds.splice(max);
+            sortedSessions.push(unsortedSessions.splice(max,1));
+            lastEditeds.splice(max,1);
         }
-        console.log("sessions(): " + sortedSessions);
+//        console.log("sessions(): " + sortedSessions);
         return sortedSessions;
     }
 
@@ -85,7 +85,7 @@ class SessionDataManager {
             sortedIssueSessions.push(unsortedIssueSessions.splice(max));
             lastEditeds.splice(max);
         }
-        console.log("IssueSession(): " + sortedIssueSessions);
+        console.log("issueSessions(): " + sortedIssueSessions);
         return sortedIssueSessions;
     }
 
@@ -94,19 +94,23 @@ class SessionDataManager {
     }
 
     session(session) {
+//        console.log("session(" + session + ") - returning " + sessionStorage.getItem(session));
         return JSON.parse(sessionStorage.getItem(session));
     }
 
     sessionIssue(session) {
+//        console.log("sessionIssue(" + session + ") - returning " + this.session(session)[0]);
         return this.session(session)[0];
     }
 
     sessionLastEdited(session) {
+//        console.log("sessionLastEdited(" + session + ") - returning " + this.session(session)[1]);
         return this.session(session)[1];
     }
 
     sessionLines(session) {
-        return sessionStorage.getItem(session)[2];
+//        console.log("sessionLines(" + session + ") - returning " + this.session(session)[2]);
+        return this.session(session)[2];
     }
 
     //sessionName = { creationTimestamp, lastEditedTimestamp, lines } (no username or password)

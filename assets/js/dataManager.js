@@ -74,8 +74,8 @@ class DataManager {
 
     storeSession(creation, lastEdited, issue, lines) {
         this._sessionData.storeSession(creation, lastEdited, issue, lines);
-        if (this._useLocalData) { this._localData.storeSession(); }
-        if (this._useServerData) { this._serverData.storeSession(); }
+        if (this._useLocalData) { this._localData.storeSession(creation, lastEdited, issue, lines); }
+        if (this._useServerData) { this._serverData.storeSession(creation, lastEdited, issue, lines); }
     }
 
     get activateLocalStorage() {

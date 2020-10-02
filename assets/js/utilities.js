@@ -187,8 +187,8 @@ class Utilities {
         var renameButton = $("#" + this._issueRenameButtonID);
         var issues = this.data.issues();
         var selectedIssue = this.data.sessionIssue(this.sessions.sessionName);
-        console.log("issues: " + issues);
-        console.log("selected issue: " + selectedIssue);
+//        console.log("issues: " + issues);
+//        console.log("selected issue: " + selectedIssue);
         var div = $("#" + this._issuePickerScrollDivID);
         div.empty();
         if (issues.length) {

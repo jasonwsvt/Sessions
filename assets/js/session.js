@@ -12,13 +12,14 @@ class Session {
         const self = this;
         this._linesObject = new Lines(linesID, linesArray);
         this._cursor = new Cursor(this.lines);
+        this.setLastEdited();
 
         $(document).ready(function() {
             Mousetrap.bind(['tab'], function(e)       { self.indentLine;  return false; });
             Mousetrap.bind(['shift+tab'], function(e) { self.outdentLine; return false; });
     
             $(document).on("keyup", function(e) {
-                self.setLastEdited(Math.floor(Date.now() / 1000));
+                self.setLastEdited();
 
                 if (e.key === "Enter" && self.cursorLineIndex > 0) {
                     self.lines.line(self.cursorLineIndex).css("paddingLeft", 
@@ -30,7 +31,7 @@ class Session {
     }
 
     get lastEdited()         { return this._lastEditedTimestamp; }
-    setLastEdited(ts)        { this._lastEditedTimestamp = ts; }
+    setLastEdited()          { this._lastEditedTimestamp = Math.floor(Date.now() / 1000); }
     get creation()           { return this._creationTimestamp; }
     get lines()              { return this._linesObject; }
     get cursorLineIndex()    { return this._cursor.lineIndex; }

@@ -18,7 +18,8 @@ class Sessions {
         this._utilities = new Utilities(this._utilitiesID, this._dataManager, this);
 
         session = this._dataManager.mostRecentSession();
-        this.loadSession((Number.isInteger(session)) ? session : "New");
+        console.log("most recent session: " + session);
+        this.loadSession((Number(session)) ? session : "New");
         
         this._buttons.adjustDivHeights();
 
@@ -41,6 +42,7 @@ class Sessions {
     get lines()       { return this._sessionObject.lines; }
     get sessionName() { return this._currentSession; }
     get issueName()   { return this._currentIssue; }
+    get data()        { return this._dataManager; }
 
     createContainers() {
         var utilitiesCode, linesCode, buttonsContainer, buttonsNavCode, buttonsCode;
@@ -55,7 +57,7 @@ class Sessions {
     }
 
     loadSession(session) {
-        if (!Number.isInteger(session)) {
+        if (!Number(session)) {
             this._currentSession = Math.floor(Date.now() / 1000);
             this._currentIssue = "Unspecified";
             this._sessionObject = new Session(this._linesID, []);
@@ -63,14 +65,18 @@ class Sessions {
         }
         else {
             this._currentSession = session;
-            this._currentIssue = sessionIssue(session);
-            this._sessionObject = new Session(this._linesID, this._dataManager.sessionLines(session));
+            this._currentIssue = this.data.sessionIssue(session);
+            this._sessionObject = new Session(this._linesID, this.data.sessionLines(session));
         }
         this._utilities.update();
     }
 
     storeSession() {
-        this._dataManager.storeSession(this.sessionName, 
+        console.log("session name: " + this.sessionName);
+        console.log("this.session.lastEdited: " + this.session.lastEdited);
+        console.log("this.issueName: " + this.issueName);
+        console.log("this.lines.linesArray: " + this.lines.linesArray);
+        this.data.storeSession(this.sessionName, 
                                        this.session.lastEdited,
                                        this.issueName,
                                        this.lines.linesArray);
