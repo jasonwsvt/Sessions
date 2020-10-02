@@ -62,8 +62,14 @@ class Sessions {
         if (this.currentSession) { this.storeSession(); }
         this._currentSession = session;
         this._currentIssue = this.data.sessionIssue(session);
-        this.lines.newLinesArray(this.data.sessionLines(session));
+        this.session.newSession(this.data.sessionLines(session));
         this.utilities.update();
+    }
+
+    newSession() {
+        if (this._currentIssue == null) { this._currentIssue = "Unspecified"; }
+        this.session.newSession([]);
+        this.storeSession();
     }
 
     newIssue(newIssue) {
@@ -77,7 +83,6 @@ class Sessions {
     }
 
     newSession() {
-        this._currentSession = Math.floor(Date.now() / 1000);
         if (this._currentIssue == null) { this._currentIssue = "Unspecified"; }
         this.lines.newLinesArray([]);
         this.storeSession();
