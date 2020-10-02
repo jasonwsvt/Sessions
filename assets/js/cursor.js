@@ -11,7 +11,7 @@ class Cursor {
     constructor(linesObject) {
         const self = this;
         this._linesObject = linesObject;
-        if (!this.cursor.length) { this.lines.appendToLine(0, this._cursorCode); }
+        this.checkForCursor();
 
         $(document).ready(function() {
             Mousetrap.bind(['up'], function(e)        { self.up;          return false; });
@@ -37,6 +37,7 @@ class Cursor {
 
     get lineIndex() { return this._lineIndex; }
     get elementIndex() { return this._cursorIndex; }
+    checkForCursor() { console.log("Checking for cursor..."); if (!this.cursor.length) { console.log("cursor found"); this.lines.appendToLine(0, this._cursorCode); } }
 
     get _prevElementIndex()  { return this._cursorIndex - 1; }
     get _prevElementExists() { return this.lines.elementExists(this._lineIndex, this._prevElementIndex); }

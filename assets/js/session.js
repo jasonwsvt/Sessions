@@ -34,8 +34,9 @@ class Session {
     setLastEdited()          { this._lastEditedTimestamp = Math.floor(Date.now() / 1000); }
     get creation()           { return this._creationTimestamp; }
     get lines()              { return this._linesObject; }
-    get cursorLineIndex()    { return this._cursor.lineIndex; }
-    get cursorElementIndex() { return this._cursor.elementIndex; }
+    get cursor()             { return this._cursor; }
+    get cursorLineIndex()    { return this.cursor.lineIndex; }
+    get cursorElementIndex() { return this.cursor.elementIndex; }
 
     insertButton(e) {
         console.log(this.cursorLineIndex + " " + this.cursorElementIndex + " " + e);
@@ -70,7 +71,8 @@ class Session {
     }
 
     newSession(linesArray) {
+        console.log("linesArray: " + linesArray);
         this.lines.newLinesArray(linesArray);
-        if (!this._cursor.cursor.length) { this.lines.prependToLine(0, this._cursorCode); }
+        this.cursor.checkForCursor();
     }
 }

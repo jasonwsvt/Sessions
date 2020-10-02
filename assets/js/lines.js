@@ -77,7 +77,9 @@ class Lines {
 
     get linesArray() {
         var i, linesArray = [];
+        console.log(this.numLines);
         for (var i = 0; i < this.numLines; i++) {
+            console.log(i + " " + this.line(i)[0].outerHTML);
             linesArray.push(this.line(i)[0].outerHTML);
         }
         return linesArray;
@@ -86,13 +88,13 @@ class Lines {
     newLinesArray(linesArray) {
         const self = this;
         this.div.empty();
-        linesArray.forEach(function(line) {
+        linesArray.forEach(function(line, index) {
+            console.log(index + " " + line);
             self.div.append(line);
         });
-
+        console.log("numLines: " + this.numLines);
         if (this.numLines == 0) {
             this.div.append(this._lineCode);
         }
-
     }
 }
