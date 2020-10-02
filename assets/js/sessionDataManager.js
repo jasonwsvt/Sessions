@@ -103,6 +103,19 @@ class SessionDataManager {
         return this.session(session)[0];
     }
 
+    renameIssue(oldIssue, newIssue) {
+        const sessionKeys = Object.keys(sessionStorage);
+        var session, sessionName, i;
+
+        for (i = 0; i < sessionKeys.length; i++) {
+            sessionName = sessionKeys[i];
+            session = this.session(sessionName);
+            if (session[0] == oldIssue) {
+                this.storeSession(sessionName, session[1], newIssue, session[2]);
+            }
+        }
+    }
+
     sessionLastEdited(session) {
 //        console.log("sessionLastEdited(" + session + ") - returning " + this.session(session)[1]);
         return this.session(session)[1];

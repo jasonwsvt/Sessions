@@ -40,9 +40,10 @@ class Sessions {
 
     get session()     { return this._sessionObject; }
     get lines()       { return this._sessionObject.lines; }
+    get data()        { return this._dataManager; }
+    get buttons()     { return this._buttons; }
     get sessionName() { return this._currentSession; }
     get issueName()   { return this._currentIssue; }
-    get data()        { return this._dataManager; }
 
     createContainers() {
         var utilitiesCode, linesCode, buttonsContainer, buttonsNavCode, buttonsCode;
@@ -57,6 +58,9 @@ class Sessions {
     }
 
     loadSession(session) {
+        if (this._currentSession) {
+            this.storeSession();
+        }
         if (!Number(session)) {
             this._currentSession = Math.floor(Date.now() / 1000);
             this._currentIssue = "Unspecified";
@@ -76,5 +80,10 @@ class Sessions {
                                this.session.lastEdited,
                                this.issueName,
                                this.lines.linesArray);
+    }
+
+    renameIssue(issueName) {
+        this.data.renameIssue(this._currentIssue, issueName);
+        this._currentIssue = issueName;
     }
 }

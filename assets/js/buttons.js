@@ -22,12 +22,12 @@ class Buttons {
 
         $(document).ready(function() {
             $('[data-toggle="popover"]').popover({
-                placement : 'top',
-                trigger : 'hover',
+                placement: 'top',
+                trigger: 'hover',
                 delay: { 
-                    show: "500", 
+                    show: "500",
                     hide: "100"
-                },
+                }
             });
 
             $("#" + buttonsNavID + " button").on("click", function(e) {

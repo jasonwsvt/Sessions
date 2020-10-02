@@ -72,6 +72,10 @@ class DataManager {
         return this._sessionData.sessionIssue(session);
     }
 
+    renameIssue(oldIssue, newIssue) {
+        this._sessionData.renameIssue(oldIssue, newIssue);
+    }
+
     storeSession(creation, lastEdited, issue, lines) {
         this._sessionData.storeSession(creation, lastEdited, issue, lines);
         if (this._useLocalData) { this._localData.storeSession(creation, lastEdited, issue, lines); }

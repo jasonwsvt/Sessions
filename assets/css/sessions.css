@@ -14,16 +14,15 @@
     justify-content: space-between;
 }
 
-.utilityDiv {
+.popUpMenu {
     z-index: 1;
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 400px;
     display: block;
     visibility: visible;
     transition-property: display, visibility;
     transition-duration: .4s;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
 }
 
 #cursor {
