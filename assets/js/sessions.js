@@ -22,7 +22,7 @@ class Sessions {
         if (Number(session)) { this.loadSession(session); } else { this.newSession(); }
         this.utilities.update();
         
-        this._buttons.adjustDivHeights();
+        this.buttons.adjustDivHeights();
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
@@ -72,7 +72,15 @@ class Sessions {
         this.storeSession();
     }
 
+    loadMostRecentSessionForIssue(issue) {
+        this.storeSession();
+        this._currentIssue = issue;
+        this._currentSession = this.data.mostRecentIssueSession(issue);
+        this.loadSession(this.sessionName);
+    }
+
     newIssue(newIssue) {
+        this.storeSession();
         this._currentIssue = newIssue;
         this.newSession();
     }

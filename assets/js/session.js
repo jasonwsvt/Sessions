@@ -71,7 +71,6 @@ class Session {
     }
 
     newSession(linesArray) {
-        console.log("linesArray: " + linesArray);
         this.lines.newLinesArray(linesArray);
         this.cursor.checkForCursor();
     }

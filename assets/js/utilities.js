@@ -12,6 +12,7 @@ class Utilities {
     _issuePickerButtonID = "issuePickerButton";
     _issuePickerDivID = "issuePickerDiv";
     _issuePickerSearchID = "issuePickerSearch";
+    _issuePickerInputID = "issuePickerInput";
     _issuePickerScrollDivID = "issuePickerScrollDiv";
     _issueRenameButtonID = "issueRenameButton";
     _issueRenameDivID = "issueRenameDiv";
@@ -60,12 +61,56 @@ class Utilities {
                 const pickerDiv = $("#" + self._issuePickerDivID);
                 const scrollDiv = $("#" + self._issuePickerScrollDivID);
                 const button = $("#" + self._issuePickerButtonID);
-                if (scrollDiv.children().length > 1) {
-                    pickerDiv.toggleClass("hidden");
-                    pickerDiv.css("left", String(button.position().left) + "px");
-                    pickerDiv.css("top", String(button.position().top + button.outerHeight()) + "px");
-                    pickerDiv.toggleClass("popUpMenu");
+                const input = $("#" + self._issuePickerInputID);
+                if (scrollDiv.children().eq(0).children().length > 1) {
+                    if (pickerDiv.hasClass("hidden")) {
+                        button.html(self.sessions.issueName + " " + caretUpIcon);
+                        pickerDiv.removeClass("hidden");
+                        pickerDiv.css("left", String(button.position().left) + "px");
+                        pickerDiv.css("top", String(button.position().top + button.outerHeight()) + "px");
+                        pickerDiv.addClass("popUpMenu");
+                        input.focus();
+                        }
+                    else {
+                        button.html(self.sessions.issueName + " " + caretDownIcon);
+                        pickerDiv.addClass("hidden");
+                        pickerDiv.removeClass("popUpMenu");
+                    }
                 }
+            });
+
+            $("#" + self._issuePickerDivID).find("button").on("click", function() {
+                const pickerDiv = $("#" + self._issuePickerDivID);
+                self.sessions.loadMostRecentSessionForIssue(this.value);
+                pickerDiv.addClass("hidden");
+                pickerDiv.removeClass("popUpMenu");
+            });
+
+            $("#" + self._issuePickerInputID).on("keypress", function(e) {
+                //hide issuePickerScrollDiv buttons that don't match search
+                const scrollDiv = $("#" + self._issuePickerScrollDivID);
+                const rows = scrollDiv.find(".row");
+                var i, searchValue = $(this).val();
+                if (e.key == "Backspace") { searchValue = searchValue.slice(0, -1); }
+                if (e.key.match(/^[0-9a-x]+$/)) { searchValue = searchValue + e.key; }
+                for (i = 0; i < rows.length; i++) {
+                    var button = rows.eq(i).find("button");
+                    console.log(button.text() + " includes " + searchValue + ": " + (button.text().includes(searchValue)));
+                    if (!button.text().includes(searchValue)) {
+                        button.parent().addClass("hidden");
+                    }
+                    else {
+                        if (button.parent().hasClass("hidden")) {
+                            button.parent().removeClass("hidden");
+                        }
+                    }
+                }
+                e.stopPropagation();
+            });
+
+            $("#" + self._issuePickerDivID).on("focusout", function() {
+                $(this).addClass("hidden");
+                $(this).removeClass("popUpMenu");
             });
 
             $("#" + self._issueRenameButtonID).on("click", function() {
@@ -87,9 +132,7 @@ class Utilities {
             });
 
             $("#" + self._issueRenameInputID).on("keypress", function(e) {
-                const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
                 const div = $("#" + self._issueRenameDivID);
-                const pickerButton = $("#" + self._issuePickerButtonID);
                 if (e.key == "Enter") {
                     div.addClass("hidden");
                     div.removeClass("popUpMenu");
@@ -99,13 +142,26 @@ class Utilities {
                 e.stopPropagation();
             });
 
+            $("#" + self._issueRenameDivID).on("focusout", function() {
+                $(this).addClass("hidden");
+                $(this).removeClass("popUpMenu");
+            });
+
             $("#" + self._issueAddButtonID).on("click", function() {
                 const div = $("#" + self._issueAddDivID)
                 const button = $("#" + self._issueAddButtonID);
-                div.toggleClass("hidden");
-                div.css("left", String(button.position().left) + "px");
-                div.css("top", String(button.position().top + button.outerHeight()) + "px");
-                div.toggleClass("popUpMenu");
+                const input = $("#" + self._issueAddInputID);
+                if (div.hasClass("hidden")) {
+                    div.removeClass("hidden");
+                    div.css("left", String(button.position().left) + "px");
+                    div.css("top", String(button.position().top + button.outerHeight()) + "px");
+                    div.addClass("popUpMenu");
+                    input.focus();
+                }
+                else {
+                    div.addClass("hidden");
+                    div.removeClass("popUpMenu");
+                }
             });
 
             $("#" + self._issueAddInputID).on("keypress", function(e) {
@@ -120,21 +176,27 @@ class Utilities {
                 e.stopPropagation();
             });
 
+            $("#" + self._issueAddDivID).on("focusout", function() {
+                $(this).addClass("hidden");
+                $(this).removeClass("popUpMenu");
+            });
+
             $("#" + self._sessionPickerButtonID).on("click", function() {
                 const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
                 const caretUpIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-up-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/></svg>";
                 const pickerDiv = $("#" + self._sessionPickerDivID);
                 const scrollDiv = $("#" + self._sessionPickerScrollDivID);
                 const button = $("#" + self._sessionPickerButtonID);
-                console.log(button.position().left);
-                if (scrollDiv.children().length > 1) {
+                if (scrollDiv.children().eq(0).children().length > 1) {
                     if (pickerDiv.hasClass("hidden")) {
+                        button.html(self.dateString(self.sessions.sessionName) + " " + caretUpIcon);
                         pickerDiv.removeClass("hidden");
                         pickerDiv.css("left", String(button.position().left) + "px");
                         pickerDiv.css("top", String(button.position().top + button.outerHeight()) + "px");
                         pickerDiv.addClass("popUpMenu");
                     }
                     else {
+                        button.html(self.dateString(self.sessions.sessionName) + " " + caretDownIcon);
                         pickerDiv.addClass("hidden");
                         pickerDiv.removeClass("popUpMenu");
                     }
@@ -146,6 +208,11 @@ class Utilities {
                 self.sessions.loadSession(this.value);
                 pickerDiv.addClass("hidden");
                 pickerDiv.removeClass("popUpMenu");        
+            });
+
+            $("#" + self._sessionPickerDivID).on("focusout", function() {
+                $(this).addClass("hidden");
+                $(this).removeClass("popUpMenu");
             });
 
             $("#" + self._sessionAddButtonID).on("click", function() {
@@ -237,7 +304,7 @@ class Utilities {
 
         const issuePickerButton = "<button id = '" + this._issuePickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const issuePickerDiv = "<div id = '" + this._issuePickerDivID + "' class = 'hidden'></div>";
-        const issuePickerSearchInput = searchIcon + "<input id = '" + this._issuePickerInputID + "' placeholder = 'search'>";
+        const issuePickerSearchInput = "<input id = '" + this._issuePickerInputID + "' placeholder = 'search'> " + searchIcon;
         const issuePickerScrollDiv = "<div id = '" + this._issuePickerScrollDivID + "'></div>";
 
         const issueRenameButton = "<button id = '" + this._issueRenameButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
@@ -245,7 +312,7 @@ class Utilities {
         const issueRenameInput = "<input id = '" + this._issueRenameInputID + "' placeholder = 'rename the selected issue' size = '50'>";
 
         const issueAddButton = "<button id = '" + this._issueAddButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
-        const issueAddDiv = "<div id = '" + this._issueRenameDivID + "' class = 'hidden'></div>";
+        const issueAddDiv = "<div id = '" + this._issueAddDivID + "' class = 'hidden'></div>";
         const issueAddInput = "<input id = '" + this._issueAddInputID + "' placeholder = 'add a new issue'>";
 
         const sessionPickerButton = "<button id = '" + this._sessionPickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
@@ -294,15 +361,15 @@ class Utilities {
             pickerButtonText = selectedIssue;
             if (numIssues > 1) { pickerButtonText += " " + caretDownIcon; }
             pickerButton.html(pickerButtonText);
-            div.append("<div style='display: grid'>");
+            code = "<div style = 'display: grid'>";
             issues.forEach(function(entry) {
-                code = "<div class = 'row'><button type='button' class='btn ";
+                code += "<div class = 'row'><button type='button' class='btn ";
                 if (entry == selectedIssue) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
                 code += " btn-sm'>" + entry + "</button></div>";
-                div.append(code);
             });
-            div.append("</div>");
+            code += "</div>";
+            div.append(code);
             //            renameButton.attr("disabled", false);
 //            pickerButton.attr("disabled", false);
         }
@@ -335,7 +402,7 @@ class Utilities {
 
             sessions.forEach(function(entry) {
                 code = "<button type='button' class='btn ";
-                if (entry == selectedSession) { code += "btn-info"; }
+                if (String(entry) == String(selectedSession)) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
                 code += " btn-sm' value = '" + entry + "'>" + self.dateString(entry) + "</button>";
                 div.append(code);

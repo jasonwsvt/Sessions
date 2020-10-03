@@ -19,19 +19,24 @@
     position: absolute;
     display: block;
     visibility: visible;
+    max-height: 200px;
     transition-property: display, visibility;
     transition-duration: .4s;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     padding: 12px 16px;
 }
 
-.popUpMenu div {
+.popUpMenu > div {
     display: flex;
     flex-direction: column;
     flex: 0 0 auto;
     width: auto;
-    height: 200px;
     overflow-y: auto;
+}
+
+.popUpMenu > div > div > .row {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
 }
 
 #cursor {
