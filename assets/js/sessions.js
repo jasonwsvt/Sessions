@@ -60,9 +60,11 @@ class Sessions {
     }
 
     loadSession(session) {
-        if (this.currentSession) { this.storeSession(); }
+        if (this.sessionName) { this.storeSession(); }
+        console.log("loadSession: " + this.sessionName + " -> " + session + " (" + this.data.sessionIssue(session) + ")");
         this._currentSession = session;
         this._currentIssue = this.data.sessionIssue(session);
+        console.log("")
         this.session.newSession(this.data.sessionLines(session));
     }
 

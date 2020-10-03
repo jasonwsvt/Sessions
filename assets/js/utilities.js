@@ -62,7 +62,9 @@ class Utilities {
                 const scrollDiv = $("#" + self._issuePickerScrollDivID);
                 const button = $("#" + self._issuePickerButtonID);
                 const input = $("#" + self._issuePickerInputID);
-                if (scrollDiv.children().eq(0).children().length > 1) {
+                const rows = scrollDiv.find(".row");
+                console.log(self._issuePickerButtonID + " click (buttons: " + rows.length + ")");
+                if (rows.length > 1) {
                     if (pickerDiv.hasClass("hidden")) {
                         button.html(self.sessions.issueName + " " + caretUpIcon);
                         pickerDiv.removeClass("hidden");
@@ -75,16 +77,10 @@ class Utilities {
                         button.html(self.sessions.issueName + " " + caretDownIcon);
                         pickerDiv.addClass("hidden");
                         pickerDiv.removeClass("popUpMenu");
+                        pickerDiv.blur();
+                        button.blur();
                     }
                 }
-            });
-
-            $("#" + self._issuePickerScrollDivID).find("button").on("click", function() {
-                const pickerDiv = $("#" + self._issuePickerDivID);
-                console.log("got here");
-                self.sessions.loadMostRecentSessionForIssue(this.value);
-                pickerDiv.addClass("hidden");
-                pickerDiv.removeClass("popUpMenu");
             });
 
             $("#" + self._issuePickerInputID).on("keypress", function(e) {
@@ -110,12 +106,25 @@ class Utilities {
                 e.stopPropagation();
             });
 
+            $("#" + self._issuePickerScrollDivID + " button").on("click", function() {
+                const pickerDiv = $("#" + self._issuePickerDivID);
+                const button = $("#" + self._issuePickerButtonID);
+                console.log(self._issuePickerScrollDivID + " button click");
+                self.sessions.loadMostRecentSessionForIssue(this.value);
+                pickerDiv.addClass("hidden");
+                pickerDiv.removeClass("popUpMenu");
+                pickerDiv.blur();
+                button.blur();
+            });
+
             $("#" + self._issuePickerDivID).on("focusout", function() {
                 const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
                 const button = $("#" + self._issuePickerButtonID);
+                console.log(self._issuePickerDivID + " focusout");
                 button.html(self.sessions.issueName + " " + caretDownIcon);
                 $(this).addClass("hidden");
                 $(this).removeClass("popUpMenu");
+                button.blur();
             });
 
             $("#" + self._issueRenameButtonID).on("click", function() {
@@ -133,23 +142,30 @@ class Utilities {
                 else {
                     div.addClass("hidden");
                     div.removeClass("popUpMenu");
+                    div.blur();
+                    button.blur();
                 }
             });
 
             $("#" + self._issueRenameInputID).on("keypress", function(e) {
                 const div = $("#" + self._issueRenameDivID);
+                const button = $("#" + self._issueRenameButtonID);
                 if (e.key == "Enter") {
                     div.addClass("hidden");
                     div.removeClass("popUpMenu");
                     self.sessions.renameIssue(this.value);
                     self._manageIssueUtilities();
+                    div.blur();
+                    button.blur();
                 }
                 e.stopPropagation();
             });
 
             $("#" + self._issueRenameDivID).on("focusout", function() {
+                const button = $("#" + self._issueRenameButtonID);
                 $(this).addClass("hidden");
                 $(this).removeClass("popUpMenu");
+                button.blur();
             });
 
             $("#" + self._issueAddButtonID).on("click", function() {
@@ -166,24 +182,30 @@ class Utilities {
                 else {
                     div.addClass("hidden");
                     div.removeClass("popUpMenu");
+                    div.blur();
+                    button.blur();
                 }
             });
 
             $("#" + self._issueAddInputID).on("keypress", function(e) {
                 const div = $("#" + self._issueAddDivID);
-                const pickerButton = $("#" + self._issuePickerButtonID);
+                const button = $("#" + self._issueAddButtonID);
                 if (e.key == "Enter") {
                     div.addClass("hidden");
                     div.removeClass("popUpMenu");
                     self.sessions.newIssue(this.value);
                     self.update();
+                    div.blur();
+                    button.blur();
                 }
                 e.stopPropagation();
             });
 
             $("#" + self._issueAddDivID).on("focusout", function() {
+                const button = $("#" + self._issueAddButtonID);
                 $(this).addClass("hidden");
                 $(this).removeClass("popUpMenu");
+                button.blur();
             });
 
             $("#" + self._sessionPickerButtonID).on("click", function() {
@@ -192,34 +214,40 @@ class Utilities {
                 const pickerDiv = $("#" + self._sessionPickerDivID);
                 const scrollDiv = $("#" + self._sessionPickerScrollDivID);
                 const button = $("#" + self._sessionPickerButtonID);
-                if (scrollDiv.children().length > 1) {
+                const buttons = scrollDiv.find("button");
+                console.log(self._sessionPickerButtonID + " click (buttons: " + buttons.length + ")");
+                if (buttons.length > 1) {
                     if (pickerDiv.hasClass("hidden")) {
                         button.html(self.dateString(self.sessions.sessionName) + " " + caretUpIcon);
                         pickerDiv.removeClass("hidden");
                         pickerDiv.css("left", String(button.position().left) + "px");
                         pickerDiv.css("top", String(button.position().top + button.outerHeight()) + "px");
                         pickerDiv.addClass("popUpMenu");
+                        pickerDiv.focus();
                     }
                     else {
                         button.html(self.dateString(self.sessions.sessionName) + " " + caretDownIcon);
                         pickerDiv.addClass("hidden");
                         pickerDiv.removeClass("popUpMenu");
+                        button.blur();
                     }
                 }
             });
 
-            $("#" + self._sessionPickerDivID).find("button").on("click", function() {
+            $("#" + self._sessionPickerScrollDivID + " button").on("click", function() {
                 const pickerDiv = $("#" + self._sessionPickerDivID);
+                console.log("sessionPickerScrollDiv button click: loading " + this.value);
                 self.sessions.loadSession(this.value);
                 pickerDiv.addClass("hidden");
                 pickerDiv.removeClass("popUpMenu");  
-                self._manageSessionUtilities();      
+                self._manageSessionUtilities();
+                pickerDiv.blur();
             });
 
             $("#" + self._sessionPickerDivID).on("focusout", function() {
                 const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
                 const button = $("#" + self._sessionPickerButtonID);
-                console.log("got here");
+                console.log("sessionPickerDiv focusout " + $(this));
                 button.html(self.dateString(self.sessions.sessionName) + " " + caretDownIcon);
                 $(this).addClass("hidden");
                 $(this).removeClass("popUpMenu");
@@ -228,6 +256,7 @@ class Utilities {
             $("#" + self._sessionAddButtonID).on("click", function() {
                 self.sessions.newSession();
                 self.update();
+                $(this).blur();
             });
 
             $("#" + self._slideUpButtonID).on("click", function() {
