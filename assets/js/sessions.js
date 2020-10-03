@@ -68,6 +68,7 @@ class Sessions {
 
     newSession() {
         if (this._currentIssue == null) { this._currentIssue = "Unspecified"; }
+        this._currentSession = Math.floor(Date.now() / 1000);
         this.session.newSession([]);
         this.storeSession();
     }

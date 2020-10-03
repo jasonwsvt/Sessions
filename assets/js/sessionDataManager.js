@@ -27,10 +27,10 @@ class SessionDataManager {
             for (i = 1; i < unsortedIssues.length; i++) {
                 if (lastEditeds[i] > lastEditeds[max]) { max = i; }
             }
-            sortedIssues.push(unsortedIssues.splice(max));
-            lastEditeds.splice(max);
+            sortedIssues.push(unsortedIssues[max]);
+            unsortedIssues.splice(max,1);
+            lastEditeds.splice(max,1);
         }
-//        console.log("pullIssueNames(): " + sortedIssues);
         return sortedIssues;
     }
 
@@ -50,7 +50,8 @@ class SessionDataManager {
             for (i = 1; i < unsortedSessions.length; i++) {
                 if (lastEditeds[i] > lastEditeds[max]) { max = i; }
             }
-            sortedSessions.push(unsortedSessions.splice(max,1));
+            sortedSessions.push(unsortedSessions[max]);
+            unsortedSessions.splice(max,1);
             lastEditeds.splice(max,1);
         }
 //        console.log("sessions(): " + sortedSessions);
@@ -86,10 +87,10 @@ class SessionDataManager {
             for (i = 1; i < unsortedIssueSessions.length; i++) {
                 if (lastEditeds[i] > lastEditeds[max]) { max = i; }
             }
-            sortedIssueSessions.push(unsortedIssueSessions.splice(max));
-            lastEditeds.splice(max);
+            sortedIssueSessions.push(unsortedIssueSessions[max]);
+            unsortedIssueSessions.splice(max,1);
+            lastEditeds.splice(max,1);
         }
-//        console.log("issueSessions(): " + sortedIssueSessions);
         return sortedIssueSessions;
     }
 

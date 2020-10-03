@@ -79,8 +79,9 @@ class Utilities {
                 }
             });
 
-            $("#" + self._issuePickerDivID).find("button").on("click", function() {
+            $("#" + self._issuePickerScrollDivID).find("button").on("click", function() {
                 const pickerDiv = $("#" + self._issuePickerDivID);
+                console.log("got here");
                 self.sessions.loadMostRecentSessionForIssue(this.value);
                 pickerDiv.addClass("hidden");
                 pickerDiv.removeClass("popUpMenu");
@@ -97,7 +98,6 @@ class Utilities {
                 var i;
                 for (i = 0; i < rows.length; i++) {
                     var button = rows.eq(i).find("button");
-                    console.log(button.text() + " includes " + $(this).val() + ": " + (button.text().includes($(this).val())));
                     if (!button.text().includes($(this).val())) {
                         button.parent().addClass("hidden");
                     }
@@ -111,6 +111,9 @@ class Utilities {
             });
 
             $("#" + self._issuePickerDivID).on("focusout", function() {
+                const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
+                const button = $("#" + self._issuePickerButtonID);
+                button.html(self.sessions.issueName + " " + caretDownIcon);
                 $(this).addClass("hidden");
                 $(this).removeClass("popUpMenu");
             });
@@ -189,7 +192,7 @@ class Utilities {
                 const pickerDiv = $("#" + self._sessionPickerDivID);
                 const scrollDiv = $("#" + self._sessionPickerScrollDivID);
                 const button = $("#" + self._sessionPickerButtonID);
-                if (scrollDiv.children().eq(0).children().length > 1) {
+                if (scrollDiv.children().length > 1) {
                     if (pickerDiv.hasClass("hidden")) {
                         button.html(self.dateString(self.sessions.sessionName) + " " + caretUpIcon);
                         pickerDiv.removeClass("hidden");
@@ -209,16 +212,20 @@ class Utilities {
                 const pickerDiv = $("#" + self._sessionPickerDivID);
                 self.sessions.loadSession(this.value);
                 pickerDiv.addClass("hidden");
-                pickerDiv.removeClass("popUpMenu");        
+                pickerDiv.removeClass("popUpMenu");  
+                self._manageSessionUtilities();      
             });
 
             $("#" + self._sessionPickerDivID).on("focusout", function() {
+                const caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
+                const button = $("#" + self._sessionPickerButtonID);
+                console.log("got here");
+                button.html(self.dateString(self.sessions.sessionName) + " " + caretDownIcon);
                 $(this).addClass("hidden");
                 $(this).removeClass("popUpMenu");
             });
 
             $("#" + self._sessionAddButtonID).on("click", function() {
-                console.log("here");
                 self.sessions.newSession();
                 self.update();
             });
