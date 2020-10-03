@@ -87,16 +87,18 @@ class Utilities {
             });
 
             $("#" + self._issuePickerInputID).on("keypress", function(e) {
+                e.stopPropagation();
+            });
+
+            $("#" + self._issuePickerInputID).on("keyup", function(e) {
                 //hide issuePickerScrollDiv buttons that don't match search
                 const scrollDiv = $("#" + self._issuePickerScrollDivID);
                 const rows = scrollDiv.find(".row");
-                var i, searchValue = $(this).val();
-                if (e.key == "Backspace") { searchValue = searchValue.slice(0, -1); }
-                if (e.key.match(/^[0-9a-x]+$/)) { searchValue = searchValue + e.key; }
+                var i;
                 for (i = 0; i < rows.length; i++) {
                     var button = rows.eq(i).find("button");
-                    console.log(button.text() + " includes " + searchValue + ": " + (button.text().includes(searchValue)));
-                    if (!button.text().includes(searchValue)) {
+                    console.log(button.text() + " includes " + $(this).val() + ": " + (button.text().includes($(this).val())));
+                    if (!button.text().includes($(this).val())) {
                         button.parent().addClass("hidden");
                     }
                     else {
