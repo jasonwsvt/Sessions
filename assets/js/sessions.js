@@ -20,7 +20,7 @@ class Sessions {
 
         session = this.data.mostRecentSession();
         if (Number(session)) { this.loadSession(session); } else { this.newSession(); }
-        this.utilities.update();
+        this.utilities.manage();
         
         this.buttons.adjustDivHeights();
 
