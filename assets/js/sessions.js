@@ -31,6 +31,7 @@ class Sessions {
 
             $("#" + self._buttonsID + " button").on("click", function(e) {
                 self.session.insertButton("<button type='button' class='btn btn-light'>" + $(this).text() + "</button>");
+                $(this).blur();
             });
 
             $(window).resize(function() {
