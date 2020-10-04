@@ -49,7 +49,7 @@ class SessionUtilities {
                 self.sessions.loadSession(this.value);
                 pickerDiv.addClass("hidden");
                 pickerDiv.removeClass("popUpMenu");  
-                self._manageSessionUtilities();
+                self.manage();
                 pickerDiv.blur();
             });
 
@@ -88,6 +88,7 @@ class SessionUtilities {
         
         element.append(sessionPickerButton + sessionPickerDiv + sessionAddButton);
         $("#" + this._sessionPickerDivID).append(sessionPickerScrollDiv);
+        $("#" + this._sessionPickerScrollDivID).css("height", "175px");
     }
 
     manage() {
@@ -96,8 +97,8 @@ class SessionUtilities {
         const pickerButton = $("#" + this._sessionPickerButtonID);
         const addButton = $("#" + this._sessionAddButtonID);
         const selectedSession = this.sessions.sessionName;
-        const selectedIssue = this.data.sessionIssue(selectedSession);
-        const sessions = this.data.issueSessions(this.data.sessionIssue(selectedSession));
+        const selectedIssue = this.sessions.issueName;
+        const sessions = this.data.issueSessions(selectedIssue);
         const div = $("#" + this._sessionPickerScrollDivID);
         const self = this;
         var code, sessionPickerText;
@@ -109,6 +110,7 @@ class SessionUtilities {
 
             sessions.forEach(function(entry) {
                 code = "<button type='button' class='btn ";
+                console.log(entry + " " + selectedSession + " " + (String(entry) == String(selectedSession)));
                 if (String(entry) == String(selectedSession)) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
                 code += " btn-sm' value = '" + entry + "'>" + self.dateString(entry) + "</button>";
