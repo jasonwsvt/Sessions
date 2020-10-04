@@ -60,6 +60,10 @@ class IssueUtilities {
                 e.stopPropagation();
             });
 
+            self._pickerSearchInput.on("click", function(e) {
+                e.stopPropagation();
+            });
+
             self._pickerSearchInput.on("keypress", function(e) {
                 e.stopPropagation();
             });
@@ -76,13 +80,12 @@ class IssueUtilities {
                 e.stopPropagation();
             });
 
-            self._pickerScrollDiv.find("button").on("click", function() {
-                console.log(self._pickerScrollDivID + " button click " + $(this).text());
-                self.sessions.loadMostRecentSessionForIssue($(this).text());
-                self._pickerDiv.addClass("hidden");
-                self._pickerDiv.removeClass("popUpMenu");
-                self._pickerDiv.blur();
-                self._pickerButton.blur();
+            self._pickerScrollDiv.on("click", function(e) {
+                e.stopPropagation();
+            });
+
+            self._pickerDiv.on("click", function(e) {
+                e.stopPropagation();
             });
 
             self._pickerDiv.on("focusout", function() {
@@ -166,6 +169,7 @@ class IssueUtilities {
         });
     }
 
+    get numIssues()          { return this._numRows; }
     get utilities()          { return this._utilities; }
     get div()                { return this.utilities.div; }
     get lines()              { return this.utilities.lines; }
@@ -219,6 +223,7 @@ class IssueUtilities {
 //        const pickerButton = this._pickerButton;
 //        const addButton = this._addButton;
 //        const div = this._pickerScrollDiv;
+        const self = this;
         const issues = this.data.issues();
         const numIssues = issues.length;
         const selectedIssue = this.sessions.issueName;
@@ -238,6 +243,17 @@ class IssueUtilities {
             code += "</div>";
             this._pickerScrollDiv.append(code);
         }
+
+        this._pickerScrollDiv.find("button").on("click", function() {
+            console.log(self._pickerScrollDivID + " button click " + $(this).text());
+            self.sessions.loadMostRecentSessionForIssue($(this).text());
+            self._pickerDiv.addClass("hidden");
+            self._pickerDiv.removeClass("popUpMenu");
+            self._pickerDiv.blur();
+            self._pickerButton.blur();
+            self.manage();
+        });
+
         if (numIssues == 1 && selectedIssue == "Unspecified") { this._addButton.attr("disabled", true); }
         else                                                  { this._addButton.attr("disabled", false); }
 

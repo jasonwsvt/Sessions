@@ -5,8 +5,8 @@ class Sessions {
     _linesID = "lines";
     _buttonsNavID = "buttonsNav";
     _buttonsID = "buttons";
-    _currentSession = null;
-    _currentIssue = null;
+    _sessionName = null;
+    _issueName = null;
     
 
     constructor() {
@@ -44,8 +44,8 @@ class Sessions {
     get lines()       { return this._sessionObject.lines; }
     get data()        { return this._dataManager; }
     get buttons()     { return this._buttons; }
-    get sessionName() { return this._currentSession; }
-    get issueName()   { return this._currentIssue; }
+    get sessionName() { return this._sessionName; }
+    get issueName()   { return this._issueName; }
     get utilities()   { return this._utilities; }
 
     createContainers() {
@@ -61,37 +61,39 @@ class Sessions {
     }
 
     loadSession(session) {
-        if (this.sessionName) { this.storeSession(); }
-        console.log("loadSession: " + this.sessionName + " -> " + session + " (" + this.data.sessionIssue(session) + ")");
-        this._currentSession = session;
-        this._currentIssue = this.data.sessionIssue(session);
-        console.log("")
+        this.storeSession();
+        console.log("loadSession: " + session + " (" + this.data.sessionIssue(session) + ")");
+        this._sessionName = session;
+        this._issueName = this.data.sessionIssue(session);
+        console.log("loadSession: " + this.issueName + " " + this.sessionName);
+        console.log(this.data.sessionLines(session));
         this.session.newSession(this.data.sessionLines(session));
     }
 
     newSession() {
-        if (this._currentIssue == null) { this._currentIssue = "Unspecified"; }
-        this._currentSession = Math.floor(Date.now() / 1000);
+        if (this._issueName == null) { this._issueName = "Unspecified"; }
+        this._sessionName = Math.floor(Date.now() / 1000);
         this.session.newSession([]);
         this.storeSession();
     }
 
     loadMostRecentSessionForIssue(issue) {
         this.storeSession();
-        this._currentIssue = issue;
-        this._currentSession = this.data.mostRecentIssueSession(issue);
+        this._issueName = issue;
+        this._sessionName = this.data.mostRecentIssueSession(issue);
+        console.log("loadMostRecentSessionForIssue(" + issue + "):" + this.sessionName);
         this.loadSession(this.sessionName);
     }
 
     newIssue(newIssue) {
         this.storeSession();
-        this._currentIssue = newIssue;
+        this._issueName = newIssue;
         this.newSession();
     }
 
     renameIssue(issueName) {
-        this.data.renameIssue(this._currentIssue, issueName);
-        this._currentIssue = issueName;
+        this.data.renameIssue(this._issueName, issueName);
+        this._issueName = issueName;
     }
 
     storeSession() {

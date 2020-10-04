@@ -71,7 +71,6 @@ class SessionDataManager {
         const sessionKeys = Object.keys(sessionStorage);
         var unsortedIssueSessions= [], sortedIssueSessions = [], lastEditeds = [];
         var session, sessionIssue, sessionName, lastEdited, max, i;
-
         for (i = 0; i < sessionKeys.length; i++) {
             sessionName = sessionKeys[i];
             session = this.session(sessionName);
@@ -95,7 +94,9 @@ class SessionDataManager {
     }
 
     mostRecentIssueSession(issue) {
-        return this.issueSessions(issue)[0];
+        const issueSessions = this.issueSessions(issue);
+        console.log("mostRecentIssueSession(" + issue + "): " + issueSessions[0]);
+        return issueSessions[0];
     }
 
     session(session) {
