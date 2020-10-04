@@ -24,12 +24,6 @@ class DataManager {
         this._sessionData = new SessionDataManager(this._sessionsObject);
 
         this.pullLocalDataForUser();
-
-        $(document).ready(function() {
-//            self.linesDiv.on("change", function() {
-//                self.storeSession();
-//            });
-        });
     }
 
     get lines()    { return this._sessionsObject.lines; }

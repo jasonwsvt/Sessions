@@ -34,6 +34,10 @@ class SessionDataManager {
         return sortedIssues;
     }
 
+    mostRecentIssue() {
+        return this.sessionIssue(this.mostRecentSession());
+    }
+
     sessions() {
         const sessionKeys = Object.keys(sessionStorage);
         var unsortedSessions = [], lastEditeds = [], sortedSessions = [];
@@ -54,16 +58,14 @@ class SessionDataManager {
             unsortedSessions.splice(max,1);
             lastEditeds.splice(max,1);
         }
-//        console.log("sessions(): " + sortedSessions);
+        console.log("sessions(): " + sortedSessions);
         return sortedSessions;
     }
 
     mostRecentSession() {
-        return this.sessions()[0];
-    }
-
-    mostRecentIssue() {
-        return this.sessionIssue(this.mostRecentSession());
+        const sessions = this.sessions();
+        console.log("mostRecentSession(): " + sessions[0]);
+        return sessions[0];
     }
 
     //return all sessions stored in session data for given issue
@@ -71,6 +73,7 @@ class SessionDataManager {
         const sessionKeys = Object.keys(sessionStorage);
         var unsortedIssueSessions= [], sortedIssueSessions = [], lastEditeds = [];
         var session, sessionIssue, sessionName, lastEdited, max, i;
+console.log("issueSessions(" + issue + "): " + sessionKeys.length);
         for (i = 0; i < sessionKeys.length; i++) {
             sessionName = sessionKeys[i];
             session = this.session(sessionName);
@@ -99,16 +102,6 @@ class SessionDataManager {
         return issueSessions[0];
     }
 
-    session(session) {
-//        console.log("session(" + session + ") - returning " + sessionStorage.getItem(session));
-        return JSON.parse(sessionStorage.getItem(session));
-    }
-
-    sessionIssue(session) {
-//        console.log("sessionIssue(" + session + ") - returning " + this.session(session)[0]);
-        return this.session(session)[0];
-    }
-
     renameIssue(oldIssue, newIssue) {
         const sessionKeys = Object.keys(sessionStorage);
         var session, sessionName, i;
@@ -122,18 +115,29 @@ class SessionDataManager {
         }
     }
 
+    session(session) {
+        console.log("session(" + session + ")");
+        return JSON.parse(sessionStorage.getItem(session));
+    }
+
+    sessionIssue(session) {
+        console.log("sessionIssue(" + session + ") - returning " + this.session(session)[0]);
+        return this.session(session)[0];
+    }
+
     sessionLastEdited(session) {
-//        console.log("sessionLastEdited(" + session + ") - returning " + this.session(session)[1]);
+        console.log("sessionLastEdited(" + session + ") - returning " + this.session(session)[1]);
         return this.session(session)[1];
     }
 
     sessionLines(session) {
-//        console.log("sessionLines(" + session + ") - returning " + this.session(session)[2]);
+        console.log("sessionLines(" + session + ")");
         return this.session(session)[2];
     }
 
     //sessionName = { creationTimestamp, lastEditedTimestamp, lines } (no username or password)
     storeSession(creation, lastEdited, issue, lines) {
+        console.log("storeSession(" + creation + ") -> (" + lastEdited + ", " + issue + ", " + lines + ")");
         sessionStorage.setItem(creation, JSON.stringify([issue, lastEdited, lines]));
     }
 }

@@ -19,6 +19,7 @@ class SessionUtilities {
     constructor (utilities) {
         const self = this;
         this._utilities = utilities;
+        console.log("session utilities constructor");
 
         $(document).ready(function() {
             $("html").on("click", function(e) {

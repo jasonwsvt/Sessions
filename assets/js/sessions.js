@@ -19,6 +19,7 @@ class Sessions {
         this._sessionObject = new Session(this._linesID, []);
 
         session = this.data.mostRecentSession();
+        console.log("sessions constructor - pulling most recent session: " + session);
         if (Number(session)) { this.loadSession(session); } else { this.newSession(); }
         this.utilities.manage();
         
@@ -60,23 +61,6 @@ class Sessions {
         $("body").prepend(utilitiesCode + linesCode + buttonsContainer);
     }
 
-    loadSession(session) {
-        this.storeSession();
-        console.log("loadSession: " + session + " (" + this.data.sessionIssue(session) + ")");
-        this._sessionName = session;
-        this._issueName = this.data.sessionIssue(session);
-        console.log("loadSession: " + this.issueName + " " + this.sessionName);
-        console.log(this.data.sessionLines(session));
-        this.session.newSession(this.data.sessionLines(session));
-    }
-
-    newSession() {
-        if (this._issueName == null) { this._issueName = "Unspecified"; }
-        this._sessionName = Math.floor(Date.now() / 1000);
-        this.session.newSession([]);
-        this.storeSession();
-    }
-
     loadMostRecentSessionForIssue(issue) {
         this.storeSession();
         this._issueName = issue;
@@ -85,18 +69,39 @@ class Sessions {
         this.loadSession(this.sessionName);
     }
 
-    newIssue(newIssue) {
-        this.storeSession();
-        this._issueName = newIssue;
-        this.newSession();
-    }
-
     renameIssue(issueName) {
+        console.log("renameIssue(" + issueName + "): " + this.issueName + " -> " + issueName);
         this.data.renameIssue(this._issueName, issueName);
         this._issueName = issueName;
     }
 
+    newIssue(newIssue) {
+        this.storeSession();
+        console.log("newIssue(" + newIssue + "): " + this.issueName + " -> " + newIssue);
+        this._issueName = newIssue;
+        this.newSession();
+    }
+
+    loadSession(session) {
+        this.storeSession();
+        console.log("loadSession(" + session + "): (" + this.data.sessionIssue(session) + ")");
+        this._sessionName = session;
+        this._issueName = this.data.sessionIssue(session);
+        console.log("loadSession(): " + this.issueName + " " + this.sessionName);
+        console.log("loadSession(): " + this.data.sessionLines(session));
+        this.session.newSession(this.data.sessionLines(session));
+    }
+
+    newSession() {
+        if (this._issueName == null) { this._issueName = "Unspecified"; }
+        this._sessionName = Math.floor(Date.now() / 1000);
+        console.log("newSession(): " + this.issueName + " " + this.sessionName);
+        this.session.newSession([]);
+        this.storeSession();
+    }
+
     storeSession() {
+        console.log("StoreSession(): " + this.sessionName + ", " + this.session.lastEdited + ", " + this.issueName);
         this.data.storeSession(this.sessionName, 
                                this.session.lastEdited,
                                this.issueName,

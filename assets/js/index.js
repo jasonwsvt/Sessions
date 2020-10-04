@@ -1,1 +1,3 @@
-sessions = new Sessions();
+"use strict";
+
+let sessions = new Sessions();

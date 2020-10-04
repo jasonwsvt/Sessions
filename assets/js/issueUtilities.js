@@ -25,6 +25,7 @@ class IssueUtilities {
     constructor (utilities) {
         const self = this;
         this._utilities = utilities;
+        console.log("issue utilities constructor");
 
         $(document).ready(function() {
             $("html").on("click", function(e) {
