@@ -25,7 +25,6 @@ class IssueUtilities {
     constructor (utilities) {
         const self = this;
         this._utilities = utilities;
-        console.log("issue utilities constructor");
 
         $(document).ready(function() {
             $("html").on("click", function(e) {
@@ -155,7 +154,7 @@ class IssueUtilities {
                     self._addDiv.addClass("hidden");
                     self._addDiv.removeClass("popUpMenu");
                     self.sessions.newIssue(this.value);
-                    self.update();
+                    self.manage();
                     self._addDiv.blur();
                     self._addButton.blur();
                 }
@@ -170,13 +169,13 @@ class IssueUtilities {
         });
     }
 
-    get numIssues()          { return this._numRows; }
     get utilities()          { return this._utilities; }
     get div()                { return this.utilities.div; }
     get lines()              { return this.utilities.lines; }
     get sessions()           { return this.utilities.sessions; }
     get data()               { return this.utilities.data; }
     get buttons()            { return this.utilities.buttons; }
+    get numIssues()          { return this._numRows; }
     get _pickerButton()      { return $("#" + this._pickerButtonID); }
     get _pickerDiv()         { return $("#" + this._pickerDivID); }
     get _pickerSearch()      { return $("#" + this._pickerSearchID); }
@@ -220,10 +219,6 @@ class IssueUtilities {
     }
 
     manage() {
-//        const caretDownIcon = this._caretDownIcon;
-//        const pickerButton = this._pickerButton;
-//        const addButton = this._addButton;
-//        const div = this._pickerScrollDiv;
         const self = this;
         const issues = this.data.issues();
         const numIssues = issues.length;
@@ -252,7 +247,7 @@ class IssueUtilities {
             self._pickerDiv.removeClass("popUpMenu");
             self._pickerDiv.blur();
             self._pickerButton.blur();
-            self.manage();
+            self.utilities.manage();
         });
 
         if (numIssues == 1 && selectedIssue == "Unspecified") { this._addButton.attr("disabled", true); }

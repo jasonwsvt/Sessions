@@ -31,10 +31,12 @@ class SessionDataManager {
             unsortedIssues.splice(max,1);
             lastEditeds.splice(max,1);
         }
+        console.log("issues(): " + sortedIssues);
         return sortedIssues;
     }
 
     mostRecentIssue() {
+        console.log("mostRecentIssue(): " + this.mostRecentSession());
         return this.sessionIssue(this.mostRecentSession());
     }
 
@@ -138,6 +140,8 @@ console.log("issueSessions(" + issue + "): " + sessionKeys.length);
     //sessionName = { creationTimestamp, lastEditedTimestamp, lines } (no username or password)
     storeSession(creation, lastEdited, issue, lines) {
         console.log("storeSession(" + creation + ") -> (" + lastEdited + ", " + issue + ", " + lines + ")");
-        sessionStorage.setItem(creation, JSON.stringify([issue, lastEdited, lines]));
+        if (creation != null) {
+            sessionStorage.setItem(creation, JSON.stringify([issue, lastEdited, lines]));
+        }
     }
 }

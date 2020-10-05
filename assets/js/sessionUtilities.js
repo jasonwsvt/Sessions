@@ -19,7 +19,6 @@ class SessionUtilities {
     constructor (utilities) {
         const self = this;
         this._utilities = utilities;
-        console.log("session utilities constructor");
 
         $(document).ready(function() {
             $("html").on("click", function(e) {
@@ -96,9 +95,9 @@ class SessionUtilities {
         const self = this;
         var code, pickerText;
         this._pickerScrollDiv.empty();
-//        console.log("Manage Sessions Picker - " + sessions.length);
+        console.log("manage(): " + selectedIssue + " - " + sessions.length);
         if (sessions.length) {
-            pickerText = this.dateString(selectedSession);
+            pickerText = selectedSession + " " + this.dateString(selectedSession);
             if (sessions.length > 1) { pickerText += " " + this._caretDownIcon; }
             this._pickerButton.html(pickerText);
 
@@ -107,7 +106,7 @@ class SessionUtilities {
 //                console.log(entry + " " + selectedSession + " " + (String(entry) == String(selectedSession)));
                 if (String(entry) == String(selectedSession)) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
-                code += " btn-sm' value = '" + entry + "'>" + self.dateString(entry) + "</button>";
+                code += " btn-sm' value = '" + entry + "'>" + entry + " " + self.dateString(entry) + "</button>";
                 self._pickerScrollDiv.append(code);
             });
         }

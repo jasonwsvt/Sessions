@@ -62,11 +62,12 @@ class Sessions {
     }
 
     loadMostRecentSessionForIssue(issue) {
+        console.log("loadMostRecentSessionForIssue(" + issue + "):" + this.issueName + " " + this.sessionName + " - " + this.data.sessionLines(this.sessionName));
         this.storeSession();
         this._issueName = issue;
         this._sessionName = this.data.mostRecentIssueSession(issue);
-        console.log("loadMostRecentSessionForIssue(" + issue + "):" + this.sessionName);
-        this.loadSession(this.sessionName);
+        console.log("loadMostRecentSessionForIssue(" + issue + "):" + this.issueName + " " + this.sessionName + " - " + this.data.sessionLines(this.sessionName));
+        this.session.newSession(this.data.sessionLines(this.sessionName));
     }
 
     renameIssue(issueName) {
@@ -76,14 +77,20 @@ class Sessions {
     }
 
     newIssue(newIssue) {
+        console.log("newIssue(" + newIssue + "): storing the old session");
         this.storeSession();
         console.log("newIssue(" + newIssue + "): " + this.issueName + " -> " + newIssue);
         this._issueName = newIssue;
-        this.newSession();
+        if (this._issueName == null) { this._issueName = "Unspecified"; }
+        this._sessionName = Math.floor(Date.now() / 1000);
+        console.log("newIssue(" + newIssue + "): " + this.issueName + " " + this.sessionName);
+        this.session.newSession([]);
+        console.log("newIssue(" + newIssue + "): storing the new session");
+        this.storeSession();
     }
 
     loadSession(session) {
-        this.storeSession();
+        if (this.sessionName && this.issueName) { this.storeSession(); }
         console.log("loadSession(" + session + "): (" + this.data.sessionIssue(session) + ")");
         this._sessionName = session;
         this._issueName = this.data.sessionIssue(session);
@@ -101,7 +108,7 @@ class Sessions {
     }
 
     storeSession() {
-        console.log("StoreSession(): " + this.sessionName + ", " + this.session.lastEdited + ", " + this.issueName);
+        console.log("storeSession(): " + this.sessionName + ", " + this.session.lastEdited + ", " + this.issueName);
         this.data.storeSession(this.sessionName, 
                                this.session.lastEdited,
                                this.issueName,

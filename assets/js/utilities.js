@@ -26,7 +26,7 @@ class Utilities {
         this._sessionUtilities = new SessionUtilities(this);
 
         this.build();
-console.log("utilities constructor");
+
         $(document).ready(function() {
             $("#" + self._slideUpButtonID).on("click", function() {
                 const lines = self.lines.div;
