@@ -136,25 +136,33 @@ class Buttons {
             });
         }
         else if (data instanceof Object) {
-            var name = "", description = "", tier = 0, wrap = "", group = "", opening, middle, closing;
+            var name = "", description = "", tier = 0, wrap = "", group = "", lastParent = "", opening, middle, closing;
             if (data.hasOwnProperty("name")) { name = data["name"]; }
             if (data.hasOwnProperty("description")) { description = data["description"]; }
             if (data.hasOwnProperty("tier")) { tier = data["tier"]; }
             if (data.hasOwnProperty("wrap")) { wrap = data["wrap"]; } else { wrap = true; }
             if (data.hasOwnProperty("group")) { group = data["group"]; wrap = false; }
+            if (Array.isArray(group) && group.every(e => { return typeof e === "string"; } )) { lastParent = true; }
 
+if (lastParent) { console.log(name); }
             if (name && !wrap) {
                 switch (tier) {
-                    case 1: opening = "<div class = 'row'><div class = 'col col-xl-2 col-lg-2 col-md-3 col-sm-4 col-5'>";
-                            middle = "</div><div class = 'col col-xl-10 col-lg-10 col-md-9 col-sm-8 col-7'>";
+                    case 1: opening = "<div class = 'row'><div class = 'col col-xl-2 col-lg-2 col-md-3 col-sm-4 col-5 px-0'>";
+                            middle = "</div><div class = 'col col-xl-10 col-lg-10 col-md-9 col-sm-8 col-7";
+                            if (lastParent) { middle += " px-0"; }
+                            middle += "'>";
                             closing = "</div></div>";
                             break;
-                    case 2: opening = "<div class = 'row'><div class = 'col col-xl-2 col-lg-3 col-md-4 col-sm-5 col-6'>";
-                            middle = "</div><div class = 'col col-xl-10 col-lg-9 col-md-8 col-sm-7 col-6'>";
+                    case 2: opening = "<div class = 'row'><div class = 'col col-xl-2 col-lg-3 col-md-4 col-sm-5 col-6 px-0'>";
+                            middle = "</div><div class = 'col col-xl-10 col-lg-9 col-md-8 col-sm-7 col-6";
+                            if (lastParent) { middle += " px-0"; }
+                            middle += "'>";
                             closing = "</div></div>";
                             break;
-                    default: opening = "<div class = 'row'><div class = 'col col-xl-3 col-lg-4 col-md-5 col-sm-6 col-6'>";
-                            middle = "</div><div class = 'col col-xl-9 col-lg-8 col-md-7 col-sm-6 col-6'>";
+                    default: opening = "<div class = 'row'><div class = 'col col-xl-3 col-lg-4 col-md-5 col-sm-6 col-6 px-0'>";
+                            middle = "</div><div class = 'col col-xl-9 col-lg-8 col-md-7 col-sm-6 col-6";
+                            if (lastParent) { middle += " px-0"; }
+                            middle += "'>";
                             closing = "</div></div>";
                             break;
                 }
@@ -167,7 +175,11 @@ class Buttons {
             if (description) { code += " data-toggle='popover' data-content='" + description + "'"; }
             code += ">" + name + "</button>";
             if (middle) { code += middle; }
-            if (group) { code += "<div class='container-fluid'>" + this.createButtons(group) + "</div>"; }
+            if (group) {
+                if (!Array.isArray(group)) { code += "<div class='container-fluid'>"; }
+                code += this.createButtons(group);
+                if (!Array.isArray(group)) { code += "</div>"; }
+            }
             if (closing) { code += closing; }
         }
         if (code.startsWith("undefined")) { code = code.substring(9); }

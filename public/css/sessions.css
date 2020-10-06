@@ -93,6 +93,10 @@
     height: auto;
 }
 
+.container-fluid > button {
+    padding-left: -15px;
+}
+
 button {
     padding: 2px;
     outline: none !important;

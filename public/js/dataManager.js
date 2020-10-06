@@ -133,12 +133,12 @@ becauseReasonsButtonsData = [
             {
                 "name": "Emotions",	
                 "tier": 2,
-                "wrap": false,
                 "group":	
                 [
                     {
                         "name": "Peace",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Enlightenment",
@@ -167,6 +167,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Love",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Fondness",
@@ -202,6 +203,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Reason",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Familiarity",
@@ -218,6 +220,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Acceptance",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Passion",
@@ -235,6 +238,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Willingness",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Amusement",
@@ -247,6 +251,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Interest",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Astonishment",
@@ -264,6 +269,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Courage",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Unwillingness",
@@ -282,6 +288,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Pride",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Humiliation",
@@ -302,6 +309,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Anger",
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Dissatisfaction",
@@ -335,6 +343,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Desire",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Self-pity",
@@ -359,6 +368,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Fear",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Greed",
@@ -385,6 +395,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Regret",
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Fright",
@@ -404,6 +415,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Apathy",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Embarrassment",
@@ -421,6 +433,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Guilt",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Indifference",
@@ -434,6 +447,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Shame",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Depression",
@@ -445,6 +459,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Low Level Emotions",	
                         "tier": 3,
+                        "wrap": true,
                         "group":	
                         [
                             "Remorse",
@@ -469,6 +484,7 @@ becauseReasonsButtonsData = [
             {
                 "name": "Psychological Reversals",
                 "tier": 2,
+                "wrap": true,
                 "group":
                 [
                     "Belief",
@@ -499,6 +515,7 @@ becauseReasonsButtonsData = [
             {
                 "name": "Conjunctions",
                 "tier": 2,
+                "wrap": true,
                 "group":
                 [
                     "- (dash)",
@@ -533,6 +550,7 @@ becauseReasonsButtonsData = [
             {
                 "name": "Characteristics",
                 "tier": 2,
+                "wrap": true,
                 "group":
                 [
                     "of others",
@@ -561,6 +579,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Vision",
                         "tier": 3,
+                        "wrap": true,
                         "group":
                         [
                             "Brightness",
@@ -571,6 +590,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Taste",
                         "tier": 3,
+                        "wrap": true,
                         "group":
                         [
                             "Sour",
@@ -584,6 +604,7 @@ becauseReasonsButtonsData = [
                     {
                         "name": "Somatosensory",
                         "tier": 3,
+                        "wrap": true,
                         "group":
                         [
                             "Heat",
@@ -604,6 +625,7 @@ becauseReasonsButtonsData = [
             {
                 "name": "Memory",
                 "tier": 2,
+                "wrap": true,
                 "group":
                 [
                     "Short Term",	
@@ -615,6 +637,7 @@ becauseReasonsButtonsData = [
             {
                 "name": "Pattern",
                 "tier": 2,
+                "wrap": true,
                 "group":
                 [
                     "Thought",
@@ -629,6 +652,7 @@ becauseReasonsButtonsData = [
             {
                 "name": "Parts",
                 "tier": 2,
+                "wrap": true,
                 "group":
                 [
                     "Certain parts believe they know X",
@@ -645,6 +669,7 @@ becauseReasonsButtonsData = [
     {
         "name": "Actions",
         "tier": 1,
+        "wrap": true,
         "group":
         [
             "accept",
