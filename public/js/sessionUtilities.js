@@ -97,7 +97,7 @@ class SessionUtilities {
         this._pickerScrollDiv.empty();
         console.log("manage(): " + selectedIssue + " - " + sessions.length);
         if (sessions.length) {
-            pickerText = selectedSession + " " + this.dateString(selectedSession);
+            pickerText = this.dateString(selectedSession);
             if (sessions.length > 1) { pickerText += " " + this._caretDownIcon; }
             this._pickerButton.html(pickerText);
 
