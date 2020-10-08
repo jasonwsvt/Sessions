@@ -17,7 +17,12 @@
   },
   "homepage": "https://github.com/jasonwsvt/Sessions#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "mongoose": "^5.10.8"
+    "express-session": "^1.17.1",
+    "mongoose": "^5.10.8",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^6.0.1"
   }
 }
