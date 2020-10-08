@@ -10,7 +10,7 @@ var credentials = {key: privateKey, cert: certificate};
 
 var express = require("express"),
     app = express(),
-    bodyParser = require('body-parser'),
+    bodyParser = require('body-parser'); /*
     mongoose = require("mongoose"),
     passport = require("passport"),
     LocalStrategy = require("passport-local"), 
@@ -21,40 +21,39 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose.connect("mongodb://localhost:27107/sessions");
-
-app.use(express.static("public"));
+*/
+app.use(express.static("public"));  //use this directory for js libraries and css
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json({ limit: '10kb' })); // Body limit is 10
+/*
+var UserSchema = new mongoose.Schema({
+    username: String,
+    password: String
+});
+
+UserSchema.plugin(passportLocalMongoose);
+
+var IssueSchema = new mongoose.Schema({
+    userID: String,
+    issue: String
+});
 
 var SessionSchema = new mongoose.Schema({
+    issueID: String,
     creation: Number,
     lastEdited: Number,
     lastOpened: Number,
     lines: [String]
 });
 
-var IssueSchema = new mongoose.Schema({
-    issue: String,
-    sessions: [SessionSchema]
-});
-
-var UserSchema = new mongoose.Schema({
-    user: String,
-    password: String,
-    issues: [IssueSchema]
-});
-
-UserSchema.plugin(passportLocalMongoose);
-
 module.exports = mongoose.model("User", UserSchema);
 
 var Session = mongoose.model("Session", SessionSchema); 
 var Issue = mongoose.model("Issue", IssueSchema);
 var User = mongoose.model("User", UserSchema);
-
-app.use(express.static("public"));  //use this directory for js libraries and css
+*/
 app.set("view engine", "html"); //set the render variable extension
-
+/*
 //PASSPORT CONFIGURATION
 app.use(require("express-session") ({
     secret: "Secret goes here",
@@ -66,7 +65,7 @@ app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
+*/
 app.get("/", (req, res) => {
     res.sendFile("sessions.html", { root: __dirname });
     console.log("someone made a request to /");
@@ -145,6 +144,6 @@ httpsServer.listen(8443, () => {
 });
 */
 
-app.listen(3000, () => {
+app.listen(3000, "0.0.0.0", () => {
     console.log("Server has started on http://localhost:3000.");
 });
