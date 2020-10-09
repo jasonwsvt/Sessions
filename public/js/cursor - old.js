@@ -7,7 +7,6 @@ class Cursor {
     _cursorCode = "<h2 id = '" + this._cursorID + "'>|</h2>";
     _typedElementCode = "<button type='button' class='btn btn-light typed'></button>";
     _cursorX = null;
-    _indent = 50;
 
     constructor(linesObject) {
         const self = this;
@@ -27,17 +26,6 @@ class Cursor {
             Mousetrap.bind(['del'], function(e)       { self.delete;      return false; });
             Mousetrap.bind(['enter'], function(e)     { self.enter;       return false; });
             $(document).on("keypress", function(e)    { self.type(e.key); return false; });
-            Mousetrap.bind(['tab'], function(e)       { self.indentLine;  return false; });
-            Mousetrap.bind(['shift+tab'], function(e) { self.outdentLine; return false; });
-    
-            $(document).on("keyup", function(e) {
-                self.setLastEdited();
-
-                if (e.key === "Enter" && self.cursorLineIndex > 0) {
-                    self.lines.line(self.cursorLineIndex).css("paddingLeft", 
-                        self.lines.line(self.cursorLineIndex - 1).css("paddingLeft"));
-                }
-            });
         });
     }
 
@@ -308,29 +296,5 @@ class Cursor {
                 this._setCursorX();
             }
         this.manageHiddenCursor();
-    }
-
-    insertButton(e) {
-        console.log(this.cursorLineIndex + " " + this.cursorElementIndex + " " + e);
-        this.lines.insertBefore(this.cursorLineIndex, this.cursorElementIndex, e);
-    }
-
-    get indentLine() {
-        if (this.lineIndex != 0) {
-            const prevLinePadding = parseInt(this.lines.line(this.lineIndex - 1).css("paddingLeft"));
-            const curLinePadding = parseInt(this.lines.line(this.lineIndex).css("paddingLeft"));
-            if (curLinePadding <= prevLinePadding) {
-                this.lines.line(this.lineIndex).css("paddingLeft",
-                    String(curLinePadding + this._indent) + "px");
-            }
-        }
-    }
-
-    get outdentLine() {
-        const curLinePadding = parseInt(this.lines.line(this.lineIndex).css("paddingLeft"));
-        if (curLinePadding >= this._indent) {
-            this.lines.line(this.lineIndex).css("paddingLeft",
-                String(curLinePadding - this._indent) + "px");
-        }
     }
 }

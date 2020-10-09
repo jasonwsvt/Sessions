@@ -5,18 +5,13 @@
 class Lines {
     _containerID = null;
     _lineCode = "<div></div>";
-    _sessionsObject = null;
-    _creationID = null;
 
-    constructor(cID, sessions) {
+    constructor(cID, linesArray) {
         this._containerID = cID;
-        this._sessionsObject = sessions;
     }
 
     get ID()         { return this._containerID; }
     get div()        { return $("#" + this._containerID); }
-    get sessions()   { return this._sessionsObject; }
-    get session()    { return this.sessions.session(this.creationID); }
 
     get numLines()        { return this.div.children().length; }
     lineExists(i)         { return (i >= 0 && i < this.numLines); }
@@ -88,24 +83,14 @@ class Lines {
         return linesArray;
     }
 
-    load(creation) {
+    newLinesArray(linesArray) {
         const self = this;
         this.div.empty();
-        if (this._sessionID) { this.session.lines(this.linesArray); }
-        this._sessionID = creation;
-        this.session.lines.forEach(function(line) {
+        linesArray.forEach(function(line, index) {
             self.div.append(line);
         });
         if (this.numLines == 0) {
             this.div.append(this._lineCode);
         }
-    }
-
-    get height() {
-        return this.div.css("height");
-    }
-
-    set height(height) {
-        this.lines.css("height", height);
     }
 }
