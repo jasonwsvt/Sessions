@@ -3,7 +3,5 @@ const utilitiesID = "utilities",
       buttonsNavID = "buttonsNav",
       buttonsID = "buttons";
       buttons = new Buttons(buttonsNavID, buttonsID),
-      lines = new Lines(linesID);
-      cursor = new Cursor(this.lines);
       sessions = new Sessions(linesID),
       utilities = new Utilities(utilitiesID, data, sessions);

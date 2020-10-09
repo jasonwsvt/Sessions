@@ -11,7 +11,7 @@ class Buttons {
     _buttons = null;
 
     constructor(buttonsNavID, buttonsID) {
-        self = this, buttonsJSON = this._getButtonsJSON();
+        var self = this, buttonsJSON = this._getButtonsJSON();
         this._buttonsNavID = buttonsNavID;
         this._buttonsNav = $("#" + this._buttonsNavID);
         this._buttonsID = buttonsID;
@@ -106,7 +106,7 @@ class Buttons {
         });
     }
 
-    getButtonsJSON() {
+    _getButtonsJSON() {
         return becauseReasonsButtonsData;
     }
 
@@ -148,7 +148,7 @@ class Buttons {
             if (data.hasOwnProperty("group")) { group = data["group"]; wrap = false; }
             if (Array.isArray(group) && group.every(e => { return typeof e === "string"; } )) { lastParent = true; }
 
-if (lastParent) { console.log(name); }
+//if (lastParent) { console.log(name); }
             if (name && !wrap) {
                 switch (tier) {
                     case 1: opening = "<div class = 'row'><div class = 'col col-xl-2 col-lg-2 col-md-3 col-sm-4 col-5 px-0'>";

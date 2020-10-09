@@ -16,7 +16,7 @@ class Lines {
     get ID()         { return this._containerID; }
     get div()        { return $("#" + this._containerID); }
     get sessions()   { return this._sessionsObject; }
-    get session()    { return this.sessions.session(this.creationID); }
+    get session()    { return this.sessions.session(this._creationID); }
 
     get numLines()        { return this.div.children().length; }
     lineExists(i)         { return (i >= 0 && i < this.numLines); }
@@ -93,6 +93,7 @@ class Lines {
         this.div.empty();
         if (this._sessionID) { this.session.lines(this.linesArray); }
         this._sessionID = creation;
+        console.log(this._sessionID, this.session);
         this.session.lines.forEach(function(line) {
             self.div.append(line);
         });

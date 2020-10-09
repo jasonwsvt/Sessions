@@ -1,4 +1,4 @@
-class SessionData {
+class Session {
     _useSessionStorage = false;
     _useLocalStorage = false;
     _useServerStorage = false;
@@ -11,11 +11,11 @@ class SessionData {
 
     constructor(creation) { this._creation = creation; }
     get creation()        { return this._creation; }
-    get mostUpToDate()    { return this._mostUpToDate; }
     get lastEdited()      { return this._lastEdited; }
     get lastOpened()      { return this._lastOpened; }
     get issue()           { return this._issue; }
     set issue(newIssue)   { this._issue = newIssue; this._update(); }
+    get mostUpToDate()    { return this._mostUpToDate; }
     get clearLines()      { this._lines = null; }
 
     set lines(lines) {
@@ -37,19 +37,15 @@ class SessionData {
         return this._lines;
     }
 
-    _update() {
-        this._lastEdited = Math.floor(Date.now() / 1000);
-        if (this._useLocalStorage)   { this._saveToLocalStorage();   this._mostUpToDate = "Local"; }
-        if (this._useSessionStorage) { this._saveToSessionStorage(); this._mostUpToDate = "Session"; }
-    }
-
+    //creation -> issue, lastOpened, lastEdited, lines
     pullSessionData() {
-        session = JSON.parse(sessionStorage.getItem(this._creation));
+        const session = JSON.parse(sessionStorage.getItem(this._creation));
         this.setSessionData(session[0], session[1], session[2]);
     }
 
-    _pullLinesFromSessionStorage() {
-        this._lines = JSON.parse(sessionStorage.getItem(this._creation))[3];
+    pullLocalData() {
+        const session = JSON.parse(localStorage.getItem(this._creation));
+        this.setLocalData(session[0], session[1], session[2]);
     }
 
     setSessionData(issue, lastOpened, lastEdited) {
@@ -60,19 +56,6 @@ class SessionData {
         }
     }
 
-    _saveToSessionStorage() {
-        sessionStorage.setItem(creation, JSON.stringify(this._issue, this._lastOpened, this._lastEdited, this._lines));
-    }
-
-    pullLocalData() {
-        session = JSON.parse(localStorage.getItem(this._creation));
-        this.setLocalData(session[0], session[1], session[2]);
-    }
-
-    _pullLinesFromLocalStorage() {
-        this._lines = JSON.parse(localStorage.getItem(this._creation))[3];
-    }
-
     setLocalData(issue, lastOpened, lastEdited) {
         this._useLocalStorage = true;
         if (this._lastEdited == null || lastEdited >= this._lastEdited) {
@@ -81,20 +64,37 @@ class SessionData {
         }
     }
 
-    //creation -> issue, lastOpened, lastEdited, lines
-    _saveToLocalStorage() {
-        localStorage.setItem(creation, JSON.stringify(this._issue, this._lastOpened, this._lastEdited, this._lines));
-    }
-
-    _pullLinesFromServerDB() {
-    }
-
     setServerData(issue, lastOpened, lastEdited) {
         this._useServerStorage = true;
         if (this._lastEdited == null || lastEdited > this._lastEdited) {
             this._mostUpToDate = "Server";
             this._setData(issue, lastEdited, lastOpened);
         }
+    }
+
+    _update() {
+        this._lastEdited = Math.floor(Date.now() / 1000);
+        if (this._useLocalStorage)   { this._saveToLocalStorage();   this._mostUpToDate = "Local"; }
+        if (this._useSessionStorage) { this._saveToSessionStorage(); this._mostUpToDate = "Session"; }
+    }
+
+    _saveToSessionStorage() {
+        sessionStorage.setItem(creation, JSON.stringify(this._issue, this._lastOpened, this._lastEdited, this._lines));
+    }
+
+    _saveToLocalStorage() {
+        localStorage.setItem(creation, JSON.stringify(this._issue, this._lastOpened, this._lastEdited, this._lines));
+    }
+
+    _pullLinesFromSessionStorage() {
+        this._lines = JSON.parse(sessionStorage.getItem(this._creation))[3];
+    }
+
+    _pullLinesFromLocalStorage() {
+        this._lines = JSON.parse(localStorage.getItem(this._creation))[3];
+    }
+
+    _pullLinesFromServerDB() {
     }
 
     //issue, lastOpened, lastEdited, lines

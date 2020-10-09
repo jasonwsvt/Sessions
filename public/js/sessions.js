@@ -4,20 +4,23 @@ class Sessions {
     _useLocalData = false;
     _useServerData = false;
     _currentSession = null;
+    _linesObject = null;
+    _cursorObject = null;
 
-    constructor() {
+    constructor(linesID) {
         //pull local data for user
         this._userInit();
         this._sessionInit();
         this._localInit();
         this._serverInit();
 
-        this.load(this.mostRecentSession());
-
-        if (Number(this.currentSession)) { this.loadSession(session); } else { this.newSession(); }
-        this.utilities.manage();
-        
-        this.buttons.adjustDivHeights();
+        this._sessions.forEach(session => {
+            console.log(session);
+        });
+        this._linesObject = new Lines(linesID, this);
+        this._cursorObject = new Cursor(this._linesObject);
+  
+        this.lines.load(this.mostRecentSession());
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
@@ -35,6 +38,8 @@ class Sessions {
         });
     }
 
+    get lines() { return this._linesObject; }
+
     _userInit() {
         //find the "remember me" user in localStorage, if any
     }
@@ -43,12 +48,12 @@ class Sessions {
         //pull all session data from sessionStorage, minus lines
         //put information into sessions object
         const keys = Object.keys(sessionStorage);
-        var session;
+        var self = this;
         keys.forEach((creation) => {
-            if (Number(creation) > 1600000000 && !this.sessionExists(creation)) {
-                session = new SessionData(creation);
-                this._sessions.push(session);
-                this._sessions(creation).pullSessionData();
+            if (Number(creation) > 1600000000 && !this.session(creation)) {
+                self._sessions.push(new Session(creation));
+                console.log(self.session(creation));
+                self.session(creation).pullSessionData();
             }
         });
     }
@@ -57,12 +62,12 @@ class Sessions {
         //pull all session data from localStorage, minus lines
         //put information into sessions object
         const keys = Object.keys(localStorage);
-        var session;
+        var self = this;
         keys.forEach((creation) => {
-            if (Number(creation) > 1600000000 && !this.sessionExists(creation)) {
-                session = new SessionData(creation);
-                this._sessions.push(session);
-                this._sessions(creation).pullLocalData();
+            if (Number(creation) > 1600000000 && !this.session(creation)) {
+                self._sessions.push(new Session(creation));
+                console.log(self.session(creation));
+                self.session(creation).pullLocalData();
             }
         });
     }
@@ -70,10 +75,6 @@ class Sessions {
     _serverInit() {
         //pull all session data from server storage, minus lines
         //put information into sessions object
-    }
-
-    loadIssue(issue) {
-        this.lines.load(this.mostRecentIssueSession(issue));
     }
 
     renameIssue(oldIssue, newIssue) {
@@ -100,12 +101,11 @@ class Sessions {
         this.lines.load(creation);
     }
     
-    load(creation) {
-        this.lines.load(creation);
-    }
-    
     session(creation) {
         return this._sessions.find(session => (session.creation == creation));
+//        this._sessions.forEach(session => {
+//            if (session.creation == creation) { return session; }
+//        });
     }
 
     issues() {
