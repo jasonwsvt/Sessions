@@ -112,6 +112,6 @@ class Lines {
     }
 
     set height(height) {
-        this.lines.css("height", height);
+        this.div.css("height", height);
     }
 }

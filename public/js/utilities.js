@@ -245,11 +245,12 @@ class Utilities {
         });
 
         self._slideUpButton.on("click", function() {
-            const lines = self.lines.div;
-            const lineHeight = Number(lines.children().eq(0).height());
+            console.log("slide up");
+            const lines = self.lines;
+            const lineHeight = Number(lines.div.children().eq(0).height());
             const minLinesHeight = 0;
-            if (parseInt(lines.height()) > minLinesHeight) {
-                lines.height(String(parseInt(lines.height()) - lineHeight) + "px");
+            if (parseInt(lines.height) > minLinesHeight) {
+                lines.height = String(parseInt(lines.height) - lineHeight) + "px";
                 self.buttons.adjustDivHeights();
             }
         });
@@ -260,11 +261,12 @@ class Utilities {
         });
 
         self._slideDownButton.on("click", function() {
-            const lines = self.lines.div;
-            const lineHeight = Number(lines.children().eq(0).height());
-            const maxLinesHeight = $(window).height() - Number(lines.children().eq(0).height());
-            if (parseInt(lines.height()) < maxLinesHeight) {
-                lines.height(String(parseInt(lines.height()) + lineHeight) + "px");
+            console.log("slide down");
+            const lines = self.lines;
+            const lineHeight = Number(lines.div.children().eq(0).height());
+            const maxLinesHeight = $(window).height() - Number(lines.div.children().eq(0).height());
+            if (parseInt(lines.height) < maxLinesHeight) {
+                lines.height = String(parseInt(lines.height) + lineHeight) + "px";
                 self.buttons.adjustDivHeights();
             }
         });
@@ -318,12 +320,12 @@ class Utilities {
     get _sessionAddButton()       { return $("#" + this._sessionAddButtonID); }
     get _sessionPickerScrollDiv() { return $("#" + this._sessionPickerScrollDivID); }
     get _numSessionButtons()      { return this._sessionPickerScrollDiv.find("button").length; }
-    get _slideUpButton()          { return $("#" + self._slideUpButtonID); }
-    get _slideDownButton()        { return $("#" + self._slideDownButtonID); }
-    get _exportButton()           { return $("#" + self._exportButtonID); }
-    get _importButton()           { return $("#" + self._importButtonID); }
-    get _configButton()           { return $("#" + self._configButtonID); }
-    get _infoButton()             { return $("#" + self._infoButtonID); }
+    get _slideUpButton()          { return $("#" + this._slideUpButtonID); }
+    get _slideDownButton()        { return $("#" + this._slideDownButtonID); }
+    get _exportButton()           { return $("#" + this._exportButtonID); }
+    get _importButton()           { return $("#" + this._importButtonID); }
+    get _configButton()           { return $("#" + this._configButtonID); }
+    get _infoButton()             { return $("#" + this._infoButtonID); }
 
     build() {
         const plusIcon = this._plusIcon;
@@ -381,7 +383,6 @@ class Utilities {
         leftSide.append(dotIcon);
         leftSide.append(issuePickerButton + issuePickerDiv);
         this._issuePickerDiv.append(issuePickerSearchInput + issuePickerScrollDiv);
-        this._issuePickerScrollDiv.css("height", "125px");
         leftSide.append(issueRenameButton + issueRenameDiv);
         this._issueRenameDiv.append(issueRenameInput);
         leftSide.append(issueAddButton + issueAddDiv);
@@ -389,7 +390,6 @@ class Utilities {
         leftSide.append(dotIcon);
         leftSide.append(sessionPickerButton + sessionPickerDiv + sessionAddButton);
         this._sessionPickerDiv.append(sessionPickerScrollDiv);
-        this._sessionPickerScrollDiv.css("height", "175px");
         rightSide.append(slideUpButton + slideDownButton);
         rightSide.append(dotIcon);
         rightSide.append(importButton + exportButton);
@@ -408,7 +408,7 @@ class Utilities {
         const numIssues = issues.length;
         const selectedIssue = this.currentIssue;
 //        console.log(issues, numIssues, selectedIssue);
-        var code, pickerButtonText;
+        var code, pickerButtonText, scrollDivHeight;
         this._issuePickerScrollDiv.empty();
         if (numIssues) {
             pickerButtonText = selectedIssue;
@@ -423,20 +423,27 @@ class Utilities {
             });
             code += "</div>";
             this._issuePickerScrollDiv.append(code);
+
+            this._issuePickerScrollDiv.find("button").on("click", function() {
+                console.log(self._issuePickerScrollDivID + " button click " + $(this).text());
+                self.lines.load(self.sessions.mostRecentIssueSession($(this).text()));
+                self._issuePickerDiv.addClass("hidden");
+                self._issuePickerDiv.removeClass("popUpMenu");
+                self._issuePickerDiv.blur();
+                self._issuePickerButton.blur();
+                self.manage();
+            });
+
+            scrollDivHeight = parseInt(this.numIssues) * parseInt(this._issueRow(0).outerHeight);
+            if (this._issuePickerScrollDiv.position().top + scrollDivHeight > window.innerHeight) {
+                scrollDivHeight = window.innerHeight - this._issuePickerScrollDiv.position().top;
+            }
+            this._issuePickerScrollDiv.css("height", String(scrollDivHeight) + "px");
+            this._issuePickerDiv.css("height", String(parseInt(this._issuePickerSearchInput.outerHeight) + parseInt(this._issuePickerScrollDiv.outerHeight) + 10) + "px");
+
+            if (numIssues == 1 && selectedIssue == "Unspecified") { this._issueAddButton.attr("disabled", true); }
+            else                                                  { this._issueAddButton.attr("disabled", false); }
         }
-
-        this._issuePickerScrollDiv.find("button").on("click", function() {
-            console.log(self._issuePickerScrollDivID + " button click " + $(this).text());
-            self.lines.load(self.sessions.mostRecentIssueSession($(this).text()));
-            self._issuePickerDiv.addClass("hidden");
-            self._issuePickerDiv.removeClass("popUpMenu");
-            self._issuePickerDiv.blur();
-            self._issuePickerButton.blur();
-            self.manage();
-        });
-
-        if (numIssues == 1 && selectedIssue == "Unspecified") { this._issueAddButton.attr("disabled", true); }
-        else                                                  { this._issueAddButton.attr("disabled", false); }
 
     }
 
@@ -445,7 +452,7 @@ class Utilities {
         const selectedIssue = this.currentIssue;
         const sessions = this.sessions.issueSessions(selectedIssue);
         const self = this;
-        var code, pickerText;
+        var code, pickerText, scrollDivHeight;
         this._sessionPickerScrollDiv.empty();
 //        console.log("manage(): " + selectedIssue + " - " + sessions.length);
         if (sessions.length) {
@@ -473,7 +480,14 @@ class Utilities {
             e.stopPropagation();
         });
 
-        if (this._numIssueRows == 1 && selectedIssue == "Unspecified") { this._sessionAddButton.attr("disabled", true); }
+        scrollDivHeight = parseInt(this.numSessions) * parseInt(this._sessionPickerScrollDiv.find("button").eq(0).outerHeight);
+        if (this._sessionPickerScrollDiv.position().top + scrollDivHeight > window.innerHeight) {
+            scrollDivHeight = window.innerHeight - this._sessionPickerScrollDiv.position().top;
+        }
+        this._sessionPickerScrollDiv.css("height", String(scrollDivHeight) + "px");
+        this._sessionPickerDiv.css("height", String(parseInt(this._sessionPickerScrollDiv.outerHeight) + 10) + "px");
+
+    if (this._numIssueRows == 1 && selectedIssue == "Unspecified") { this._sessionAddButton.attr("disabled", true); }
         else                                                        { this._sessionAddButton.attr("disabled", false); }
     }
 
