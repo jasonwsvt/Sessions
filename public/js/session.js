@@ -20,16 +20,16 @@ class Session {
     set lines(lines)      { this._setLines(lines); }
 
     get lines() {
-        console.log("lines()", this._creation, this._mostUpToDate, this._lines);
+//        console.log("lines()", this._creation, this._mostUpToDate, this._lines);
         this._lastOpened = Math.floor(Date.now() / 1000);
-        if (!this._lines.length) { console.log("this._lines == []", this._mostUpToDate);
+        if (!this._lines.length) { //console.log("this._lines == []", this._mostUpToDate);
             switch (this._mostUpToDate) {
                 case "Session": this._pullLinesFromSessionStorage(); break;
                 case "Local":   this._pullLinesFromLocalStorage();   break;
                 case "Server":  this._pullLinesFromServerDB();       break;
             }
         }
-        console.log("lines()", this._lines);
+//        console.log("lines()", this._lines);
         return this._lines;
     }
 
@@ -42,7 +42,7 @@ class Session {
     pullSessionData() {
         this._useSessionStorage = true;
         const session = JSON.parse(sessionStorage.getItem(this._creation));
-        console.log("pullSessionData(): " + session);
+//        console.log("pullSessionData(): " + session);
         this.setSessionData(session[0], session[1], session[2]);
     }
 
@@ -79,17 +79,17 @@ class Session {
 
     //issue, lastOpened, lastEdited, lines
     _setData(issue, lastOpened, lastEdited) {
-        if (parseInt(lastEdited) < 1600000000) { console.log(lastEdited); console.trace(); }
-        if (issue.length < 5) { console.log(lastEdited); console.trace(); }
-        if (parseInt(lastOpened) < 1600000000) { console.log(lastOpened); console.trace(); }
+//        if (parseInt(lastEdited) < 1600000000) { console.log(lastEdited); console.trace(); }
+//        if (issue.length < 5) { console.log(lastEdited); console.trace(); }
+//        if (parseInt(lastOpened) < 1600000000) { console.log(lastOpened); console.trace(); }
         this._issue = issue;
         this._lastOpened = lastOpened;
         this._lastEdited = lastEdited;
     }
 
     _update() {
-        console.log("updating:", this._lines);
-        console.trace();
+//        console.log("updating:", this._lines);
+//        console.trace();
         this._lastEdited = Math.floor(Date.now() / 1000);
         if (!this._useSessionStorage && !this._useLocalStorage && !this._useServerStorage) {
             this._useSessionStorage = true;

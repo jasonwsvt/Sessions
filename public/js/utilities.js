@@ -65,6 +65,8 @@ class Utilities {
 
         this.build();
 
+        this.manage();
+
         this.buttons.adjustDivHeights();
 
         $(document).ready(function() {
@@ -91,6 +93,7 @@ class Utilities {
                         self._issuePickerDiv.css("left", String(self._issuePickerButton.position().left) + "px");
                         self._issuePickerDiv.css("top", String(self._issuePickerButton.position().top + self._issuePickerButton.outerHeight()) + "px");
                         self._issuePickerDiv.addClass("popUpMenu");
+                        console.log("setting focus to input field");
                         self._issuePickerSearchInput.focus();
                         }
                     else {
@@ -134,7 +137,8 @@ class Utilities {
 
             self._issuePickerDiv.on("focusout", function() {
                 console.log(self._issuePickerDivID + " focusout");
-                self._issuePickerButton.html(self.currentIssue + " " + self._caretDownIcon);
+                if (self.numIssues > 1) { self._issuePickerButton.html(self.currentIssue + " " + self._caretDownIcon); }
+                else { self._issuePickerButton.html(self.currentIssue); }
                 self._issuePickerDiv.addClass("hidden");
                 self._issuePickerDiv.removeClass("popUpMenu");
                 self._issuePickerButton.blur();
@@ -213,8 +217,8 @@ class Utilities {
         });
 
         self._sessionPickerButton.on("click", function(e) {
-            console.log(self._sessionPickerButtonID + " click (buttons: " + self._numButtons + ")");
-            if (self._numButtons > 1) {
+            console.log(self._sessionPickerButtonID + " click (buttons: " + self._numSessionButtons + ")");
+            if (self._numSessionButtons > 1) {
                 if (self._sessionPickerDiv.hasClass("hidden")) {
                     self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretUpIcon);
                     self._sessionPickerDiv.removeClass("hidden");
@@ -409,6 +413,7 @@ class Utilities {
         const issues = this.sessions.issues();
         const numIssues = issues.length;
         const selectedIssue = this.currentIssue;
+//        console.log(issues, numIssues, selectedIssue);
         var code, pickerButtonText;
         this._issuePickerScrollDiv.empty();
         if (numIssues) {
@@ -448,7 +453,7 @@ class Utilities {
         const self = this;
         var code, pickerText;
         this._sessionPickerScrollDiv.empty();
-        console.log("manage(): " + selectedIssue + " - " + sessions.length);
+//        console.log("manage(): " + selectedIssue + " - " + sessions.length);
         if (sessions.length) {
             pickerText = this.dateString(selectedSession);
             if (sessions.length > 1) { pickerText += " " + this._caretDownIcon; }

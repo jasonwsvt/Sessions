@@ -15,9 +15,9 @@ class Sessions {
         this._localInit();
         this._serverInit();
 
-        this._sessions.forEach(session => {
-            console.log(session);
-        });
+//        this._sessions.forEach(session => {
+//            console.log(session);
+//        });
         this._linesObject = new Lines(linesID, this);
   
         if (this.numSessions) { this.lines.load(this.mostRecentSession()); }
@@ -31,7 +31,7 @@ class Sessions {
             });
 
             $("#" + self._buttonsID + " button").on("click", function(e) {
-                self.session.insertButton("<button type='button' class='btn btn-light'>" + $(this).text() + "</button>");
+                self.cursor.insertButton("<button type='button' class='btn btn-light'>" + $(this).text() + "</button>");
                 $(this).blur();
             });
 
@@ -42,6 +42,7 @@ class Sessions {
     }
 
     get lines() { return this._linesObject; }
+    get cursor() { return this._cursorObject; }
 
     _userInit() {
         //find the "remember me" user in localStorage, if any
@@ -55,7 +56,7 @@ class Sessions {
         keys.forEach((creation) => {
             if (Number(creation) > 1600000000 && !this.session(creation)) {
                 self._sessions.push(new Session(creation));
-                console.log(self.session(creation));
+//                console.log(self.session(creation));
                 self.session(creation).pullSessionData();
             }
         });
@@ -105,6 +106,7 @@ class Sessions {
         session.issue = issue;
         this._sessions.push(session);
         this.lines.load(creation);
+        this.cursor.checkForCursor();
     }
     
     session(creation) {
@@ -131,7 +133,7 @@ class Sessions {
             unsortedIssues.splice(max,1);
             lastOpeneds.splice(max,1);
         }
-        console.log("issues(): " + sortedIssues);
+//        console.log("issues(): " + sortedIssues);
         return sortedIssues;
     }
 
@@ -150,19 +152,19 @@ class Sessions {
             unsortedSessions.splice(max,1);
             lastOpeneds.splice(max,1);
         }
-        console.log("sessions(): " + sortedSessions);
+//        console.log("sessions(): " + sortedSessions);
         return sortedSessions;
     }
 
     mostRecentSession() {
         const sessions = this.sessions();
-        console.log("mostRecentSession(): " + sessions[0]);
+//        console.log("mostRecentSession(): " + sessions[0]);
         return sessions[0];
     }
 
     issueSessions(issue) {
         var unsortedIssueSessions= [], sortedIssueSessions = [], lastOpeneds = [], max, i;
-console.log("issueSessions(" + issue + "): " + this._sessions.length);
+//console.log("issueSessions(" + issue + "): " + this._sessions.length);
         this._sessions.forEach((session) => {
             if (session.issue == issue && !unsortedIssueSessions.includes(session.creation)) {
                 unsortedIssueSessions.push(session.creation);
