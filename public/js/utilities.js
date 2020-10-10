@@ -71,21 +71,11 @@ class Utilities {
 
         $(document).ready(function() {
             $("html").on("click", function(e) {
-                if(!self._issuePickerDiv.hasClass("hidden")) {
-                    self._issuePickerDiv.trigger("focusout");
-                }
-                if(!self._issueRenameDiv.hasClass("hidden")) {
-                    self._issueRenameDiv.trigger("focusout");
-                }
-                if(!self._issueAddDiv.hasClass("hidden")) {
-                    self._issueAddDiv.trigger("focusout");
-                }
-                if(!self._sessionPickerDiv.hasClass("hidden")) {
-                    self._sessionPickerDiv.trigger("focusout");
-                }
+                self.closeMenus();
             });
 
             self._issuePickerButton.on("click", function(e) {
+                self.closeMenus();
                 if (self._numIssueRows > 1) {
                     if (self._issuePickerDiv.hasClass("hidden")) {
                         $(this).html(self.currentIssue + " " + self._caretUpIcon);
@@ -145,6 +135,7 @@ class Utilities {
             });
 
             self._issueRenameButton.on("click", function(e) {
+                self.closeMenus();
                 if (self._issueRenameDiv.hasClass("hidden")) {
                     self._issueRenameDiv.removeClass("hidden");
                     self._issueRenameDiv.css("left", String(self._issueRenameButton.position().left) + "px");
@@ -181,6 +172,7 @@ class Utilities {
             });
 
             self._issueAddButton.on("click", function(e) {
+                self.closeMenus();
                 if (self._issueAddDiv.hasClass("hidden")) {
                     self._issueAddDiv.removeClass("hidden");
                     self._issueAddDiv.css("left", String(self._issueAddButton.position().left) + "px");
@@ -217,6 +209,7 @@ class Utilities {
         });
 
         self._sessionPickerButton.on("click", function(e) {
+            self.closeMenus();
             console.log(self._sessionPickerButtonID + " click (buttons: " + self._numSessionButtons + ")");
             if (self._numSessionButtons > 1) {
                 if (self._sessionPickerDiv.hasClass("hidden")) {
@@ -494,5 +487,12 @@ class Utilities {
         const second = String(d.getSeconds()).padStart(2, '0');
         const ampm = String((d.getHours() > 12) ? "PM" : "AM");
         return month + " " + day + ", " + year + " " + hour + ":" + minute + ":" + second + ampm;
+    }
+
+    closeMenus() {
+        this._issuePickerDiv.trigger("focusout");
+        this._issueRenameDiv.trigger("focusout");
+        this._issueAddDiv.trigger("focusout");
+        this._sessionPickerDiv.trigger("focusout");
     }
 }
