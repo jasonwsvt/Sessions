@@ -7,13 +7,15 @@ class Sessions {
     _linesObject = null;
     _cursorObject = null;
 
-    constructor(linesID) {
+    constructor(linesID, buttonsID) {
         const self = this;
         //pull local data for user
         this._userInit();
         this._sessionInit();
         this._localInit();
         this._serverInit();
+
+        this._buttonsID = buttonsID;
 
 //        this._sessions.forEach(session => {
 //            console.log(session);

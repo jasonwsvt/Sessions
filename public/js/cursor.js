@@ -312,8 +312,8 @@ class Cursor {
     }
 
     insertButton(e) {
-        console.log(this.cursorLineIndex + " " + this.cursorElementIndex + " " + e);
-        this.lines.insertBefore(this.cursorLineIndex, this.cursorElementIndex, e);
+        console.log(this.lineIndex + " " + this.elementIndex + " " + e);
+        this.lines.insertBefore(this.lineIndex, this.elementIndex, e);
     }
 
     get indentLine() {
