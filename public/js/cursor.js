@@ -203,7 +203,10 @@ class Cursor {
     //otherwise, move whole line to previous line, if it exists
     get backspace() {
         if (this._prevElementExists) {
-            if (!this._prevElement.hasClass("typed") || (this._prevElement.hasClass("typed") && !this._prevElement.hasClass("space") && this._prevElement.text().length <= 1)) {
+            if (!this._prevElement.hasClass("typed") || 
+                (this._prevElement.hasClass("typed") &&
+                 ((!this._prevElement.hasClass("space") && this._prevElement.text().length == 1) ||
+                  (this._prevElement.hasClass("space") && this._prevElement.text().length == 0)))) {
                 this.lines.removeElement(this._lineIndex, this._prevElementIndex);
             }
             else {
