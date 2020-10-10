@@ -245,12 +245,10 @@ class Utilities {
         });
 
         self._slideUpButton.on("click", function() {
-            console.log("slide up");
-            const lines = self.lines;
-            const lineHeight = Number(lines.div.children().eq(0).height());
+            const lineHeight = Number(self.lines.div.children().eq(0).height());
             const minLinesHeight = 0;
-            if (parseInt(lines.height) > minLinesHeight) {
-                lines.height = String(parseInt(lines.height) - lineHeight) + "px";
+            if (parseInt(self.lines.height) > minLinesHeight) {
+                self.lines.height = String(parseInt(self.lines.height) - lineHeight) + "px";
                 self.buttons.adjustDivHeights();
             }
         });
@@ -261,12 +259,10 @@ class Utilities {
         });
 
         self._slideDownButton.on("click", function() {
-            console.log("slide down");
-            const lines = self.lines;
-            const lineHeight = Number(lines.div.children().eq(0).height());
-            const maxLinesHeight = $(window).height() - Number(lines.div.children().eq(0).height());
-            if (parseInt(lines.height) < maxLinesHeight) {
-                lines.height = String(parseInt(lines.height) + lineHeight) + "px";
+            const lineHeight = Number(self.lines.div.children().eq(0).height());
+            const maxLinesHeight = $(window).height() - Number(self.lines.div.children().eq(0).height());
+            if (parseInt(self.lines.height) < maxLinesHeight) {
+                self.lines.height = String(parseInt(self.lines.height) + lineHeight) + "px";
                 self.buttons.adjustDivHeights();
             }
         });
