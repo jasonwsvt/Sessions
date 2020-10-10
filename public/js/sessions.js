@@ -8,6 +8,7 @@ class Sessions {
     _cursorObject = null;
 
     constructor(linesID) {
+        const self = this;
         //pull local data for user
         this._userInit();
         this._sessionInit();

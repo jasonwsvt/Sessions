@@ -16,7 +16,7 @@ class Lines {
     get ID()         { return this._containerID; }
     get div()        { return $("#" + this._containerID); }
     get sessions()   { return this._sessionsObject; }
-    get session()    { return this.sessions.session(this._creation); }
+    get session()    { console.log(this._creation, this.sessions.session(this._creation)); return this.sessions.session(this._creation); }
 
     get numLines()        { return this.div.children().length; }
     lineExists(i)         { return (i >= 0 && i < this.numLines); }
@@ -89,18 +89,19 @@ class Lines {
     }
 
     load(creation) {
+        console.trace();
         const self = this;
         if (this._creation) { this.session.lines = this.linesArray; }
         this._creation = creation;
         const lines = this.session.lines;
-        console.log(this._creation, typeof this._creation, this.session.lines);
+        console.log("load: " + this._creation, typeof this._creation, this.session.lines);
         this.div.empty();
-        if (lines) {
-                lines.forEach(function(line) {
+        if (lines.length) {
+            lines.forEach(function(line) {
                 self.div.append(line);
             });
         }
-        if (this.numLines == 0) {
+        else {
             this.div.append(this._lineCode);
         }
     }

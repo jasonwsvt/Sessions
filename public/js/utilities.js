@@ -84,9 +84,9 @@ class Utilities {
             });
 
             self._issuePickerButton.on("click", function(e) {
-                if (self._numRows > 1) {
+                if (self._numIssueRows > 1) {
                     if (self._issuePickerDiv.hasClass("hidden")) {
-                        $(this).html(self.sessions.issueName + " " + self._caretUpIcon);
+                        $(this).html(self.currentIssue + " " + self._caretUpIcon);
                         self._issuePickerDiv.removeClass("hidden");
                         self._issuePickerDiv.css("left", String(self._issuePickerButton.position().left) + "px");
                         self._issuePickerDiv.css("top", String(self._issuePickerButton.position().top + self._issuePickerButton.outerHeight()) + "px");
@@ -94,7 +94,7 @@ class Utilities {
                         self._issuePickerSearchInput.focus();
                         }
                     else {
-                        self._issuePickerButton.html(self.sessions.issueName + " " + self._caretDownIcon);
+                        self._issuePickerButton.html(self.currentIssue + " " + self._caretDownIcon);
                         self._issuePickerDiv.addClass("hidden");
                         self._issuePickerDiv.removeClass("popUpMenu");
                         self._issuePickerDiv.blur();
@@ -113,7 +113,7 @@ class Utilities {
             });
 
             self._issuePickerSearchInput.on("keyup", function(e) {
-                for (var i = 0; i < self._numRows; i++) {
+                for (var i = 0; i < self._numIssueRows; i++) {
                     if (!self._button(i).text().includes($(this).val())) {
                         self._row(i).addClass("hidden");
                     }
@@ -134,7 +134,7 @@ class Utilities {
 
             self._issuePickerDiv.on("focusout", function() {
                 console.log(self._issuePickerDivID + " focusout");
-                self._issuePickerButton.html(self.sessions.issueName + " " + self._caretDownIcon);
+                self._issuePickerButton.html(self.currentIssue + " " + self._caretDownIcon);
                 self._issuePickerDiv.addClass("hidden");
                 self._issuePickerDiv.removeClass("popUpMenu");
                 self._issuePickerButton.blur();
@@ -146,7 +146,7 @@ class Utilities {
                     self._issueRenameDiv.css("left", String(self._issueRenameButton.position().left) + "px");
                     self._issueRenameDiv.css("top", String(self._issueRenameButton.position().top + self._issueRenameButton.outerHeight()) + "px");
                     self._issueRenameDiv.addClass("popUpMenu");
-                    self._issueRenameInput.val(self.sessions.issueName);
+                    self._issueRenameInput.val(self.currentIssue);
                     self._issueRenameInput.focus();
                 }
                 else {
@@ -162,7 +162,7 @@ class Utilities {
                 if (e.key == "Enter") {
                     self._issueRenameDiv.addClass("hidden");
                     self._issueRenameDiv.removeClass("popUpMenu");
-                    self.sessions.renameIssue(this.currentIssue(), this.value);
+                    self.sessions.renameIssue(self.currentIssue, this.value);
                     self.manageIssueUtilities();
                     self._issueRenameDiv.blur();
                     self._issueRenameButton.blur();
@@ -216,7 +216,7 @@ class Utilities {
             console.log(self._sessionPickerButtonID + " click (buttons: " + self._numButtons + ")");
             if (self._numButtons > 1) {
                 if (self._sessionPickerDiv.hasClass("hidden")) {
-                    self._sessionPickerButton.html(self.dateString(self.sessions.sessionName) + " " + self._caretUpIcon);
+                    self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretUpIcon);
                     self._sessionPickerDiv.removeClass("hidden");
                     self._sessionPickerDiv.css("left", String(self._sessionPickerButton.position().left) + "px");
                     self._sessionPickerDiv.css("top", String(self._sessionPickerButton.position().top + self._sessionPickerButton.outerHeight()) + "px");
@@ -224,7 +224,7 @@ class Utilities {
                     self._sessionPickerDiv.focus();
                 }
                 else {
-                    self._sessionPickerButton.html(self.dateString(self.sessions.sessionName) + " " + self._caretDownIcon);
+                    self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretDownIcon);
                     self._sessionPickerDiv.addClass("hidden");
                     self._sessionPickerDiv.removeClass("popUpMenu");
                     self._sessionPickerButton.blur();
@@ -234,7 +234,7 @@ class Utilities {
         });
 
         self._sessionPickerDiv.on("focusout", function() {
-            self._sessionPickerButton.html(self.dateString(self.sessions.sessionName) + " " + self._caretDownIcon);
+            self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretDownIcon);
             $(this).addClass("hidden");
             $(this).removeClass("popUpMenu");
         });
@@ -297,8 +297,9 @@ class Utilities {
     get lines()                   { return this.sessions.lines; }
     get sessions()                { return this._sessions; }
     get buttons()                 { return this._buttons; }
-    get numIssues()               { return this._numRows; }
-    get currentIssue()            { return this.sessions.session(this.lines.creation).issue; }
+    get numIssues()               { return this._numIssueRows; }
+    get currentIssue()            { return this.lines.session.issue; }
+    get currentSession()          { return this.lines.session.creation; }
     get _loginDiv()               { return $("#" + this._loginDivID); }
     get _issuePickerButton()      { return $("#" + this._issuePickerButtonID); }
     get _issuePickerDiv()         { return $("#" + this._issuePickerDivID); }
@@ -407,7 +408,7 @@ class Utilities {
         const self = this;
         const issues = this.sessions.issues();
         const numIssues = issues.length;
-        const selectedIssue = this.lines.session.issue;
+        const selectedIssue = this.currentIssue;
         var code, pickerButtonText;
         this._issuePickerScrollDiv.empty();
         if (numIssues) {
@@ -441,8 +442,8 @@ class Utilities {
     }
 
     manageSessionUtilities() {
-        const selectedSession = this.sessions.sessionName;
-        const selectedIssue = this.sessions.issueName;
+        const selectedSession = this.currentSession;
+        const selectedIssue = this.currentIssue;
         const sessions = this.sessions.issueSessions(selectedIssue);
         const self = this;
         var code, pickerText;
@@ -473,7 +474,7 @@ class Utilities {
             e.stopPropagation();
         });
 
-        if (this._numIssues == 1 && selectedIssue == "Unspecified") { this._sessionAddButton.attr("disabled", true); }
+        if (this._numIssueRows == 1 && selectedIssue == "Unspecified") { this._sessionAddButton.attr("disabled", true); }
         else                                                        { this._sessionAddButton.attr("disabled", false); }
     }
 
