@@ -1,5 +1,5 @@
 class Session {
-    _useSessionStorage = false;
+    _useSessionStorage = true;
     _useLocalStorage = false;
     _useServerStorage = false;
     _mostUpToDate = null;
@@ -13,8 +13,8 @@ class Session {
     get creation()        { return this._creation; }
     get lastEdited()      { return this._lastEdited; }
     get lastOpened()      { return this._lastOpened; }
-    get issue()           { return this._issue; }
     set issue(newIssue)   { this._issue = newIssue; this._update(); }
+    get issue()           { return this._issue; }
     get mostUpToDate()    { return this._mostUpToDate; }
     get clearLines()      { this._lines = null; }
 
@@ -26,6 +26,7 @@ class Session {
     }
 
     get lines() {
+        console.log("lines()", this._creation);
         this._lastOpened = Math.floor(Date.now() / 1000);
         if (this._lines == []) {
             switch (this._mostUpToDate) {
@@ -72,6 +73,13 @@ class Session {
         }
     }
 
+    //issue, lastOpened, lastEdited, lines
+    _setData(issue, lastOpened, lastEdited) {
+        this._issue = issue;
+        this._lastEdited = lastEdited;
+        this._lastOpened = lastOpened;
+    }
+
     _update() {
         this._lastEdited = Math.floor(Date.now() / 1000);
         if (this._useLocalStorage)   { this._saveToLocalStorage();   this._mostUpToDate = "Local"; }
@@ -79,11 +87,11 @@ class Session {
     }
 
     _saveToSessionStorage() {
-        sessionStorage.setItem(creation, JSON.stringify(this._issue, this._lastOpened, this._lastEdited, this._lines));
+        sessionStorage.setItem(this._creation, JSON.stringify(this._issue, this._lastOpened, this._lastEdited, this._lines));
     }
 
     _saveToLocalStorage() {
-        localStorage.setItem(creation, JSON.stringify(this._issue, this._lastOpened, this._lastEdited, this._lines));
+        localStorage.setItem(this._creation, JSON.stringify(this._issue, this._lastOpened, this._lastEdited, this._lines));
     }
 
     _pullLinesFromSessionStorage() {
@@ -96,12 +104,4 @@ class Session {
 
     _pullLinesFromServerDB() {
     }
-
-    //issue, lastOpened, lastEdited, lines
-    _setData(issue, lastOpened, lastEdited) {
-        this._issue = issue;
-        this._lastEdited = lastEdited;
-        this._lastOpened = lastOpened;
-    }
-
 }

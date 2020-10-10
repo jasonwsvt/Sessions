@@ -31,8 +31,6 @@ class Cursor {
             Mousetrap.bind(['shift+tab'], function(e) { self.outdentLine; return false; });
     
             $(document).on("keyup", function(e) {
-                self.setLastEdited();
-
                 if (e.key === "Enter" && self.cursorLineIndex > 0) {
                     self.lines.line(self.cursorLineIndex).css("paddingLeft", 
                         self.lines.line(self.cursorLineIndex - 1).css("paddingLeft"));

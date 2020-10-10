@@ -1,9 +1,8 @@
-/* utilities class links to session class and dataManager classes
+/* utilities class links to sessions class
 */
 
 class Utilities {
     _utilitiesID = null;
-    _dataManager = null;
     _sessions = null;
     _minLinesHeight = null;
     _maxLinesHeight = null;
@@ -58,13 +57,15 @@ class Utilities {
     _configButtonID = "configButton";
 
 
-    constructor (utilitiesID, dataManager, sessions) {
+    constructor (utilitiesID, sessions, buttons) {
         const self = this;
         this._utilitiesID = utilitiesID;
-        this._dataManager = dataManager;
         this._sessions = sessions;
+        this._buttons = buttons;
 
         this.build();
+
+        this.buttons.adjustDivHeights();
 
         $(document).ready(function() {
             $("html").on("click", function(e) {
@@ -295,10 +296,10 @@ class Utilities {
     get div()                     { return $("#" + this._utilitiesID); }
     get lines()                   { return this.sessions.lines; }
     get sessions()                { return this._sessions; }
-    get data()                    { return this._dataManager; }
-    get buttons()                 { return this.sessions.buttons; }
+    get buttons()                 { return this._buttons; }
     get numIssues()               { return this._numRows; }
     get currentIssue()            { return this.sessions.session(this.lines.creation).issue; }
+    get _loginDiv()               { return $("#" + this._loginDivID); }
     get _issuePickerButton()      { return $("#" + this._issuePickerButtonID); }
     get _issuePickerDiv()         { return $("#" + this._issuePickerDivID); }
     get _issuePickerSearch()      { return $("#" + this._issuePickerSearchID); }
@@ -377,7 +378,7 @@ class Utilities {
         const rightSide = this.div.children().eq(1);
 
         leftSide.append(loginButton + loginDiv);
-        this.loginDiv.append(loginDivUsernameInput + loginDivPasswordInput + loginDivLoginButton + loginDivForgotPasswordButton + loginDivNewAccountButton);
+        this._loginDiv.append(loginDivUsernameInput + loginDivPasswordInput + loginDivLoginButton + loginDivForgotPasswordButton + loginDivNewAccountButton);
         leftSide.append(dotIcon);
         leftSide.append(issuePickerButton + issuePickerDiv);
         this._issuePickerDiv.append(issuePickerSearchInput + issuePickerScrollDiv);
@@ -404,9 +405,9 @@ class Utilities {
 
     manageIssueUtilities() {
         const self = this;
-        const issues = this.data.issues();
+        const issues = this.sessions.issues();
         const numIssues = issues.length;
-        const selectedIssue = this.sessions.issueName;
+        const selectedIssue = this.lines.session.issue;
         var code, pickerButtonText;
         this._issuePickerScrollDiv.empty();
         if (numIssues) {
@@ -442,7 +443,7 @@ class Utilities {
     manageSessionUtilities() {
         const selectedSession = this.sessions.sessionName;
         const selectedIssue = this.sessions.issueName;
-        const sessions = this.data.issueSessions(selectedIssue);
+        const sessions = this.sessions.issueSessions(selectedIssue);
         const self = this;
         var code, pickerText;
         this._sessionPickerScrollDiv.empty();

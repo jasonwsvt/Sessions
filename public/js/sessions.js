@@ -18,13 +18,15 @@ class Sessions {
             console.log(session);
         });
         this._linesObject = new Lines(linesID, this);
-        this._cursorObject = new Cursor(this._linesObject);
   
-        this.lines.load(this.mostRecentSession());
+        if (this.numSessions) { this.lines.load(this.mostRecentSession()); }
+        else { this.newSession(); }
+
+        this._cursorObject = new Cursor(this._linesObject);
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
-                self.storeSession();
+                self.lines.session.lines = self.lines.linesArray;
             });
 
             $("#" + self._buttonsID + " button").on("click", function(e) {
@@ -77,26 +79,29 @@ class Sessions {
         //put information into sessions object
     }
 
+    get numSessions() { return this._sessions.length; }
+
     renameIssue(oldIssue, newIssue) {
         this._sessions.forEach((session) => {
             if (session.issue == oldIssue) {
-                session.issue(newIssue);
+                session.issue = newIssue;
             }
         });
     }
 
-    newIssue(newIssue) {
-        var creation = Math.floor(Date.now() / 1000);
-        var session = new Session(creation);
-        session.issue(newIssue);
-        this._sessions.push(session);
-        this.lines.load(creation);
-    }
+//    newIssue(newIssue) {
+//        var creation = Math.floor(Date.now() / 1000);
+//        var session = new Session(creation);
+//        session.issue(newIssue);
+//        this._sessions.push(session);
+//        this.lines.load(creation);
+//    }
 
     newSession(issue) {
         var creation = Math.floor(Date.now() / 1000);
         var session = new Session(creation);
-        session.issue(issue);
+        if (typeof issue != "string" || issue == "") { issue = "Unspecified"; }
+        session.issue = issue;
         this._sessions.push(session);
         this.lines.load(creation);
     }
@@ -208,7 +213,7 @@ console.log("issueSessions(" + issue + "): " + this._sessions.length);
     }
 
     setLines(creation, lines) {
-        this.session(creation).lines(lines);
+        this.session(creation).lines = lines;
     }
 
     pullLocalDataForUser() {
