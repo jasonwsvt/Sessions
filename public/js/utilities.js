@@ -107,11 +107,12 @@ class Utilities {
 
             self._issuePickerSearchInput.on("keyup", function(e) {
                 for (var i = 0; i < self._numIssueRows; i++) {
-                    if (!self._button(i).text().includes($(this).val())) {
-                        self._row(i).addClass("hidden");
+//                    console.log($(this).val(), self._issueButton(i), "'" + self._issueButton(i).text() + "'");
+                    if (!self._issueButton(i).text().includes($(this).val())) {
+                        self._issueRow(i).addClass("hidden");
                     }
-                    else if (self._row(i).hasClass("hidden")) {
-                        self._row(i).removeClass("hidden");
+                    else if (self._issueRow(i).hasClass("hidden")) {
+                        self._issueRow(i).removeClass("hidden");
                     }
                 }
                 e.stopPropagation();
@@ -126,7 +127,7 @@ class Utilities {
             });
 
             self._issuePickerDiv.on("focusout", function() {
-                console.log(self._issuePickerDivID + " focusout");
+//                console.log(self._issuePickerDivID + " focusout");
                 if (self.numIssues > 1) { self._issuePickerButton.html(self.currentIssue + " " + self._caretDownIcon); }
                 else { self._issuePickerButton.html(self.currentIssue); }
                 self._issuePickerDiv.addClass("hidden");
@@ -301,7 +302,7 @@ class Utilities {
     get _issuePickerButton()      { return $("#" + this._issuePickerButtonID); }
     get _issuePickerDiv()         { return $("#" + this._issuePickerDivID); }
     get _issuePickerSearch()      { return $("#" + this._issuePickerSearchID); }
-    get _issuePickerSearchInput() { return $("#" + this._issuePickerInputID); }
+    get _issuePickerSearchInput() { return $("#" + this._issuePickerSearchInputID); }
     get _issuePickerScrollDiv()   { return $("#" + this._issuePickerScrollDivID); }
     get _issueRenameButton()      { return $("#" + this._issueRenameButtonID); }
     get _issueRenameDiv()         { return $("#" + this._issueRenameDivID); }
@@ -311,7 +312,7 @@ class Utilities {
     get _issueAddInput()          { return $("#" + this._issueAddInputID); }
     get _numIssueRows()           { return this._issuePickerScrollDiv.find(".row").length; }
     _issueRow(i)                  { return this._issuePickerScrollDiv.find(".row").eq(i); }
-    _issueButton(i)               { return this._issuePickerScrollDiv.find(".button").eq(i); }
+    _issueButton(i)               { return this._issuePickerScrollDiv.find("button").eq(i); }
     get _sessionPickerButton()    { return $("#" + this._sessionPickerButtonID); }
     get _sessionPickerDiv()       { return $("#" + this._sessionPickerDivID); }
     get _sessionAddButton()       { return $("#" + this._sessionAddButtonID); }
