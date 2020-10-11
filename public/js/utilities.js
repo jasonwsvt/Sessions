@@ -67,10 +67,10 @@ class Utilities {
         this.manage();
         this.buttons.adjustDivHeights();
 
-        $(document).ready(function() {
+        $(document).ready(function() { /*
             $("html").on("click", function(e) {
                 self.closeMenus();
-            });
+            }); */
 
             self._issuePickerButton.on("click", function(e) {
                 self.closeMenus(self._issuePickerButtonID);
@@ -128,15 +128,14 @@ class Utilities {
                 e.stopPropagation();
             });
 
-            self._issuePickerDiv.on("focusout", function() {
+/*            self._issuePickerDiv.on("focusout", function() {
 //                console.log(self._issuePickerDivID + " focusout");
                 if (self.numIssues > 1) { self._issuePickerButton.html(self.currentIssue + " " + self._caretDownIcon); }
                 else { self._issuePickerButton.html(self.currentIssue); }
                 self._issuePickerDiv.addClass("hidden");
                 self._issuePickerDiv.removeClass("popUpMenu");
                 self._issuePickerButton.blur();
-                console.trace();
-            });
+            }); */
 
             self._issueRenameButton.on("click", function(e) {
                 self.closeMenus(self._issueRenameButtonID);
@@ -210,95 +209,95 @@ class Utilities {
                 $(this).removeClass("popUpMenu");
                 self._issueAddButton.blur();
             });
-        });
 
-        self._sessionPickerButton.on("click", function(e) {
-            self.closeMenus(self._sessionPickerButtonID);
-            if (self._numSessionButtons > 1) {
-                if (self._sessionPickerDiv.hasClass("hidden")) {
-                    if (self.numSessions == 1) {
-                        self._sessionPickerButton.html(self.dateString(self.currentSession));
+            self._sessionPickerButton.on("click", function(e) {
+                self.closeMenus(self._sessionPickerButtonID);
+                if (self._numSessionButtons > 1) {
+                    if (self._sessionPickerDiv.hasClass("hidden")) {
+                        if (self.numSessions == 1) {
+                            self._sessionPickerButton.html(self.dateString(self.currentSession));
+                        }
+                        if (self.numSessions > 1) {
+                            self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretUpIcon);
+                        }
+                        self._sessionPickerDiv.removeClass("hidden");
+                        self._sessionPickerDiv.css("left", String(self._sessionPickerButton.position().left) + "px");
+                        self._sessionPickerDiv.css("top", String(self._sessionPickerButton.position().top + self._sessionPickerButton.outerHeight()) + "px");
+                        self._sessionPickerDiv.addClass("popUpMenu");
+                        self._sessionPickerDiv.focus();
                     }
-                    if (self.numSessions > 1) {
-                        self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretUpIcon);
+                    else {
+                        self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretDownIcon);
+                        self._sessionPickerDiv.addClass("hidden");
+                        self._sessionPickerDiv.removeClass("popUpMenu");
+                        self._sessionPickerButton.blur();
                     }
-                    self._sessionPickerDiv.removeClass("hidden");
-                    self._sessionPickerDiv.css("left", String(self._sessionPickerButton.position().left) + "px");
-                    self._sessionPickerDiv.css("top", String(self._sessionPickerButton.position().top + self._sessionPickerButton.outerHeight()) + "px");
-                    self._sessionPickerDiv.addClass("popUpMenu");
-                    self._sessionPickerDiv.focus();
                 }
-                else {
+                e.stopPropagation();
+            });
+
+            self._sessionPickerDiv.on("focusout", function() {
+                if (self.numSessions == 1) {
+                    self._sessionPickerButton.html(self.dateString(self.currentSession));
+                }
+                if (self.numSessions > 1) {
                     self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretDownIcon);
-                    self._sessionPickerDiv.addClass("hidden");
-                    self._sessionPickerDiv.removeClass("popUpMenu");
-                    self._sessionPickerButton.blur();
                 }
-            }
-            e.stopPropagation();
-        });
+                $(this).addClass("hidden");
+                $(this).removeClass("popUpMenu");
+            });
 
-        self._sessionPickerDiv.on("focusout", function() {
-            if (self.numSessions == 1) {
-                self._sessionPickerButton.html(self.dateString(self.currentSession));
-            }
-            if (self.numSessions > 1) {
-                self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretDownIcon);
-            }
-            $(this).addClass("hidden");
-            $(this).removeClass("popUpMenu");
-        });
+            self._sessionAddButton.on("click", function(e) {
+                self.sessions.newSession(self.currentIssue);
+                self.manageSessionUtilities();
+                $(this).blur();
+                e.stopPropagation();
+            });
 
-        self._sessionAddButton.on("click", function(e) {
-            self.sessions.newSession(self.currentIssue);
-            self.manageSessionUtilities();
-            $(this).blur();
-            e.stopPropagation();
-        });
+            self._slideUpButton.on("click", function() {
+                const lineHeight = Number(self.lines.div.children().eq(0).height());
+                const minLinesHeight = 0;
+                if (parseInt(self.lines.height) > minLinesHeight) {
+                    self.lines.height = String(parseInt(self.lines.height) - lineHeight) + "px";
+                    self.buttons.adjustDivHeights();
+                }
+            });
 
-        self._slideUpButton.on("click", function() {
-            const lineHeight = Number(self.lines.div.children().eq(0).height());
-            const minLinesHeight = 0;
-            if (parseInt(self.lines.height) > minLinesHeight) {
-                self.lines.height = String(parseInt(self.lines.height) - lineHeight) + "px";
-                self.buttons.adjustDivHeights();
-            }
-        });
+            Mousetrap.bind(['ctrl+up'], function(e) {
+                self._slideUpButton.trigger("click");
+                return false;
+            });
 
-        Mousetrap.bind(['ctrl+up'], function(e) {
-            self._slideUpButton.trigger("click");
-            return false;
-        });
+            self._slideDownButton.on("click", function() {
+                const lineHeight = Number(self.lines.div.children().eq(0).height());
+                const maxLinesHeight = $(window).height() - Number(self.lines.div.children().eq(0).height());
+                if (parseInt(self.lines.height) < maxLinesHeight) {
+                    self.lines.height = String(parseInt(self.lines.height) + lineHeight) + "px";
+                    self.buttons.adjustDivHeights();
+                }
+            });
 
-        self._slideDownButton.on("click", function() {
-            const lineHeight = Number(self.lines.div.children().eq(0).height());
-            const maxLinesHeight = $(window).height() - Number(self.lines.div.children().eq(0).height());
-            if (parseInt(self.lines.height) < maxLinesHeight) {
-                self.lines.height = String(parseInt(self.lines.height) + lineHeight) + "px";
-                self.buttons.adjustDivHeights();
-            }
-        });
+            Mousetrap.bind(['ctrl+down'], function(e) {
+                self._slideDownButton.trigger("click");
+                return false;
+            });
 
-        Mousetrap.bind(['ctrl+down'], function(e) {
-            self._slideDownButton.trigger("click");
-            return false;
-        });
+            self._exportButton.on("click", function() {
 
-        self._exportButton.on("click", function() {
+            });
 
-        });
+            self._importButton.on("click", function() {
 
-        self._importButton.on("click", function() {
+            });
 
-        });
+            self._configButton.on("click", function() {
 
-        self._configButton.on("click", function() {
+            });
 
-        });
+            self._infoButton.on("click", function() {
 
-        self._infoButton.on("click", function() {
-
-        });
+            });
+        }); 
     }
 
     get div()                     { return $("#" + this._utilitiesID); }
@@ -416,7 +415,7 @@ class Utilities {
         const numIssues = issues.length;
         const selectedIssue = this.currentIssue;
 //        console.log(issues, numIssues, selectedIssue);
-        var code, pickerButtonText, scrollDivHeight;
+        var code, pickerButtonText, scrollDivHeight, i;
         this._issuePickerScrollDiv.empty();
         pickerButtonText = selectedIssue;
         if (numIssues > 1) { pickerButtonText += " " + this._caretDownIcon; }
@@ -431,6 +430,7 @@ class Utilities {
             });
             code += "</div>";
             this._issuePickerScrollDiv.append(code);
+
             this._issuePickerScrollDiv.find("button").on("click", function(e) {
                 console.log(self._issuePickerScrollDivID + " button click " + $(this).text());
                 self.lines.load(self.sessions.mostRecentIssueSession($(this).text()));
@@ -438,7 +438,6 @@ class Utilities {
                 self.manage();
                 e.stopPropagation();
             });
-            console.log("manage issue utilities");
 
             scrollDivHeight = parseInt(this.numIssues) * parseInt(this._issueRow(0).outerHeight);
             if (this._issuePickerScrollDiv.position().top + scrollDivHeight > window.innerHeight) {
@@ -473,7 +472,7 @@ class Utilities {
             });
 
             self._sessionPickerScrollDiv.find("button").on("click", function(e) {
-                console.log("pickerScrollDiv button click: loading " + this.value);
+                console.log("sessionPickerScrollDiv button click: loading " + this.value);
                 self.lines.load(this.value);
                 self._sessionPickerDiv.trigger("focusout");
                 self.manageSessionUtilities();
@@ -506,7 +505,6 @@ class Utilities {
     }
 
     closeMenus(except) {
-        console.log(except);
         if (except != this._issuePickerButtonID)   { this._issuePickerDiv.trigger("focusout"); }
         if (except != this._issueRenameButtonID)   { this._issueRenameDiv.trigger("focusout"); }
         if (except != this._issueAddButtonID)      { this._issueAddDiv.trigger("focusout"); }
