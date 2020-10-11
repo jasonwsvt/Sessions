@@ -67,10 +67,10 @@ class Utilities {
         this.manage();
         this.buttons.adjustDivHeights();
 
-        $(document).ready(function() { /*
+        $(document).ready(function() {
             $("html").on("click", function(e) {
                 self.closeMenus();
-            }); */
+            });
 
             self._issuePickerButton.on("click", function(e) {
                 self.closeMenus(self._issuePickerButtonID);
@@ -128,14 +128,14 @@ class Utilities {
                 e.stopPropagation();
             });
 
-/*            self._issuePickerDiv.on("focusout", function() {
-//                console.log(self._issuePickerDivID + " focusout");
+            self._issuePickerDiv.on("focusout", function() {
+                console.log(self._issuePickerDivID + " focusout");
                 if (self.numIssues > 1) { self._issuePickerButton.html(self.currentIssue + " " + self._caretDownIcon); }
                 else { self._issuePickerButton.html(self.currentIssue); }
-                self._issuePickerDiv.addClass("hidden");
-                self._issuePickerDiv.removeClass("popUpMenu");
+//                self._issuePickerDiv.addClass("hidden");
+//                self._issuePickerDiv.removeClass("popUpMenu");
                 self._issuePickerButton.blur();
-            }); */
+            });
 
             self._issueRenameButton.on("click", function(e) {
                 self.closeMenus(self._issueRenameButtonID);
@@ -184,10 +184,7 @@ class Utilities {
                     self._issueAddInput.focus();
                 }
                 else {
-                    self._issueAddDiv.addClass("hidden");
-                    self._issueAddDiv.removeClass("popUpMenu");
-                    self._issueAddDiv.blur();
-                    self._issueAddButton.blur();
+                    self.closeMenus();
                 }
                 e.stopPropagation();
             });
@@ -198,8 +195,7 @@ class Utilities {
                     self._issueAddDiv.removeClass("popUpMenu");
                     self.sessions.newSession(this.value);
                     self.manage();
-                    self._issueAddDiv.blur();
-                    self._issueAddButton.blur();
+                    self.closeMenus();
                 }
                 e.stopPropagation();
             });
@@ -434,7 +430,7 @@ class Utilities {
             this._issuePickerScrollDiv.find("button").on("click", function(e) {
                 console.log(self._issuePickerScrollDivID + " button click " + $(this).text());
                 self.lines.load(self.sessions.mostRecentIssueSession($(this).text()));
-                self._issuePickerDiv.trigger("focusout");
+                self.closeMenus();
                 self.manage();
                 e.stopPropagation();
             });
@@ -474,7 +470,7 @@ class Utilities {
             self._sessionPickerScrollDiv.find("button").on("click", function(e) {
                 console.log("sessionPickerScrollDiv button click: loading " + this.value);
                 self.lines.load(this.value);
-                self._sessionPickerDiv.trigger("focusout");
+                self.closeMenus();
                 self.manageSessionUtilities();
                 e.stopPropagation();
             });
@@ -505,9 +501,25 @@ class Utilities {
     }
 
     closeMenus(except) {
-        if (except != this._issuePickerButtonID)   { this._issuePickerDiv.trigger("focusout"); }
-        if (except != this._issueRenameButtonID)   { this._issueRenameDiv.trigger("focusout"); }
-        if (except != this._issueAddButtonID)      { this._issueAddDiv.trigger("focusout"); }
-        if (except != this._sessionPickerButtonID) { this._sessionPickerDiv.trigger("focusout"); }
+        if (except != this._issuePickerButtonID)   {
+            this._issuePickerDiv.addClass("hidden");
+            this._issuePickerDiv.removeClass("popUpMenu");
+            this._issuePickerButton.focusout();
+        }
+        if (except != this._issueRenameButtonID)   { 
+            this._issueRenameDiv.addClass("hidden");
+            this._issueRenameDiv.removeClass("popUpMenu");
+            this._issueRenameButton.focusout();
+        }
+        if (except != this._issueAddButtonID)      { 
+            this._issueAddDiv.addClass("hidden");
+            this._issueAddDiv.removeClass("popUpMenu");
+            this._issueAddButton.focusout();
+        }
+        if (except != this._sessionPickerButtonID) { 
+            this._sessionPickerDiv.addClass("hidden");
+            this._sessionPickerDiv.removeClass("popUpMenu");
+            this._sessionPickerButton.focusout();
+        }
     }
 }
