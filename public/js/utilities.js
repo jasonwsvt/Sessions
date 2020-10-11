@@ -64,9 +64,7 @@ class Utilities {
         this._buttons = buttons;
 
         this.build();
-
         this.manage();
-
         this.buttons.adjustDivHeights();
 
         $(document).ready(function() {
@@ -75,7 +73,7 @@ class Utilities {
             });
 
             self._issuePickerButton.on("click", function(e) {
-                self.closeMenus();
+                self.closeMenus(self._issuePickerButtonID);
                 if (self._numIssueRows > 1) {
                     if (self._issuePickerDiv.hasClass("hidden")) {
                         if (self.numIssues > 1) {
@@ -88,7 +86,6 @@ class Utilities {
                         self._issuePickerDiv.css("left", String(self._issuePickerButton.position().left) + "px");
                         self._issuePickerDiv.css("top", String(self._issuePickerButton.position().top + self._issuePickerButton.outerHeight()) + "px");
                         self._issuePickerDiv.addClass("popUpMenu");
-                        console.log("setting focus to input field");
                         self._issuePickerSearchInput.focus();
                         }
                     else {
@@ -138,10 +135,11 @@ class Utilities {
                 self._issuePickerDiv.addClass("hidden");
                 self._issuePickerDiv.removeClass("popUpMenu");
                 self._issuePickerButton.blur();
+                console.trace();
             });
 
             self._issueRenameButton.on("click", function(e) {
-                self.closeMenus();
+                self.closeMenus(self._issueRenameButtonID);
                 if (self._issueRenameDiv.hasClass("hidden")) {
                     self._issueRenameDiv.removeClass("hidden");
                     self._issueRenameDiv.css("left", String(self._issueRenameButton.position().left) + "px");
@@ -178,7 +176,7 @@ class Utilities {
             });
 
             self._issueAddButton.on("click", function(e) {
-                self.closeMenus();
+                self.closeMenus(self._issueAddButtonID);
                 if (self._issueAddDiv.hasClass("hidden")) {
                     self._issueAddDiv.removeClass("hidden");
                     self._issueAddDiv.css("left", String(self._issueAddButton.position().left) + "px");
@@ -215,8 +213,7 @@ class Utilities {
         });
 
         self._sessionPickerButton.on("click", function(e) {
-            self.closeMenus();
-            console.log(self._sessionPickerButtonID + " click (buttons: " + self._numSessionButtons + ")");
+            self.closeMenus(self._sessionPickerButtonID);
             if (self._numSessionButtons > 1) {
                 if (self._sessionPickerDiv.hasClass("hidden")) {
                     if (self.numSessions == 1) {
@@ -434,16 +431,14 @@ class Utilities {
             });
             code += "</div>";
             this._issuePickerScrollDiv.append(code);
-
-            this._issuePickerScrollDiv.find("button").on("click", function() {
+            this._issuePickerScrollDiv.find("button").on("click", function(e) {
                 console.log(self._issuePickerScrollDivID + " button click " + $(this).text());
                 self.lines.load(self.sessions.mostRecentIssueSession($(this).text()));
-                self._issuePickerDiv.addClass("hidden");
-                self._issuePickerDiv.removeClass("popUpMenu");
-                self._issuePickerDiv.blur();
-                self._issuePickerButton.blur();
+                self._issuePickerDiv.trigger("focusout");
                 self.manage();
+                e.stopPropagation();
             });
+            console.log("manage issue utilities");
 
             scrollDivHeight = parseInt(this.numIssues) * parseInt(this._issueRow(0).outerHeight);
             if (this._issuePickerScrollDiv.position().top + scrollDivHeight > window.innerHeight) {
@@ -465,14 +460,12 @@ class Utilities {
         const self = this;
         var code, pickerText, scrollDivHeight;
         this._sessionPickerScrollDiv.empty();
-//        console.log("manage(): " + selectedIssue + " - " + sessions.length);
         pickerText = this.dateString(selectedSession);
         if (sessions.length > 1) { pickerText += " " + this._caretDownIcon; }
         this._sessionPickerButton.html(pickerText);
         if (sessions.length > 1) {
             sessions.forEach(function(entry) {
                 code = "<button type='button' class='btn ";
-//                console.log(entry + " " + selectedSession + " " + (String(entry) == String(selectedSession)));
                 if (String(entry) == String(selectedSession)) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
                 code += " btn-sm' value = '" + entry + "'>" + entry + " " + self.dateString(entry) + "</button>";
@@ -482,10 +475,8 @@ class Utilities {
             self._sessionPickerScrollDiv.find("button").on("click", function(e) {
                 console.log("pickerScrollDiv button click: loading " + this.value);
                 self.lines.load(this.value);
-                self._sessionPickerDiv.addClass("hidden");
-                self._sessionPickerDiv.removeClass("popUpMenu");  
+                self._sessionPickerDiv.trigger("focusout");
                 self.manageSessionUtilities();
-                self._sessionPickerDiv.blur();
                 e.stopPropagation();
             });
 
@@ -514,10 +505,11 @@ class Utilities {
         return month + " " + day + ", " + year + " " + hour + ":" + minute + ":" + second + ampm;
     }
 
-    closeMenus() {
-        this._issuePickerDiv.trigger("focusout");
-        this._issueRenameDiv.trigger("focusout");
-        this._issueAddDiv.trigger("focusout");
-        this._sessionPickerDiv.trigger("focusout");
+    closeMenus(except) {
+        console.log(except);
+        if (except != this._issuePickerButtonID)   { this._issuePickerDiv.trigger("focusout"); }
+        if (except != this._issueRenameButtonID)   { this._issueRenameDiv.trigger("focusout"); }
+        if (except != this._issueAddButtonID)      { this._issueAddDiv.trigger("focusout"); }
+        if (except != this._sessionPickerButtonID) { this._sessionPickerDiv.trigger("focusout"); }
     }
 }
