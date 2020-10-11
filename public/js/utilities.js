@@ -132,8 +132,6 @@ class Utilities {
                 console.log(self._issuePickerDivID + " focusout");
                 if (self.numIssues > 1) { self._issuePickerButton.html(self.currentIssue + " " + self._caretDownIcon); }
                 else { self._issuePickerButton.html(self.currentIssue); }
-//                self._issuePickerDiv.addClass("hidden");
-//                self._issuePickerDiv.removeClass("popUpMenu");
                 self._issuePickerButton.blur();
             });
 
