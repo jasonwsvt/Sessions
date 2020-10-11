@@ -78,7 +78,12 @@ class Utilities {
                 self.closeMenus();
                 if (self._numIssueRows > 1) {
                     if (self._issuePickerDiv.hasClass("hidden")) {
-                        $(this).html(self.currentIssue + " " + self._caretUpIcon);
+                        if (self.numIssues > 1) {
+                            $(this).html(self.currentIssue + " " + self._caretUpIcon);
+                        }
+                        if (self.numIssues == 1) {
+                            $(this).html(self.currentIssue);
+                        }
                         self._issuePickerDiv.removeClass("hidden");
                         self._issuePickerDiv.css("left", String(self._issuePickerButton.position().left) + "px");
                         self._issuePickerDiv.css("top", String(self._issuePickerButton.position().top + self._issuePickerButton.outerHeight()) + "px");
@@ -195,7 +200,7 @@ class Utilities {
                     self._issueAddDiv.addClass("hidden");
                     self._issueAddDiv.removeClass("popUpMenu");
                     self.sessions.newSession(this.value);
-                    self.manageIssueUtilities();
+                    self.manage();
                     self._issueAddDiv.blur();
                     self._issueAddButton.blur();
                 }
@@ -214,7 +219,12 @@ class Utilities {
             console.log(self._sessionPickerButtonID + " click (buttons: " + self._numSessionButtons + ")");
             if (self._numSessionButtons > 1) {
                 if (self._sessionPickerDiv.hasClass("hidden")) {
-                    self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretUpIcon);
+                    if (self.numSessions == 1) {
+                        self._sessionPickerButton.html(self.dateString(self.currentSession));
+                    }
+                    if (self.numSessions > 1) {
+                        self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretUpIcon);
+                    }
                     self._sessionPickerDiv.removeClass("hidden");
                     self._sessionPickerDiv.css("left", String(self._sessionPickerButton.position().left) + "px");
                     self._sessionPickerDiv.css("top", String(self._sessionPickerButton.position().top + self._sessionPickerButton.outerHeight()) + "px");
@@ -232,7 +242,12 @@ class Utilities {
         });
 
         self._sessionPickerDiv.on("focusout", function() {
-            self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretDownIcon);
+            if (self.numSessions == 1) {
+                self._sessionPickerButton.html(self.dateString(self.currentSession));
+            }
+            if (self.numSessions > 1) {
+                self._sessionPickerButton.html(self.dateString(self.currentSession) + " " + self._caretDownIcon);
+            }
             $(this).addClass("hidden");
             $(this).removeClass("popUpMenu");
         });
@@ -406,11 +421,11 @@ class Utilities {
 //        console.log(issues, numIssues, selectedIssue);
         var code, pickerButtonText, scrollDivHeight;
         this._issuePickerScrollDiv.empty();
-        if (numIssues) {
-            pickerButtonText = selectedIssue;
-            if (numIssues > 1) { pickerButtonText += " " + this._caretDownIcon; }
-            this._issuePickerButton.html(pickerButtonText);
-            code = "<div style = 'display: grid'>";
+        pickerButtonText = selectedIssue;
+        if (numIssues > 1) { pickerButtonText += " " + this._caretDownIcon; }
+        this._issuePickerButton.html(pickerButtonText);
+        if (numIssues > 1) {
+                code = "<div style = 'display: grid'>";
             issues.forEach(function(entry) {
                 code += "<div class = 'row'><button type='button' class='btn ";
                 if (entry == selectedIssue) { code += "btn-info"; }
@@ -451,11 +466,10 @@ class Utilities {
         var code, pickerText, scrollDivHeight;
         this._sessionPickerScrollDiv.empty();
 //        console.log("manage(): " + selectedIssue + " - " + sessions.length);
-        if (sessions.length) {
-            pickerText = this.dateString(selectedSession);
-            if (sessions.length > 1) { pickerText += " " + this._caretDownIcon; }
-            this._sessionPickerButton.html(pickerText);
-
+        pickerText = this.dateString(selectedSession);
+        if (sessions.length > 1) { pickerText += " " + this._caretDownIcon; }
+        this._sessionPickerButton.html(pickerText);
+        if (sessions.length > 1) {
             sessions.forEach(function(entry) {
                 code = "<button type='button' class='btn ";
 //                console.log(entry + " " + selectedSession + " " + (String(entry) == String(selectedSession)));
@@ -464,27 +478,27 @@ class Utilities {
                 code += " btn-sm' value = '" + entry + "'>" + entry + " " + self.dateString(entry) + "</button>";
                 self._sessionPickerScrollDiv.append(code);
             });
+
+            self._sessionPickerScrollDiv.find("button").on("click", function(e) {
+                console.log("pickerScrollDiv button click: loading " + this.value);
+                self.lines.load(this.value);
+                self._sessionPickerDiv.addClass("hidden");
+                self._sessionPickerDiv.removeClass("popUpMenu");  
+                self.manageSessionUtilities();
+                self._sessionPickerDiv.blur();
+                e.stopPropagation();
+            });
+
+            scrollDivHeight = parseInt(this.numSessions) * parseInt(this._sessionPickerScrollDiv.find("button").eq(0).outerHeight);
+            if (this._sessionPickerScrollDiv.position().top + scrollDivHeight > window.innerHeight) {
+                scrollDivHeight = window.innerHeight - this._sessionPickerScrollDiv.position().top;
+            }
+            this._sessionPickerScrollDiv.css("height", String(scrollDivHeight) + "px");
+            this._sessionPickerDiv.css("height", String(parseInt(this._sessionPickerScrollDiv.outerHeight) + 10) + "px");
+
+            if (this._numIssueRows == 1 && selectedIssue == "Unspecified") { this._sessionAddButton.attr("disabled", true); }
+                else                                                        { this._sessionAddButton.attr("disabled", false); }
         }
-
-        self._sessionPickerScrollDiv.find("button").on("click", function(e) {
-            console.log("pickerScrollDiv button click: loading " + this.value);
-            self.lines.load(this.value);
-            self._sessionPickerDiv.addClass("hidden");
-            self._sessionPickerDiv.removeClass("popUpMenu");  
-            self.manageSessionUtilities();
-            self._sessionPickerDiv.blur();
-            e.stopPropagation();
-        });
-
-        scrollDivHeight = parseInt(this.numSessions) * parseInt(this._sessionPickerScrollDiv.find("button").eq(0).outerHeight);
-        if (this._sessionPickerScrollDiv.position().top + scrollDivHeight > window.innerHeight) {
-            scrollDivHeight = window.innerHeight - this._sessionPickerScrollDiv.position().top;
-        }
-        this._sessionPickerScrollDiv.css("height", String(scrollDivHeight) + "px");
-        this._sessionPickerDiv.css("height", String(parseInt(this._sessionPickerScrollDiv.outerHeight) + 10) + "px");
-
-    if (this._numIssueRows == 1 && selectedIssue == "Unspecified") { this._sessionAddButton.attr("disabled", true); }
-        else                                                        { this._sessionAddButton.attr("disabled", false); }
     }
 
     dateString(entry) {
