@@ -3,5 +3,5 @@ const utilitiesID = "utilities",
       buttonsNavID = "buttonsNav",
       buttonsID = "buttons";
       buttons = new Buttons(buttonsNavID, buttonsID),
-      sessions = new Sessions(linesID, buttonsID),
+      sessions = new Sessions(linesID, buttonsID, buttons),
       utilities = new Utilities(utilitiesID, sessions, buttons);

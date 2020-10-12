@@ -129,7 +129,7 @@ class Utilities {
             });
 
             self._issuePickerDiv.on("focusout", function() {
-                console.log(self._issuePickerDivID + " focusout");
+//                console.log(self._issuePickerDivID + " focusout");
                 if (self.numIssues > 1) { self._issuePickerButton.html(self.currentIssue + " " + self._caretDownIcon); }
                 else { self._issuePickerButton.html(self.currentIssue); }
                 self._issuePickerButton.blur();
@@ -249,30 +249,20 @@ class Utilities {
             });
 
             self._slideUpButton.on("click", function() {
-                const lineHeight = Number(self.lines.div.children().eq(0).height());
-                const minLinesHeight = 0;
-                if (parseInt(self.lines.height) > minLinesHeight) {
-                    self.lines.height = String(parseInt(self.lines.height) - lineHeight) + "px";
-                    self.buttons.adjustDivHeights();
-                }
+                self.lines.reduceVisibleLines();
             });
 
             Mousetrap.bind(['ctrl+up'], function(e) {
-                self._slideUpButton.trigger("click");
+                self.lines.reduceVisibleLines();
                 return false;
             });
 
             self._slideDownButton.on("click", function() {
-                const lineHeight = Number(self.lines.div.children().eq(0).height());
-                const maxLinesHeight = $(window).height() - Number(self.lines.div.children().eq(0).height());
-                if (parseInt(self.lines.height) < maxLinesHeight) {
-                    self.lines.height = String(parseInt(self.lines.height) + lineHeight) + "px";
-                    self.buttons.adjustDivHeights();
-                }
+                self.lines.increaseVisibleLines();
             });
 
             Mousetrap.bind(['ctrl+down'], function(e) {
-                self._slideDownButton.trigger("click");
+                self.lines.increaseVisibleLines();
                 return false;
             });
 
@@ -290,6 +280,10 @@ class Utilities {
 
             self._infoButton.on("click", function() {
 
+            });
+
+            $(window).resize(function() {
+                self.buttons.adjustDivHeights();
             });
         }); 
     }
@@ -426,7 +420,7 @@ class Utilities {
             this._issuePickerScrollDiv.append(code);
 
             this._issuePickerScrollDiv.find("button").on("click", function(e) {
-                console.log(self._issuePickerScrollDivID + " button click " + $(this).text());
+//                console.log(self._issuePickerScrollDivID + " button click " + $(this).text());
                 self.lines.load(self.sessions.mostRecentIssueSession($(this).text()));
                 self.closeMenus();
                 self.manage();

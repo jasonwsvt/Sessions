@@ -6,8 +6,9 @@ class Sessions {
     _currentSession = null;
     _linesObject = null;
     _cursorObject = null;
+    _buttonsObject = null;
 
-    constructor(linesID, buttonsID) {
+    constructor(linesID, buttonsID, buttonsObject) {
         const self = this;
         //pull local data for user
         this._userInit();
@@ -15,6 +16,7 @@ class Sessions {
         this._localInit();
         this._serverInit();
 
+        this._buttonsObject = buttonsObject;
         this._buttonsID = buttonsID;
 
 //        this._sessions.forEach(session => {
@@ -36,15 +38,12 @@ class Sessions {
                 self.cursor.insertButton("<button type='button' class='btn btn-light'>" + $(this).text() + "</button>");
                 $(this).blur();
             });
-
-            $(window).resize(function() {
-                self._buttons.adjustDivHeights();
-            });
         });
     }
 
     get lines() { return this._linesObject; }
     get cursor() { return this._cursorObject; }
+    get buttons() { return this._buttonsObject; }
 
     _userInit() {
         //find the "remember me" user in localStorage, if any
@@ -187,7 +186,7 @@ class Sessions {
 
     mostRecentIssueSession(issue) {
         const issueSessions = this.issueSessions(issue);
-        console.log("mostRecentIssueSession(" + issue + "): " + issueSessions[0]);
+//        console.log("mostRecentIssueSession(" + issue + "): " + issueSessions[0]);
         return issueSessions[0];
     }
 

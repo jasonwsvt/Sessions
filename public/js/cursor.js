@@ -3,6 +3,7 @@
 
 class Cursor {
     _linesObject = null;
+//    _numVisibleLines = null;
     _cursorID = "cursor";
     _cursorCode = "<h2 id = '" + this._cursorID + "'>|</h2>";
     _typedElementCode = "<button type='button' class='btn btn-light typed'></button>";
@@ -39,15 +40,15 @@ class Cursor {
         });
     }
 
-    get cursor() { return $("#cursor"); }
+//    set numVisibleLines(num) { this._numVisibleLines = num; }
+    get linesID()            { return this._linesObject.ID; }
+    get linesDiv()           { return this._linesObject.div; }
+    get lines()              { return this._linesObject; }
 
-    get linesID() { return this._linesObject.ID; }
-    get linesDiv() { return this._linesObject.div; }
-    get lines() { return this._linesObject; }
-
-    get lineIndex() { return this._lineIndex; }
-    get elementIndex() { return this._cursorIndex; }
-    checkForCursor() { if (!this.cursor.length) { this.lines.appendToLine(0, this._cursorCode); } }
+    get cursor()             { return $("#cursor"); }
+    get lineIndex()          { return this._lineIndex; }
+    get elementIndex()       { return this._cursorIndex; }
+    checkForCursor()         { if (!this.cursor.length) { this.lines.appendToLine(0, this._cursorCode); } }
 
     get _prevElementIndex()  { return this._cursorIndex - 1; }
     get _prevElementExists() { return this.lines.elementExists(this._lineIndex, this._prevElementIndex); }
@@ -312,7 +313,6 @@ class Cursor {
     }
 
     insertButton(e) {
-        console.log(this.lineIndex + " " + this.elementIndex + " " + e);
         this.lines.insertBefore(this.lineIndex, this.elementIndex, e);
     }
 

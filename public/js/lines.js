@@ -9,6 +9,7 @@ class Lines {
     _creation = null;
 
     constructor(cID, sessions) {
+        const self = this;
         this._containerID = cID;
         this._sessionsObject = sessions;
     }
@@ -16,8 +17,7 @@ class Lines {
     get ID()         { return this._containerID; }
     get div()        { return $("#" + this._containerID); }
     get sessions()   { return this._sessionsObject; }
-    get session()    { //console.log(this._creation, this.sessions.session(this._creation)); 
-                       return this.sessions.session(this._creation); }
+    get session()    { return this.sessions.session(this._creation); }
 
     get numLines()        { return this.div.children().length; }
     lineExists(i)         { return (i >= 0 && i < this.numLines); }
@@ -107,11 +107,25 @@ class Lines {
         }
     }
 
-    get height() {
-        return this.div.css("height");
+    get height()          { return parseInt(this.div.css("height")); }
+    set height(height)    { this.div.css("height", String(height) + "px"); }
+    get numVisibleLines() { return this.height / this.div.children().eq(0).height(); }
+
+    increaseVisibleLines() {
+        const lineHeight = this.div.children().eq(0).height();
+        const maxVisibleLines = Math.floor($(window).height() / lineHeight);
+        if (this.numVisibleLines < maxVisibleLines) {
+            this.div.css("height", String((this.numVisibleLines + 1) * lineHeight) + "px");
+            this.sessions.buttons.adjustDivHeights();
+        }
     }
 
-    set height(height) {
-        this.div.css("height", height);
+    reduceVisibleLines() {
+        const lineHeight = this.div.children().eq(0).height();
+        const minVisibleLines = 0;
+        if (this.numVisibleLines > minVisibleLines) {
+            this.div.css("height", String((this.numVisibleLines - 1) * lineHeight) + "px");
+            this.sessions.buttons.adjustDivHeights();
+        }
     }
 }
