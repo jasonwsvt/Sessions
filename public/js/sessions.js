@@ -117,7 +117,45 @@ class Sessions {
 //        });
     }
 
-    issues() {
+    sessions() {
+        return this._sessions;
+    }
+
+    issueSessions(issue) {
+        var sessions= [];
+        sessions = this._sessions.filter(session => { return session.issue == issue });
+//        this._sessions.forEach(session => {
+//            if (session.issue == issue) {
+//                sessions.push(session);
+//            }
+//        });
+        return sessions;
+    }
+
+    mostRecentlyEdited(sessions) {
+        var recentMost = [];
+        //for each of the issues in sessions
+        //find the most recently edited
+    }
+
+    mostRecentlyOpened(sessions) {
+        var recentMost = [];
+        //for each of the issues in sessions
+        //find the most recently opened
+    }
+
+    mostRecentlyCreated(sessions) {
+        var recentMost = [];
+        //for each of the issues in sessions
+        //find the most recently created
+    }
+
+    sortByCreation(s)   { return s.sort((a,b) => { return a.creation - b.creation; }); }
+    sortByLastEdited(s) { return s.sort((a,b) => { return a.lastEdited - b.lastEdited; }); }
+    sortByLastOpened(s) { return s.sort((a,b) => { return a.lastOpened - b.lastOpened; }); }
+    sortByIssue(s)      { return s.sort((a,b) => a.issue.toLowerCase().localeCompare(b.issue.toLowerCase())); }
+
+    issuesSortedByLastOpened() {
         var unsortedIssues = [], lastOpeneds = [], sortedIssues = [], max, i;
         this._sessions.forEach(session => {
             if (!unsortedIssues.includes(session.issue)) {
@@ -138,50 +176,80 @@ class Sessions {
         return sortedIssues;
     }
 
-    sessions() {
-        var unsortedSessions = [], lastOpeneds = [], sortedSessions = [], max, i;
-        this._sessions.forEach((session) => {
-            unsortedSessions.push(session.creation);
-            lastOpeneds.push(session.lastOpened);
-        });
-        while (unsortedSessions.length) {
-            max = 0;
-            for (i = 1; i < unsortedSessions.length; i++) {
-                if (lastOpeneds[i] > lastOpeneds[max]) { max = i; }
+    issuesSortedAlphabetically() {
+        var issues = [], sortedIssues = [], max, i;
+        this._sessions.forEach(session => {
+            if (!issues.includes(session.issue)) {
+                issues.push(session.issue);
             }
-            sortedSessions.push(unsortedSessions[max]);
-            unsortedSessions.splice(max,1);
-            lastOpeneds.splice(max,1);
+        });
+        return issues.sort();
+
+    }
+    mostRecentlyEditedIssueSessions() {
+        var issueSessions = [], issue, lastEdited;
+        this._sessions.forEach(session => {
+            issue = session.issue;
+            lastEdited = session.lastEdited;
+            if (!issueSessions.find(session => (session.issue == issue))) {
+                issueSessions.push(session);
+            }
+            else {
+                issueSessions.find(session => (session.issue == issue)).lastEditeds[unsortedIssues.indexOf(session.issue)].push(session.lastEdited);
+            }
+        });
+    }
+
+    issuesSortedByLastEdited() {
+        var unsortedIssues = [], lastEditeds = [], sortedIssues = [], max, i;
+        this._sessions.forEach(session => {
+            if (!unsortedIssues.includes(session.issue)) {
+                unsortedIssues.push(session.issue);
+                lastediteds.push(session.lastEdited);
+            }
+            else if (lastEditeds[unsortedIssues.indexOf(session.issue)] < session.lastEdited) {
+                lastEditeds[unsortedIssues.indexOf(session.issue)].push(session.lastEdited);
+            }
+        });
+        while (unsortedIssues.length) {
+            max = 0;
+            for (i = 1; i < unsortedIssues.length; i++) {
+                if (lastEditeds[i] > lastEditeds[max]) { max = i; }
+            }
+            sortedIssues.push(unsortedIssues[max]);
+            unsortedIssues.splice(max,1);
+            lastEditeds.splice(max,1);
         }
+        return sortedIssues;
+    }
+
+    sessionsSortedByLastOpened() {
+        var sessions, sortedCreations = [];
+        var sessions = this._sortArrayByLastOpened(this._sessions);
+        sessions.forEach((session) => {
+            sortedCreations.push(session.creation);
+        });
 //        console.log("sessions(): " + sortedSessions);
-        return sortedSessions;
+        return sortedCreations;
+    }
+
+    sessionsSortedByLastEdited() {
+        var sessions, sortedCreations = [];
+        sessions = this._sortArrayByLastEdited(this._sessions);
+        sessions.forEach((session) => {
+            sortedCreations.push(session.creation);
+        });
+//        console.log("sessions(): " + sortedSessions);
+        return sortedCreations;
     }
 
     mostRecentSession() {
-        const sessions = this.sessions();
+        const sessions = this.sessionsSortedByLastOpened();
 //        console.log("mostRecentSession(): " + sessions[0]);
         return sessions[0];
     }
 
     issueSessions(issue) {
-        var unsortedIssueSessions= [], sortedIssueSessions = [], lastOpeneds = [], max, i;
-//console.log("issueSessions(" + issue + "): " + this._sessions.length);
-        this._sessions.forEach((session) => {
-            if (session.issue == issue && !unsortedIssueSessions.includes(session.creation)) {
-                unsortedIssueSessions.push(session.creation);
-                lastOpeneds.push(session.lastOpened);
-            }
-        });
-        while (unsortedIssueSessions.length) {
-            max = 0;
-            for (i = 1; i < unsortedIssueSessions.length; i++) {
-                if (lastOpeneds[i] > lastOpeneds[max]) { max = i; }
-            }
-            sortedIssueSessions.push(unsortedIssueSessions[max]);
-            unsortedIssueSessions.splice(max,1);
-            lastOpeneds.splice(max,1);
-        }
-        return sortedIssueSessions;
     }
 
     mostRecentIssueSession(issue) {
@@ -189,6 +257,13 @@ class Sessions {
 //        console.log("mostRecentIssueSession(" + issue + "): " + issueSessions[0]);
         return issueSessions[0];
     }
+
+    _sortArrayAlphabetically(array) {
+        return array.sort((a, b) => {
+            return a.issue.toLowerCase().localeCompare(b.issue.toLowerCase());
+        });
+    }
+
 
     sessionLines(creation) {
         console.log("sessionLines(" + session + ")");
