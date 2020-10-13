@@ -26,9 +26,9 @@ class Sessions {
             var m = this.sortByLastOpened(s);
             console.log("sort by last opened:", m);
             var p = m[m.length-1];
-            console.log("last edited:", p);
+            console.log("most recent:", p);
             var c = p.creation;
-            console.log(c);
+            console.log("creation: ", c);
             this.lines.load(c);
         }
         else { this.newSession(); }
