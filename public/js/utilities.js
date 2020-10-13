@@ -399,9 +399,10 @@ class Utilities {
 
     manageIssueUtilities() {
         const self = this;
-        const issues = this.sessions.issues();
-        const numIssues = issues.length;
+        const s = this.sessions;
         const selectedIssue = this.currentIssue;
+        const sessions = s.sortByIssue(s.mostRecentlyOpened(s.sessions()));
+        const numIssues = sessions.length;
 //        console.log(issues, numIssues, selectedIssue);
         var code, pickerButtonText, scrollDivHeight, i;
         this._issuePickerScrollDiv.empty();
@@ -410,24 +411,28 @@ class Utilities {
         this._issuePickerButton.html(pickerButtonText);
         if (numIssues > 1) {
                 code = "<div style = 'display: grid'>";
-            issues.forEach(function(entry) {
+            sessions.forEach(function(entry) {
                 code += "<div class = 'row'><button type='button' class='btn ";
-                if (entry == selectedIssue) { code += "btn-info"; }
+                if (entry.issue == selectedIssue) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
-                code += " btn-sm'>" + entry + "</button></div>";
+                code += " btn-sm' value = '" + entry.issue + "'>" + entry.issue + "</button></div>";
             });
             code += "</div>";
             this._issuePickerScrollDiv.append(code);
 
             this._issuePickerScrollDiv.find("button").on("click", function(e) {
 //                console.log(self._issuePickerScrollDivID + " button click " + $(this).text());
-                self.lines.load(self.sessions.mostRecentIssueSession($(this).text()));
+                const s = self.sessions;
+                console.log("sessions: " + s.sessions(), this.value + " sessions: " + s.issueSessions(this.value));
+                const issueSessions = s.mostRecentlyOpened(s.issueSessions(this.value));
+                console.log(s.issueSessions(this.value));
+                self.lines.load(issueSessions[issueSessions.length - 1].creation);
                 self.closeMenus();
                 self.manage();
                 e.stopPropagation();
             });
 
-            scrollDivHeight = parseInt(this.numIssues) * parseInt(this._issueRow(0).outerHeight);
+            scrollDivHeight = parseInt(numIssues) * parseInt(this._issueRow(0).outerHeight);
             if (this._issuePickerScrollDiv.position().top + scrollDivHeight > window.innerHeight) {
                 scrollDivHeight = window.innerHeight - this._issuePickerScrollDiv.position().top;
             }
@@ -443,7 +448,8 @@ class Utilities {
     manageSessionUtilities() {
         const selectedSession = this.currentSession;
         const selectedIssue = this.currentIssue;
-        const sessions = this.sessions.issueSessions(selectedIssue);
+        const s = this.sessions;
+        const sessions = s.sortByCreation(s.issueSessions(selectedIssue)).reverse();
         const self = this;
         var code, pickerText, scrollDivHeight;
         this._sessionPickerScrollDiv.empty();
@@ -453,9 +459,9 @@ class Utilities {
         if (sessions.length > 1) {
             sessions.forEach(function(entry) {
                 code = "<button type='button' class='btn ";
-                if (String(entry) == String(selectedSession)) { code += "btn-info"; }
+                if (String(entry.creation) == String(selectedSession)) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
-                code += " btn-sm' value = '" + entry + "'>" + entry + " " + self.dateString(entry) + "</button>";
+                code += " btn-sm' value = '" + entry.creation + "'>" + self.dateString(entry.creation) + "</button>";
                 self._sessionPickerScrollDiv.append(code);
             });
 
