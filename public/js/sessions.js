@@ -141,7 +141,7 @@ class Sessions {
                 recentMost.push(session);
             }
         });
-        console.log(recentMost);
+//        console.log(recentMost);
         return recentMost;
     }
 

@@ -31,12 +31,12 @@ class Cursor {
             Mousetrap.bind(['tab'], function(e)       { self.indentLine;  return false; });
             Mousetrap.bind(['shift+tab'], function(e) { self.outdentLine; return false; });
     
-            $(document).on("keyup", function(e) {
-                if (e.key === "Enter" && self.cursorLineIndex > 0) {
-                    self.lines.line(self.cursorLineIndex).css("paddingLeft", 
-                        self.lines.line(self.cursorLineIndex - 1).css("paddingLeft"));
-                }
-            });
+//            $(document).on("keyup", function(e) {
+//                if (e.key === "Enter" && self.cursorLineIndex > 0) {
+//                    self.lines.line(self.cursorLineIndex).css("paddingLeft", 
+//                        self.lines.line(self.cursorLineIndex - 1).css("paddingLeft"));
+//                }
+//            });
         });
     }
 
@@ -195,6 +195,11 @@ class Cursor {
                     && (!this._nextLineExists || (this._nextLineExists && this._nextLineLength))))) {
             this._insertLineBelow;
             this.lines.appendToLine(this._nextLineIndex, this._detachCursorToEnd);
+            console.log(this.lines.line(this._prevLineIndex).css("paddingLeft"), this._indent);
+            if (parseInt(this.lines.line(this._prevLineIndex).css("paddingLeft")) >= this._indent) {
+                this.lines.line(this._lineIndex).css("paddingLeft", 
+                    this.lines.line(this._prevLineIndex).css("paddingLeft"));
+            }
         }
         this.manageHiddenCursor();
         this._setCursorX();
