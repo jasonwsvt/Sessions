@@ -250,6 +250,7 @@ class Utilities {
 
             self._slideUpButton.on("click", function() {
                 self.lines.reduceVisibleLines();
+                return false;
             });
 
             Mousetrap.bind(['ctrl+up'], function(e) {
@@ -259,6 +260,7 @@ class Utilities {
 
             self._slideDownButton.on("click", function() {
                 self.lines.increaseVisibleLines();
+                return false;
             });
 
             Mousetrap.bind(['ctrl+down'], function(e) {

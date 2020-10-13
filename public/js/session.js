@@ -1,9 +1,9 @@
 class Session {
     _creation = null;
     _issue = null;
-    _lines = [];
-    _lastEdited = null;
     _lastOpened = null;
+    _lastEdited = null;
+    _lines = [];
     _useSessionStorage = false;
     _useLocalStorage = false;
     _useServerStorage = false;
@@ -21,7 +21,6 @@ class Session {
 
     get lines() {
 //        console.log("lines()", this._creation, this._mostUpToDate, this._lines);
-        this._lastOpened = Math.floor(Date.now() / 1000);
         if (!this._lines.length) { //console.log("this._lines == []", this._mostUpToDate);
             switch (this._mostUpToDate) {
                 case "Session": this._pullLinesFromSessionStorage(); break;
@@ -30,13 +29,31 @@ class Session {
             }
         }
 //        console.log("lines()", this._lines);
+        this._setLastOpened(Math.floor(Date.now() / 1000));
         return this._lines;
     }
 
-    _setIssue(issue)           { this._issue = issue;           this._update(); }
-    _setLastEdited(lastEdited) { this._lastEdited = lastEdited; this._update(); }
-    _setLastOpened(lastOpened) { this._lastOpened = lastOpened; this._update(); }
-    _setLines(lines)           { if (lines != this._lines) { this._lines = lines; this._update(); } }
+    _setLines(lines) {
+        if (JSON.stringify(lines) != JSON.stringify(this._lines)) {
+            console.log("_setLines(" + lines + ") for " + this.creation);
+            this._lines = lines;
+            this._lastEdited = Math.floor(Date.now() / 1000);
+            this._update();
+        }
+    }
+    _setIssue(issue)           {
+        this._issue = issue;
+        this._lastEdited = Math.floor(Date.now() / 1000);
+        this._update();
+    }
+    _setLastEdited(lastEdited) {
+        this._lastEdited = lastEdited;
+        this._update();
+    }
+    _setLastOpened(lastOpened) {
+        this._lastOpened = lastOpened;
+        this._update();
+    }
 
     //creation -> issue, lastOpened, lastEdited, lines
     pullSessionData() {
@@ -53,7 +70,7 @@ class Session {
     }
 
     setSessionData(issue, lastOpened, lastEdited) {
-        this._useSessionData = true;
+        this._useSessionStorage = true;
         if (parseInt(lastEdited) < 1600000000) { console.log(lastEdited); console.trace(); }  
         if (this._lastEdited == null || lastEdited >= this._lastEdited) {
             this._mostUpToDate = "Session";
@@ -90,7 +107,6 @@ class Session {
     _update() {
 //        console.log("updating:", this._lines);
 //        console.trace();
-        this._lastEdited = Math.floor(Date.now() / 1000);
         if (!this._useSessionStorage && !this._useLocalStorage && !this._useServerStorage) {
             this._useSessionStorage = true;
         }

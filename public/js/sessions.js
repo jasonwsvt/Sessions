@@ -21,19 +21,11 @@ class Sessions {
         this._linesObject = new Lines(linesID, this);
   
         if (this.numSessions) {
-            var s = this.sessions();
-            console.log("sessions:", s);
-            var m = this.sortByLastOpened(s);
-            console.log("sort by last opened:", m);
-            var p = m[m.length-1];
-            console.log("most recent:", p);
-            var c = p.creation;
-            console.log("creation: ", c);
-            this.lines.load(c);
+            this.lines.load(this.sortByLastOpened(this.sessions()).slice(-1)[0].creation);
         }
         else { this.newSession(); }
 
-        this._cursorObject = new Cursor(this._linesObject);
+        this._cursorObject = new Cursor(this.lines);
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
