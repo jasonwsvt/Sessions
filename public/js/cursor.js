@@ -195,7 +195,6 @@ class Cursor {
                     && (!this._nextLineExists || (this._nextLineExists && this._nextLineLength))))) {
             this._insertLineBelow;
             this.lines.appendToLine(this._nextLineIndex, this._detachCursorToEnd);
-            console.log(this.lines.line(this._prevLineIndex).css("paddingLeft"), this._indent);
             if (parseInt(this.lines.line(this._prevLineIndex).css("paddingLeft")) >= this._indent) {
                 this.lines.line(this._lineIndex).css("paddingLeft", 
                     this.lines.line(this._prevLineIndex).css("paddingLeft"));
