@@ -23,7 +23,7 @@ class Sessions {
         if (this.numSessions) {
             this.lines.load(this.sortByLastOpened(this.sessions()).slice(-1)[0].creation);
         }
-        else { this.newSession(); }
+        else { this.newSession("Unspecified"); }
 
         this._cursorObject = new Cursor(this.lines);
 
@@ -83,10 +83,14 @@ class Sessions {
     get numSessions()    { return this._sessions.length; }
     session(creation)    { return this.sessions().find(s => (s.creation == creation)); }
     sessions()           { return this._sessions; }
-    issueSessions(issue) { return this.sessions().filter(s => { return s.issue == issue; }); }
-    sortByCreation(s)    { return s.sort((a,b) => { return Number(a.creation) - Number(b.creation); }); }
-    sortByLastEdited(s)  { return s.sort((a,b) => { return Number(a.lastEdited) - Number(b.lastEdited); }); }
-    sortByLastOpened(s)  { return s.sort((a,b) => { return Number(a.lastOpened) - Number(b.lastOpened); }); }
+    issueSessions(issue) { return this.sessions().filter(s => (s.issue == issue)); }
+//    issueSessions(issue) { return this.sessions().filter(s => { return s.issue == issue; }); }
+//    sortByCreation(s)    { return s.sort((a,b) => { return Number(a.creation) - Number(b.creation); }); }
+//    sortByLastEdited(s)  { return s.sort((a,b) => { return Number(a.lastEdited) - Number(b.lastEdited); }); }
+//    sortByLastOpened(s)  { return s.sort((a,b) => { return Number(a.lastOpened) - Number(b.lastOpened); }); }
+    sortByCreation(s)    { return s.sort((a,b) => (Number(a.creation) - Number(b.creation))); }
+    sortByLastEdited(s)  { return s.sort((a,b) => (Number(a.lastEdited) - Number(b.lastEdited))); }
+    sortByLastOpened(s)  { return s.sort((a,b) => (Number(a.lastOpened) - Number(b.lastOpened))); }
     sortByIssue(s)       { return s.sort((a,b) => a.issue.toLowerCase().localeCompare(b.issue.toLowerCase())); }
 
     renameIssue(oldIssue, newIssue) {
@@ -100,7 +104,7 @@ class Sessions {
     newSession(issue) {
         var creation = Math.floor(Date.now() / 1000);
         var session = new Session(creation);
-        if (typeof issue != "string" || issue == "") { issue = "Unspecified"; }
+//        if (typeof issue != "string" || issue == "") { issue = "Unspecified"; }
         session.issue = issue;
         this._sessions.push(session);
         this.lines.load(creation);
@@ -112,7 +116,8 @@ class Sessions {
         var recentMost = [], issue, index;
         sessions.forEach(session => {
             issue = session.issue;
-            index = recentMost.map(session => { return session.issue; }).indexOf(issue);
+//            index = recentMost.map(session => { return session.issue; }).indexOf(issue);
+            index = recentMost.map(session => session.issue).indexOf(issue);
             if (index >= 0) {
                 if (recentMost[index].lastEdited < session.lastEdited) {
                     recentMost[index] = session;
@@ -130,7 +135,8 @@ class Sessions {
         var recentMost = [], issue, index;
         sessions.forEach(session => {
             issue = session.issue;
-            index = recentMost.map(session => { return session.issue; }).indexOf(issue);
+//            index = recentMost.map(session => { return session.issue; }).indexOf(issue);
+            index = recentMost.map(session => session.issue).indexOf(issue);
             if (index >= 0) {
                 if (recentMost[index].lastOpened < session.lastOpened) {
                     recentMost[index] = session;
@@ -149,7 +155,8 @@ class Sessions {
         var recentMost = [], issue, index;
         sessions.forEach(session => {
             issue = session.issue;
-            index = recentMost.map(session => { return session.issue; }).indexOf(issue);
+//            index = recentMost.map(session => { return session.issue; }).indexOf(issue);
+            index = recentMost.map(session => session.issue).indexOf(issue);
             if (index >= 0) {
                 if (recentMost[index].creation < session.creation) {
                     recentMost[index] = session;
@@ -172,13 +179,13 @@ class Sessions {
     }
 
     //gets a stringified JSON of all the Because Reasons components from the server
-    getButtons() {
-        return becauseReasonsButtonsData;
-        //check if buttons are stored in localstorage, if so, check the version
-        //pull the version of the most recent buttons from server
-        //if the local version is older than the server version, or there is no local version,
-        //pull buttons json data with ajax from the Node server
-    }
+//    getButtons() {
+//        return becauseReasonsButtonsData;
+//        //check if buttons are stored in localstorage, if so, check the version
+//        //pull the version of the most recent buttons from server
+//        //if the local version is older than the server version, or there is no local version,
+//        //pull buttons json data with ajax from the Node server
+//    }
 
     createServerAccount() {
         //

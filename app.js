@@ -1,71 +1,12 @@
-/*
-var fs = require('fs');
-var http = require('http');
-var https = require('https');
-var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
-var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
-
-var credentials = {key: privateKey, cert: certificate};
-*/
-
 var express = require("express"),
     app = express(),
-    bodyParser = require('body-parser'); /*
-    mongoose = require("mongoose"),
-    passport = require("passport"),
-    LocalStrategy = require("passport-local"), 
-    passportLocalMongoose = require("passport-local-mongoose");  
+    bodyParser = require('body-parser');
 
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
-mongoose.set('useUnifiedTopology', true);
-mongoose.connect("mongodb://localhost:27107/sessions");
-*/
 app.use(express.static("public"));  //use this directory for js libraries and css
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json({ limit: '10kb' })); // Body limit is 10
-/*
-var UserSchema = new mongoose.Schema({
-    username: String,
-    password: String
-});
-
-UserSchema.plugin(passportLocalMongoose);
-
-var IssueSchema = new mongoose.Schema({
-    userID: String,
-    issue: String
-});
-
-var SessionSchema = new mongoose.Schema({
-    issueID: String,
-    creation: Number,
-    lastEdited: Number,
-    lastOpened: Number,
-    lines: [String]
-});
-
-module.exports = mongoose.model("User", UserSchema);
-
-var Session = mongoose.model("Session", SessionSchema); 
-var Issue = mongoose.model("Issue", IssueSchema);
-var User = mongoose.model("User", UserSchema);
-*/
 app.set("view engine", "html"); //set the render variable extension
-/*
-//PASSPORT CONFIGURATION
-app.use(require("express-session") ({
-    secret: "Secret goes here",
-    resave: false,
-    saveUninitialized: false
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-*/
+
 app.get("/", (req, res) => {
     res.sendFile("sessions.html", { root: __dirname });
     console.log("someone made a request to /");
@@ -98,9 +39,9 @@ app.get("/update/sessions", (req, res) => {
     console.log(req.params);
 });
 
-app.post("/retrieve/:session", (req, res) => {
-    const creationTS = req.params.creationTS;
-
+app.post("/retrieve/", (req, res) => {
+    const creation = req.params.creation;
+/*
     Session.findOne({ creation: creationTS }, (err, session) => {
         if (err) { console.log("Error."); }
         else {
@@ -108,6 +49,7 @@ app.post("/retrieve/:session", (req, res) => {
         }
     })
     console.log(req.params);
+    res.send(session); */
 });
 
 app.get("/u/:user", (req, res) => {
