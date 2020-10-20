@@ -4,20 +4,18 @@
 */
 
 class Buttons {
+    _buttonsNavID = "buttonsNav";
+    _buttonsID = "buttons";
     _buttonCode = null;
-    _buttonsNavID = null;
     _buttonsNav = null;
-    _buttonsID = null;
     _buttons = null;
 
-    constructor(buttonsNavID, buttonsID) {
-        var self = this, buttonsJSON = this._getButtonsJSON();
-        this._buttonsNavID = buttonsNavID;
-        this._buttonsNav = $("#" + this._buttonsNavID);
-        this._buttonsID = buttonsID;
-        this._buttons = $("#" + this._buttonsID);
-        this._buttonsNav.append("<div style = 'display: grid'>" + this.createButtonsNav(buttonsJSON) + "</div>");
-        this._buttons.append("<div class = 'container-fluid'>" + this.createButtons(buttonsJSON) + "</div>");
+    constructor(app) {
+        var self = this;
+        var buttonsJSON = this._getButtonsJSON();
+        this._app = app;
+        this.buttonsNav.append("<div style = 'display: grid'>" + this.createButtonsNav(buttonsJSON) + "</div>");
+        this.buttons.append("<div class = 'container-fluid'>" + this.createButtons(buttonsJSON) + "</div>");
         this.adjustDivHeights();
 
         $(document).ready(function() {
@@ -30,26 +28,25 @@ class Buttons {
                 }
             });
 
-            $("#" + buttonsNavID + " button").on("click", function(e) {
-                const navButtons = $("#" + buttonsNavID + " button");
+            this.buttonsNav.find("button").on("click", function(e) {
                 const buttonIndex = $(this).parent().index();
-                const buttonRow = $("#" + buttonsID + " > .container-fluid > .row").eq(buttonIndex);
+                const buttonRow = this.buttonRow(buttonIndex);
 
                 //if ctrl+click, show this and hide all others
                 if (e.ctrlKey) {
                     navButtons.each(function(index) {
                         if (index == buttonIndex) {
-                            if (navButtons.eq(index).hasClass("btn-secondary")) {
+                            if (this.navButton(index).hasClass("btn-secondary")) {
                                 $(this).toggleClass("btn-secondary");
                                 $(this).toggleClass("btn-info");
-                                $("#" + buttonsID + " > .container-fluid > .row").eq(index).toggleClass("hidden");
+                                this.buttonRow(index).toggleClass("hidden");
                             }
                         }
                         else {
-                            if (navButtons.eq(index).hasClass("btn-info")) {
+                            if (this.navButton(index).hasClass("btn-info")) {
                                 $(this).toggleClass("btn-secondary");
                                 $(this).toggleClass("btn-info");
-                                $("#" + buttonsID + " > .container-fluid > .row").eq(index).toggleClass("hidden");
+                                this.buttonRow(index).toggleClass("hidden");
                             }
                         }
                     });
@@ -75,7 +72,7 @@ class Buttons {
                 $(document).focus();
             });
 
-            $(self._buttons).scroll(function(e) {
+            $(self.buttons).scroll(function(e) {
                 self = $(this);
                 self.find(".btn-block").each(function (index) {
                     const div = $(this).parent().parent();
@@ -103,8 +100,21 @@ class Buttons {
                     }
                 });
             });
+
+            $(document).ready(function() {
+                self.buttons.find("button").on("click", function(e) {
+                    self.cursor.insertButton("<button type='button' class='btn btn-light'>" + $(this).text() + "</button>");
+                    $(this).blur();
+                });
+            });
         });
     }
+
+    get cursor() { return this._app.editor.cursor; }
+    get buttonsNav() { $("#" + this._buttonsNavID); }
+    get buttons() { $("#" + this._buttonsID); }
+    navButton(index) { return this.buttonsNav.find("button").eq(index); }
+    buttonRow(index) { return $("#" + buttonsID + " > .container-fluid > .row").eq(index); }
 
     _getButtonsJSON() {
         return becauseReasonsButtonsData;
@@ -112,8 +122,8 @@ class Buttons {
 
     adjustDivHeights() {
         //set div height to window height minus div top
-        this._buttons.height($(window).height() - this._buttons.position().top);
-        this._buttonsNav.height($(window).height() - this._buttons.position().top);
+        this.buttons.height($(window).height() - this.buttons.position().top);
+        this.buttonsNav.height($(window).height() - this.buttons.position().top);
     }
 
     createButtonsNav(data) {

@@ -2,8 +2,8 @@
 */
 
 class Utilities {
-    _utilitiesID = null;
-    _sessions = null;
+    _utilitiesID = "utilities";
+    _app = null;
     _minLinesHeight = null;
     _maxLinesHeight = null;
 
@@ -57,11 +57,9 @@ class Utilities {
     _configButtonID = "configButton";
 
 
-    constructor (utilitiesID, sessions, buttons) {
+    constructor (app) {
         const self = this;
-        this._utilitiesID = utilitiesID;
-        this._sessions = sessions;
-        this._buttons = buttons;
+        this._app = app;
 
         this.build();
         this.manage();
@@ -291,12 +289,12 @@ class Utilities {
     }
 
     get div()                     { return $("#" + this._utilitiesID); }
-    get lines()                   { return this.sessions.lines; }
-    get sessions()                { return this._sessions; }
-    get buttons()                 { return this._buttons; }
-    get numIssues()               { return this._numIssueRows; }
-    get currentIssue()            { return this.lines.session.issue; }
-    get currentSession()          { return this.lines.session.creation; }
+    get app()                     { return this._app; }
+    get lines()                   { return this.app.editor.lines; }
+    get buttons()                 { return this.app.buttons; }
+    get numIssues()               { return this.app.userManager.currentUser.currentClient.issues.length; }
+    get currentIssue()            { return this.app.userManager.currentUser.currentClient.currentIssue.name; }
+    get currentSession()          { return this.app.userManager.currentUser.currentClient.currentIssue.currentSession; }
     get _loginDiv()               { return $("#" + this._loginDivID); }
     get _issuePickerButton()      { return $("#" + this._issuePickerButtonID); }
     get _issuePickerDiv()         { return $("#" + this._issuePickerDivID); }

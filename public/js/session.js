@@ -1,20 +1,15 @@
 class Session {
+    _id = null;
     _creation = null;
-    _issue = null;
     _lastOpened = null;
     _lastEdited = null;
     _lines = [];
-    _useSessionStorage = false;
-    _useLocalStorage = false;
-    _useServerStorage = false;
     _mostUpToDate = null;
 
     constructor(creation) { this._creation = creation; }
     get creation()        { return this._creation; }
     get lastEdited()      { return this._lastEdited; }
     get lastOpened()      { return this._lastOpened; }
-    set issue(newIssue)   { this._setIssue(newIssue); }
-    get issue()           { return this._issue; }
     get mostUpToDate()    { return this._mostUpToDate; }
     get clearLines()      { this._lines = []; }
     set lines(lines)      { this._setLines(lines); }
@@ -41,19 +36,25 @@ class Session {
             this._update();
         }
     }
-    _setIssue(issue)           {
-        this._issue = issue;
-        this._lastEdited = Math.floor(Date.now() / 1000);
-        this._update();
-    }
+
     _setLastEdited(lastEdited) {
         this._lastEdited = lastEdited;
         this._update();
     }
+
     _setLastOpened(lastOpened) {
         this._lastOpened = lastOpened;
         this._update();
     }
+
+    get data()        { return { creation:   this._creation,
+                                 lastEdited: this._lastEdited,
+                                 lastOpened: this._lastOpened  } }
+    
+    get sessionData() { return { creation:   this._creation,
+                                 lastEdited: this._lastEdited,
+                                 lastOpened: this._lastOpened,
+                                 lines:      this._lines       } }
 
     //creation -> issue, lastOpened, lastEdited, lines
     pullSessionData() {

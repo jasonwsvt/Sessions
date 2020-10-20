@@ -3,21 +3,20 @@
 */
 
 class Lines {
-    _containerID = null;
+    _containerID = "lines";
     _lineCode = "<div></div>";
-    _sessionsObject = null;
     _creation = null;
+    _editor = null;
 
-    constructor(cID, sessions) {
+    constructor(cID, editor) {
         const self = this;
-        this._containerID = cID;
-        this._sessionsObject = sessions;
+        this._editor = editor;
     }
 
     get ID()         { return this._containerID; }
     get div()        { return $("#" + this._containerID); }
-    get sessions()   { return this._sessionsObject; }
-    get session()    { return this.sessions.session(this._creation); }
+    get session()    { return this._editor.app.userManager.currentUser.currentClient.currentIssue.currentSession; }
+    get buttons()    { return this._editor.app.buttons; }
 
     get numLines()        { return this.div.children().length; }
     lineExists(i)         { return (i >= 0 && i < this.numLines); }
