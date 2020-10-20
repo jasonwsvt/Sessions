@@ -21,7 +21,7 @@ class Issue {
         this._sessions.load(data.sessions);
     }
 
-    init(id, name = "Unspecified") {
+    init(id, name = this._issues.default) {
         this._id = id;
         this._name = name;
         this._sessions.new();

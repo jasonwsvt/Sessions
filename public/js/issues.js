@@ -2,9 +2,11 @@ class Issues {
     _client = null;
     _issues = [];
     _current = null;
+    _default = "New Issue";
 
-    constructor(client)       { this._client = client; this._utility = new Utility(this); }
+    constructor(client)       { this._client = client; this._utility = new Utility(this, "issue"); }
     get app()                 { return this._client.app; }
+    get default()             { return this._default; }
 
     get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
     get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
@@ -20,7 +22,7 @@ class Issues {
     findByName(name)          { return this._issues.find(i => (i.name == name)); }
 
     get current()             { return this._issues[this._current] }
-    get length()              { return this._issues.length }
+    get entries()             { return this._issues.length }
 
     get data()                { return this._issues.map(issue, () => issue.data) }
     set data(data) {
@@ -32,8 +34,8 @@ class Issues {
         })
     }
 
-    new(name = "Unspecified") {
-        var id = this._issues.length;
+    new(name = this._default) {
+        var id = this.entries;
         var issue = new Issue(this);
         issue.init(id, name);
         this._issues.push(issue); 

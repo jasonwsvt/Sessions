@@ -1,9 +1,7 @@
-/* utilities class links to sessions class
-*/
-
-class Utilities {
+class Utility {
     _utilityID = null;
-    _app = null;
+    _parent = null;
+    _naming = null;
 
     _dotIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-dot my-2' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'/></svg>";
     _caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
@@ -24,182 +22,184 @@ class Utilities {
     _addDivID = null;
     _addInputID = null;
 
-    constructor (app, parent, type) {
+    constructor (parent, type, naming = true) {
         const self = this;
         this._app = app;
         this._type = type;
         this._parent = parent;
+        this._naming = naming;
 
         this._init();
-        this.build();
-        this.manage();
+        this._build();
+        this._manage();
 
         $(document).ready(function() {
             $("html").on("click", function(e) {
                 self.closeMenus();
             });
 
-            self._pickerButton.on("click", function(e) {
+            self.pickerButton.on("click", function(e) {
                 self.closeMenus(self._pickerButtonID);
-                if (self._numrows > 1) {
-                    if (self._pickerDiv.hasClass("hidden")) {
-                        if (self.numIssues > 1) {
-                            $(this).html(self.currentIssue + " " + self._caretUpIcon);
+                if (self.entries > 1) {
+                    if (self.pickerDiv.hasClass("hidden")) {
+                        if (self.entries > 1) {
+                            $(this).html(self.current + " " + self._caretUpIcon);
                         }
-                        if (self.numIssues == 1) {
-                            $(this).html(self.currentIssue);
+                        if (self.entries == 1) {
+                            $(this).html(self.current);
                         }
-                        self._pickerDiv.removeClass("hidden");
-                        self._pickerDiv.css("left", String(self._pickerButton.position().left) + "px");
-                        self._pickerDiv.css("top", String(self._pickerButton.position().top + self._pickerButton.outerHeight()) + "px");
-                        self._pickerDiv.addClass("popUpMenu");
-                        self._pickerSearchInput.focus();
+                        self.pickerDiv.removeClass("hidden");
+                        self.pickerDiv.css("left", String(self.pickerButton.position().left) + "px");
+                        self.pickerDiv.css("top", String(self.pickerButton.position().top + self.pickerButton.outerHeight()) + "px");
+                        self.pickerDiv.addClass("popUpMenu");
+                        self.pickerSearchInput.focus();
                         }
                     else {
-                        self._pickerButton.html(self.currentIssue + " " + self._caretDownIcon);
-                        self._pickerDiv.addClass("hidden");
-                        self._pickerDiv.removeClass("popUpMenu");
-                        self._pickerDiv.blur();
-                        self._pickerButton.blur();
+                        self.pickerButton.html(self.current + " " + self._caretDownIcon);
+                        self.pickerDiv.addClass("hidden");
+                        self.pickerDiv.removeClass("popUpMenu");
+                        self.pickerDiv.blur();
+                        self.pickerButton.blur();
                     }
                 }
                 e.stopPropagation();
             });
 
-            self._pickerSearchInput.on("click", function(e) {
+            self.pickerSearchInput.on("click", function(e) {
                 e.stopPropagation();
             });
 
-            self._pickerSearchInput.on("keypress", function(e) {
+            self.pickerSearchInput.on("keypress", function(e) {
                 e.stopPropagation();
             });
 
-            self._pickerSearchInput.on("keyup", function(e) {
-                for (var i = 0; i < self._numrows; i++) {
-//                    console.log($(this).val(), self._issueButton(i), "'" + self._issueButton(i).text() + "'");
-                    if (!self._issueButton(i).text().includes($(this).val())) {
-                        self._row(i).addClass("hidden");
+            self.pickerSearchInput.on("keyup", function(e) {
+                for (var i = 0; i < self.entries; i++) {
+                    if (!self.button(i).text().includes($(this).val())) {
+                        self.row(i).addClass("hidden");
                     }
-                    else if (self._row(i).hasClass("hidden")) {
-                        self._row(i).removeClass("hidden");
+                    else if (self.row(i).hasClass("hidden")) {
+                        self.row(i).removeClass("hidden");
                     }
                 }
                 e.stopPropagation();
             });
 
-            self._pickerScrollDiv.on("click", function(e) {
+            self.pickerScrollDiv.on("click", function(e) {
                 e.stopPropagation();
             });
 
-            self._pickerDiv.on("click", function(e) {
+            self.pickerDiv.on("click", function(e) {
                 e.stopPropagation();
             });
 
-            self._pickerDiv.on("focusout", function() {
-//                console.log(self._pickerDivID + " focusout");
-                if (self.numIssues > 1) { self._pickerButton.html(self.currentIssue + " " + self._caretDownIcon); }
-                else { self._pickerButton.html(self.currentIssue); }
-                self._pickerButton.blur();
+            self.pickerDiv.on("focusout", function() {
+//                console.log(self.pickerDivID + " focusout");
+                if (self.entries > 1) { self.pickerButton.html(self.current + " " + self._caretDownIcon); }
+                else { self.pickerButton.html(self.current); }
+                self.pickerButton.blur();
             });
 
-            self._renameButton.on("click", function(e) {
-                self.closeMenus(self._renameButtonID);
-                if (self._renameDiv.hasClass("hidden")) {
-                    self._renameDiv.removeClass("hidden");
-                    self._renameDiv.css("left", String(self._renameButton.position().left) + "px");
-                    self._renameDiv.css("top", String(self._renameButton.position().top + self._renameButton.outerHeight()) + "px");
-                    self._renameDiv.addClass("popUpMenu");
-                    self._renameInput.val(self.currentIssue);
-                    self._renameInput.focus();
-                }
-                else {
-                    self._renameDiv.addClass("hidden");
-                    self._renameDiv.removeClass("popUpMenu");
-                    self._renameDiv.blur();
-                    self._renameButton.blur();
-                }
-                e.stopPropagation();
-            });
+            if (self._naming) {
+                self.renameButton.on("click", function(e) {
+                    self.closeMenus(self._renameButtonID);
+                    if (self.renameDiv.hasClass("hidden")) {
+                        self.renameDiv.removeClass("hidden");
+                        self.renameDiv.css("left", String(self.renameButton.position().left) + "px");
+                        self.renameDiv.css("top", String(self.renameButton.position().top + self.renameButton.outerHeight()) + "px");
+                        self.renameDiv.addClass("popUpMenu");
+                        self.renameInput.val(self.current.name);
+                        self.renameInput.focus();
+                    }
+                    else {
+                        self.closeMenus();
+                    }
+                    e.stopPropagation();
+                });
 
-            self._renameInput.on("keypress", function(e) {
-                if (e.key == "Enter") {
-                    self._renameDiv.addClass("hidden");
-                    self._renameDiv.removeClass("popUpMenu");
-                    self.sessions.renameIssue(self.currentIssue, this.value);
-                    self.manageIssueUtilities();
-                    self._renameDiv.blur();
-                    self._renameButton.blur();
-                }
-                e.stopPropagation();
-            });
+                self.renameInput.on("keypress", function(e) {
+                    if (e.key == "Enter") {
+                        self.renameDiv.addClass("hidden");
+                        self.renameDiv.removeClass("popUpMenu");
+                        self.parent.name = this.value;
+                        self._manage();
+                        self.renameDiv.blur();
+                        self.renameButton.blur();
+                    }
+                    e.stopPropagation();
+                });
 
-            self._renameDiv.on("focusout", function() {
-                $(this).addClass("hidden");
-                $(this).removeClass("popUpMenu");
-                self._renameButton.blur();
-            });
-
-            self._addButton.on("click", function(e) {
-                self.closeMenus(self._addButtonID);
-                if (self._addDiv.hasClass("hidden")) {
-                    self._addDiv.removeClass("hidden");
-                    self._addDiv.css("left", String(self._addButton.position().left) + "px");
-                    self._addDiv.css("top", String(self._addButton.position().top + self._addButton.outerHeight()) + "px");
-                    self._addDiv.addClass("popUpMenu");
-                    self._addInput.focus();
-                }
-                else {
+                self.renameDiv.on("focusout", function() {
                     self.closeMenus();
-                }
-                e.stopPropagation();
-            });
+                });
 
-            self._addInput.on("keypress", function(e) {
-                if (e.key == "Enter") {
-                    self._addDiv.addClass("hidden");
-                    self._addDiv.removeClass("popUpMenu");
-                    self.sessions.newSession(this.value);
-                    self.manage();
+                self.addButton.on("click", function(e) {
+                    self.closeMenus(self._addButtonID);
+                    if (self.addDiv.hasClass("hidden")) {
+                        self.addDiv.removeClass("hidden");
+                        self.addDiv.css("left", String(self.addButton.position().left) + "px");
+                        self.addDiv.css("top", String(self.addButton.position().top + self.addButton.outerHeight()) + "px");
+                        self.addDiv.addClass("popUpMenu");
+                        self.addInput.focus();
+                    }
+                    else {
+                        self.closeMenus();
+                    }
+                    e.stopPropagation();
+                });
+
+                self.addInput.on("keypress", function(e) {
+                    if (e.key == "Enter") {
+                        self.parent.new(this.value);
+                        self._manage();
+                        self.closeMenus();
+                    }
+                    e.stopPropagation();
+                });
+
+                self.addDiv.on("focusout", function() {
                     self.closeMenus();
-                }
-                e.stopPropagation();
-            });
-
-            self._addDiv.on("focusout", function() {
-                $(this).addClass("hidden");
-                $(this).removeClass("popUpMenu");
-                self._addButton.blur();
-            });
+                });
+            }
+            else {
+                self.addButton.on("click", function(e) {
+                    self.parent.new();
+                    self._manage();
+                    self.closeMenus();
+                    e.stopPropagation();
+                });
+            }
         }); 
     }
 
-    get span()                    { return $("#" + this._utilityID); }
-    get parent()                  { return this._parent; }
-    get app()                     { return this._app; }
-    get lines()                   { return this.app.editor.lines; }
-    get length()                  { return this.parent.length; }
-    get current()                 { return this.parent.current; }
-    get _pickerButton()      { return $("#" + this._pickerButtonID); }
-    get _pickerDiv()         { return $("#" + this._pickerDivID); }
-    get _pickerSearch()      { return $("#" + this._pickerSearchID); }
-    get _pickerSearchInput() { return $("#" + this._pickerSearchInputID); }
-    get _pickerScrollDiv()   { return $("#" + this._pickerScrollDivID); }
-    get _renameButton()      { return $("#" + this._renameButtonID); }
-    get _renameDiv()         { return $("#" + this._renameDivID); }
-    get _renameInput()       { return $("#" + this._renameInputID); }
-    get _addButton()         { return $("#" + this._addButtonID); }
-    get _addDiv()            { return $("#" + this._addDivID); }
-    get _addInput()          { return $("#" + this._addInputID); }
-    _row(i)                  { return this._pickerScrollDiv.find(".row").eq(i); }
-    _issueButton(i)               { return this._pickerScrollDiv.find("button").eq(i); }
+    get span()              { return $("#" + this._spanID); }
+    get parent()            { return this._parent; }
+    get app()               { return this._parent.app; }
+    get lines()             { return this.app.editor.lines; }
+    get entries()           { return this.parent.entries; }
+    get current()           { return this.parent.current; }
+    get pickerButton()      { return $("#" + this._pickerButtonID); }
+    get pickerDiv()         { return $("#" + this._pickerDivID); }
+    get pickerSearch()      { return $("#" + this._pickerSearchID); }
+    get pickerSearchInput() { return $("#" + this._pickerSearchInputID); }
+    get pickerScrollDiv()   { return $("#" + this._pickerScrollDivID); }
+    get renameButton()      { return $("#" + this._renameButtonID); }
+    get renameDiv()         { return $("#" + this._renameDivID); }
+    get renameInput()       { return $("#" + this._renameInputID); }
+    get addButton()         { return $("#" + this._addButtonID); }
+    get addDiv()            { return $("#" + this._addDivID); }
+    get addInput()          { return $("#" + this._addInputID); }
+    row(i)                  { return this.pickerScrollDiv.find(".row").eq(i); }
+    button(i)               { return this.pickerScrollDiv.find("button").eq(i); }
 
-    init() {
+    _init() {
+        this._spanID = this._type + "Utility";
         this._pickerButtonID = this._type + "pickerButton";
         this._pickerDivID = this._type + "pickerDiv";
         this._pickerSearchID = this._type + "pickerSearch";
         this._pickerSearchInputID = this._type + "pickerSearchInput";
         this._pickerScrollDivID = this._type + "pickerScrollDiv";
-        this. _renameButtonID = this._type + "renameButton";
+        this._renameButtonID = this._type + "renameButton";
         this._renameDivID = this._type + "renameDiv";
         this._renameInputID = this._type + "renameInput";
         this._addButtonID = this._type + "addButton";
@@ -207,7 +207,7 @@ class Utilities {
         this._addInputID = this._type + "addInput";    
     }
 
-    build() {
+    _build() {
         const plusIcon = this._plusIcon;
         const pencilIcon = this._pencilIcon;
         const searchIcon = this._searchIcon;
@@ -226,22 +226,27 @@ class Utilities {
         const addDiv = "<div id = '" + this._addDivID + "' class = 'hidden'></div>";
         const addInput = "<input id = '" + this._addInputID + "' placeholder = 'add a new " + type + "'>";
 
-        span.append(pickerButton + pickerDiv);
-        this._pickerDiv.append(pickerSearchInput + pickerScrollDiv);
-        span.append(renameButton + renameDiv);
-        this._renameDiv.append(renameInput);
-        span.append(addButton + addDiv);
-        this._addDiv.append(addInput);
+        this.span.append(pickerButton + pickerDiv);
+        this.pickerDiv.append(pickerSearchInput + pickerScrollDiv);
+
+        if (this._naming) {
+            this.span.append(renameButton + renameDiv);
+            this.renameDiv.append(renameInput);
+        }
+
+        this.span.append(addButton + addDiv);
+        this.addDiv.append(addInput);
+        this.span.append(this._dotIcon);
     }
 
-    manage() {
+    _manage() {
         const self = this;
         var code, pickerButtonText, scrollDivHeight;
-        this._pickerScrollDiv.empty();
+        this.pickerScrollDiv.empty();
         pickerButtonText = this.current;
-        if (this.length > 1) { pickerButtonText += " " + this._caretDownIcon; }
-        this._pickerButton.html(pickerButtonText);
-        if (this.length > 1) {
+        if (this.entries > 1) { pickerButtonText += " " + this._caretDownIcon; }
+        this.pickerButton.html(pickerButtonText);
+        if (this.entries > 1) {
             code = "<div style = 'display: grid'>";
             this.parent.sortByName().forEach(function(entry) {
                 code += "<div class = 'row'><button type='button' class='btn ";
@@ -250,43 +255,43 @@ class Utilities {
                 code += " btn-sm' value = '" + entry.name + "'>" + entry.name + "</button></div>";
             });
             code += "</div>";
-            this._pickerScrollDiv.append(code);
+            this.pickerScrollDiv.append(code);
 
-            this._pickerScrollDiv.find("button").on("click", function(e) {
+            this.pickerScrollDiv.find("button").on("click", function(e) {
                 self.parent.findByName(this.value).load();
                 self.closeMenus();
-                self.manage();
+                self._manage();
                 e.stopPropagation();
             });
 
-            scrollDivHeight = parseInt(numIssues) * parseInt(this._row(0).outerHeight);
-            if (this._pickerScrollDiv.position().top + scrollDivHeight > window.innerHeight) {
-                scrollDivHeight = window.innerHeight - this._pickerScrollDiv.position().top;
+            scrollDivHeight = this.entries * parseInt(this.row(0).outerHeight);
+            if (this.pickerScrollDiv.position().top + scrollDivHeight > window.innerHeight) {
+                scrollDivHeight = window.innerHeight - this.pickerScrollDiv.position().top;
             }
-            this._pickerScrollDiv.css("height", String(scrollDivHeight) + "px");
-            this._pickerDiv.css("height", String(parseInt(this._pickerSearchInput.outerHeight) + parseInt(this._pickerScrollDiv.outerHeight) + 10) + "px");
+            this.pickerScrollDiv.css("height", String(scrollDivHeight) + "px");
+            this.pickerDiv.css("height", String(parseInt(this.pickerSearchInput.outerHeight) + parseInt(this.pickerScrollDiv.outerHeight) + 10) + "px");
 
-            if (numIssues == 1 && selectedIssue == "Unspecified") { this._addButton.attr("disabled", true); }
-            else                                                  { this._addButton.attr("disabled", false); }
+            if (this.entries == 1 && this.current == "Unspecified") { this.addButton.attr("disabled", true); }
+            else                                                    { this.addButton.attr("disabled", false); }
         }
 
     }
 
     closeMenus(except) {
         if (except != this._pickerButtonID)   {
-            this._pickerDiv.addClass("hidden");
-            this._pickerDiv.removeClass("popUpMenu");
-            this._pickerButton.focusout();
+            this.pickerDiv.addClass("hidden");
+            this.pickerDiv.removeClass("popUpMenu");
+            this.pickerButton.focusout();
         }
         if (except != this._renameButtonID)   { 
-            this._renameDiv.addClass("hidden");
-            this._renameDiv.removeClass("popUpMenu");
-            this._renameButton.focusout();
+            this.renameDiv.addClass("hidden");
+            this.renameDiv.removeClass("popUpMenu");
+            this.renameButton.focusout();
         }
         if (except != this._addButtonID)      { 
-            this._addDiv.addClass("hidden");
-            this._addDiv.removeClass("popUpMenu");
-            this._addButton.focusout();
+            this.addDiv.addClass("hidden");
+            this.addDiv.removeClass("popUpMenu");
+            this.addButton.focusout();
         }
     }
 }

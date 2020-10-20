@@ -37,7 +37,7 @@ class User {
                                this._id = data._id;
                                this._clients.data = data.clients; }
 
-    init(id, userName = "Unspecified") { 
+    init(id, userName = this._mgr.default) { 
         this._userName = userName;
         this._id = id;
         this._clients.new("Self");

@@ -20,7 +20,7 @@ class Client {
                                     _id:    this.id,
                                     issues: this.issues.data } }
 
-    init(id, name = "Unspecified") {
+    init(id, name = this._clients.default) {
         this._name = name;
         this._id = id;
         this._issues.new();

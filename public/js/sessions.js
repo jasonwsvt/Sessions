@@ -2,9 +2,11 @@ class Sessions {
     _issue = null;
     _sessions = [];
     _current = null;
+    _default = Math.floor(Date.now() / 1000);
 
-    constructor(issue)        { this._issue = issue; }
+    constructor(issue)        { this._issue = issue; this._utility = new Utility(this, "session", rename = false); }
     get app()                 { return this._issue.app; }
+    get default()             { return this._default; }
 
     get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
     get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
@@ -21,7 +23,7 @@ class Sessions {
     findById(id)              { return this._sessions.find(s => (s.id == id)); }
 
     get current()             { return this._sessions[this._current]; }
-    get length()              { return this._sessions.length }
+    get entries()             { return this._sessions.length }
 
     get data()                { return this._sessions.map(session, () => session.data) }
     set data(data) {
@@ -32,8 +34,8 @@ class Sessions {
         })
     }
 
-    new(creation = Math.floor(Date.now() / 1000)) {
-        var id = this._sessions.length;
+    new(creation = this.default) {
+        var id = this.entries;
         var session = new session(this);
         session.init(id, creation);
         this._sessions.push(session); 

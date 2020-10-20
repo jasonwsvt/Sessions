@@ -80,7 +80,7 @@ class Session {
         this._lastOpened = data.lastOpened;
     }
 
-    init(id, creation = Math.floor(Date.now() / 1000)) {
+    init(id, creation = this._sessions.default) {
         this._creation = creation;
         this._id = id;
     }
