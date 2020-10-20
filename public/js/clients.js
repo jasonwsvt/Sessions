@@ -2,11 +2,10 @@ class Clients {
     _user = null;
     _clients = [];
     _current = null;
+    _utility = null;
 
-    constructor(user) {
-        this._user = user;
-    }
-
+    constructor(user)         { this._user = user; this._utility = new Utility(this); }
+    get app()                 { return this._user.app; }
     get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
     get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
     get mostRecentlyCreated() { return this.sortByCreation.slice(-1); }
@@ -21,15 +20,17 @@ class Clients {
 
     get current()             { return this._clients[this._current] }
     get length()              { return this._clients.length }
+
     get data()                { return this._clients.map(client, () => client.data) }
+    set data(data)            { var client;
+                                data.forEach(info => {
+                                    client = new Client(this);
+                                    client.data = info; }) }
 
-    new(name)     { this._clients.push(new Client(name, this)); }
-
-    load(data) {
-        var client;
-        data.forEach(info => {
-            client = new Client(this);
-            client.load(info);
-        })
-    }
+    new(name = "Unspecified") { var id = this._clients.length;
+                                var client = new Client(this);
+                                client.init(id, name);
+                                this._clients.push(client);
+                                this._current = id;
+                                return client.id; }
 }

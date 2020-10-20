@@ -6,19 +6,19 @@ class UserManager {
 
     constructor(app) {
         this._app = app;
-        if (this.numSessions) {
-            this.lines.load(this.sortByLastOpened(this.sessions()).slice(-1)[0].creation);
-        }
-        else { this.newSession("Unspecified"); }
+        pull
+        this._user = new user();
     }
 
     get app() { return this._app; }
-    get currentUser() { return this._current; }
 
-    new(userName) { }
+    new(userName) { 
+        
+    }
 
     _userInit() {
         //find the "remember me" user in localStorage, if any
+        if (Object.keys(localStorage).includes("rememberMe")) { user = }
     }
 
     _sessionInit() {
@@ -59,7 +59,8 @@ class UserManager {
         const users = null;
         if (Object.keys(localStorage).includes("rememberMe")) {
             user = localStorage.getItem("rememberMe"); 
-            this._user = new User(JSON.parse(localStorage.getItem(user)));
+            this._user = new User(this);
+            this._user.data = JSON.parse(localStorage.getItem(user));
         }
     }
 

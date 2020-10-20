@@ -1,16 +1,15 @@
 class User {
-    _useLocalStorage = false;
-    _useServerStorage = false;
-    _clients = null;
+    _id = null;
     _userName = null;
     _firstName = null;
     _lastName = null;
+    _passwordHash = null;
+    _useLocalStorage = false;
+    _useServerStorage = false;
+    _clients = null;
 
-    constructor() {
-        this._clients = new Clients(this);
-        this._clients.new("Self");
-    }
-
+    constructor(mgr)         { this._mgr = mgr; this._clients = new Clients(this); }
+    get app()                { return this._mgr.app; }
     get clients()            { return (this._clients) ? this._clients : null; }
     get currentClient()      { return this._clients.current; }
     get name()               { return `${this._firstName} ${this._lastName}` }
@@ -24,16 +23,23 @@ class User {
     get data()               { return { userName:      this._userName,
                                         firstName:     this._firstName,
                                         lastName:      this._lastName,
+                                        passwordHash:  this._passwordHash,
                                         useLocalData:  this._useLocalData,
                                         useServerData: this._useServerData,
                                         clients:       this.clients.data } }
 
-    load(data) {
-        this._useLocalStorage = data.useLocalStorage;
-        this._useSessionStorage = data.useSessionStorage;
-        this._userName = data.userName;
-        this._firstName = data.firstName;
-        this._lastName = data.lastName;
-        this._clients.load(data.clients);
-    }                                    
+    set data(data)           { this._useLocalStorage = data.useLocalStorage;
+                               this._useSessionStorage = data.useSessionStorage;
+                               this._userName = data.userName;
+                               this._firstName = data.firstName;
+                               this._lastName = data.lastName;
+                               this._passwordHash = data.passwordHash;
+                               this._id = data._id;
+                               this._clients.data = data.clients; }
+
+    init(id, userName = "Unspecified") { 
+        this._userName = userName;
+        this._id = id;
+        this._clients.new("Self");
+    }
 }

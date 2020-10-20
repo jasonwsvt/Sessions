@@ -4,31 +4,17 @@ class Session {
     _lastOpened = null;
     _lastEdited = null;
     _lines = [];
-    _mostUpToDate = null;
+    _sessions = null;
 
-    constructor(creation) { this._creation = creation; }
+    constructor(sessions) { this._sessions = sessions; }
+    get app()             { return this._sessions.app; }
+    get user()            { return this.app.userManager.user; }
     get creation()        { return this._creation; }
     get lastEdited()      { return this._lastEdited; }
     get lastOpened()      { return this._lastOpened; }
-    get mostUpToDate()    { return this._mostUpToDate; }
     get clearLines()      { this._lines = []; }
-    set lines(lines)      { this._setLines(lines); }
 
-    get lines() {
-//        console.log("lines()", this._creation, this._mostUpToDate, this._lines);
-        if (!this._lines.length) { //console.log("this._lines == []", this._mostUpToDate);
-            switch (this._mostUpToDate) {
-                case "Session": this._pullLinesFromSessionStorage(); break;
-                case "Local":   this._pullLinesFromLocalStorage();   break;
-                case "Server":  this._pullLinesFromServerDB();       break;
-            }
-        }
-//        console.log("lines()", this._lines);
-        this._setLastOpened(Math.floor(Date.now() / 1000));
-        return this._lines;
-    }
-
-    _setLines(lines) {
+    set lines(lines)      {
         if (JSON.stringify(lines) != JSON.stringify(this._lines)) {
             console.log("_setLines(" + lines + ") for " + this.creation);
             this._lines = lines;
@@ -37,17 +23,56 @@ class Session {
         }
     }
 
+    get lines() {
+//        console.log("lines()", this._creation, this._mostUpToDate, this._lines);
+        if (!this._lines.length) { this._pullLines(); }
+        this._setLastOpened(Math.floor(Date.now() / 1000));
+        return this._lines;
+    }
+
+    _pullLines() {
+        if (this.user.useSessionStorage && Object.keys(sessionStorage).includes(this._creation)) {
+            const session = JSON.parse(sessionStorage.getItem(this._creation));
+            this._lines = session[3];
+        }
+        else if (this.user.useLocalStorage && Object.keys(localStorage).includes(this._creation)) {
+            const session = JSON.parse(localStorage.getItem(this._creation));
+            this._lines = session[3];
+        }
+        else if (this.user.useServerStorage) { //request from server
+
+        }
+    }
+    _setLines(lines) {
+    }
+
     _setLastEdited(lastEdited) { this._lastEdited = lastEdited; this._save(); }
     _setLastOpened(lastOpened) { this._lastOpened = lastOpened; this._save(); }
 
-    get data()        { return { creation:   this._creation,
-                                 lastEdited: this._lastEdited,
-                                 lastOpened: this._lastOpened  } }
+    _exists() {
+        return (Object.keys(sessionStorage).includes(this._creation));
+    }
+
+    get name() {
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const d = new Date(this._creation * 1000);
+        const year = String(d.getFullYear());
+        const month = months[d.getMonth()];
+        const day = String(d.getDate());
+        const hour = String((d.getHours() > 12) ? d.getHours() - 12 : d.getHours()).padStart(2, '0');
+        const minute = String(d.getMinutes()).padStart(2, '0');
+        const second = String(d.getSeconds()).padStart(2, '0');
+        const ampm = String((d.getHours() > 12) ? "PM" : "AM");
+        return `${month} ${day} ${year} ${hour}:${minute}:${second}${ampm}`;
+    }
+
+    get data()         { return { creation:   this._creation,
+                                  lastEdited: this._lastEdited,
+                                  lastOpened: this._lastOpened  } }
     
-    get sessionData() { return { creation:   this._creation,
-                                 lastEdited: this._lastEdited,
-                                 lastOpened: this._lastOpened,
-                                 lines:      this._lines       } }
+    get _sessionData() { return { lastEdited: this._lastEdited,
+                                  lastOpened: this._lastOpened,
+                                  lines:      this._lines       } }
 
     load(data) {
         this._creation = data.creation;
@@ -55,34 +80,16 @@ class Session {
         this._lastOpened = data.lastOpened;
     }
 
-    _save() {
-//        console.log("updating:", this._lines);
-//        console.trace();
-        if (!this._useSessionStorage && !this._useLocalStorage && !this._useServerStorage) {
-            this._useSessionStorage = true;
-        }
-        if (this._useLocalStorage)   { this._saveToLocalStorage();   this._mostUpToDate = "Local"; }
-        if (this._useSessionStorage) { this._saveToSessionStorage(); this._mostUpToDate = "Session"; }
+    init(id, creation = Math.floor(Date.now() / 1000)) {
+        this._creation = creation;
+        this._id = id;
     }
 
-    _saveToSessionStorage() {
+    _save() {
         sessionStorage.setItem(this._creation, JSON.stringify(this._sessionData));
     }
 
-    _saveToLocalStorage() {
-        localStorage.setItem(this._creation, JSON.stringify(this._sessionData));
-    }
-
-    _pullLinesFromSessionStorage() {
-        const session = JSON.parse(sessionStorage.getItem(this._creation));
-        this._lines = session[3];
-    }
-
-    _pullLinesFromLocalStorage() {
-        const session = JSON.parse(localStorage.getItem(this._creation));
-        this._lines = session[3];
-    }
-
-    _pullLinesFromServerDB() {
+    setAsCurrent() {
+        this._sessions.current = this._id;
     }
 }
