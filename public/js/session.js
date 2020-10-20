@@ -66,11 +66,11 @@ class Session {
     }
 
     _saveToSessionStorage() {
-        sessionStorage.setItem(this._creation, JSON.stringify([this._issue, this._lastOpened, this._lastEdited, this._lines]));
+        sessionStorage.setItem(this._creation, JSON.stringify(this._sessionData));
     }
 
     _saveToLocalStorage() {
-        localStorage.setItem(this._creation, JSON.stringify([this._issue, this._lastOpened, this._lastEdited, this._lines]));
+        localStorage.setItem(this._creation, JSON.stringify(this._sessionData));
     }
 
     _pullLinesFromSessionStorage() {
