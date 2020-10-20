@@ -2,20 +2,19 @@ class Sessions {
     _issue = null;
     _sessions = [];
     _current = null;
-    _default = Math.floor(Date.now() / 1000);
 
     constructor(issue)        { this._issue = issue; this._utility = new Utility(this, "session", rename = false); }
     get app()                 { return this._issue.app; }
-    get default()             { return this._default; }
+    get default()             { return Math.floor(Date.now() / 1000); }
 
+    get firstCreated()        { return this.sortByCreation.slice(0); }
+    get mostRecentlyCreated() { return this.sortByCreation.slice(-1); }
     get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
     get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
-    get mostRecentlyCreated() { return this.sortByCreation.slice(-1); }
-    get firstCreated()        { return this.sortByCreation.slice(0); }
 
+    get sortByCreation()      { return this._sessions.sort((a,b) => (Number(a.creation) - Number(b.creation)));}
     get sortByLastEdited()    { return this._sessions.sort((a,b) => (Number(a.lastEdited) - Number(b.lastEdited))); }
     get sortByLastOpened()    { return this._sessions.sort((a,b) => (Number(a.lastOpened) - Number(b.lastOpened))); }
-    get sortByCreation()      { return this._sessions.sort((a,b) => (Number(a.creation) - Number(b.creation)));}
     get sortByName()          { return this._sessions.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())); }
 
     findByName(name)          { return this._sessions.find(s => (s.name == name)); }

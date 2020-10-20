@@ -8,14 +8,14 @@ class Issues {
     get app()                 { return this._client.app; }
     get default()             { return this._default; }
 
+    get firstCreated()        { return this.sortByCreation.slice(0); }
+    get mostRecentlyCreated() { return this.sortByCreation.slice(-1); }
     get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
     get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
-    get mostRecentlyCreated() { return this.sortByCreation.slice(-1); }
-    get firstCreated()        { return this.sortByCreation.slice(0); }
 
+    get sortByCreation()      { return this._issues.sort((a,b) => (a.sessions.firstCreated.creation - b.sessions.firstCreated.creation) )}
     get sortByLastEdited()    { return this._issues.sort((a,b) => (a.sessions.mostRecentlyEdited.lastEdited - b.sessions.mostRecentlyEdited.lastEdited) )}
     get sortByLastOpened()    { return this._issues.sort((a,b) => (a.sessions.mostRecentlyOpened.lastOpened - b.sessions.mostRecentlyOpened.lastOpened) )}
-    get sortByCreation()      { return this._issues.sort((a,b) => (a.sessions.firstCreated.creation - b.sessions.firstCreated.creation) )}
     get sortByName()          { return this._issues.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())); }
 
     findById(id)              { return this._issues.find(i => (i._id == id)); }
