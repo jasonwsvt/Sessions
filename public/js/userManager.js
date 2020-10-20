@@ -56,10 +56,11 @@ class UserManager {
 
     pullLocalDataForUser() {
         //see if there's a user record (remember me checked), and if so,
-        //  get the values for using local and server storage
-        //  if (localStorage == true) { this.activateLocalStorage; }
-        //  if (serverStorage == true) { this.activateServerStorage; }
-        //  pull issues and sessions for user
+        const users = null;
+        if (Object.keys(localStorage).includes("rememberMe")) {
+            user = localStorage.getItem("rememberMe"); 
+            this._user = new User(JSON.parse(localStorage.getItem(user)));
+        }
     }
 
     //gets a stringified JSON of all the Because Reasons components from the server

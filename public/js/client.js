@@ -16,4 +16,10 @@ class Client {
 
     get data()         { return { name:   this.name,
                                   issues: this.issues.data } }
+
+    load(data) {
+        this._name = data.name;
+        this._id = data._id;
+        this._issues.load(data.issues);
+    }
 }

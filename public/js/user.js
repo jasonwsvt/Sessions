@@ -1,6 +1,6 @@
 class User {
-    _useLocalData = false;
-    _useServerData = false;
+    _useLocalStorage = false;
+    _useServerStorage = false;
     _clients = null;
     _userName = null;
     _firstName = null;
@@ -28,4 +28,12 @@ class User {
                                         useServerData: this._useServerData,
                                         clients:       this.clients.data } }
 
+    load(data) {
+        this._useLocalStorage = data.useLocalStorage;
+        this._useSessionStorage = data.useSessionStorage;
+        this._userName = data.userName;
+        this._firstName = data.firstName;
+        this._lastName = data.lastName;
+        this._clients.load(data.clients);
+    }                                    
 }

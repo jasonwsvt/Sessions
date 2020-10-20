@@ -24,4 +24,12 @@ class Clients {
     get data()                { return this._clients.map(client, () => client.data) }
 
     new(name)     { this._clients.push(new Client(name, this)); }
+
+    load(data) {
+        var client;
+        data.forEach(info => {
+            client = new Client(this);
+            client.load(info);
+        })
+    }
 }

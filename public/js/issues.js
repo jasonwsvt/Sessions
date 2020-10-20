@@ -24,4 +24,12 @@ class Issues {
     get data()                { return this._issues.map(issue, () => issue.data) }
 
     new(title)                { this._issues.push(new Issue(title, this)); }
+
+    load(data) {
+        var issue;
+        data.forEach(info => {
+            issue = new Issue(this);
+            issue.load(info);
+        })
+    }
 }

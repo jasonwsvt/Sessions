@@ -20,4 +20,10 @@ class Issue {
     set name(newName) {
         this._name = newName;
     }
+
+    load(data) {
+        this._name = data.name;
+        this._id = data.id;
+        this._sessions.load(data.sessions);
+    }
 }

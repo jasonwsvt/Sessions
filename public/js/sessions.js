@@ -29,4 +29,12 @@ class Sessions {
         this.lines.load(creation);
         this.cursor.checkForCursor();
     }
+
+    load(data) {
+        var session;
+        data.forEach(info => {
+            session = new Issue(this);
+            session.load(info);
+        })
+    }
 }

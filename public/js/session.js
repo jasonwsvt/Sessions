@@ -33,19 +33,12 @@ class Session {
             console.log("_setLines(" + lines + ") for " + this.creation);
             this._lines = lines;
             this._lastEdited = Math.floor(Date.now() / 1000);
-            this._update();
+            this._save();
         }
     }
 
-    _setLastEdited(lastEdited) {
-        this._lastEdited = lastEdited;
-        this._update();
-    }
-
-    _setLastOpened(lastOpened) {
-        this._lastOpened = lastOpened;
-        this._update();
-    }
+    _setLastEdited(lastEdited) { this._lastEdited = lastEdited; this._save(); }
+    _setLastOpened(lastOpened) { this._lastOpened = lastOpened; this._save(); }
 
     get data()        { return { creation:   this._creation,
                                  lastEdited: this._lastEdited,
@@ -56,56 +49,13 @@ class Session {
                                  lastOpened: this._lastOpened,
                                  lines:      this._lines       } }
 
-    //creation -> issue, lastOpened, lastEdited, lines
-    pullSessionData() {
-        this._useSessionStorage = true;
-        const session = JSON.parse(sessionStorage.getItem(this._creation));
-//        console.log("pullSessionData(): " + session);
-        this.setSessionData(session[0], session[1], session[2]);
+    load(data) {
+        this._creation = data.creation;
+        this._lastEdited = data.lastEdited;
+        this._lastOpened = data.lastOpened;
     }
 
-    pullLocalData() {
-        this._useLocalStorage = true;
-        const session = JSON.parse(localStorage.getItem(this._creation));
-        this.setLocalData(session[0], session[1], session[2]);
-    }
-
-    setSessionData(issue, lastOpened, lastEdited) {
-        this._useSessionStorage = true;
-        if (parseInt(lastEdited) < 1600000000) { console.log(lastEdited); console.trace(); }  
-        if (this._lastEdited == null || lastEdited >= this._lastEdited) {
-            this._mostUpToDate = "Session";
-            this._setData(issue, lastEdited, lastOpened);
-        }
-    }
-
-    setLocalData(issue, lastOpened, lastEdited) {
-        this._useLocalStorage = true;
-        if (this._lastEdited == null || lastEdited >= this._lastEdited) {
-            this._mostUpToDate = "Local";
-            this._setData(issue, lastEdited, lastOpened);
-        }
-    }
-
-    setServerData(issue, lastOpened, lastEdited) {
-        this._useServerStorage = true;
-        if (this._lastEdited == null || lastEdited > this._lastEdited) {
-            this._mostUpToDate = "Server";
-            this._setData(issue, lastOpened, lastEdited);
-        }
-    }
-
-    //issue, lastOpened, lastEdited, lines
-    _setData(issue, lastOpened, lastEdited) {
-//        if (parseInt(lastEdited) < 1600000000) { console.log(lastEdited); console.trace(); }
-//        if (issue.length < 5) { console.log(lastEdited); console.trace(); }
-//        if (parseInt(lastOpened) < 1600000000) { console.log(lastOpened); console.trace(); }
-        this._issue = issue;
-        this._lastOpened = lastOpened;
-        this._lastEdited = lastEdited;
-    }
-
-    _update() {
+    _save() {
 //        console.log("updating:", this._lines);
 //        console.trace();
         if (!this._useSessionStorage && !this._useLocalStorage && !this._useServerStorage) {
