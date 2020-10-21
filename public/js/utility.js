@@ -175,7 +175,7 @@ class Utility {
     get span()              { return $("#" + this._spanID); }
     get parent()            { return this._parent; }
     get app()               { return this._parent.app; }
-    get lines()             { return this.app.editor.lines; }
+    get editor()            { return this.app.editor; }
     get entries()           { return this.parent.entries; }
     get current()           { return this.parent.current; }
     get pickerButton()      { return $("#" + this._pickerButtonID); }
@@ -258,7 +258,7 @@ class Utility {
             this.pickerScrollDiv.append(code);
 
             this.pickerScrollDiv.find("button").on("click", function(e) {
-                self.parent.findByName(this.value).load();
+                self.parent.findByName(this.value).setAsCurrent();
                 self.closeMenus();
                 self._manage();
                 e.stopPropagation();

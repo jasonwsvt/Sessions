@@ -6,20 +6,19 @@ class Issue {
     
     constructor(issues)  { this._issues = issues; this._sessions = new Sessions(this); }
     get app()            { return this._issues.app; }
+    get issues()         { return this._issues; }
+    get sessions()       { return this._sessions; }
 
     get id()             { return this._id }
     get name()           { return this._name; }
-    set name(name)       { this._name = name; this._update(); }
-    get sessions()       { return this._sessions; }
+    set name(name)       { this._name = name; this._save(); }
 
-    get data() { return { name: this.name,
-                          sessions: this.sessions.data } }
-
-    load(data) {
-        this._name = data.name;
-        this._id = data._id;
-        this._sessions.load(data.sessions);
-    }
+    set data(data)       { this._name = data.name;
+                           this._id = data._id;
+                           this._sessions.data = data.sessions; }
+    get data()           { return { name:     this.name,
+                                    _id:      this.id,
+                                    sessions: this.sessions.data } }
 
     init(id, name = this._issues.default) {
         this._id = id;

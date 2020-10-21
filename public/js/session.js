@@ -14,6 +14,11 @@ class Session {
     get lastOpened()      { return this._lastOpened; }
     get clearLines()      { this._lines = []; }
 
+    _save()                    { sessionStorage.setItem(this._creation, JSON.stringify(this._sessionData)); }
+    _setLastEdited(lastEdited) { this._lastEdited = lastEdited;     this._save(); }
+    _setLastOpened(lastOpened) { this._lastOpened = lastOpened;     this._save(); }
+    setAsCurrent()             { this._sessions.current = this._id; this.app.editor.load(); }
+
     set lines(lines)      {
         if (JSON.stringify(lines) != JSON.stringify(this._lines)) {
             console.log("_setLines(" + lines + ") for " + this.creation);
@@ -31,7 +36,7 @@ class Session {
     }
 
     _pullLines() {
-        if (this.user.useSessionStorage && Object.keys(sessionStorage).includes(this._creation)) {
+        if (Object.keys(sessionStorage).includes(this._creation)) {
             const session = JSON.parse(sessionStorage.getItem(this._creation));
             this._lines = session[3];
         }
@@ -39,18 +44,9 @@ class Session {
             const session = JSON.parse(localStorage.getItem(this._creation));
             this._lines = session[3];
         }
-        else if (this.user.useServerStorage) { //request from server
+        else if () { //request from server
 
         }
-    }
-    _setLines(lines) {
-    }
-
-    _setLastEdited(lastEdited) { this._lastEdited = lastEdited; this._save(); }
-    _setLastOpened(lastOpened) { this._lastOpened = lastOpened; this._save(); }
-
-    _exists() {
-        return (Object.keys(sessionStorage).includes(this._creation));
     }
 
     get name() {
@@ -70,26 +66,18 @@ class Session {
                                   lastEdited: this._lastEdited,
                                   lastOpened: this._lastOpened  } }
     
-    get _sessionData() { return { lastEdited: this._lastEdited,
-                                  lastOpened: this._lastOpened,
-                                  lines:      this._lines       } }
-
-    load(data) {
+    set data(data) {
         this._creation = data.creation;
         this._lastEdited = data.lastEdited;
         this._lastOpened = data.lastOpened;
     }
 
+    get _sessionData() { return { lastEdited: this._lastEdited,
+        lastOpened: this._lastOpened,
+        lines:      this._lines       } }
+
     init(id, creation = this._sessions.default) {
         this._creation = creation;
         this._id = id;
-    }
-
-    _save() {
-        sessionStorage.setItem(this._creation, JSON.stringify(this._sessionData));
-    }
-
-    setAsCurrent() {
-        this._sessions.current = this._id;
     }
 }

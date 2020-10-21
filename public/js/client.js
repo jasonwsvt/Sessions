@@ -6,16 +6,16 @@ class Client {
 
     constructor(clients) { this._clients = clients; this._issues = new Issues(this); }
     get app()            { return this._clients.app; }
+    get clients()        { return this._clients; }
+    get issues()         { return this._issues; }
 
     get id()             { return this._id }
     get name()           { return this._name }
     set name(name)       { this._name = name; this._save(); }
-    get issues()         { return this._issues.issues }
 
     set data(data)       { this._name = data.name;
                            this._id = data._id;
-                           this._issues.load(data.issues); }
-
+                           this._issues.data = data.issues; }
     get data()           { return { name:   this.name,
                                     _id:    this.id,
                                     issues: this.issues.data } }
