@@ -13,12 +13,12 @@ class Clients {
     get mostRecentlyCreated() { return this.sortByCreation.slice(-1); }
     get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
     get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
-    get current()             { return this._clients[this._current] }
+    get current()             { return this._clients[this._current]; }
     set current(id)           { this._current = id; }
     findById(id)              { return this._clients.find(i => (i.id == id)); }
     findByName(name)          { return this._clients.find(i => (i.name == name)); }
 
-    get entries()             { return this._clients.length }
+    get entries()             { return this._clients.length; }
     get sortByCreation()      { return this._clients.sort((a,b) => (a.issues.firstCreated - b.issues.firstCreated)) }
     get sortByLastEdited()    { return this._clients.sort((a,b) => (a.issues.mostRecentlyEdited - b.issues.mostRecentlyEdited) ) }
     get sortByLastOpened()    { return this._clients.sort((a,b) => (a.issues.mostRecentlyOpened - b.issues.mostRecentlyOpened) ) }

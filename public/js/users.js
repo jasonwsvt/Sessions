@@ -1,4 +1,4 @@
-class UserManager {
+class Users {
     _app = null;
     _current = null;
     _editor = null;
@@ -12,9 +12,9 @@ class UserManager {
 
     findById(id)                 { return this._users.find(i => (i.id == id)); }
     findByUserName(userName)     { return this._users.find(i => (i.userName == userName)); }
-
     get current()                { return this._users[this._current]; }
     set current(id)              { this._current = id; }
+
     get entries()                { return this._users.length; }
 
     get data()                   { return this._users.map(user, () => user.data) }
@@ -39,8 +39,7 @@ class UserManager {
     logIn(userName, password)    { if (Object.keys(localStorage).includes(userName)) {
                                        user = JSON.parse(localStorage.getItem(userName));
                                        if (user.passwordHash == this.hash(password)) {
-                                           this.data = user;                              }
-    }}
+                                           this.data = user;                              } } }
 
-    
+    hash(password)               { return "hashed " + password; }
 }

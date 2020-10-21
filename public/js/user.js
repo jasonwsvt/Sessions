@@ -7,12 +7,13 @@ class User {
     _practitioner = null;
     _useLocalStorage = false;
     _useServerStorage = false;
+    _users = null;
     _clients = null;
 
-    constructor(mgr)         { this._mgr = mgr; this._clients = new Clients(this); }
-    get app()                { return this._mgr.app; }
-    get mgr()                { return this._mgr; }
-    get clients()            { return (this._clients) ? this._clients : null; }
+    constructor(users)       { this._users = users; this._clients = new Clients(this); }
+    get app()                { return this._users.app; }
+    get users()              { return this._users; }
+    get clients()            { return this._clients; }
     get current()            { return this._clients.current; }
 
     get name()               { return `${this._firstName} ${this._lastName}` }
