@@ -17,7 +17,6 @@ class Users {
 
     get entries()                { return this._users.length; }
 
-    get data()                   { return this._users.map(user, () => user.data) }
     set data(data)               { user = new User(this);
                                    user.data = data; }
 
@@ -28,10 +27,13 @@ class Users {
                                    this.current = id;
                                    return id; }
 
-    _init()                      { const users = null;
+    _init()                      { var userName, user;
                                    if (Object.keys(localStorage).includes("rememberMe")) {
-                                       userName = localStorage.getItem("rememberMe"); 
-                                       this.data = JSON.parse(localStorage.getItem(userName));
+                                       userName = localStorage.getItem("rememberMe");
+                                       user = new User(this);
+                                       user.load(JSON.parse(localStorage.getItem(userName)));
+                                       this.current = this.entries;
+                                       this._users.push(user);
                                    }
                                    else {
                                        this.new(); } }
@@ -39,7 +41,12 @@ class Users {
     logIn(userName, password)    { if (Object.keys(localStorage).includes(userName)) {
                                        user = JSON.parse(localStorage.getItem(userName));
                                        if (user.passwordHash == this.hash(password)) {
-                                           this.data = user;                              } } }
+                                           this.data = user;
+                                           return true;
+                                       }
+                                   }
+                                   return false;
+                                 }
 
     hash(password)               { return "hashed " + password; }
 }

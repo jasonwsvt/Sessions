@@ -13,7 +13,7 @@ class Clients {
     get mostRecentlyCreated() { return this.sortByCreation.slice(-1); }
     get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
     get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
-    get current()             { return this._clients[this._current]; }
+    get current()             { return this.findByID(this._current); }
     set current(id)           { this._current = id; }
     findById(id)              { return this._clients.find(i => (i.id == id)); }
     findByName(name)          { return this._clients.find(i => (i.name == name)); }
@@ -24,16 +24,16 @@ class Clients {
     get sortByLastOpened()    { return this._clients.sort((a,b) => (a.issues.mostRecentlyOpened - b.issues.mostRecentlyOpened) ) }
     get sortByName()          { return this._clients.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())); }
 
-    get data()                { return this._clients.map(client, () => client.data) }
-    set data(data)            { var client;
-                                data.forEach(info => {
-                                    client = new Client(this);
-                                    client.data = info; }) }
-
     new(name = this.default)  { var id = this.entries;
                                 var client = new Client(this);
                                 client.init(id, name);
                                 this._clients.push(client);
                                 this.current = id;
                                 return id; }
+
+    load(data)                { var client;
+                                data.forEach(entry => {
+                                client = new Client(this);
+                                client.load(entry); }) }
+
 }

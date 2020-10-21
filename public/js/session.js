@@ -13,11 +13,22 @@ class Session {
     get lastEdited()      { return this._lastEdited; }
     get lastOpened()      { return this._lastOpened; }
     get clearLines()      { this._lines = []; }
-
-    _save()                    { sessionStorage.setItem(this._creation, JSON.stringify(this._sessionData)); }
     _setLastEdited(lastEdited) { this._lastEdited = lastEdited;     this._save(); }
     _setLastOpened(lastOpened) { this._lastOpened = lastOpened;     this._save(); }
     setAsCurrent()             { this._sessions.current = this._id; this.app.editor.load(); }
+
+    _save() {
+        var sessionData;
+        if (Object.keys(sessionStorage).includes("sessions")) {
+            sessionData = JSON.parse(sessionStorage.getItem("sessions"));
+        }
+        sessionData[_id]= this.data;
+        sessionStorage.setItem("sessions", JSON.stringify(sessionData));
+    }
+
+    load(data) {
+        this.data = data;
+    }
 
     set lines(lines)      {
         if (JSON.stringify(lines) != JSON.stringify(this._lines)) {
@@ -44,7 +55,7 @@ class Session {
             const session = JSON.parse(localStorage.getItem(this._creation));
             this._lines = session[3];
         }
-        else if () { //request from server
+        else if (this.user.useServerStorage) { //request from server
 
         }
     }
@@ -66,15 +77,9 @@ class Session {
                                   lastEdited: this._lastEdited,
                                   lastOpened: this._lastOpened  } }
     
-    set data(data) {
-        this._creation = data.creation;
-        this._lastEdited = data.lastEdited;
-        this._lastOpened = data.lastOpened;
-    }
-
-    get _sessionData() { return { lastEdited: this._lastEdited,
-        lastOpened: this._lastOpened,
-        lines:      this._lines       } }
+    set data(data)              { this._creation = data.creation;
+                                  this._lastEdited = data.lastEdited;
+                                  this._lastOpened = data.lastOpened; }
 
     init(id, creation = this._sessions.default) {
         this._creation = creation;

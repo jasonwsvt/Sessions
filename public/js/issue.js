@@ -30,4 +30,18 @@ class Issue {
         this._issues.current = this._id;
         this._sessions.mostRecentlyOpened.setAsCurrent();
     }
+
+    _save() {
+        var issueData;
+        if (Object.keys(sessionStorage).includes("issues")) {
+            issueData = JSON.parse(sessionStorage.getItem("issues"));
+        }
+        issueData[_id]= this.data;
+        sessionStorage.setItem("issues", JSON.stringify(issueData));
+    }
+
+    load(data) {
+        this.data = data;
+        this.sessions.load(data.sessions);
+    }
 }

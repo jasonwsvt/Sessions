@@ -16,15 +16,17 @@ class User {
     get clients()            { return this._clients; }
     get current()            { return this._clients.current; }
 
+    get id()                 { return this._id; }
     get name()               { return `${this._firstName} ${this._lastName}` }
     get userName()           { return this._userName }
     get firstName()          { return this._firstName }
     get lastName()           { return this._lastName }
     get isPractitioner()     { return this._practitioner; }
 
-    set userName(userName)   { if (this._userName != userName) { this._userName = userName; this._save(); } }
-    set lastName(lastName)   { if (this._lastName != lastName) { this._lastName = lastName; this._save(); } }
-    set firstName(firstName) { if (this._firstName != firstName) { this._firstName = firstName; this._save(); } }
+    set id(id)               { if (this._id != id)                { this._id = id;                this._save(); } }
+    set userName(userName)   { if (this._userName != userName)    { this._userName = userName;    this._save(); } }
+    set lastName(lastName)   { if (this._lastName != lastName)    { this._lastName = lastName;    this._save(); } }
+    set firstName(firstName) { if (this._firstName != firstName)  { this._firstName = firstName;  this._save(); } }
     set password(password)   { const newHash = this.hash(password);
                                if (this._passwordHash != newHash) { this._passwordHash = newHash; this._save(); } }
 
@@ -35,8 +37,7 @@ class User {
                                this._lastName = data.lastName;
                                this._passwordHash = data.passwordHash;
                                this._practitioner = data.practitioner;
-                               this._id = data._id;
-                               this._clients.data = data.clients; }
+                               this._id = data._id; }
 
     get data()               { return { userName:      this._userName,
                                         _id:           this.id,
@@ -44,12 +45,25 @@ class User {
                                         lastName:      this._lastName,
                                         passwordHash:  this._passwordHash,
                                         useLocalData:  this._useLocalData,
-                                        useServerData: this._useServerData,
-                                        clients:       this.clients.data } }
+                                        useServerData: this._useServerData } }
 
     init(id, userName = this._mgr.default) { 
         this._userName = userName;
         this._id = id;
         this._clients.new("Self");
+    }
+
+    _save() {
+        var userData;
+        if (Object.keys(sessionStorage).includes("users")) {
+            userData = JSON.parse(sessionStorage.getItem("users"));
+        }
+        userData[_id]= this.data;
+        sessionStorage.setItem("users", JSON.stringify(userData));
+    }
+
+    load(data) {
+        this.data = data;
+        this.clients.load(data.clients);
     }
 }

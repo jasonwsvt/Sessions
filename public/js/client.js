@@ -14,11 +14,9 @@ class Client {
     set name(name)       { this._name = name; this._save(); }
 
     set data(data)       { this._name = data.name;
-                           this._id = data._id;
-                           this._issues.data = data.issues; }
+                           this._id = data._id; }
     get data()           { return { name:   this.name,
-                                    _id:    this.id,
-                                    issues: this.issues.data } }
+                                    _id:    this.id } }
 
     init(id, name = this._clients.default) {
         this._name = name;
@@ -29,5 +27,19 @@ class Client {
     setAsCurrent() {
         this._clients.current = this._id;
         this._issues.mostRecentlyOpened.setAsCurrent();
+    }
+
+    _save() {
+        var clientData;
+        if (Object.keys(sessionStorage).includes("clients")) {
+            clientData = JSON.parse(sessionStorage.getItem("clients"));
+        }
+        clientData[_id]= this.data;
+        sessionStorage.setItem("users", JSON.stringify(clientData));
+    }
+
+    load(data) {
+        this.data = data;
+        this.issues.load(data.issues);
     }
 }
