@@ -5,7 +5,6 @@
 class Lines {
     _containerID = "lines";
     _lineCode = "<div></div>";
-    _creation = null;
     _editor = null;
 
     constructor(cID, editor) {
@@ -13,10 +12,12 @@ class Lines {
         this._editor = editor;
     }
 
-    get ID()         { return this._containerID; }
-    get div()        { return $("#" + this._containerID); }
-    get session()    { return this._editor.app.userManager.currentUser.currentClient.currentIssue.currentSession; }
-    get buttons()    { return this._editor.app.buttons; }
+    get ID()              { return this._containerID; }
+    get div()             { return $("#" + this._containerID); }
+    get session()         { return this.app.currentSession; }
+    get app()             { return this._editor.app; }
+    get buttons()         { return this.app.buttons; }
+    get currentSession()  { return this.app.currentSession; }
 
     get numLines()        { return this.div.children().length; }
     lineExists(i)         { return (i >= 0 && i < this.numLines); }
@@ -88,11 +89,10 @@ class Lines {
         return linesArray;
     }
 
-    load(creation) {
+    load() {
 //        console.trace();
         const self = this;
-        if (this._creation) { this.session.lines = this.linesArray; }
-        this._creation = creation;
+//        if (this.session) { this.session.lines = this.linesArray; }
         const lines = this.session.lines;
 //        console.log("load: " + this._creation, typeof this._creation, this.session.lines);
         this.div.empty();

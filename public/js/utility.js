@@ -22,12 +22,10 @@ class Utility {
     _addDivID = null;
     _addInputID = null;
 
-    constructor (parent, type, naming = true) {
+    constructor (app, type) {
         const self = this;
         this._app = app;
         this._type = type;
-        this._parent = parent;
-        this._naming = naming;
 
         this._init();
         this._build();
@@ -173,11 +171,17 @@ class Utility {
     }
 
     get span()              { return $("#" + this._spanID); }
-    get parent()            { return this._parent; }
-    get app()               { return this._parent.app; }
+    get app()               { return this._app; }
+    get parent()            { switch (this._type) {
+                                case "client": return this.app.currentUser.clients;
+                                case "issue": return this.app.currentClient.issues;
+                                case "session": return this.app.currentIssue.sessions; } }
+    get current()           { switch (this._type) {
+                                case "client": return this.app.currentClient;
+                                case "issue": return this.app.currentIssue;
+                                case "session": return this.app.currentSession; } }
     get editor()            { return this.app.editor; }
     get entries()           { return this.parent.entries; }
-    get current()           { return this.parent.current; }
     get pickerButton()      { return $("#" + this._pickerButtonID); }
     get pickerDiv()         { return $("#" + this._pickerDivID); }
     get pickerSearch()      { return $("#" + this._pickerSearchID); }

@@ -11,8 +11,7 @@ class Editor {
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
-                //                   User    Client  Issue   Session
-                self.app.userManager.current.current.current.current.lines = self.lines.linesArray;
+                self.app.currentSession.lines = self.lines.linesArray;
             });
         });
     }
@@ -20,4 +19,9 @@ class Editor {
     get app()    { return this._app; }
     get lines()  { return this._lines; }
     get cursor() { return this._cursor; }
+
+    load() {
+        this.lines.load();
+        this.cursor.checkForCursor();
+    }
 }
