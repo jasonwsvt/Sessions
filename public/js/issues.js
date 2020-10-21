@@ -4,7 +4,7 @@ class Issues {
     _current = null;
     _default = "New Issue";
 
-    constructor(client)       { this._client = client; this._utility = new Utility(this, "issue"); }
+    constructor(client)       { this._client = client; }
     get app()                 { return this._client.app; }
     get default()             { return this._default; }
 

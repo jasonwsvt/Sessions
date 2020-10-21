@@ -5,7 +5,7 @@ class Clients {
     _utility = null;
     _default = "New Client"
 
-    constructor(user)         { this._user = user; if (this.user.isPractitioner) { this._utility = new Utility(this, "client"); } }
+    constructor(user)         { this._user = user; } }
     get app()                 { return this._user.app; }
     get default()             { return this._default; }
 
@@ -14,7 +14,7 @@ class Clients {
     get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
     get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
     get current()             { return this.findByID(this._current); }
-    set current(id)           { this._current = id; }
+    set current(id)           { this.findById(id).setAsCurrent(); }
     findById(id)              { return this._clients.find(i => (i.id == id)); }
     findByName(name)          { return this._clients.find(i => (i.name == name)); }
 

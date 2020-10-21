@@ -53,6 +53,11 @@ class User {
         this._clients.new("Self");
     }
 
+    setAsCurrent() {
+        this._users.current = this._id;
+        this._clients.mostRecentlyOpened.setAsCurrent();
+    }
+
     _save() {
         var userData;
         if (Object.keys(sessionStorage).includes("users")) {

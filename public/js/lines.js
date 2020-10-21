@@ -17,7 +17,6 @@ class Lines {
     get session()         { return this.app.currentSession; }
     get app()             { return this._editor.app; }
     get buttons()         { return this.app.buttons; }
-    get currentSession()  { return this.app.currentSession; }
 
     get numLines()        { return this.div.children().length; }
     lineExists(i)         { return (i >= 0 && i < this.numLines); }
@@ -103,28 +102,6 @@ class Lines {
         }
         else {
             this.div.append(this._lineCode);
-        }
-    }
-
-    get height()          { return parseInt(this.div.css("height")); }
-    set height(height)    { this.div.css("height", String(height) + "px"); }
-    get numVisibleLines() { return this.height / this.div.children().eq(0).height(); }
-
-    increaseVisibleLines() {
-        const lineHeight = this.div.children().eq(0).height();
-        const maxVisibleLines = Math.floor($(window).height() / lineHeight);
-        if (this.numVisibleLines < maxVisibleLines) {
-            this.div.css("height", String((this.numVisibleLines + 1) * lineHeight) + "px");
-            this.sessions.buttons.adjustDivHeights();
-        }
-    }
-
-    reduceVisibleLines() {
-        const lineHeight = this.div.children().eq(0).height();
-        const minVisibleLines = 0;
-        if (this.numVisibleLines > minVisibleLines) {
-            this.div.css("height", String((this.numVisibleLines - 1) * lineHeight) + "px");
-            this.sessions.buttons.adjustDivHeights();
         }
     }
 }

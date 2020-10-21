@@ -6,14 +6,14 @@ class Users {
     _utility = null;
     _default = "New User";
 
-    constructor(app)             { this._app = app; this._utility = new LoginUtility(this); this._init(); }
+    constructor(app)             { this._app = app; this._init(); }
     get app()                    { return this._app; }
     get default()                { return this._default; }
 
     findById(id)                 { return this._users.find(i => (i.id == id)); }
     findByUserName(userName)     { return this._users.find(i => (i.userName == userName)); }
     get current()                { return this._users[this._current]; }
-    set current(id)              { this._current = id; }
+    set current(id)              { this.findById(id).setAsCurrent(); }
 
     get entries()                { return this._users.length; }
 
@@ -32,11 +32,14 @@ class Users {
                                        userName = localStorage.getItem("rememberMe");
                                        user = new User(this);
                                        user.load(JSON.parse(localStorage.getItem(userName)));
-                                       this.current = this.entries;
                                        this._users.push(user);
+                                       this.current = user._id; 
                                    }
                                    else {
-                                       this.new(); } }
+                                       this.new();
+                                   }
+
+                                 }
 
     logIn(userName, password)    { if (Object.keys(localStorage).includes(userName)) {
                                        user = JSON.parse(localStorage.getItem(userName));

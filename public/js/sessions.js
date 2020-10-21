@@ -3,7 +3,7 @@ class Sessions {
     _sessions = [];
     _current = null;
 
-    constructor(issue)        { this._issue = issue; this._utility = new Utility(this, "session", rename = false); }
+    constructor(issue)        { this._issue = issue; }
     get app()                 { return this._issue.app; }
     get default()             { return Math.floor(Date.now() / 1000); }
 
