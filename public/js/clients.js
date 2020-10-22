@@ -14,7 +14,7 @@ class Clients {
     get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
     get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
     get current()             { return this.findByID(this._current); }
-    set current(id)           { this.findById(id).setAsCurrent(); }
+    set current(id)           { this._current = id; }
     findById(id)              { return this._clients.find(i => (i.id == id)); }
     findByName(name)          { return this._clients.find(i => (i.name == name)); }
 
