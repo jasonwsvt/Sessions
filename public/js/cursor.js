@@ -2,7 +2,7 @@
 */
 
 class Cursor {
-    _linesObject = null;
+    _editor = null;
 //    _numVisibleLines = null;
     _cursorID = "cursor";
     _cursorCode = "<h2 id = '" + this._cursorID + "'>|</h2>";
@@ -10,9 +10,9 @@ class Cursor {
     _cursorX = null;
     _indent = 50;
 
-    constructor(linesObject) {
+    constructor(editor) {
         const self = this;
-        this._linesObject = linesObject;
+        this._editor = editor;
         this.checkForCursor();
 
         $(document).ready(function() {
@@ -41,9 +41,9 @@ class Cursor {
     }
 
 //    set numVisibleLines(num) { this._numVisibleLines = num; }
-    get linesID()            { return this._linesObject.ID; }
-    get linesDiv()           { return this._linesObject.div; }
-    get lines()              { return this._linesObject; }
+    get lines()              { return this._editor.lines; }
+    get linesID()            { return this.lines.ID; }
+    get linesDiv()           { return this.lines.div; }
 
     get cursor()             { return $("#cursor"); }
     get lineIndex()          { return this._lineIndex; }

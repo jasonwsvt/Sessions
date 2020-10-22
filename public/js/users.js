@@ -12,7 +12,7 @@ class Users {
 
     findById(id)                 { return this._users.find(i => (i.id == id)); }
     findByUserName(userName)     { return this._users.find(i => (i.userName == userName)); }
-    get current()                { return this._users[this._current]; }
+    get current()                { return this.findById(this._current); }
     set current(id)              { this._current = id; }
 
     get entries()                { return this._users.length; }

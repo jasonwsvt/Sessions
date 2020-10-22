@@ -1,6 +1,8 @@
 class Utility {
     _utilityID = null;
+    _app = null;
     _parent = null;
+    _type = null;
     _naming = null;
 
     _dotIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-dot my-2' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'/></svg>";
@@ -22,10 +24,12 @@ class Utility {
     _addDivID = null;
     _addInputID = null;
 
-    constructor (app, type) {
+    constructor (app, parent, type, naming = true) {
         const self = this;
         this._app = app;
+        this._parent = parent;
         this._type = type;
+        this._naming = naming;
 
         this._init();
         this._build();
@@ -172,14 +176,8 @@ class Utility {
 
     get span()              { return $("#" + this._spanID); }
     get app()               { return this._app; }
-    get parent()            { switch (this._type) {
-                                case "client": return this.app.currentUser.clients;
-                                case "issue": return this.app.currentClient.issues;
-                                case "session": return this.app.currentIssue.sessions; } }
-    get current()           { switch (this._type) {
-                                case "client": return this.app.currentClient;
-                                case "issue": return this.app.currentIssue;
-                                case "session": return this.app.currentSession; } }
+    get parent()            { return this._parent(); }
+    get current()           { return this.parent.current; }
     get editor()            { return this.app.editor; }
     get entries()           { return this.parent.entries; }
     get pickerButton()      { return $("#" + this._pickerButtonID); }

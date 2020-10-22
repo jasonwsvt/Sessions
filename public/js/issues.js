@@ -12,10 +12,10 @@ class Issues {
     get mostRecentlyCreated() { return this.sortByCreation.slice(-1); }
     get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
     get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
-    get current()             { return this.findByID(this._current); }
+    get current()             { return this.findById(this._current); }
     set current(id)           { this._current = id; }
-    findById(id)              { return this._issues.find(i => (i._id == id)); }
-    findByName(name)          { return this._issues.find(i => (i.name == name)); }
+    findById(id)              { return this._issues.find(issue => (issue._id == id)); }
+    findByName(name)          { return this._issues.find(issue => (issue.name == name)); }
 
     get entries()             { return this._issues.length }
     get sortByCreation()      { return this._issues.sort((a,b) => (a.sessions.firstCreated.creation - b.sessions.firstCreated.creation) )}
@@ -34,5 +34,6 @@ class Issues {
                                 issue.init(id, name);
                                 this._issues.push(issue); 
                                 this.current = id;
+                                console.log("created new issue", this.current.name);
                                 return id; }
 }

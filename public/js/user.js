@@ -47,7 +47,7 @@ class User {
                                         useLocalData:  this._useLocalData,
                                         useServerData: this._useServerData } }
 
-    init(id, userName = this._mgr.default) { 
+    init(id, userName = this.users.default) { 
         this._userName = userName;
         this._id = id;
         this._clients.new("Self");

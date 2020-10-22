@@ -110,9 +110,9 @@ class Buttons {
         });
     }
 
-    get cursor() { return this._app.editor.cursor; }
-    get buttonsNav() { $("#" + this._buttonsNavID); }
-    get buttons() { $("#" + this._buttonsID); }
+    get cursor()     { return this._app.editor.cursor; }
+    get buttonsNav() { return $("#" + this._buttonsNavID); }
+    get buttons()    { return $("#" + this._buttonsID); }
     navButton(index) { return this.buttonsNav.find("button").eq(index); }
     buttonRow(index) { return $("#" + buttonsID + " > .container-fluid > .row").eq(index); }
 
