@@ -5,7 +5,7 @@ class Clients {
     _utility = null;
     _default = "New Client"
 
-    constructor(user)         { this._user = user; } }
+    constructor(user)         { this._user = user; }
     get app()                 { return this._user.app; }
     get default()             { return this._default; }
 
