@@ -33,7 +33,7 @@ class Sessions {
                                    session.init(id, creation);
                                    this._sessions.push(session); 
                                    this._current = id;
-                                   console.log(this._current, this._sessions);
-                                   console.log("created new session", this.current.name);
+                                   //console.log(this._current, this._sessions);
+                                   //console.log("created new session", this.current.name);
                                    return id; }
 }

@@ -34,6 +34,6 @@ class Issues {
                                 issue.init(id, name);
                                 this._issues.push(issue); 
                                 this.current = id;
-                                console.log("created new issue", this.current.name);
+                                //console.log("created new issue", this.current.name);
                                 return id; }
 }

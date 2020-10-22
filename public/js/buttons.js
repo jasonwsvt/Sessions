@@ -28,7 +28,7 @@ class Buttons {
                 }
             });
 
-            this.buttonsNav.find("button").on("click", function(e) {
+            self.buttonsNav.find("button").on("click", function(e) {
                 const buttonIndex = $(this).parent().index();
                 const buttonRow = this.buttonRow(buttonIndex);
 

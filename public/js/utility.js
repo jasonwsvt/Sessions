@@ -24,9 +24,9 @@ class Utility {
     _addDivID = null;
     _addInputID = null;
 
-    constructor (app, parent, type, naming = true) {
+    constructor (utilities, parent, type, naming = true) {
         const self = this;
-        this._app = app;
+        this._utilities = utilities;
         this._parent = parent;
         this._type = type;
         this._naming = naming;
@@ -36,19 +36,15 @@ class Utility {
         this._manage();
 
         $(document).ready(function() {
-            $("html").on("click", function(e) {
-                self.closeMenus();
-            });
-
             self.pickerButton.on("click", function(e) {
-                self.closeMenus(self._pickerButtonID);
+                self.closeAllUtilityMenus(self._pickerButtonID);
                 if (self.entries > 1) {
                     if (self.pickerDiv.hasClass("hidden")) {
                         if (self.entries > 1) {
-                            $(this).html(self.current + " " + self._caretUpIcon);
+                            $(this).html(self.current.name + " " + self._caretUpIcon);
                         }
                         if (self.entries == 1) {
-                            $(this).html(self.current);
+                            $(this).html(self.current.name);
                         }
                         self.pickerDiv.removeClass("hidden");
                         self.pickerDiv.css("left", String(self.pickerButton.position().left) + "px");
@@ -57,11 +53,8 @@ class Utility {
                         self.pickerSearchInput.focus();
                         }
                     else {
-                        self.pickerButton.html(self.current + " " + self._caretDownIcon);
-                        self.pickerDiv.addClass("hidden");
-                        self.pickerDiv.removeClass("popUpMenu");
-                        self.pickerDiv.blur();
-                        self.pickerButton.blur();
+                        self.pickerButton.html(self.current.name + " " + self._caretDownIcon);
+                        self.closeMenus();
                     }
                 }
                 e.stopPropagation();
@@ -95,16 +88,16 @@ class Utility {
                 e.stopPropagation();
             });
 
-            self.pickerDiv.on("focusout", function() {
+//            self.pickerDiv.on("focusout", function() {
 //                console.log(self.pickerDivID + " focusout");
-                if (self.entries > 1) { self.pickerButton.html(self.current + " " + self._caretDownIcon); }
-                else { self.pickerButton.html(self.current); }
-                self.pickerButton.blur();
-            });
+//                if (self.entries > 1) { self.pickerButton.html(self.current.name + " " + self._caretDownIcon); }
+//                else { self.pickerButton.html(self.current.name); }
+//                self.pickerButton.blur();
+//            });
 
             if (self._naming) {
                 self.renameButton.on("click", function(e) {
-                    self.closeMenus(self._renameButtonID);
+                    self.utilities.closeAllUtilityMenus(self._renameButtonID);
                     if (self.renameDiv.hasClass("hidden")) {
                         self.renameDiv.removeClass("hidden");
                         self.renameDiv.css("left", String(self.renameButton.position().left) + "px");
@@ -125,18 +118,19 @@ class Utility {
                         self.renameDiv.removeClass("popUpMenu");
                         self.parent.name = this.value;
                         self._manage();
-                        self.renameDiv.blur();
-                        self.renameButton.blur();
+                        self.closeMenus();
+//                        self.renameDiv.blur();
+//                        self.renameButton.blur();
                     }
                     e.stopPropagation();
                 });
 
-                self.renameDiv.on("focusout", function() {
-                    self.closeMenus();
-                });
+//                self.renameDiv.on("focusout", function() {
+//                    self.closeMenus();
+//                });
 
                 self.addButton.on("click", function(e) {
-                    self.closeMenus(self._addButtonID);
+                    self.utilities.closeAllUtilityMenus(self._addButtonID);
                     if (self.addDiv.hasClass("hidden")) {
                         self.addDiv.removeClass("hidden");
                         self.addDiv.css("left", String(self.addButton.position().left) + "px");
@@ -145,7 +139,7 @@ class Utility {
                         self.addInput.focus();
                     }
                     else {
-                        self.closeMenus();
+                        self.utilities.closeAllUtilityMenus();
                     }
                     e.stopPropagation();
                 });
@@ -159,15 +153,15 @@ class Utility {
                     e.stopPropagation();
                 });
 
-                self.addDiv.on("focusout", function() {
-                    self.closeMenus();
-                });
+//                self.addDiv.on("focusout", function() {
+//                    self.closeMenus();
+//                });
             }
             else {
                 self.addButton.on("click", function(e) {
                     self.parent.new();
                     self._manage();
-                    self.closeMenus();
+                    self.utilities.closeAllUtilityMenus();
                     e.stopPropagation();
                 });
             }
@@ -175,7 +169,8 @@ class Utility {
     }
 
     get span()              { return $("#" + this._spanID); }
-    get app()               { return this._app; }
+    get utilities()         { return this._utilities; }
+    get app()               { return this.utilities.app; }
     get parent()            { return this._parent(); }
     get current()           { return this.parent.current; }
     get editor()            { return this.app.editor; }
@@ -196,17 +191,17 @@ class Utility {
 
     _init() {
         this._spanID = this._type + "Utility";
-        this._pickerButtonID = this._type + "pickerButton";
-        this._pickerDivID = this._type + "pickerDiv";
-        this._pickerSearchID = this._type + "pickerSearch";
-        this._pickerSearchInputID = this._type + "pickerSearchInput";
-        this._pickerScrollDivID = this._type + "pickerScrollDiv";
-        this._renameButtonID = this._type + "renameButton";
-        this._renameDivID = this._type + "renameDiv";
-        this._renameInputID = this._type + "renameInput";
-        this._addButtonID = this._type + "addButton";
-        this._addDivID = this._type + "addDiv";
-        this._addInputID = this._type + "addInput";    
+        this._pickerButtonID = this._type + "PickerButton";
+        this._pickerDivID = this._type + "PickerDiv";
+        this._pickerSearchID = this._type + "PickerSearch";
+        this._pickerSearchInputID = this._type + "PickerSearchInput";
+        this._pickerScrollDivID = this._type + "PickerScrollDiv";
+        this._renameButtonID = this._type + "RenameButton";
+        this._renameDivID = this._type + "RenameDiv";
+        this._renameInputID = this._type + "RenameInput";
+        this._addButtonID = this._type + "AddButton";
+        this._addDivID = this._type + "AddDiv";
+        this._addInputID = this._type + "AddInput";    
     }
 
     _build() {
@@ -245,14 +240,14 @@ class Utility {
         const self = this;
         var code, pickerButtonText, scrollDivHeight;
         this.pickerScrollDiv.empty();
-        pickerButtonText = this.current;
+        pickerButtonText = this.current.name;
         if (this.entries > 1) { pickerButtonText += " " + this._caretDownIcon; }
         this.pickerButton.html(pickerButtonText);
         if (this.entries > 1) {
             code = "<div style = 'display: grid'>";
-            this.parent.sortByName().forEach(function(entry) {
+            this.parent.sortByName.forEach(function(entry) {
                 code += "<div class = 'row'><button type='button' class='btn ";
-                if (entry.name == this.current) { code += "btn-info"; }
+                if (entry.name == this.current.name) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
                 code += " btn-sm' value = '" + entry.name + "'>" + entry.name + "</button></div>";
             });
@@ -273,7 +268,7 @@ class Utility {
             this.pickerScrollDiv.css("height", String(scrollDivHeight) + "px");
             this.pickerDiv.css("height", String(parseInt(this.pickerSearchInput.outerHeight) + parseInt(this.pickerScrollDiv.outerHeight) + 10) + "px");
 
-            if (this.entries == 1 && this.current == "Unspecified") { this.addButton.attr("disabled", true); }
+            if (this.entries == 1 && this.current.name == "Unspecified") { this.addButton.attr("disabled", true); }
             else                                                    { this.addButton.attr("disabled", false); }
         }
 
@@ -283,17 +278,20 @@ class Utility {
         if (except != this._pickerButtonID)   {
             this.pickerDiv.addClass("hidden");
             this.pickerDiv.removeClass("popUpMenu");
-            this.pickerButton.focusout();
+            this.pickerDiv.blur();
+            this.pickerButton.blur();
         }
         if (except != this._renameButtonID)   { 
             this.renameDiv.addClass("hidden");
             this.renameDiv.removeClass("popUpMenu");
-            this.renameButton.focusout();
+            this.renameDiv.blur();
+            this.renameButton.blur();
         }
         if (except != this._addButtonID)      { 
             this.addDiv.addClass("hidden");
             this.addDiv.removeClass("popUpMenu");
-            this.addButton.focusout();
+            this.addDiv.blur();
+            this.addButton.blur();
         }
     }
 }
