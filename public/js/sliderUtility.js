@@ -1,8 +1,8 @@
 /* utilities class links to sessions class
 */
 
-class ScrollUtilitys {
-    _utilitiesID = "utilities";
+class SliderUtility {
+    _utility = "sliderUtility";
     _app = null;
 
     _scrollUpIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-arrow-bar-up' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z'/></svg>";
@@ -20,22 +20,22 @@ class ScrollUtilitys {
 
         $(document).ready(function() {
             self._slideUpButton.on("click", function() {
-                self.lines.reduceVisibleLines();
+                self.editor.reduceVisibleLines();
                 return false;
             });
 
             Mousetrap.bind(['ctrl+up'], function(e) {
-                self.lines.reduceVisibleLines();
+                self.editor.reduceVisibleLines();
                 return false;
             });
 
             self._slideDownButton.on("click", function() {
-                self.lines.increaseVisibleLines();
+                self.editor.increaseVisibleLines();
                 return false;
             });
 
             Mousetrap.bind(['ctrl+down'], function(e) {
-                self.lines.increaseVisibleLines();
+                self.editor.increaseVisibleLines();
                 return false;
             });
         }); 
@@ -55,8 +55,7 @@ class ScrollUtilitys {
         const slideUpButton = "<button id = '" + this._slideUpButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + scrollUpIcon + "</button>";
         const slideDownButton = "<button id = '" + this._slideDownButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + scrollDownIcon + "</button>";
 
-        rightSide.append(slideUpButton + slideDownButton);
-        rightSide.append(dotIcon);
+        this.span.append(slideUpButton + slideDownButton);
     }
 
     manage() {
