@@ -20,26 +20,28 @@ class Users {
     set data(data)               { user = new User(this);
                                    user.data = data; }
 
-    new(userName = this.default) { var id = this.entries;
-                                   var user = new User(this);
-                                   user.init(id, userName);
-                                   this._users.push(user);
-                                   this.current = id;
-                                   return id; }
+    _init() {
+        var userName, user;
+        if (Object.keys(localStorage).includes("rememberMe")) {
+            userName = localStorage.getItem("rememberMe");
+            user = new User(this);
+            user.load(JSON.parse(localStorage.getItem(userName)));
+            user.setAsCurrent();
+            this._users.push(user);
+        }
+        else {
+            this.new();
+        }
+    }
 
-    _init()                      { var userName, user;
-                                   if (Object.keys(localStorage).includes("rememberMe")) {
-                                       userName = localStorage.getItem("rememberMe");
-                                       user = new User(this);
-                                       user.load(JSON.parse(localStorage.getItem(userName)));
-                                       this._users.push(user);
-                                       this.current = user._id; 
-                                   }
-                                   else {
-                                       this.new();
-                                   }
-
-                                 }
+    new(userName = this.default) {
+        var id = this.entries;
+        var user = new User(this);
+        user.init(id, userName);
+        user.setAsCurrent();
+        this._users.push(user);
+        return id;
+    }
 
     logIn(userName, password)    { if (Object.keys(localStorage).includes(userName)) {
                                        user = JSON.parse(localStorage.getItem(userName));

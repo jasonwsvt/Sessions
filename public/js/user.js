@@ -39,13 +39,17 @@ class User {
                                this._practitioner = data.practitioner;
                                this._id = data._id; }
 
-    get data()               { return { userName:      this._userName,
-                                        _id:           this.id,
-                                        firstName:     this._firstName,
-                                        lastName:      this._lastName,
-                                        passwordHash:  this._passwordHash,
-                                        useLocalData:  this._useLocalData,
-                                        useServerData: this._useServerData } }
+    get data() {
+        return {
+            userName: this._userName,
+            _id:           this.id,
+            firstName:     this._firstName,
+            lastName:      this._lastName,
+            passwordHash:  this._passwordHash,
+            useLocalData:  this._useLocalData,
+            useServerData: this._useServerData
+        }
+    }
 
     init(id, userName = this.users.default) { 
         this._userName = userName;

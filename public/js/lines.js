@@ -7,15 +7,16 @@ class Lines {
     _lineCode = "<div></div>";
     _editor = null;
 
-    constructor(cID, editor) {
+    constructor(editor) {
         const self = this;
         this._editor = editor;
     }
 
     get ID()              { return this._containerID; }
     get div()             { return $("#" + this._containerID); }
-    get session()         { return this.app.currentSession; }
-    get app()             { return this._editor.app; }
+    get editor()          { return this._editor; }
+    get session()         { return this.editor.session; }
+    get app()             { return this.editor.app; }
     get buttons()         { return this.app.buttons; }
 
     get numLines()        { return this.div.children().length; }

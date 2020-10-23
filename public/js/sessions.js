@@ -7,10 +7,10 @@ class Sessions {
     get app()                 { return this._issue.app; }
     get default()             { return Math.floor(Date.now() / 1000); }
 
-    get firstCreated()        { return this.sortByCreation.slice(0); }
-    get mostRecentlyCreated() { return this.sortByCreation.slice(-1); }
-    get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
-    get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
+    get firstCreated()        { return this.sortByCreation.slice(0)[0]; }
+    get mostRecentlyCreated() { return this.sortByCreation.slice(-1)[0]; }
+    get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1)[0]; }
+    get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1)[0]; }
     get current()             { return this.findById(this._current); }
     set current(id)           { this._current = id; }
     findByName(name)          { return this._sessions.find(session => (session.name == name)); }

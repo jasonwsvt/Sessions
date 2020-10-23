@@ -8,10 +8,10 @@ class Issues {
     get app()                 { return this._client.app; }
     get default()             { return this._default; }
 
-    get firstCreated()        { return this.sortByCreation.slice(0); }
-    get mostRecentlyCreated() { return this.sortByCreation.slice(-1); }
-    get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1); }
-    get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1); }
+    get firstCreated()        { return this.sortByCreation.slice(0)[0]; }
+    get mostRecentlyCreated() { return this.sortByCreation.slice(-1)[0]; }
+    get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1)[0]; }
+    get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1)[0]; }
     get current()             { return this.findById(this._current); }
     set current(id)           { this._current = id; }
     findById(id)              { return this._issues.find(issue => (issue._id == id)); }

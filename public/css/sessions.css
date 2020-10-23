@@ -7,11 +7,18 @@
 #utilities {
     display: flex;
     flex: 0 0 auto;
+    flex-direction: row;
     /* only manually resize */
     white-space: nowrap;
     width: 100%;
     background-color: #eee;
     justify-content: space-between;
+}
+
+#utilities > div {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: row;
 }
 
 .popUpMenu {

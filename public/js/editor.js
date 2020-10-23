@@ -11,7 +11,7 @@ class Editor {
 
         $(document).ready(function() {
             $(document).on("keyup", function() {
-                self.app.currentSession.lines = self.lines.linesArray;
+                self.session.lines = self.lines.linesArray;
             });
         });
     }
@@ -20,6 +20,9 @@ class Editor {
     get lines()           { return this._lines; }
     get cursor()          { return this._cursor; }
     get buttons()         { return this.app.buttons; }
+    get session()         {
+        return this.app.users.current.clients.current.issues.current.sessions.current;
+    }
     get lineHeight()      { return this.lines.div.children().eq(0).height(); }
     get height()          { return parseInt(this.lines.div.css("height")); }
     set height(height)    { this.lines.div.css("height", String(height) + "px"); }

@@ -9,6 +9,7 @@ class Utilities {
     _infoUtility = null;
 
     constructor(app) {
+        var self = this;
         this._app = app;
 //        this._userUtility = new UserUtility(this);
         this._clientUtility = new Utility(this, this.currentUserClients, "client");

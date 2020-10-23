@@ -8,21 +8,31 @@ class Session {
 
     constructor(sessions) { this._sessions = sessions; }
     get app()             { return this._sessions.app; }
-    get user()            { return this.app.userManager.user; }
+    get user()            { return this.app.users.current; }
     get creation()        { return this._creation; }
     get lastEdited()      { return this._lastEdited; }
     get lastOpened()      { return this._lastOpened; }
     get clearLines()      { this._lines = []; }
-    _setLastEdited(lastEdited) { this._lastEdited = lastEdited;     this._save(); }
-    _setLastOpened(lastOpened) { this._lastOpened = lastOpened;     this._save(); }
-    setAsCurrent()             { this._sessions.current = this._id; this.app.editor.load(); }
+
+    _setLastEdited(lastEdited) {
+        this._lastEdited = lastEdited;
+        this._save();
+    }
+
+    _setLastOpened(lastOpened) {
+        this._lastOpened = lastOpened;
+        this._save();
+    }
+    setAsCurrent()             {
+        this._sessions.current = this._id;
+    }
 
     _save() {
-        var sessionData;
+        var sessionData = [];
         if (Object.keys(sessionStorage).includes("sessions")) {
             sessionData = JSON.parse(sessionStorage.getItem("sessions"));
         }
-        sessionData[_id]= this.data;
+        sessionData[this._id]= this._sessionData;
         sessionStorage.setItem("sessions", JSON.stringify(sessionData));
     }
 
@@ -77,9 +87,18 @@ class Session {
                                   lastEdited: this._lastEdited,
                                   lastOpened: this._lastOpened  } }
     
-    set data(data)              { this._creation = data.creation;
-                                  this._lastEdited = data.lastEdited;
-                                  this._lastOpened = data.lastOpened; }
+    set data(data)              { this._creation = Number(data.creation);
+                                  this._lastEdited = Number(data.lastEdited);
+                                  this._lastOpened = Number(data.lastOpened); }
+
+    get _sessionData() {
+        return {
+            creation:   this._creation,
+            lastEdited: this._lastEdited,
+            lastOpened: this._lastOpened,
+            lines:      this._lines
+        }
+    }
 
     init(id, creation = this._sessions.default) {
         this._creation = creation;
