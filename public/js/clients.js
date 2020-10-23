@@ -8,6 +8,8 @@ class Clients {
     constructor(user) {
         this._user = user;
     }
+
+    get user() { return this._user; }
     get app() {
         return this._user.app;
     }
@@ -35,7 +37,7 @@ class Clients {
         this._current = id;
     }
     findById(id) {
-        return this._clients.find(client => (client._id == id));
+        return this._clients.find(client => (client.id == id));
     }
     findByName(name) {
         return this._clients.find(client => (client.name == name));
@@ -56,9 +58,12 @@ class Clients {
     get sortByName() {
         return this._clients.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
     }
+    get unsorted() {
+        return this._clients;
+    }
 
     new(name = this.default) {
-        var id = this.entries;
+        var id = this.newId;
         var client = new Client(this);
         client.init(id, name);
         this._clients.push(client);
@@ -72,5 +77,14 @@ class Clients {
             client = new Client(this);
             client.load(entry);
         });
+    }
+
+    get newId() {
+        var id;
+        while (true) {
+            id = Math.round(Math.random()*1000000000000000);
+            if (!this.findById(id)) { break; }
+        }
+        return id;
     }
 }

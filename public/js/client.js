@@ -8,15 +8,31 @@ class Client {
     get app()            { return this._clients.app; }
     get clients()        { return this._clients; }
     get issues()         { return this._issues; }
+    get userId()         { return this.clients.user.id; }
 
     get id()             { return this._id }
+    set id(id) {
+        if (this._id != id) {
+            this._id = id;
+            this._save();
+            this._issues.unsorted.forEach(issue => (issue._clientId = id));
+        }
+    }
     get name()           { return this._name }
     set name(name)       { this._name = name; this._save(); }
 
-    set data(data)       { this._name = data.name;
-                           this._id = data._id; }
-    get data()           { return { name:   this.name,
-                                    _id:    this.id } }
+
+    set data(data)       { this._id     = data.id,
+                           this._userId = data.userId;
+                           this._name   = data.name; }
+    get data()           { return { id:     this.id,
+                                    userId: this.userId,
+                                    name:   this.name } }
+
+    setAsCurrent() {
+        this._clients.current = this._id;
+        this._issues.mostRecentlyOpened.setAsCurrent();
+    }
 
     init(id, name = this._clients.default) {
         this._name = name;
@@ -24,17 +40,13 @@ class Client {
         this._issues.new();
     }
 
-    setAsCurrent() {
-        this._clients.current = this._id;
-        this._issues.mostRecentlyOpened.setAsCurrent();
-    }
-
     _save() {
         var clientData;
+        this._lastEdited = Math.floor(Date.now() / 1000);
         if (Object.keys(sessionStorage).includes("clients")) {
             clientData = JSON.parse(sessionStorage.getItem("clients"));
         }
-        clientData[_id]= this.data;
+        clientData[this._id]= this.data;
         sessionStorage.setItem("users", JSON.stringify(clientData));
     }
 

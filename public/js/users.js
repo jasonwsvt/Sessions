@@ -35,7 +35,7 @@ class Users {
     }
 
     new(userName = this.default) {
-        var id = this.entries;
+        var id = this.newId;
         var user = new User(this);
         user.init(id, userName);
         user.setAsCurrent();
@@ -54,4 +54,9 @@ class Users {
                                  }
 
     hash(password)               { return "hashed " + password; }
+
+    get newId() {
+        return Math.round(Math.random()*1000000000000000);
+    }
+
 }
