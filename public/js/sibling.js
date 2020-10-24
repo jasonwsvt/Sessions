@@ -30,26 +30,31 @@ class Sibling {
 
     setAsCurrent() {
         this._siblings.current = this._data.id;
+        this._data.lastOpened = this.now;
         if (this._children) { this._children.mostRecentlyOpened.setAsCurrent(); }
     }
                                 
-    init(data) {
-        this.data(data);
-        if (this._children) { this._children.new(); }
+    init(parentId) {
+        this.data(newData(parentId));
+        if (this._children) { this._children.new(this.data.id); }
     }
 
     _save() {
-        var data;
-        this._lastEdited = Math.floor(Date.now() / 1000);
-        if (Object.keys(sessionStorage).includes(this._siblings.collectionName)) {
-            data = JSON.parse(sessionStorage.getItem(this._siblings.collectionName));
+        var sessionData;
+        this._data.lastEdited = this.now;
+        if (Object.keys(sessionStorage).includes(this._siblings.type + "s")) {
+            sessionData = JSON.parse(sessionStorage.getItem(this._siblings.type + "s"));
         }
-        data[this._id]= this.data;
-        sessionStorage.setItem(this._siblings.collectionName, JSON.stringify(data));
+        sessionData[this._id]= this.data;
+        sessionStorage.setItem(this._siblings.type + "s", JSON.stringify(data));
     }
 
     load(data) {
         this.data = data;
-        if (this._children) { this._children.load(data[this._children.collectionName]); }
+        if (this._children) { this._children.load(data[this._children.type + "s"]); }
+    }
+
+    get now() {
+        Math.floor(Date.now() / 1000);
     }
 }

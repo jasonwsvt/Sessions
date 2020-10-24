@@ -1,25 +1,47 @@
 class Session {
-    constructor(app, users) {
-        super(app, users, Clients);
+    _id = null;
+    _issueId = null;
+    _creation = null;
+    _lastOpened = null;
+    _lastEdited = null;
+    _lines = [];
+    _sessions = null;
+
+    constructor(sessions) { this._sessions = sessions; }
+    get app()             { return this._sessions.app; }
+    get user()            { return this.app.users.current; }
+    get creation()        { return this._creation; }
+    get lastEdited()      { return this._lastEdited; }
+    get lastOpened()      { return this._lastOpened; }
+    get issueId()         { return this.sessions.issue.id; }
+    set issueId(issueId)  { this.issueId = issueId; this._save(); }
+    get clearLines()      { this._lines = []; }
+    get id()              { return this._id; }
+    set id(id)            { if (this._id != id) { this._id = id; this._save(); }
     }
 
-    get creation()        { return this._data.creation; }
+    setAsCurrent()             {
+        this._sessions.current = this._id;
+    }
 
-    get newData(issueId) {
-        return {
-            id: this.newId,
-            issueId: issueId,
-            creation: this.now,
-            lastEdited: null,
-            lastOpened: null
+    _save() {
+        var sessionData = [];
+        if (Object.keys(sessionStorage).includes("sessions")) {
+            sessionData = JSON.parse(sessionStorage.getItem("sessions"));
         }
+        sessionData[this._id]= this._sessionData;
+        sessionStorage.setItem("sessions", JSON.stringify(sessionData));
+    }
+
+    load(data) {
+        this.data = data;
     }
 
     set lines(lines)      {
         if (JSON.stringify(lines) != JSON.stringify(this._lines)) {
             console.log("_setLines(" + lines + ") for " + this._creation);
             this._lines = lines;
-            this._lastEdited = this.now;
+            this._lastEdited = Math.floor(Date.now() / 1000);
             this._save();
         }
     }
@@ -27,7 +49,7 @@ class Session {
     get lines() {
 //        console.log("lines()", this._creation, this._mostUpToDate, this._lines);
         if (!this._lines.length) { this._pullLines(); }
-        this._lastOpened = this.now;
+        this._lastOpened = Math.floor(Date.now() / 1000);
         this._save();
         return this._lines;
     }
@@ -80,12 +102,8 @@ class Session {
         }
     }
 
-    _save() {
-        var sessionData = [];
-        if (Object.keys(sessionStorage).includes("sessions")) {
-            sessionData = JSON.parse(sessionStorage.getItem("sessions"));
-        }
-        sessionData[this._id]= this._sessionData;
-        sessionStorage.setItem("sessions", JSON.stringify(sessionData));
+    init(id, creation = this._sessions.default) {
+        this._creation = creation;
+        this._id = id;
     }
 }
