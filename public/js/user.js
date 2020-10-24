@@ -2,8 +2,11 @@ class User extends Sibling {
     constructor(app, users) {
         super(app, users);
         this._children = new Clients(app, this);
+        this._childrenType = "clients";
         this._defaultName = "New User";
     }
+
+    get clients()            { return this._children; }
 
     get parentId()           { return null; }
     set parentId(parentId)   { return null; }
@@ -59,9 +62,9 @@ class User extends Sibling {
         }
     }
     
-    get newData() {
+    _newData(id, parentId) {
         return {
-            id: this.newId,
+            id: id,
             userName: this._defaultName,
             firstName: null,
             lastName: null,

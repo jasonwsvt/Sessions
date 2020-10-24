@@ -3,6 +3,7 @@ class Sibling {
     _data = null;
     _siblings = false;
     _children = false;
+    _childrenType = null;
     _defaultName = null;
     
     constructor(app, siblings) {
@@ -39,27 +40,29 @@ class Sibling {
         if (this._children) { this._children.mostRecentlyOpened.setAsCurrent(); }
     }
                                 
-    init(parentId) {
-        this.data(newData(parentId));
-        if (this._children) { this._children.new(this.data.id); }
+    init(id, parentId) {
+        this._data = this._newData(id, parentId);
+        if (this._children) { this._children.new(this._data.id); }
+    }
+
+    load(data) {
+        this._data = data;
+        if (this._children) { this._children.load(data[this._childrenType]); }
     }
 
     _save() {
         var sessionData;
         this._data.lastEdited = this.now;
-        if (Object.keys(sessionStorage).includes(this._siblings.type + "s")) {
-            sessionData = JSON.parse(sessionStorage.getItem(this._siblings.type + "s"));
+        if (Object.keys(sessionStorage).includes(this._childrenType)) {
+            sessionData = JSON.parse(sessionStorage.getItem(this._childrenType));
         }
-        sessionData[this._id]= this.data;
-        sessionStorage.setItem(this._siblings.type + "s", JSON.stringify(data));
-    }
-
-    load(data) {
-        this.data = data;
-        if (this._children) { this._children.load(data[this._children.type + "s"]); }
+        sessionData[this._id]= this._data;
+        sessionStorage.setItem(this._childrenType, JSON.stringify(sessionData));
     }
 
     get now() {
-        Math.floor(Date.now() / 1000);
+        return Math.floor(Date.now() / 1000);
     }
+
+    newData(parentId) { pass; }
 }

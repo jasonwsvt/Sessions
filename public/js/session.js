@@ -4,6 +4,8 @@ class Session extends Sibling {
         this._defaultName = "New Session";
     }
 
+    get user()             { return this._app.users.current; }
+
     get creation()         { return this._data.creation; }
 
     get parentId()         { return (this._data.issueId) ? this._data.issueId : null; }
@@ -15,19 +17,20 @@ class Session extends Sibling {
 
     get lines() {
 //        console.log("lines()", this._creation, this._mostUpToDate, this._lines);
-        if (!this._data.lines.length) {
+        if (!this._data.lines || !this._data.lines.length) {
             //On the off-chance the app crashed and on reload the backup didn't catch them yet
             if (Object.keys(sessionStorage).includes(this._data.creation)) {
                 const session = JSON.parse(sessionStorage.getItem(this._data.creation));
                 this._data.lines = session.lines;
             }
             else if (this.user.useLocalStorage && Object.keys(localStorage).includes(this._data.creation)) {
-                const session = JSON.parse(localStorage.getItem(this._creation));
+                const session = JSON.parse(localStorage.getItem(this._data.creation));
                 this._data.lines = session.lines;
             }
             else if (this.user.useServerStorage) { //request from server
 
             }
+            return (this._data.lines) ? this._data.lines : [];
         }
         this._data.lastOpened = this.now;
         this._save();
@@ -35,14 +38,14 @@ class Session extends Sibling {
     }
     set lines(lines) {
         if (JSON.stringify(lines) != JSON.stringify(this._data.lines)) {
-            console.log("_setLines(" + lines + ") for " + this._data.creation);
+            //console.log("_setLines(" + lines + ") for " + this._data.creation);
             this._data.lines = lines;
             this._data.lastEdited = this.now;
             this._save();
         }
     }
 
-    set name() { pass; }
+    set name(name) { pass; }
     get name() {
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         const d = new Date(this._data.creation * 1000);
@@ -56,37 +59,37 @@ class Session extends Sibling {
         return `${month} ${day} ${year} ${hour}:${minute}:${second}${ampm}`;
     }
 
-    get newData(issueId) { return { id:           this.newId,
-                                    issueId:           issueId,
-                                    creation:     this.now,
-                                    lastEdited:   null,
-                                    lastOpened:   null } }
+    _newData(id, issueId)  { return { id:                      id,
+                                      issueId:                 issueId,
+                                      creation:           this.now,
+                                      lastEdited:         null,
+                                      lastOpened:         null } }
 
-    get data()           { return { id:           this._data.id,
-                                    issueId:      this._data.issueId,
-                                    creation:     this._data.creation,
-                                    lastEdited:   this._data.lastEdited,
-                                    lastOpened:   this._data.lastOpened  } }
+    get data()             { return { id:           this._data.id,
+                                      issueId:      this._data.issueId,
+                                      creation:     this._data.creation,
+                                      lastEdited:   this._data.lastEdited,
+                                      lastOpened:   this._data.lastOpened  } }
     
-    set data(data)     { this._data.id         = Number(data.id);
-                         this._data.issueId    = Number(data.issueId)
-                         this._data.creation   = Number(data.creation);
-                         this._data.lastEdited = Number(data.lastEdited);
-                         this._data.lastOpened = Number(data.lastOpened); }
+    set data(data)       { this._data.id         = Number(data.id);
+                           this._data.issueId    = Number(data.issueId)
+                           this._data.creation   = Number(data.creation);
+                           this._data.lastEdited = Number(data.lastEdited);
+                           this._data.lastOpened = Number(data.lastOpened); }
 
-    get _sessionData()   { return { id:           this._data.id,
-                                    issueId:      this._data.issueId,
-                                    creation:     this._data.creation,
-                                    lastEdited:   this._data.lastEdited,
-                                    lastOpened:   this._data.lastOpened,
-                                    lines:        this._data.lines } }
+    get _sessionData()   {   return { id:           this._data.id,
+                                      issueId:      this._data.issueId,
+                                      creation:     this._data.creation,
+                                      lastEdited:   this._data.lastEdited,
+                                      lastOpened:   this._data.lastOpened,
+                                      lines:        this._data.lines } }
 
     _save() {
         var sessionData = [];
         if (Object.keys(sessionStorage).includes("sessions")) {
             sessionData = JSON.parse(sessionStorage.getItem("sessions"));
         }
-        sessionData[this._data.id]= this._sessionData;
+        sessionData[this._data.id] = this._sessionData;
         sessionStorage.setItem("sessions", JSON.stringify(sessionData));
     }
 }

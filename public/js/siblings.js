@@ -1,4 +1,4 @@
-class Sibling {
+class Siblings {
     _app = null;
     _SiblingClass = null;
     _type = null;
@@ -6,10 +6,9 @@ class Sibling {
     _siblings = [];
     _current = null;
 
-    constructor(app, SiblingClass, type, parent) {
+    constructor(app, SiblingClass, parent) {
         this._app = app;
         this._SiblingClass = SiblingClass;
-        this._type = type;
         if (parent != undefined) { this._parent = parent; }
     }
     get app()                 { return this._app; }
@@ -21,6 +20,7 @@ class Sibling {
     get mostRecentlyCreated() { return this.sortByCreation.slice(-1)[0]; }
     get mostRecentlyOpened()  { return this.sortByLastOpened.slice(-1)[0]; }
     get mostRecentlyEdited()  { return this.sortByLastEdited.slice(-1)[0]; }
+    set current(id)           { this._current = id; }
     get current()             { return this.findById(this._current); }
     findById(id)              { return this._siblings.find(sibling => (sibling.id == id)); }
     findByName(name)          { return this._siblings.find(sibling => (sibling.name == name)); }
@@ -56,12 +56,12 @@ class Sibling {
         });
     }
 
-    new() {
+    new(parentId = null) {
         var id = this.newId;
-        var sibling = new this._SiblingClass(this);
-        sibling.init(id, this.id, name);
+        var sibling = new this._SiblingClass(this._app, this);
+        sibling.init(id, parentId);
         this._siblings.push(sibling);
-        this.current = id;
+        this._current = id;
         return id;
     }
 

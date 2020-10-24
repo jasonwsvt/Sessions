@@ -37,7 +37,7 @@ class Utility {
 
         $(document).ready(function() {
             self.pickerButton.on("click", function(e) {
-                self.closeAllUtilityMenus(self._pickerButtonID);
+                self.utilities.closeAllUtilityMenus(self._pickerButtonID);
                 if (self.entries > 1) {
                     if (self.pickerDiv.hasClass("hidden")) {
                         if (self.entries > 1) {
