@@ -1,4 +1,4 @@
-class Sessions {
+class Sessions extends Siblings {
     constructor(app, parent) {
         super(app, Session, "session", parent);
     }

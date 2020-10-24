@@ -1,7 +1,6 @@
 class Sibling {
     _app = null;
     _SiblingClass = null;
-    _defaultName = null;
     _type = null;
     _parent = false;
     _siblings = [];
@@ -10,14 +9,12 @@ class Sibling {
     constructor(app, SiblingClass, type, parent) {
         this._app = app;
         this._SiblingClass = SiblingClass;
-        this._defaultName = "New " + type.charAt(0).toUpperCase();
         this._type = type;
         if (parent != undefined) { this._parent = parent; }
     }
     get app()                 { return this._app; }
-    get defaultName()         { return this._defaultName; }
     get parent()              { return (this._parent) ? this._parent : null; }
-    get hasChildren(id)       { return (this.unsorted[0].children() == false); }
+    get hasChildren()         { return (this.unsorted[0].children() == false); }
     get type()                { return this._type; }
 
     get firstCreated()        { return this.sortByCreation.slice(0)[0]; }

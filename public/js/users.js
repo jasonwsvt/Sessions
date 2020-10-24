@@ -1,4 +1,4 @@
-class Users {
+class Users extends Siblings {
     constructor(app) {
         super(app, User, "user");
         this._init();

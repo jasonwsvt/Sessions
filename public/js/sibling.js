@@ -1,11 +1,13 @@
 class Sibling {
+    _app = null;
     _data = null;
     _siblings = false;
     _children = false;
+    _defaultName = null;
     
-    constructor(app, siblings, Children)  {
+    constructor(app, siblings) {
+        this._app = app;
         this._siblings = siblings;
-        if (Children != undefined) { this._children = new Children(app, this); }
     }
     get app()            { return this._app; }
     get siblings()       { return (this._siblings)        ? this._siblings        : null; }
@@ -14,10 +16,11 @@ class Sibling {
 
     set data(data)       { this._data = data; }
     get data()           { return this._data; }
-    get parentId()       { return (this._data.parentId)   ? this._data.parentId   : null; }
+
     get name()           { return this._data.name; }
     set name(name)       { this._data.name = name; this._save(); }
-    get id()             { return this._data.id }
+
+    get id()             { return this._data.id; }
     set id(id) {
         if (this._data.id != id) {
             this._data.id = id;
@@ -27,6 +30,8 @@ class Sibling {
             }
         }
     }
+    get lastEdited()      { return this._data.lastEdited; }
+    get lastOpened()      { return this._data.lastOpened; }
 
     setAsCurrent() {
         this._siblings.current = this._data.id;
