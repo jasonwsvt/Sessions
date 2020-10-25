@@ -1,14 +1,16 @@
 class Sibling {
     _app = null;
-    _data = null;
     _siblings = false;
+    _type = null;
+    _data = null;
     _children = false;
     _childrenType = null;
     _defaultName = null;
     
-    constructor(app, siblings) {
+    constructor(app, siblings, type) {
         this._app = app;
         this._siblings = siblings;
+        this._type = type;
     }
     get app()            { return this._app; }
     get siblings()       { return (this._siblings)        ? this._siblings        : null; }
@@ -42,6 +44,7 @@ class Sibling {
                                 
     init(id, parentId) {
         this._data = this._newData(id, parentId);
+        this._save();
         if (this._children) { this._children.new(this._data.id); }
     }
 
@@ -51,13 +54,21 @@ class Sibling {
     }
 
     _save() {
-        var sessionData;
+        var sessionData = [];
         this._data.lastEdited = this.now;
-        if (Object.keys(sessionStorage).includes(this._childrenType)) {
-            sessionData = JSON.parse(sessionStorage.getItem(this._childrenType));
+        if (Object.keys(sessionStorage).includes(this.siblings.siblingsType)) {
+            sessionData = JSON.parse(sessionStorage.getItem(this.siblings.siblingsType));
         }
-        sessionData[this._id]= this._data;
-        sessionStorage.setItem(this._childrenType, JSON.stringify(sessionData));
+        
+        if (!sessionData.find(session => {
+            if (session.id == this._data.id) {
+                session = this._data;
+                return true;
+            }
+        })) { sessionData.push(this._data); }
+
+        console.log(this.siblings.siblingsType, this._data.id, sessionData, JSON.stringify(sessionData));
+        sessionStorage.setItem(this.siblings.siblingsType, JSON.stringify(sessionData));
     }
 
     get now() {

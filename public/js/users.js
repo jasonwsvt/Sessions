@@ -1,6 +1,7 @@
 class Users extends Siblings {
     constructor(app) {
         super(app, User, "user");
+        this._siblingsType = "users";
         this._init();
     }
 

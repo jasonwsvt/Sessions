@@ -69,27 +69,12 @@ class Session extends Sibling {
                                       issueId:      this._data.issueId,
                                       creation:     this._data.creation,
                                       lastEdited:   this._data.lastEdited,
-                                      lastOpened:   this._data.lastOpened  } }
+                                      lastOpened:   this._data.lastOpened,
+                                      lines:        this._data.lines  } }
     
     set data(data)       { this._data.id         = Number(data.id);
                            this._data.issueId    = Number(data.issueId)
                            this._data.creation   = Number(data.creation);
                            this._data.lastEdited = Number(data.lastEdited);
                            this._data.lastOpened = Number(data.lastOpened); }
-
-    get _sessionData()   {   return { id:           this._data.id,
-                                      issueId:      this._data.issueId,
-                                      creation:     this._data.creation,
-                                      lastEdited:   this._data.lastEdited,
-                                      lastOpened:   this._data.lastOpened,
-                                      lines:        this._data.lines } }
-
-    _save() {
-        var sessionData = [];
-        if (Object.keys(sessionStorage).includes("sessions")) {
-            sessionData = JSON.parse(sessionStorage.getItem("sessions"));
-        }
-        sessionData[this._data.id] = this._sessionData;
-        sessionStorage.setItem("sessions", JSON.stringify(sessionData));
-    }
 }

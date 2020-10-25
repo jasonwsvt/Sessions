@@ -1,7 +1,7 @@
 class Siblings {
     _app = null;
     _SiblingClass = null;
-    _type = null;
+    _siblingsType = null;
     _parent = false;
     _siblings = [];
     _current = null;
@@ -14,7 +14,7 @@ class Siblings {
     get app()                 { return this._app; }
     get parent()              { return (this._parent) ? this._parent : null; }
     get hasChildren()         { return (this.unsorted[0].children() == false); }
-    get type()                { return this._type; }
+    get siblingsType()        { return this._siblingsType; }
 
     get firstCreated()        { return this.sortByCreation.slice(0)[0]; }
     get mostRecentlyCreated() { return this.sortByCreation.slice(-1)[0]; }
