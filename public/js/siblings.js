@@ -48,18 +48,35 @@ class Siblings {
         return this._siblings;
     }
 
-    load(data) {
-        var sibling;
+    load() {
+        this._loadFrom(sessionStorage);
+        if (this.app.users.current.useLocalStorage)  { this._loadFrom(localStorage); }
+        if (this.app.users.current.useServerStorage) { this._loadFrom(serverStorage); }
+        if (!this.entries) { this.new(); }
+    }
+
+    _loadFrom(container) {
+        var data = [], entries = [], sibling;
+        console.log("got here");
+        if (Object.keys(container).includes(this._siblingsType)) {
+            entries = JSON.parse(container.getItem(this._siblingsType));
+            entries = entries.filter(entry =>
+                (entry.parentId == this.parent.id && 
+                    (!this.findById(entry.id)) ||
+                     (this.findById(entry.id) &&
+                      this.findById(entry.id)._data.lastEdited < entry.lastEdited)));
+            data.push(entries);
+        }
         data.forEach(entry => {
             sibling = new this._SiblingClass(this);
             sibling.load(entry);
         });
     }
 
-    new(parentId = null) {
+    new() {
         var id = this.newId;
         var sibling = new this._SiblingClass(this._app, this);
-        sibling.init(id, parentId);
+        sibling.init(id, this.parent.id);
         this._siblings.push(sibling);
         this._current = id;
         return id;

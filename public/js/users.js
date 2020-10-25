@@ -5,7 +5,6 @@ class Users extends Siblings {
         super(app, User, "user");
         this._siblingsType = "users";
         this._defaultUserName = "New User";
-        this._init();
     }
 
     get firstCreated()        { pass; }
@@ -17,27 +16,27 @@ class Users extends Siblings {
     get sortByLastOpened()    { pass; }
     get sortByName()          { pass; }
 
-    load(data) {
-        var user = new User(this._app, this);
-        user.load(data);
-        user.setAsCurrent();
-        this._users.push(user);
-    }
-
-    _init() {
+    load() {
+        var entries, entry;
+        console.log(this._siblingsType, this._defaultUserName);
         if (Object.keys(localStorage).includes("rememberMe")) {
+            console.log("has RememberMe user");
             load(JSON.parse(localStorage.getItem(localStorage.getItem("rememberMe"))));
         }
-        else if (Object.keys(sessionStorage).includes(this._siblingType)) {
-            data = sessionStorage.getItem(this._siblingType).find(user => (user.userName == this._defaultUserName));
-            if (data) {
-                this.load(data);
+        else if (Object.keys(sessionStorage).includes(this._siblingsType)) {
+            console.log("has sessionStorage users");
+            entries = JSON.parse(sessionStorage.getItem(this._siblingsType));
+            entry = entries.find(entry => (entry.userName == this._defaultUserName));
+            if (entry) {
+                this._loadFrom(sessionStorage);
             }
         }
         else if (Object.keys(localStorage).includes(this._siblingsType)) {
-            data = localStorage.getItem(this._siblingsType).find(user => (user.userName == this._defaultUserName));
-            if (data) {
-                this.load(data);
+            console.log("has localStorage users");
+            entries = JSON.parse(localStorage.getItem(this._siblingsType));
+            entry = entries.find(entry => (entry.userName == this._defaultUserName));
+            if (entry) {
+                this._loadFrom(localStorage);
             }
         }
         else {

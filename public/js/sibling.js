@@ -49,12 +49,13 @@ class Sibling {
     }
 
     load(data) {
+        console.log(data);
         this._data = data;
         this._postLoad();
-        if (this._children) { this._children.load(data[this._childrenType]); }
+        if (this._children) { this._children.load(); }
     }
 
-    _postLoad() { pass; }
+    _postLoad() { return; }
 
     _save() {
         var sessionData = [];
@@ -63,14 +64,14 @@ class Sibling {
             sessionData = JSON.parse(sessionStorage.getItem(this.siblings.siblingsType));
         }
         sessionData = sessionData.filter(session => {
-            console.log(session.id, (session.id == this._data.id), this._data.id);
+//            console.log(session.id, (session.id == this._data.id), this._data.id);
             if (Number(session.id) != Number(this._data.id)) {
                 return session;
             }
         });
         sessionData.push(this._data);
 
-        console.log(this.siblings.siblingsType, this._data.id, sessionData, JSON.stringify(sessionData));
+//        console.log(this.siblings.siblingsType, this._data.id, sessionData, JSON.stringify(sessionData));
         sessionStorage.setItem(this.siblings.siblingsType, JSON.stringify(sessionData));
     }
 

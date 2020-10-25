@@ -22,7 +22,7 @@ class User extends Sibling {
     }
 
     get name()               { return `${this._data.firstName} ${this._data.lastName}`; }
-    set name()               { pass; }
+    set name(name)           { pass; }
 
     get firstName()          { return this._data.firstName; }
     set firstName(firstName) {
