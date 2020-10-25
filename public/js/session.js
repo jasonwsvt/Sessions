@@ -38,6 +38,7 @@ class Session extends Sibling {
     }
     set lines(lines) {
         if (JSON.stringify(lines) != JSON.stringify(this._data.lines)) {
+            console.log(this._data.lines, lines);
             //console.log("_setLines(" + lines + ") for " + this._data.creation);
             this._data.lines = lines;
             this._data.lastEdited = this.now;
@@ -59,22 +60,18 @@ class Session extends Sibling {
         return `${month} ${day} ${year} ${hour}:${minute}:${second}${ampm}`;
     }
 
-    _newData(id, issueId)  { return { id:                      id,
-                                      issueId:                 issueId,
-                                      creation:           this.now,
-                                      lastEdited:         null,
-                                      lastOpened:         null } }
+    _newData(id, issueId) {
+        return {
+            id: id,
+            issueId: issueId,
+            creation: this.now,
+            lastEdited: null,
+            lastOpened: null,
+            lines: null
+        }
+    }
 
-    get data()             { return { id:           this._data.id,
-                                      issueId:      this._data.issueId,
-                                      creation:     this._data.creation,
-                                      lastEdited:   this._data.lastEdited,
-                                      lastOpened:   this._data.lastOpened,
-                                      lines:        this._data.lines  } }
-    
-    set data(data)       { this._data.id         = Number(data.id);
-                           this._data.issueId    = Number(data.issueId)
-                           this._data.creation   = Number(data.creation);
-                           this._data.lastEdited = Number(data.lastEdited);
-                           this._data.lastOpened = Number(data.lastOpened); }
+    _postLoad() {
+        this._data.lines = null;
+    }
 }

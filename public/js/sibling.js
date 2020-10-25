@@ -50,8 +50,11 @@ class Sibling {
 
     load(data) {
         this._data = data;
+        this._postLoad();
         if (this._children) { this._children.load(data[this._childrenType]); }
     }
+
+    _postLoad() { pass; }
 
     _save() {
         var sessionData = [];
@@ -59,13 +62,13 @@ class Sibling {
         if (Object.keys(sessionStorage).includes(this.siblings.siblingsType)) {
             sessionData = JSON.parse(sessionStorage.getItem(this.siblings.siblingsType));
         }
-        
-        if (!sessionData.find(session => {
-            if (session.id == this._data.id) {
-                session = this._data;
-                return true;
+        sessionData = sessionData.filter(session => {
+            console.log(session.id, (session.id == this._data.id), this._data.id);
+            if (Number(session.id) != Number(this._data.id)) {
+                return session;
             }
-        })) { sessionData.push(this._data); }
+        });
+        sessionData.push(this._data);
 
         console.log(this.siblings.siblingsType, this._data.id, sessionData, JSON.stringify(sessionData));
         sessionStorage.setItem(this.siblings.siblingsType, JSON.stringify(sessionData));
