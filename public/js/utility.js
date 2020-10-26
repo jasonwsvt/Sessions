@@ -248,7 +248,7 @@ class Utility {
             code = "<div style = 'display: grid'>";
             this.parent.sortByName.forEach(function(entry) {
                 code += "<div class = 'row'><button type='button' class='btn ";
-                if (entry.name == this.current.name) { code += "btn-info"; }
+                if (entry.name == self.current.name) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
                 code += " btn-sm' value = '" + entry.name + "'>" + entry.name + "</button></div>";
             });

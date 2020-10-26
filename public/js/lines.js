@@ -94,7 +94,7 @@ class Lines {
         const self = this;
 //        if (this.session) { this.session.lines = this.linesArray; }
         const lines = this.session.lines;
-//        console.log("load: " + this._creation, typeof this._creation, this.session.lines);
+//        console.log("lines load: " + this.session, this.session.lines);
         this.div.empty();
         if (lines.length) {
             lines.forEach(function(line) {

@@ -18,15 +18,16 @@ class Session extends Sibling {
     }
 
     get lines() {
-//        console.log("lines()", this._creation, this._mostUpToDate, this._lines);
-        if (!this._data.lines || !this._data.lines.length) {
+        var session;
+        console.log("loading lines for", this._data.id);
+        if (this._data.lines.length == 0) {
             //On the off-chance the app crashed and on reload the backup didn't catch them yet
-            if (Object.keys(sessionStorage).includes(this._data.creation)) {
-                const session = JSON.parse(sessionStorage.getItem(this._data.creation));
+            if (Object.keys(sessionStorage).includes(this.sessions.siblingsType)) {
+                session = JSON.parse(sessionStorage.getItem(this.sessions.siblingsType)).find(entry => (entry.id == this._data.id));
                 this._data.lines = session.lines;
             }
-            else if (this.user.useLocalStorage && Object.keys(localStorage).includes(this._data.creation)) {
-                const session = JSON.parse(localStorage.getItem(this._data.creation));
+            else if (this.user.useLocalStorage && Object.keys(localStorage).includes(this.sessions.siblingsType)) {
+                session = JSON.parse(sessionStorage.getItem(this.sessions.siblingsType)).find(entry => (entry.id == this._data.id));
                 this._data.lines = session.lines;
             }
             else if (this.user.useServerStorage) { //request from server
@@ -69,11 +70,11 @@ class Session extends Sibling {
             creation: this.now,
             lastEdited: null,
             lastOpened: null,
-            lines: null
+            lines: []
         }
     }
 
     _postLoad() {
-        this._data.lines = null;
+        this._data.lines = [];
     }
 }

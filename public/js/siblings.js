@@ -73,6 +73,7 @@ class Siblings {
     }
 
     new(useLocalStorage, useServerStorage, parentId) {
+        console.log(this.app.users.current.useLocalStorage);
         var id = this.newId;
         this._current = id;
         var sibling = new this._SiblingClass(this._app, this);
