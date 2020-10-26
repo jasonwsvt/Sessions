@@ -45,10 +45,10 @@ class Utilities {
 
     manage(type) {
         switch (type) {
-            case "user": this._userUtility.manage();
-            case "client": console.log("Managing client"); this._clientUtility.manage();
-            case "issue": console.log("Managing issue"); this._issueUtility.manage();
-            case "session": console.log("Managing session"); this._sessionUtility.manage();
+            case "user":    this._userUtility.manage();
+            case "client":  this._clientUtility.manage();
+            case "issue":   this._issueUtility.manage();
+            case "session": this._sessionUtility.manage();
         }
     }
 

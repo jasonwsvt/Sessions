@@ -12,20 +12,22 @@ class Sibling {
         this._app = app;
         this._siblings = siblings;
     }
-    get app()            { return this._app; }
-    get siblings()       { return (this._siblings)        ? this._siblings        : null; }
-    get parent()         { return (this._siblings.parent) ? this._siblings.parent : null; }
-    get children()       { return (this._children)        ? this._children        : null; }
-    get hasChildren()    { return (this._childrenType != null); }
-    get type()           { return this._type; }
+    get app()              { return this._app; }
+    get siblings()         { return (this._siblings)        ? this._siblings        : null; }
+    get parent()           { return (this._siblings.parent) ? this._siblings.parent : null; }
+    get children()         { return (this._children)        ? this._children        : null; }
+    get hasChildren()      { return (this._childrenType != null); }
+    get type()             { return this._type; }
+    get defaultName()      { return this._defaultName; }
+    get defaultFirstName() { return this._defaultFirstName; }
 
-    set data(data)       { this._data = data; }
-    get data()           { return this._data; }
+    set data(data)         { this._data = data; }
+    get data()             { return this._data; }
 
-    get name()           { return this._data.name; }
-    set name(name)       { this._data.name = name; this._save(); }
+    get name()             { return this._data.name; }
+    set name(name)         { this._data.name = name; this._save(); }
 
-    get id()             { return this._data.id; }
+    get id()               { return this._data.id; }
     set id(id) {
         if (this._data.id != id) {
             this._data.id = id;
