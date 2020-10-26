@@ -5,6 +5,7 @@ class Users extends Siblings {
         super(app, User, "user");
         this._siblingsType = "users";
         this._defaultUserName = "New User";
+        this.load();
     }
 
     get firstCreated()        { pass; }
@@ -21,14 +22,16 @@ class Users extends Siblings {
         console.log(this._siblingsType, this._defaultUserName);
         if (Object.keys(localStorage).includes("rememberMe")) {
             console.log("has RememberMe user");
-            load(JSON.parse(localStorage.getItem(localStorage.getItem("rememberMe"))));
+            user = new this._SiblingClass(this);
+            user.load(useLocalStorage, useServerStorage, JSON.parse(localStorage.getItem(localStorage.getItem("rememberMe"))));
         }
         else if (Object.keys(sessionStorage).includes(this._siblingsType)) {
             console.log("has sessionStorage users");
             entries = JSON.parse(sessionStorage.getItem(this._siblingsType));
             entry = entries.find(entry => (entry.userName == this._defaultUserName));
             if (entry) {
-                this._loadFrom(sessionStorage);
+                this._loadFrom(entry.useLocalStorage, entry.useServerStorage, sessionStorage);
+                this._current = entry.id;
             }
         }
         else if (Object.keys(localStorage).includes(this._siblingsType)) {
@@ -36,7 +39,8 @@ class Users extends Siblings {
             entries = JSON.parse(localStorage.getItem(this._siblingsType));
             entry = entries.find(entry => (entry.userName == this._defaultUserName));
             if (entry) {
-                this._loadFrom(localStorage);
+                this._loadFrom(entry.useLocalStorage, entry.useServerStorage, localStorage);
+                this._current = entry.id;
             }
         }
         else {

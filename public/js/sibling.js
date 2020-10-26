@@ -48,11 +48,11 @@ class Sibling {
         if (this._children) { this._children.new(this._data.id); }
     }
 
-    load(data) {
+    load(useLocalStorage, useServerStorage, data) {
         console.log(data);
         this._data = data;
         this._postLoad();
-        if (this._children) { this._children.load(); }
+        if (this._children) { this._children.load(useLocalStorage, useServerStorage); }
     }
 
     _postLoad() { return; }

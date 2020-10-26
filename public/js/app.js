@@ -9,7 +9,6 @@ class App {
         this._editor = new Editor(this);
         this._utilities = new Utilities(this);
         this._buttons = new Buttons(this);
-        this.users.load();
         this.editor.load();
     }
 

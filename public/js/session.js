@@ -5,6 +5,7 @@ class Session extends Sibling {
     }
 
     get user()             { return this._app.users.current; }
+    get sessions()         { return this._siblings; }
 
     get creation()         { return this._data.creation; }
 

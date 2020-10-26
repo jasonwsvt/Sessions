@@ -6,7 +6,8 @@ class Issue extends Sibling {
         this._defaultName = "New Issue";
     }
 
-    get sessions()            { return this._children; }
+    get sessions()         { return this._children; }
+    get issues()           { return this._siblings; }
 
     get parentId()         { return (this._data.clientId) ? this._data.clientId : null; }
     set parentId(parentId) { if (this._data.clientId != parentId) { this._data.clientId = parentId; } }

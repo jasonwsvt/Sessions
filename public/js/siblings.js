@@ -13,7 +13,7 @@ class Siblings {
     }
     get app()                 { return this._app; }
     get parent()              { return (this._parent) ? this._parent : null; }
-    get hasChildren()         { return (this.unsorted[0].children() == false); }
+    get hasChildren()         { return (this.unsorted[0].children == false); }
     get siblingsType()        { return this._siblingsType; }
 
     get firstCreated()        { return this.sortByCreation.slice(0)[0]; }
@@ -34,12 +34,12 @@ class Siblings {
     get sortByLastEdited() {
         return (this.hasChildren)
             ? this._siblings.sort((a,b) => (a.children.mostRecentlyEdited.lastEdited - b.children.mostRecentlyEdited.lastEdited))
-            : this._sessions.sort((a,b) => (Number(a._data.lastEdited) - Number(b._data.lastEdited)));
+            : this._siblings.sort((a,b) => (Number(a._data.lastEdited) - Number(b._data.lastEdited)));
     }
     get sortByLastOpened() {
         return (this.hasChildren)
             ? this._siblings.sort((a,b) => (a.children.mostRecentlyOpened.lastOpened - b.children.mostRecentlyOpened.lastOpened))
-            : this._sessions.sort((a,b) => (Number(a._data.lastOpened) - Number(b._data.lastOpened)));
+            : this._siblings.sort((a,b) => (Number(a._data.lastOpened) - Number(b._data.lastOpened)));
     }
     get sortByName() {
         return this._siblings.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
@@ -48,16 +48,16 @@ class Siblings {
         return this._siblings;
     }
 
-    load() {
-        this._loadFrom(sessionStorage);
-        if (this.app.users.current.useLocalStorage)  { this._loadFrom(localStorage); }
-        if (this.app.users.current.useServerStorage) { this._loadFrom(serverStorage); }
+    load(useLocalStorage, useServerStorage) {
+        this._loadFrom(useLocalStorage, useServerStorage, sessionStorage);
+        if (useLocalStorage)  { this._loadFrom(useLocalStorage, useServerStorage, localStorage); }
+        if (useServerStorage) { this._loadFrom(useLocalStorage, useServerStorage, serverStorage); }
         if (!this.entries) { this.new(); }
     }
 
-    _loadFrom(container) {
+    _loadFrom(useLocalStorage, useServerStorage, container) {
         var data = [], entries = [], sibling;
-        console.log("got here");
+        console.log(this._siblingsType + " load from " + container);
         if (Object.keys(container).includes(this._siblingsType)) {
             entries = JSON.parse(container.getItem(this._siblingsType));
             entries = entries.filter(entry =>
@@ -69,8 +69,9 @@ class Siblings {
         }
         data.forEach(entry => {
             sibling = new this._SiblingClass(this);
-            sibling.load(entry);
+            sibling.load(useLocalStorage, useServerStorage, entry);
         });
+        if (this.entries) { this._current = this.mostRecentlyOpened; }
     }
 
     new() {
