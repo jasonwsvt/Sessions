@@ -48,15 +48,15 @@ class Siblings {
         return this._siblings;
     }
 
-    load(useLocalStorage, useServerStorage, parentId) {
-        this._loadFrom(useLocalStorage, useServerStorage, sessionStorage, parentId);
-        if (useLocalStorage)   { this._loadFrom(useLocalStorage, useServerStorage, localStorage, parentId); }
-        if (useServerStorage)  { this._loadFrom(useLocalStorage, useServerStorage, serverStorage, parentId); }
-        if (this.entries == 0) { this.new(useLocalStorage, useServerStorage, parentId); }
+    load(parentId) {
+        this._loadFrom(sessionStorage, parentId);
+        if (this.currentUser.useLocalStorage)   { this._loadFrom(localStorage, parentId); }
+        if (this.currentUser.useServerStorage)  { this._loadFrom(serverStorage, parentId); }
+        if (this.entries == 0) { this.new(parentId); }
         this._current = this.unsorted.sort((a,b) => (Number(a._data.lastOpened) - Number(b._data.lastOpened))).slice(-1)[0].id;
     }
 
-    _loadFrom(useLocalStorage, useServerStorage, container, parentId) {
+    _loadFrom(container, parentId) {
         var data = [], sibling;
         if (Object.keys(container).includes(this._siblingsType)) {
             data = JSON.parse(container.getItem(this._siblingsType)).filter(entry =>
@@ -66,19 +66,18 @@ class Siblings {
                       this.findById(entry.id)._data.lastEdited < entry.lastEdited)));
             data.forEach(entry => {
                 sibling = new this._SiblingClass(this._app, this);
-                sibling.load(useLocalStorage, useServerStorage, entry);
+                sibling.load(entry);
                 this._siblings.push(sibling);
             });
         }
     }
 
-    new(useLocalStorage, useServerStorage, parentId) {
-        console.log(this.app.users.current.useLocalStorage);
+    new(parentId) {
         var id = this.newId;
         this._current = id;
         var sibling = new this._SiblingClass(this._app, this);
 //        console.log(this._siblingsType, "new", parentId, id, "Current:", this._current, "Entries:", this.entries);
-        sibling.init(useLocalStorage, useServerStorage, id, parentId);
+        sibling.init(id, parentId);
         this._siblings.push(sibling);
         return id;
     }

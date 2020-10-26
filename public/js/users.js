@@ -27,7 +27,8 @@ class Users extends Siblings {
             entry = entries.find(entry => (entry.userName == userName));
             this._current = entry.id;
             user = new this._SiblingClass(this);
-            user.load(entry.useLocalStorage, entry.useServerStorage, entry);
+            user.load(entry);
+            this._users.push(user);
         }
         else if (Object.keys(sessionStorage).includes(this._siblingsType)) {
 //            console.log("has sessionStorage users");
@@ -35,7 +36,7 @@ class Users extends Siblings {
             entry = entries.find(entry => (entry.userName == this._defaultUserName));
             if (entry) {
                 this._current = entry.id;
-                this._loadFrom(entry.useLocalStorage, entry.useServerStorage, sessionStorage);
+                this._loadFrom(sessionStorage);
             }
         }
         else if (Object.keys(localStorage).includes(this._siblingsType)) {
@@ -44,7 +45,7 @@ class Users extends Siblings {
             entry = entries.find(entry => (entry.userName == this._defaultUserName));
             if (entry) {
                 this._current = entry.id;
-                this._loadFrom(entry.useLocalStorage, entry.useServerStorage, localStorage);
+                this._loadFrom(localStorage);
             }
         }
         else {
@@ -56,14 +57,17 @@ class Users extends Siblings {
         if (Object.keys(localStorage).includes(userName)) {
             data = JSON.parse(localStorage.getItem(userName));
             if (data.passwordHash == this.hash(password)) {
-                this.data = user;
+                this._current = data.id;
+                user = new this._SiblingClass(this);
+                user.load(data);
+                this._users.push(user);
                 return true;
             }
         }
         return false;
     }
 
-    hash(password)               {
+    hash(password) {
         return "hashed " + password;
     }
 }

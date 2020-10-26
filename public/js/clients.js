@@ -3,4 +3,6 @@ class Clients extends Siblings {
         super(app, Client, parent);
         this._siblingsType = "clients";
     }
+
+    get currentUser() { return this.parent; }
 }

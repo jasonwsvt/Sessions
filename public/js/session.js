@@ -5,8 +5,8 @@ class Session extends Sibling {
         this._type = "session";
     }
 
-    get user()             { return this._app.users.current; }
     get sessions()         { return this._siblings; }
+    get currentUser()      { return this._siblings.parent.parent.parent.parent; }
 
     get creation()         { return this._data.creation; }
 
@@ -26,11 +26,11 @@ class Session extends Sibling {
                 session = JSON.parse(sessionStorage.getItem(this.sessions.siblingsType)).find(entry => (entry.id == this._data.id));
                 this._data.lines = session.lines;
             }
-            else if (this.user.useLocalStorage && Object.keys(localStorage).includes(this.sessions.siblingsType)) {
+            else if (this.currentUser.useLocalStorage && Object.keys(localStorage).includes(this.sessions.siblingsType)) {
                 session = JSON.parse(sessionStorage.getItem(this.sessions.siblingsType)).find(entry => (entry.id == this._data.id));
                 this._data.lines = session.lines;
             }
-            else if (this.user.useServerStorage) { //request from server
+            else if (this.currentUser.useServerStorage) { //request from server
 
             }
             return (this._data.lines) ? this._data.lines : [];

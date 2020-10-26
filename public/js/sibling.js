@@ -45,20 +45,21 @@ class Sibling {
         if (this._children) { this._children.mostRecentlyOpened.setAsCurrent(); }
     }
                                 
-    init(useLocalStorage, useServerStorage, id, parentId) {
+    init(id, parentId) {
         this._data = this._newData(id, parentId);
 //        console.log("New:", this.siblings.siblingsType, "Entries:", this.siblings.entries, this._data);
         this._postInit();
         this._save();
-        if (this._children) { this._children.new(useLocalStorage, useServerStorage, id); }
+        if (this._children) { this._children.new(id); }
     }
 
     _postInit() { return; }
 
-    load(useLocalStorage, useServerStorage, data) {
+    load(data) {
+        console.log(this._type, this.data);
         this._data = data;
         this._postLoad();
-        if (this._children) { this._children.load(useLocalStorage, useServerStorage, this._data.id); }
+        if (this._children) { this._children.load(this._data.id); }
     }
 
     _postLoad() { return; }
