@@ -238,6 +238,9 @@ class Utility {
         const self = this;
         var code, pickerButtonText, scrollDivHeight;
         this.pickerScrollDiv.empty();
+//        console.log("Parent:", this.parent);
+//        console.log("Current:", this.current);
+//        console.log("Current name:", this.current.name);
         pickerButtonText = this.current.name;
         if (this.entries > 1) { pickerButtonText += " " + this._caretDownIcon; }
         this.pickerButton.html(pickerButtonText);

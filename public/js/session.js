@@ -2,6 +2,7 @@ class Session extends Sibling {
     constructor(app, sessions) {
         super(app, sessions);
         this._defaultName = "New Session";
+        this._type = "session";
     }
 
     get user()             { return this._app.users.current; }
@@ -39,7 +40,7 @@ class Session extends Sibling {
     }
     set lines(lines) {
         if (JSON.stringify(lines) != JSON.stringify(this._data.lines)) {
-            console.log(this._data.lines, lines);
+//            console.log(this._data.lines, lines);
             //console.log("_setLines(" + lines + ") for " + this._data.creation);
             this._data.lines = lines;
             this._data.lastEdited = this.now;

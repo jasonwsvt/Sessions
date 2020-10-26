@@ -3,6 +3,7 @@ class Client extends Sibling {
         super(app, clients);
         this._children = new Issues(app, this);
         this._childrenType = "issues";
+        this._type = "client";
         this._defaultName = "New Client";
 
     }

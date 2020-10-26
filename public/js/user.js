@@ -3,6 +3,7 @@ class User extends Sibling {
         super(app, users);
         this._children = new Clients(app, this);
         this._childrenType = "clients";
+        this._type = "user";
         this._defaultName = "New User";
     }
 

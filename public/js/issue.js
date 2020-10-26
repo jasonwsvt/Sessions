@@ -3,6 +3,7 @@ class Issue extends Sibling {
         super(app, issues);
         this._children = new Sessions(app, this);
         this._childrenType = "sessions";
+        this._type = "issue";
         this._defaultName = "New Issue";
     }
 

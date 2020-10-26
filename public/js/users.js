@@ -18,20 +18,24 @@ class Users extends Siblings {
     get sortByName()          { pass; }
 
     load() {
-        var entries, entry;
+        var entries, entry, userName;
         console.log(this._siblingsType, this._defaultUserName);
         if (Object.keys(localStorage).includes("rememberMe")) {
             console.log("has RememberMe user");
+            userName = JSON.parse(localStorage.getItem(localStorage.getItem("rememberMe")));
+            entries = JSON.parse(sessionStorage.getItem(this._siblingsType));
+            entry = entries.find(entry => (entry.userName == userName));
+            this._current = entry.id;
             user = new this._SiblingClass(this);
-            user.load(useLocalStorage, useServerStorage, JSON.parse(localStorage.getItem(localStorage.getItem("rememberMe"))));
+            user.load(entry.useLocalStorage, entry.useServerStorage, entry);
         }
         else if (Object.keys(sessionStorage).includes(this._siblingsType)) {
             console.log("has sessionStorage users");
             entries = JSON.parse(sessionStorage.getItem(this._siblingsType));
             entry = entries.find(entry => (entry.userName == this._defaultUserName));
             if (entry) {
-                this._loadFrom(entry.useLocalStorage, entry.useServerStorage, sessionStorage);
                 this._current = entry.id;
+                this._loadFrom(entry.useLocalStorage, entry.useServerStorage, sessionStorage);
             }
         }
         else if (Object.keys(localStorage).includes(this._siblingsType)) {
@@ -39,8 +43,8 @@ class Users extends Siblings {
             entries = JSON.parse(localStorage.getItem(this._siblingsType));
             entry = entries.find(entry => (entry.userName == this._defaultUserName));
             if (entry) {
-                this._loadFrom(entry.useLocalStorage, entry.useServerStorage, localStorage);
                 this._current = entry.id;
+                this._loadFrom(entry.useLocalStorage, entry.useServerStorage, localStorage);
             }
         }
         else {

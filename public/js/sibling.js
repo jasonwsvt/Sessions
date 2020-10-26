@@ -7,15 +7,16 @@ class Sibling {
     _childrenType = null;
     _defaultName = null;
     
-    constructor(app, siblings, type) {
+    constructor(app, siblings) {
         this._app = app;
         this._siblings = siblings;
-        this._type = type;
     }
     get app()            { return this._app; }
     get siblings()       { return (this._siblings)        ? this._siblings        : null; }
     get parent()         { return (this._siblings.parent) ? this._siblings.parent : null; }
     get children()       { return (this._children)        ? this._children        : null; }
+    get hasChildren()    { return (this._childrenType != null); }
+    get parentId()       { return; }
 
     set data(data)       { this._data = data; }
     get data()           { return this._data; }
@@ -42,17 +43,18 @@ class Sibling {
         if (this._children) { this._children.mostRecentlyOpened.setAsCurrent(); }
     }
                                 
-    init(id, parentId) {
+    init(useLocalStorage, useServerStorage, id, parentId) {
+        console.log("New:", this.siblings.siblingsType, id, parentId);
         this._data = this._newData(id, parentId);
         this._save();
-        if (this._children) { this._children.new(this._data.id); }
+        if (this._children) { this._children.new(useLocalStorage, useServerStorage, id); }
     }
 
     load(useLocalStorage, useServerStorage, data) {
         console.log(data);
         this._data = data;
         this._postLoad();
-        if (this._children) { this._children.load(useLocalStorage, useServerStorage); }
+        if (this._children) { this._children.load(useLocalStorage, useServerStorage, this._data.id); }
     }
 
     _postLoad() { return; }
@@ -79,5 +81,5 @@ class Sibling {
         return Math.floor(Date.now() / 1000);
     }
 
-    newData(parentId) { pass; }
+    _newData(id, parentId) { pass; }
 }
