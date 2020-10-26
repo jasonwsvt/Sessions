@@ -13,18 +13,21 @@ class Utilities {
     constructor(app) {
         var self = this;
         this._app = app;
-//        this._userUtility = new UserUtility(this);
         $("#userUtility").after(this._dotIcon);
-        this._clientUtility = new Utility(this, this.currentUserClients, "client");
         $("#clientUtility").after(this._dotIcon);
-        this._issueUtility = new Utility(this, this.currentClientIssues, "issue");
         $("#issueUtility").after(this._dotIcon);
+        $("#sliderUtility").after(this._dotIcon);
+        $("#transferUtility").after(this._dotIcon);
+
+//        this._userUtility = new UserUtility(this);
+        this._clientUtility = new Utility(this, this.currentUserClients, "client");
+        this._issueUtility = new Utility(this, this.currentClientIssues, "issue");
         this._sessionUtility = new Utility(this, this.currentIssueSessions, "session", false);
         this._sliderUtility = new SliderUtility(this);
-        $("#sliderUtility").after(this._dotIcon);
 //        this._transferUtility = new TransferUtility(this);
-        $("#transferUtility").after(this._dotIcon);
 //        this._infoUtility = new InfoUtility(this);
+
+        this.manage("client");  //switch to "user" once userItility is created
 
         $(document).ready(function() {
             $("html").on("click", function(e) {
@@ -40,17 +43,20 @@ class Utilities {
     get app() { return this._app; }
     get utilities() { return this; }
 
+    manage(type) {
+        switch (type) {
+            case "user": this._userUtility.manage();
+            case "client": console.log("Managing client"); this._clientUtility.manage();
+            case "issue": console.log("Managing issue"); this._issueUtility.manage();
+            case "session": console.log("Managing session"); this._sessionUtility.manage();
+        }
+    }
+
     currentUserClients()   {
-//        console.log("Users:", this.app.users);
-//        console.log("Current user:", this.app.users.current);
-//        console.log("Current user clients:", this.app.users.current.clients);
         return this.app.users.current.clients;
     }
 
     currentClientIssues()  {
-//        console.log("Current client:", this.app.users.current.clients.current);
-//        console.log("Current client issues:", this.app.users.current.clients.current.issues);
-//        console.trace();
         return this.app.users.current.clients.current.issues;
     }
 

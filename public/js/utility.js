@@ -1,7 +1,7 @@
 class Utility {
     _utilityID = null;
     _app = null;
-    _parent = null;
+    _group = null;
     _type = null;
     _naming = null;
 
@@ -23,16 +23,15 @@ class Utility {
     _addDivID = null;
     _addInputID = null;
 
-    constructor (utilities, parent, type, naming = true) {
+    constructor (utilities, group, type, naming = true) {
         const self = this;
         this._utilities = utilities;
-        this._parent = parent;
+        this._group = group;
         this._type = type;
         this._naming = naming;
 
         this._init();
         this._build();
-        this._manage();
 
         $(document).ready(function() {
             self.pickerButton.on("click", function(e) {
@@ -115,8 +114,8 @@ class Utility {
                     if (e.key == "Enter") {
                         self.renameDiv.addClass("hidden");
                         self.renameDiv.removeClass("popUpMenu");
-                        self.parent.name = this.value;
-                        self._manage();
+                        self.current.name = this.value;
+                        self.utilities.manage(self._type);
                         self.closeMenus();
 //                        self.renameDiv.blur();
 //                        self.renameButton.blur();
@@ -145,10 +144,11 @@ class Utility {
 
                 self.addInput.on("keypress", function(e) {
                     if (e.key == "Enter") {
-                        self.parent.new(this.value);
+                        self.group.new();
+                        self.current.name = this.value;
                         self.closeMenus();
                         self.editor.load();
-                        self._manage();
+                        self.utilities.manage(self._type);
                     }
                     e.stopPropagation();
                 });
@@ -159,9 +159,9 @@ class Utility {
             }
             else {
                 self.addButton.on("click", function(e) {
-                    self.parent.new();
+                    self.group.new();
                     self.editor.load();
-                    self._manage();
+                    self.utilities.manage(self._type);
                     self.utilities.closeAllUtilityMenus();
                     e.stopPropagation();
                 });
@@ -172,10 +172,10 @@ class Utility {
     get span()              { return $("#" + this._spanID); }
     get utilities()         { return this._utilities; }
     get app()               { return this.utilities.app; }
-    get parent()            { return this._parent(); }
-    get current()           { return this.parent.current; }
+    get group()            { return this._group(); }
+    get current()           { return this.group.current; }
     get editor()            { return this.app.editor; }
-    get entries()           { return this.parent.entries; }
+    get entries()           { return this.group.entries; }
     get pickerButton()      { return $("#" + this._pickerButtonID); }
     get pickerDiv()         { return $("#" + this._pickerDivID); }
     get pickerSearch()      { return $("#" + this._pickerSearchID); }
@@ -202,7 +202,7 @@ class Utility {
         this._renameInputID = this._type + "RenameInput";
         this._addButtonID = this._type + "AddButton";
         this._addDivID = this._type + "AddDiv";
-        this._addInputID = this._type + "AddInput";    
+        this._addInputID = this._type + "AddInput";
     }
 
     _build() {
@@ -236,11 +236,11 @@ class Utility {
         this.addDiv.append(addInput);
     }
 
-    _manage() {
+    manage() {
         const self = this;
         var code, pickerButtonText, scrollDivHeight;
         this.pickerScrollDiv.empty();
-//        console.log("Parent:", this.parent);
+//        console.log("Group:", this.group);
 //        console.log("Current:", this.current);
 //        console.log("Current name:", this.current.name);
         pickerButtonText = this.current.name;
@@ -248,9 +248,9 @@ class Utility {
         this.pickerButton.html(pickerButtonText);
         if (this.entries > 1) {
             code = "<div style = 'display: grid'>";
-            this.parent.sortByName.forEach(function(entry) {
+            this.group.sortByName.forEach(function(entry) {
                 code += "<div class = 'row'><button type='button' class='btn ";
-                if (entry.name == self.current.name) { code += "btn-info"; }
+                if (entry.id == self.current.id) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
                 code += " btn-sm' value = '" + entry.id + "'>" + entry.name + "</button></div>";
             });
@@ -258,9 +258,10 @@ class Utility {
             this.pickerScrollDiv.append(code);
 
             this.pickerScrollDiv.find("button").on("click", function(e) {
-                self.parent.findById(this.value).setAsCurrent();
+                self.group.findById(this.value).setAsCurrent();
+                self.editor.load();
                 self.closeMenus();
-                self._manage();
+                self.utilities.manage(self._type);
                 e.stopPropagation();
             });
 
