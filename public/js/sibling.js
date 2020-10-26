@@ -17,7 +17,6 @@ class Sibling {
     get parent()         { return (this._siblings.parent) ? this._siblings.parent : null; }
     get children()       { return (this._children)        ? this._children        : null; }
     get hasChildren()    { return (this._childrenType != null); }
-    get parentId()       { return; }
     get type()           { return this._type; }
 
     set data(data)       { this._data = data; }
@@ -45,8 +44,8 @@ class Sibling {
         if (this._children) { this._children.mostRecentlyOpened.setAsCurrent(); }
     }
                                 
-    init(id, parentId) {
-        this._data = this._newData(id, parentId);
+    init(id) {
+        this._data = this._newData(id);
 //        console.log("New:", this.siblings.siblingsType, "Entries:", this.siblings.entries, this._data);
         this._postInit();
         this._save();

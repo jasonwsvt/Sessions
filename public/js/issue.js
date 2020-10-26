@@ -14,7 +14,8 @@ class Issue extends Sibling {
     get parentId()         { return (this._data.clientId) ? this._data.clientId : null; }
     set parentId(parentId) { if (this._data.clientId != parentId) { this._data.clientId = parentId; } }
 
-    _newData(id, clientId) {
+    _newData(id) {
+        var clientId = this.parent.id;
         return {
             id: id,
             clientId: clientId,

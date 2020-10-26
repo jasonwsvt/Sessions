@@ -146,8 +146,9 @@ class Utility {
                 self.addInput.on("keypress", function(e) {
                     if (e.key == "Enter") {
                         self.parent.new(this.value);
-                        self._manage();
                         self.closeMenus();
+                        self.editor.load();
+                        self._manage();
                     }
                     e.stopPropagation();
                 });
@@ -159,6 +160,7 @@ class Utility {
             else {
                 self.addButton.on("click", function(e) {
                     self.parent.new();
+                    self.editor.load();
                     self._manage();
                     self.utilities.closeAllUtilityMenus();
                     e.stopPropagation();
@@ -250,13 +252,13 @@ class Utility {
                 code += "<div class = 'row'><button type='button' class='btn ";
                 if (entry.name == self.current.name) { code += "btn-info"; }
                 else { code += "btn-outline-info"; }
-                code += " btn-sm' value = '" + entry.name + "'>" + entry.name + "</button></div>";
+                code += " btn-sm' value = '" + entry.id + "'>" + entry.name + "</button></div>";
             });
             code += "</div>";
             this.pickerScrollDiv.append(code);
 
             this.pickerScrollDiv.find("button").on("click", function(e) {
-                self.parent.findByName(this.value).setAsCurrent();
+                self.parent.findById(this.value).setAsCurrent();
                 self.closeMenus();
                 self._manage();
                 e.stopPropagation();

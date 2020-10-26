@@ -15,8 +15,9 @@ class Client extends Sibling {
     get parentId()         { return (this._data.userId) ? this._data.userId : null; }
     set parentId(parentId) { if (this._data.userId != parentId) { this._data.userId = parentId; } }
 
-    _newData(id, userId) {
+    _newData(id) {
         var name = (this.clients.entries == 0 && this._defaultFirstName) ? this._defaultFirstName : this._defaultName;
+        var userId = this.parent.id;
         return {
             id: id,
             userId: userId,

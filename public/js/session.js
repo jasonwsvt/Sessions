@@ -63,7 +63,8 @@ class Session extends Sibling {
         return `${month} ${day} ${year} ${hour}:${minute}:${second}${ampm}`;
     }
 
-    _newData(id, issueId) {
+    _newData(id) {
+        var issueId = this.parent.id;
         return {
             id: id,
             issueId: issueId,

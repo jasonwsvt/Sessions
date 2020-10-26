@@ -72,12 +72,14 @@ class Siblings {
         }
     }
 
-    new(parentId) {
+    new() {
         var id = this.newId;
+//        var parentId = this.parent.id;
+//        console.log(parentId);
         this._current = id;
         var sibling = new this._SiblingClass(this._app, this);
 //        console.log(this._siblingsType, "new", parentId, id, "Current:", this._current, "Entries:", this.entries);
-        sibling.init(id, parentId);
+        sibling.init(id);
         this._siblings.push(sibling);
         return id;
     }
