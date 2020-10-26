@@ -6,6 +6,7 @@ class Sibling {
     _children = false;
     _childrenType = null;
     _defaultName = null;
+    _defaultFirstName = null;
     
     constructor(app, siblings) {
         this._app = app;
@@ -17,6 +18,7 @@ class Sibling {
     get children()       { return (this._children)        ? this._children        : null; }
     get hasChildren()    { return (this._childrenType != null); }
     get parentId()       { return; }
+    get type()           { return this._type; }
 
     set data(data)       { this._data = data; }
     get data()           { return this._data; }
@@ -44,14 +46,16 @@ class Sibling {
     }
                                 
     init(useLocalStorage, useServerStorage, id, parentId) {
-        console.log("New:", this.siblings.siblingsType, id, parentId);
         this._data = this._newData(id, parentId);
+//        console.log("New:", this.siblings.siblingsType, "Entries:", this.siblings.entries, this._data);
+        this._postInit();
         this._save();
         if (this._children) { this._children.new(useLocalStorage, useServerStorage, id); }
     }
 
+    _postInit() { return; }
+
     load(useLocalStorage, useServerStorage, data) {
-        console.log(data);
         this._data = data;
         this._postLoad();
         if (this._children) { this._children.load(useLocalStorage, useServerStorage, this._data.id); }

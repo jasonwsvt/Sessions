@@ -1,6 +1,6 @@
 class Sessions extends Siblings {
     constructor(app, parent) {
-        super(app, Session, "session", parent);
+        super(app, Session, parent);
         this._siblingsType = "sessions";
     }
 

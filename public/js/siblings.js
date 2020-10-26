@@ -24,7 +24,7 @@ class Siblings {
     get current()             { return this.findById(this._current); }
     findById(id)              { return this._siblings.find(sibling => (sibling.id == id)); }
     findByName(name)          { return this._siblings.find(sibling => (sibling.name == name)); }
-    get entries()             { return this._siblings.length }
+    get entries()             { return this._siblings.length; }
 
     get sortByCreation() {
         return (this.hasChildren)
@@ -49,30 +49,22 @@ class Siblings {
     }
 
     load(useLocalStorage, useServerStorage, parentId) {
-        console.log(this._siblingsType, "load", parentId);
-//        if (parentId = null && this._siblingsType != "users") { console.trace(); }
         this._loadFrom(useLocalStorage, useServerStorage, sessionStorage, parentId);
-        if (useLocalStorage)  { this._loadFrom(useLocalStorage, useServerStorage, localStorage, parentId); }
-        if (useServerStorage) { this._loadFrom(useLocalStorage, useServerStorage, serverStorage, parentId); }
-        if (!this.entries) { this.new(useLocalStorage, useServerStorage, parentId); }
+        if (useLocalStorage)   { this._loadFrom(useLocalStorage, useServerStorage, localStorage, parentId); }
+        if (useServerStorage)  { this._loadFrom(useLocalStorage, useServerStorage, serverStorage, parentId); }
+        if (this.entries == 0) { this.new(useLocalStorage, useServerStorage, parentId); }
         this._current = this.unsorted.sort((a,b) => (Number(a._data.lastOpened) - Number(b._data.lastOpened))).slice(-1)[0].id;
-
-        console.log(this._siblingsType, "Current set to:", this._current);
     }
 
     _loadFrom(useLocalStorage, useServerStorage, container, parentId) {
-        console.log(this._siblingsType, "loadfrom", "ParentId:", parentId);
-//        if (parentId = null && this._siblingsType != "users") { console.trace(); }
         var data = [], sibling;
         if (Object.keys(container).includes(this._siblingsType)) {
-            data = JSON.parse(container.getItem(this._siblingsType));
-            data = data.filter(entry =>
-                ((parentId == undefined || parentId == entry.parentId) &&
-                    (!this.findById(entry.id)) || (this.findById(entry.id) &&
+            data = JSON.parse(container.getItem(this._siblingsType)).filter(entry =>
+                ((parentId == undefined || parentId == entry[this.parent.type + "Id"]) &&
+                    (!this.findById(entry.id)) ||
+                     (this.findById(entry.id) &&
                       this.findById(entry.id)._data.lastEdited < entry.lastEdited)));
-            console.log(this._siblingsType, "loadfrom", "ParentId:", parentId, data);
             data.forEach(entry => {
-                console.log(this._siblingsType, "loadfrom", "ParentId:", parentId, entry);
                 sibling = new this._SiblingClass(this._app, this);
                 sibling.load(useLocalStorage, useServerStorage, entry);
                 this._siblings.push(sibling);
@@ -84,7 +76,7 @@ class Siblings {
         var id = this.newId;
         this._current = id;
         var sibling = new this._SiblingClass(this._app, this);
-        console.log(this._siblingsType, "new", parentId, id, "Current set to:", this._current);
+//        console.log(this._siblingsType, "new", parentId, id, "Current:", this._current, "Entries:", this.entries);
         sibling.init(useLocalStorage, useServerStorage, id, parentId);
         this._siblings.push(sibling);
         return id;

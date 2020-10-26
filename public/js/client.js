@@ -1,11 +1,11 @@
 class Client extends Sibling {
     constructor(app, clients) {
         super(app, clients);
-        this._children = new Issues(app, this);
         this._childrenType = "issues";
         this._type = "client";
         this._defaultName = "New Client";
-
+        this._defaultFirstName = "Self";
+        this._children = new Issues(app, this);
     }
 
     get issues()           { return this._children; }
@@ -15,10 +15,11 @@ class Client extends Sibling {
     set parentId(parentId) { if (this._data.userId != parentId) { this._data.userId = parentId; } }
 
     _newData(id, userId) {
+        var name = (this.clients.entries == 0 && this._defaultFirstName) ? this._defaultFirstName : this._defaultName;
         return {
             id: id,
             userId: userId,
-            name: this._defaultName,
+            name: name,
             lastEdited: null,
             lastOpened: null
         }
