@@ -89,6 +89,29 @@ class UserUtility {
     get _loginDiv()               { return $("#" + this._loginDivID); }
 
     _build() {
+        const plusIcon = this._plusIcon;
+        const pencilIcon = this._pencilIcon;
+        const searchIcon = this._searchIcon;
+        const type = this._type;
+
+        const settingsButton = "<button id = '" + this._settingsButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
+        const settingsDiv = "<div id = '" + this._settingsDivID + "' class = 'hidden'></div>";
+        const settingsInput = "<input id = '" + this._settingsInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
+
+        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
+        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden'></div>";
+        const loginInput = "<input id = '" + this._loginInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
+
+        const newAccountButton = "<button id = '" + this._newAccountButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
+        const newAccountDiv = "<div id = '" + this._newAccountDivID + "' class = 'hidden'></div>";
+        const newAccountInput = "<input id = '" + this._newAccountInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
+
+        this.span.append(settingsButton + settingsDiv);
+        this.settingsDiv.append(settingsInput);
+        this.span.append(loginButton + loginDiv);
+        this.loginDiv.append(loginInput);
+        this.span.append(newAccountButton + newAccountDiv);
+        this.newAccountDiv.append(newAccountInput);
     }
 
     manage() {
