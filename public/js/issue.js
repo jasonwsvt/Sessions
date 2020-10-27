@@ -2,9 +2,7 @@ class Issue extends Sibling {
     constructor(app, issues) {
         super(app, issues);
         this._children = new Sessions(app, this);
-        this._childrenType = "sessions";
         this._type = "issue";
-        this._defaultName = "New Issue";
     }
 
     get sessions()         { return this._children; }
@@ -16,10 +14,11 @@ class Issue extends Sibling {
 
     _newData(id) {
         var clientId = this.parent.id;
+        var name = this.siblings.defaultName;
         return {
             id: id,
             clientId: clientId,
-            name: this._defaultName,
+            name: name,
             lastEdited: null,
             lastOpened: null
         }

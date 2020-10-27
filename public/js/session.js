@@ -1,7 +1,6 @@
 class Session extends Sibling {
     constructor(app, sessions) {
         super(app, sessions);
-        this._defaultName = "New Session";
         this._type = "session";
     }
 
@@ -22,12 +21,12 @@ class Session extends Sibling {
         console.log("loading lines for", this._data.id);
         if (this._data.lines.length == 0) {
             //On the off-chance the app crashed and on reload the backup didn't catch them yet
-            if (Object.keys(sessionStorage).includes(this.sessions.siblingsType)) {
-                session = JSON.parse(sessionStorage.getItem(this.sessions.siblingsType)).find(entry => (entry.id == this._data.id));
+            if (Object.keys(sessionStorage).includes(this.sessions.type)) {
+                session = JSON.parse(sessionStorage.getItem(this.sessions.type)).find(entry => (entry.id == this._data.id));
                 this._data.lines = session.lines;
             }
-            else if (this.currentUser.useLocalStorage && Object.keys(localStorage).includes(this.sessions.siblingsType)) {
-                session = JSON.parse(sessionStorage.getItem(this.sessions.siblingsType)).find(entry => (entry.id == this._data.id));
+            else if (this.currentUser.useLocalStorage && Object.keys(localStorage).includes(this.sessions.type)) {
+                session = JSON.parse(sessionStorage.getItem(this.sessions.type)).find(entry => (entry.id == this._data.id));
                 this._data.lines = session.lines;
             }
             else if (this.currentUser.useServerStorage) { //request from server

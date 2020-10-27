@@ -2,9 +2,7 @@ class User extends Sibling {
     constructor(app, users) {
         super(app, users);
         this._children = new Clients(app, this);
-        this._childrenType = "clients";
         this._type = "user";
-        this._defaultName = "New User";
     }
 
     get clients()            { return this._children; }
@@ -65,9 +63,10 @@ class User extends Sibling {
     }
     
     _newData(id, parentId) {
+        var name = this.siblings.defaultName;
         return {
             id: id,
-            userName: this._defaultName,
+            userName: name,
             firstName: "",
             lastName: "",
             passwordHash: "",

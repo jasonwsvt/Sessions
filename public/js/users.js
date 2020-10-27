@@ -3,7 +3,7 @@ class Users extends Siblings {
 
     constructor(app) {
         super(app, User, "user");
-        this._siblingsType = "users";
+        this._type = "users";
         this._defaultUserName = "New User";
         this.load();
     }
@@ -19,29 +19,29 @@ class Users extends Siblings {
 
     load() {
         var entries, entry, userName;
-//        console.log(this._siblingsType, this._defaultUserName);
+//        console.log(this._type, this._defaultUserName);
         if (Object.keys(localStorage).includes("rememberMe")) {
             console.log("has RememberMe user");
             userName = JSON.parse(localStorage.getItem(localStorage.getItem("rememberMe")));
-            entries = JSON.parse(sessionStorage.getItem(this._siblingsType));
+            entries = JSON.parse(sessionStorage.getItem(this._type));
             entry = entries.find(entry => (entry.userName == userName));
             this._current = entry.id;
             user = new this._SiblingClass(this);
             user.load(entry);
             this._users.push(user);
         }
-        else if (Object.keys(sessionStorage).includes(this._siblingsType)) {
+        else if (Object.keys(sessionStorage).includes(this._type)) {
 //            console.log("has sessionStorage users");
-            entries = JSON.parse(sessionStorage.getItem(this._siblingsType));
+            entries = JSON.parse(sessionStorage.getItem(this._type));
             entry = entries.find(entry => (entry.userName == this._defaultUserName));
             if (entry) {
                 this._current = entry.id;
                 this._loadFrom(sessionStorage);
             }
         }
-        else if (Object.keys(localStorage).includes(this._siblingsType)) {
+        else if (Object.keys(localStorage).includes(this._type)) {
             console.log("has localStorage users");
-            entries = JSON.parse(localStorage.getItem(this._siblingsType));
+            entries = JSON.parse(localStorage.getItem(this._type));
             entry = entries.find(entry => (entry.userName == this._defaultUserName));
             if (entry) {
                 this._current = entry.id;

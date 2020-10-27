@@ -4,9 +4,6 @@ class Sibling {
     _type = null;
     _data = null;
     _children = false;
-    _childrenType = null;
-    _defaultName = null;
-    _defaultFirstName = null;
     
     constructor(app, siblings) {
         this._app = app;
@@ -16,10 +13,7 @@ class Sibling {
     get siblings()         { return (this._siblings)        ? this._siblings        : null; }
     get parent()           { return (this._siblings.parent) ? this._siblings.parent : null; }
     get children()         { return (this._children)        ? this._children        : null; }
-    get hasChildren()      { return (this._childrenType != null); }
     get type()             { return this._type; }
-    get defaultName()      { return this._defaultName; }
-    get defaultFirstName() { return this._defaultFirstName; }
 
     set data(data)         { this._data = data; }
     get data()             { return this._data; }
@@ -48,7 +42,7 @@ class Sibling {
                                 
     init(id) {
         this._data = this._newData(id);
-//        console.log("New:", this.siblings.siblingsType, "Entries:", this.siblings.entries, this._data);
+//        console.log("New:", this.siblings.type, "Entries:", this.siblings.entries, this._data);
         this._postInit();
         this._save();
         if (this._children) { this._children.new(id); }
@@ -68,8 +62,8 @@ class Sibling {
     _save() {
         var sessionData = [];
         this._data.lastEdited = this.now;
-        if (Object.keys(sessionStorage).includes(this.siblings.siblingsType)) {
-            sessionData = JSON.parse(sessionStorage.getItem(this.siblings.siblingsType));
+        if (Object.keys(sessionStorage).includes(this.siblings.type)) {
+            sessionData = JSON.parse(sessionStorage.getItem(this.siblings.type));
         }
         sessionData = sessionData.filter(session => {
 //            console.log(session.id, (session.id == this._data.id), this._data.id);
@@ -79,8 +73,8 @@ class Sibling {
         });
         sessionData.push(this._data);
 
-//        console.log(this.siblings.siblingsType, this._data.id, sessionData, JSON.stringify(sessionData));
-        sessionStorage.setItem(this.siblings.siblingsType, JSON.stringify(sessionData));
+//        console.log(this.siblings.type, this._data.id, sessionData, JSON.stringify(sessionData));
+        sessionStorage.setItem(this.siblings.type, JSON.stringify(sessionData));
     }
 
     get now() {

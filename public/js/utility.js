@@ -272,7 +272,7 @@ class Utility {
             this.pickerScrollDiv.css("height", String(scrollDivHeight) + "px");
             this.pickerDiv.css("height", String(parseInt(this.pickerSearchInput.outerHeight) + parseInt(this.pickerScrollDiv.outerHeight) + 10) + "px");
 
-            if (this.group.findByName(this.current.defaultName)) { this.addButton.attr("disabled", true); }
+            if (this.group.findByName(this.group.defaultName)) { this.addButton.attr("disabled", true); }
             else                                                 { this.addButton.attr("disabled", false); }
         }
 

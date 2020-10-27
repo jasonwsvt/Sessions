@@ -1,10 +1,14 @@
 class Siblings {
     _app = null;
     _SiblingClass = null;
-    _siblingsType = null;
+    _type = null;
     _parent = false;
     _siblings = [];
     _current = null;
+    _type = null;
+    _defaultName = null;
+    _defaultFirstName = null;
+    _sortByLastX = false;
 
     constructor(app, SiblingClass, parent) {
         this._app = app;
@@ -13,8 +17,10 @@ class Siblings {
     }
     get app()                 { return this._app; }
     get parent()              { return (this._parent) ? this._parent : null; }
-    get hasChildren()         { return (this.unsorted[0].hasChildren); }
-    get siblingsType()        { return this._siblingsType; }
+    get canHaveChildren()     { return this._canHaveChildren; }
+    get type()                { return this._type; }
+    get defaultName()         { return this._defaultName; }
+    get defaultFirstName()    { return this._defaultFirstName; }
 
     get firstCreated()        { return this.sortByCreation.slice(0)[0]; }
     get mostRecentlyCreated() { return this.sortByCreation.slice(-1)[0]; }
@@ -27,19 +33,19 @@ class Siblings {
     get entries()             { return this._siblings.length; }
 
     get sortByCreation() {
-        return (this.hasChildren)
-            ? this._siblings.sort((a,b) => (a.children.firstCreated.creation - b.children.firstCreated.creation))
-            : this._siblings.sort((a,b) => (Number(a.creation) - Number(b.creation)));
+        return (this._sortByLastX)
+            ? this._siblings.sort((a,b) => (Number(a.creation) - Number(b.creation)))
+            : this._siblings.sort((a,b) => (a.children.firstCreated.creation - b.children.firstCreated.creation));
     }
     get sortByLastEdited() {
-        return (this.hasChildren)
-            ? this._siblings.sort((a,b) => (a.children.mostRecentlyEdited.lastEdited - b.children.mostRecentlyEdited.lastEdited))
-            : this._siblings.sort((a,b) => (Number(a._data.lastEdited) - Number(b._data.lastEdited)));
+        return (this._sortByLastX)
+            ? this._siblings.sort((a,b) => (Number(a._data.lastEdited) - Number(b._data.lastEdited)))
+            : this._siblings.sort((a,b) => (a.children.mostRecentlyEdited.lastEdited - b.children.mostRecentlyEdited.lastEdited));
     }
     get sortByLastOpened() {
-        return (this.hasChildren)
-            ? this._siblings.sort((a,b) => (a.children.mostRecentlyOpened.lastOpened - b.children.mostRecentlyOpened.lastOpened))
-            : this._siblings.sort((a,b) => (Number(a._data.lastOpened) - Number(b._data.lastOpened)));
+        return (this._sortByLastX)
+            ? this._siblings.sort((a,b) => (Number(a._data.lastOpened) - Number(b._data.lastOpened)))
+            : this._siblings.sort((a,b) => (a.children.mostRecentlyOpened.lastOpened - b.children.mostRecentlyOpened.lastOpened));
     }
     get sortByName() {
         return this._siblings.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
@@ -58,8 +64,8 @@ class Siblings {
 
     _loadFrom(container, parentId) {
         var data = [], sibling;
-        if (Object.keys(container).includes(this._siblingsType)) {
-            data = JSON.parse(container.getItem(this._siblingsType)).filter(entry =>
+        if (Object.keys(container).includes(this._type)) {
+            data = JSON.parse(container.getItem(this._type)).filter(entry =>
                 ((parentId == undefined || parentId == entry[this.parent.type + "Id"]) &&
                     (!this.findById(entry.id)) ||
                      (this.findById(entry.id) &&
@@ -78,7 +84,7 @@ class Siblings {
 //        console.log(parentId);
         this._current = id;
         var sibling = new this._SiblingClass(this._app, this);
-//        console.log(this._siblingsType, "new", parentId, id, "Current:", this._current, "Entries:", this.entries);
+//        console.log(this._type, "new", parentId, id, "Current:", this._current, "Entries:", this.entries);
         sibling.init(id);
         this._siblings.push(sibling);
         return id;
