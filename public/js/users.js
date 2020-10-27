@@ -8,14 +8,14 @@ class Users extends Siblings {
         this.load();
     }
 
-    get firstCreated()        { pass; }
-    get mostRecentlyCreated() { pass; }
-    get mostRecentlyOpened()  { pass; }
-    get mostRecentlyEdited()  { pass; }
-    get sortByCreation()      { pass; }
-    get sortByLastEdited()    { pass; }
-    get sortByLastOpened()    { pass; }
-    get sortByName()          { pass; }
+    get firstCreated()        { return; }
+    get mostRecentlyCreated() { return; }
+    get mostRecentlyOpened()  { return; }
+    get mostRecentlyEdited()  { return; }
+    get sortByCreation()      { return; }
+    get sortByLastEdited()    { return; }
+    get sortByLastOpened()    { return; }
+    get sortByName()          { return; }
 
     load() {
         var entries, entry, userName;

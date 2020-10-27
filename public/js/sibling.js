@@ -51,7 +51,6 @@ class Sibling {
     _postInit() { return; }
 
     load(data) {
-        console.log(this._type, this.data);
         this._data = data;
         this._postLoad();
         if (this._children) { this._children.load(this._data.id); }

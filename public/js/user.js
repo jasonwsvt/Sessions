@@ -20,8 +20,11 @@ class User extends Sibling {
         }
     }
 
+    get email()              { return this._data.email; }
+    set email(email)         { this._data.email = email; }
+
     get name()               { return `${this._data.firstName} ${this._data.lastName}`; }
-    set name(name)           { pass; }
+    set name(name)           { return; }
 
     get firstName()          { return this._data.firstName; }
     set firstName(firstName) {
@@ -69,6 +72,7 @@ class User extends Sibling {
             userName: name,
             firstName: "",
             lastName: "",
+            email: "",
             passwordHash: "",
             lastEdited: false,
             lastOpened: false,

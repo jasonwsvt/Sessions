@@ -51,7 +51,6 @@ class Utility {
                         self.pickerSearchInput.focus();
                         }
                     else {
-                        self.pickerButton.html(self.current.name + " " + self._caretDownIcon);
                         self.closeMenus();
                     }
                 }
@@ -86,12 +85,8 @@ class Utility {
                 e.stopPropagation();
             });
 
-//            self.pickerDiv.on("focusout", function() {
-//                console.log(self.pickerDivID + " focusout");
-//                if (self.entries > 1) { self.pickerButton.html(self.current.name + " " + self._caretDownIcon); }
-//                else { self.pickerButton.html(self.current.name); }
-//                self.pickerButton.blur();
-//            });
+            self.pickerDiv.on("focusout", function() {
+            });
 
             if (self._naming) {
                 self.renameButton.on("click", function(e) {
@@ -117,15 +112,9 @@ class Utility {
                         self.current.name = this.value;
                         self.utilities.manage(self._type);
                         self.closeMenus();
-//                        self.renameDiv.blur();
-//                        self.renameButton.blur();
                     }
                     e.stopPropagation();
                 });
-
-//                self.renameDiv.on("focusout", function() {
-//                    self.closeMenus();
-//                });
 
                 self.addButton.on("click", function(e) {
                     self.utilities.closeAllUtilityMenus(self._addButtonID);
@@ -137,7 +126,7 @@ class Utility {
                         self.addInput.focus();
                     }
                     else {
-                        self.utilities.closeAllUtilityMenus();
+                        self.utilities.closeMenus();
                     }
                     e.stopPropagation();
                 });
@@ -152,10 +141,6 @@ class Utility {
                     }
                     e.stopPropagation();
                 });
-
-//                self.addDiv.on("focusout", function() {
-//                    self.closeMenus();
-//                });
             }
             else {
                 self.addButton.on("click", function(e) {
@@ -172,7 +157,7 @@ class Utility {
     get span()              { return $("#" + this._spanID); }
     get utilities()         { return this._utilities; }
     get app()               { return this.utilities.app; }
-    get group()            { return this._group(); }
+    get group()             { return this._group(); }
     get current()           { return this.group.current; }
     get editor()            { return this.app.editor; }
     get entries()           { return this.group.entries; }
@@ -283,6 +268,8 @@ class Utility {
             this.pickerDiv.addClass("hidden");
             this.pickerDiv.removeClass("popUpMenu");
             this.pickerDiv.blur();
+            if (this.entries > 1) { this.pickerButton.html(this.current.name + " " + this._caretDownIcon); }
+            else { this.pickerButton.html(this.current.name); }
             this.pickerButton.blur();
         }
         if (except != this._renameButtonID)   { 
