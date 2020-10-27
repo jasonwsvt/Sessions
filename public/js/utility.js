@@ -1,5 +1,5 @@
 class Utility {
-    _utilityID = null;
+    _utilities = null;
     _app = null;
     _group = null;
     _type = null;
@@ -84,9 +84,9 @@ class Utility {
             self.pickerDiv.on("click", function(e) {
                 e.stopPropagation();
             });
-
-            self.pickerDiv.on("focusout", function() {
-            });
+//
+//            self.pickerDiv.on("focusout", function() {
+//            });
 
             if (self._naming) {
                 self.renameButton.on("click", function(e) {
