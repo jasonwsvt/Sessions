@@ -3,6 +3,7 @@
 
 class UserUtility {
     _utilities = null;
+    _utilityID = null;
 
     _dotIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-dot my-2' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'/></svg>";
     _caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
@@ -34,6 +35,7 @@ class UserUtility {
     constructor (utilities) {
         const self = this;
         this._utilities = utilities;
+        this._utilityID = "userUtility";
 
         this._build();
 
@@ -82,11 +84,27 @@ class UserUtility {
         }); 
     }
 
-    get span()                     { return $("#" + this._utilityID); }
-    get app()                     { return this._app; }
-    get lines()                   { return this.app.editor.lines; }
-    get buttons()                 { return this.app.buttons; }
-    get _loginDiv()               { return $("#" + this._loginDivID); }
+    get app()                          { return this._app; }
+    get lines()                        { return this.app.editor.lines; }
+    get buttons()                      { return this.app.buttons; }
+    get span()                         { return $("#" + this._utilityID); }
+    get loginDiv()                     { return $("#" + this._loginDivID); }
+    get settingsDiv()                  { return $("#" + this._settingsDivID); }
+    get settingsButton()               { return $("#" + this._settingsButtonID); }
+    get settingsDivID()                { return $("#" + this._settingsDivID); }
+    get settingsDivUsername()          { return $("#" + this._settingsDivUsernameID); }
+    get settingsDivEmail()             { return $("#" + this._settingsDivEmailID); }
+    get settingsDivPassword()          { return $("#" + this._settingsDivPasswordID); }
+    get settingsDivFirstName()         { return $("#" + this._settingsDivFirstNameID); }
+    get loginButton()                  { return $("#" + this._loginButtonID); }
+    get loginDiv()                     { return $("#" + this._loginDivID); }
+    get loginDivUsername()             { return $("#" + this._loginDivUsernameID); }
+    get loginDivPassword()             { return $("#" + this._loginDivPasswordID); }
+    get loginDivForgotPasswordButton() { return $("#" + this._loginDivForgotPasswordButtonID); }
+    get newAccountButton()             { return $("#" + this._createNewAccountButtonID); }
+    get newAccountDiv()                { return $("#" + this._createNewAccountDivID); }
+    get newAccountDivUsername()        { return $("#" + this._createNewAccountDivUsernameID); }
+    get newAccountDivPassword()        { return $("#" + this._createNewAccountDivPasswordID); }
 
     _build() {
         const plusIcon = this._plusIcon;
@@ -98,40 +116,40 @@ class UserUtility {
         const settingsDiv = "<div id = '" + this._settingsDivID + "' class = 'hidden'></div>";
         const settingsInput = "<input id = '" + this._settingsInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
 
-        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
-        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden'></div>";
-        const loginInput = "<input id = '" + this._loginInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
+//        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
+//        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden'></div>";
+//        const loginInput = "<input id = '" + this._loginInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
 
-        const newAccountButton = "<button id = '" + this._newAccountButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
-        const newAccountDiv = "<div id = '" + this._newAccountDivID + "' class = 'hidden'></div>";
-        const newAccountInput = "<input id = '" + this._newAccountInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
+//        const newAccountButton = "<button id = '" + this._newAccountButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
+//        const newAccountDiv = "<div id = '" + this._newAccountDivID + "' class = 'hidden'></div>";
+//        const newAccountInput = "<input id = '" + this._newAccountInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
 
         this.span.append(settingsButton + settingsDiv);
         this.settingsDiv.append(settingsInput);
-        this.span.append(loginButton + loginDiv);
-        this.loginDiv.append(loginInput);
-        this.span.append(newAccountButton + newAccountDiv);
-        this.newAccountDiv.append(newAccountInput);
+//        this.span.append(loginButton + loginDiv);
+//        this.loginDiv.append(loginInput);
+//        this.span.append(newAccountButton + newAccountDiv);
+//        this.newAccountDiv.append(newAccountInput);
     }
 
     manage() {
     }
 
     closeMenus(except) {
-        if (except != this._issuePickerButtonID)   {
-            this._issuePickerDiv.addClass("hidden");
-            this._issuePickerDiv.removeClass("popUpMenu");
-            this._issuePickerButton.focusout();
+        if (except != this._settingsButtonID)   {
+            this._settingsDiv.addClass("hidden");
+            this._settingsDiv.removeClass("popUpMenu");
+            this._settingsButton.focusout();
         }
-        if (except != this._issueRenameButtonID)   { 
-            this._issueRenameDiv.addClass("hidden");
-            this._issueRenameDiv.removeClass("popUpMenu");
-            this._issueRenameButton.focusout();
+        if (except != this._loginButtonID)   { 
+            this._loginDiv.addClass("hidden");
+            this._loginDiv.removeClass("popUpMenu");
+            this._loginButton.focusout();
         }
-        if (except != this._issueAddButtonID)      { 
-            this._issueAddDiv.addClass("hidden");
-            this._issueAddDiv.removeClass("popUpMenu");
-            this._issueAddButton.focusout();
+        if (except != this._newAccountButtonID)      { 
+            this._newAccountDiv.addClass("hidden");
+            this._newAccountAddDiv.removeClass("popUpMenu");
+            this._newAccountAddButton.focusout();
         }
         if (except != this._sessionPickerButtonID) { 
             this._sessionPickerDiv.addClass("hidden");

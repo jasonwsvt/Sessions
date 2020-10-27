@@ -19,7 +19,7 @@ class Utilities {
         $("#sliderUtility").after(this._dotIcon);
         $("#transferUtility").after(this._dotIcon);
 
-//        this._userUtility = new UserUtility(this);
+        this._userUtility = new UserUtility(this);
         this._clientUtility = new Utility(this, this.currentUserClients, "client");
         this._issueUtility = new Utility(this, this.currentClientIssues, "issue");
         this._sessionUtility = new Utility(this, this.currentIssueSessions, "session", false);
