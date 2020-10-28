@@ -19,7 +19,7 @@ class Utilities {
         $("#sliderUtility").after(this._dotIcon);
         $("#transferUtility").after(this._dotIcon);
 
-        this._userUtility = new UserUtility(this);
+        this._userUtility = new UserUtility(this, this.users);
         this._clientUtility = new Utility(this, this.currentUserClients, "client");
         this._issueUtility = new Utility(this, this.currentClientIssues, "issue");
         this._sessionUtility = new Utility(this, this.currentIssueSessions, "session", false);
@@ -27,7 +27,7 @@ class Utilities {
 //        this._transferUtility = new TransferUtility(this);
 //        this._infoUtility = new InfoUtility(this);
 
-        this.manage("client");  //switch to "user" once userItility is created
+        this.manage("user");  //switch to "user" once userItility is created
 
         $(document).ready(function() {
             $("html").on("click", function(e) {
@@ -52,6 +52,10 @@ class Utilities {
         }
     }
 
+    users() {
+        return this.app.users;
+    }
+
     currentUserClients()   {
         return this.app.users.current.clients;
     }
@@ -65,7 +69,7 @@ class Utilities {
     }
         
     closeAllUtilityMenus(except) {
-        //this._userUtility.closeMenus(except);
+        this._userUtility.closeMenus(except);
         this._clientUtility.closeMenus(except);
         this._issueUtility.closeMenus(except);
         this._sessionUtility.closeMenus(except);
