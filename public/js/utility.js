@@ -47,7 +47,7 @@ class Utility {
                         self.pickerDiv.removeClass("hidden");
                         self.pickerDiv.css("left", String(self.pickerButton.position().left) + "px");
                         self.pickerDiv.css("top", String(self.pickerButton.position().top + self.pickerButton.outerHeight()) + "px");
-                        self.pickerDiv.addClass("popUpMenu");
+                        self.pickerDiv.addClass("utilityMenu");
                         self.pickerSearchInput.focus();
                         }
                     else {
@@ -95,7 +95,7 @@ class Utility {
                         self.renameDiv.removeClass("hidden");
                         self.renameDiv.css("left", String(self.renameButton.position().left) + "px");
                         self.renameDiv.css("top", String(self.renameButton.position().top + self.renameButton.outerHeight()) + "px");
-                        self.renameDiv.addClass("popUpMenu");
+                        self.renameDiv.addClass("utilityMenu");
                         self.renameInput.val(self.current.name);
                         self.renameInput.focus();
                     }
@@ -108,7 +108,7 @@ class Utility {
                 self.renameInput.on("keypress", function(e) {
                     if (e.key == "Enter") {
                         self.renameDiv.addClass("hidden");
-                        self.renameDiv.removeClass("popUpMenu");
+                        self.renameDiv.removeClass("utilityMenu");
                         self.current.name = this.value;
                         self.utilities.manage(self._type);
                         self.closeMenus();
@@ -122,7 +122,7 @@ class Utility {
                         self.addDiv.removeClass("hidden");
                         self.addDiv.css("left", String(self.addButton.position().left) + "px");
                         self.addDiv.css("top", String(self.addButton.position().top + self.addButton.outerHeight()) + "px");
-                        self.addDiv.addClass("popUpMenu");
+                        self.addDiv.addClass("utilityMenu");
                         self.addInput.focus();
                     }
                     else {
@@ -267,7 +267,7 @@ class Utility {
     closeMenus(except) {
         if (except != this._pickerButtonID)   {
             this.pickerDiv.addClass("hidden");
-            this.pickerDiv.removeClass("popUpMenu");
+            this.pickerDiv.removeClass("utilityMenu");
             this.pickerDiv.blur();
             if (this.entries > 1) { this.pickerButton.html(this.current.name + " " + this._caretDownIcon); }
             else { this.pickerButton.html(this.current.name); }
@@ -275,13 +275,13 @@ class Utility {
         }
         if (except != this._renameButtonID)   { 
             this.renameDiv.addClass("hidden");
-            this.renameDiv.removeClass("popUpMenu");
+            this.renameDiv.removeClass("utilityMenu");
             this.renameDiv.blur();
             this.renameButton.blur();
         }
         if (except != this._addButtonID)      { 
             this.addDiv.addClass("hidden");
-            this.addDiv.removeClass("popUpMenu");
+            this.addDiv.removeClass("utilityMenu");
             this.addDiv.blur();
             this.addButton.blur();
         }

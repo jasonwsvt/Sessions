@@ -50,12 +50,13 @@ class UserUtility {
 
         $(document).ready(function() {
             self.settingsButton.on("click", function(e) {
-                self.utilities.closeAllUtilityMenus(self._type);
+                self.utilities.closeAllUtilityMenus(self._settingsButtonID);
+                console.log(self._type, self.settingsDiv.hasClass("hidden"))
                 if (self.settingsDiv.hasClass("hidden")) {
                     self.settingsDiv.removeClass("hidden");
                     this.blur();
                 }
-                else {
+                else { console.log("got here");
                     self._closeSettingsMenu();
                 }
                 e.stopPropagation();
@@ -66,7 +67,7 @@ class UserUtility {
             });
 
             self.loginButton.on("click", function(e) {
-                self.utilities.closeAllUtilityMenus(self._type);
+                self.utilities.closeAllUtilityMenus(self._loginButtonID);
                 if (self.loginDiv.hasClass("hidden")) {
                     self.loginDiv.removeClass("hidden");
                     this.blur();
@@ -78,7 +79,7 @@ class UserUtility {
             });
 
             self.newAccountButton.on("click", function(e) {
-                self.utilities.closeAllUtilityMenus(self._type);
+                self.utilities.closeAllUtilityMenus(self._newAccountButtonID);
                 if (self.newAccountDiv.hasClass("hidden")) {
                     self.newAccountDiv.removeClass("hidden");
                     this.blur();
@@ -136,31 +137,45 @@ class UserUtility {
         const infix = "</div><div class = 'col-3'>";
         const postfix = "</div>";
         const settingsButton = "<button id = '" + this._settingsButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
-        const settingsDiv = "<div id = '" + this._settingsDivID + "' class = 'hidden container popUpMenu'></div>";
-        const username =  "<input id = '" + this._settingsDivUsernameID + "' type = 'text' placeholder = 'username' size = '50'>";
+        const settingsDiv = "<div id = '" + this._settingsDivID + "' class = 'container userMenu hidden'></div>";
+        const username =  "<input id = '" + this._settingsDivUsernameID + "' type = 'text' placeholder = 'username' size = '30'>";
         const usernameLocalTool = "<button id = '" + this._settingsDivUsernameLocalToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
         const usernameServerTool = "<button id = '" + this._settingsDivUsernameServerToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
-        const password1 = "<input id = '" + this._settingsDivPassword1ID + "' type = 'password' placeholder = 'password' size = '50'>";
-        const password2 = "<input id = '" + this._settingsDivPassword2ID + "' type = 'password' placeholder = 'verify password' size = '50'>";
+        const password1 = "<input id = '" + this._settingsDivPassword1ID + "' type = 'password' placeholder = 'password' size = '30'>";
+        const password2 = "<input id = '" + this._settingsDivPassword2ID + "' type = 'password' placeholder = 'verify password' size = '30'>";
         const passwordLocalTool = "<button id = '" + this._settingsDivPasswordLocalToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
         const passwordServerTool = "<button id = '" + this._settingsDivPasswordServerToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
-        const email = "<input class = 'col-3' id = '" + this._settingsDivEmailID + "' type = 'email' placeholder = 'email address' size = '50'>";
+        const email = "<input id = '" + this._settingsDivEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
         const emailLocalTool = "<button id = '" + this._settingsDivEmailLocalToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
         const emailServerTool = "<button id = '" + this._settingsDivEmailServerToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
 
+        const backupFrequencyLabel = "<label style = 'text-align: right'>Back-up Frequency:</label>";
+        var backupFrequencies = [1, 2, 3, 4, 5, 10, 15, 20, 30, 40, 60]
+            .map(f => { return String(f) + " minutes"; })
+            .map(f => { return "<option value = '" + f + "'>" + f + "</option>"; })
+            .join("");
+        const backupFrequencyServerTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + backupFrequencies + "</select>";
+        backupFrequencies = [10, 20, 30, 45]
+            .map(f => { return String(f) + " seconds"; })
+            .map(f => { return "<option value = '" + f + "'>" + f + "</option>"; })
+            .join("").concat(backupFrequencies);
+        const backupFrequencyLocalTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + backupFrequencies + "</select>";
+
+
 //        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
-//        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden popUpMenu'></div>";
+//        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden userMenu'></div>";
 //        const loginInput = "<input id = '" + this._loginInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
 
 //        const newAccountButton = "<button id = '" + this._newAccountButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
-//        const newAccountDiv = "<div id = '" + this._newAccountDivID + "' class = 'hidden popUpMenu'></div>";
+//        const newAccountDiv = "<div id = '" + this._newAccountDivID + "' class = 'hidden userMenu'></div>";
 //        const newAccountInput = "<input id = '" + this._newAccountInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
 
         this.span.append(settingsButton + settingsDiv);
-        this.settingsDiv.append(prefix + infix + "Local" + infix + "Server" + postfix);
-        this.settingsDiv.append(prefix + username + infix + usernameLocalTool + infix + usernameServerTool + postfix);
-        this.settingsDiv.append(prefix + password1 + "<br>" + password2 + infix + passwordLocalTool + infix + passwordServerTool + postfix);
-        this.settingsDiv.append(prefix + email + infix + emailLocalTool + infix + emailServerTool + postfix);
+        this.settingsDiv.append(prefix +                                  infix + "Local"                  + infix + "Server"                  + postfix);
+        this.settingsDiv.append(prefix + username                       + infix + usernameLocalTool        + infix + usernameServerTool        + postfix);
+        this.settingsDiv.append(prefix + password1 + "<br>" + password2 + infix + passwordLocalTool        + infix + passwordServerTool        + postfix);
+        this.settingsDiv.append(prefix + email                          + infix + emailLocalTool           + infix + emailServerTool           + postfix);
+        this.settingsDiv.append(prefix + backupFrequencyLabel           + infix + backupFrequencyLocalTool + infix + backupFrequencyServerTool + postfix);
 //        this.span.append(loginButton + loginDiv);
 //        this.span.append(newAccountButton + newAccountDiv);
 //        this.newAccountDiv.addClass("hidden");
@@ -201,19 +216,19 @@ class UserUtility {
 
     _closeSettingsMenu() {
         this.settingsDiv.addClass("hidden");
-//        this.settingsDiv.removeClass("popUpMenu");
+//        this.settingsDiv.removeClass("userMenu");
         this.settingsButton.blur();
     }
 
     _closeLoginMenu() {
         this.loginDiv.addClass("hidden");
-        this.loginDiv.removeClass("popUpMenu");
+        this.loginDiv.removeClass("userMenu");
         this.loginButton.focusout();
     }
 
     _closeNewAccountMenu() {
         this.newAccountDiv.addClass("hidden");
-        this.newAccountAddDiv.removeClass("popUpMenu");
+        this.newAccountAddDiv.removeClass("userMenu");
         this.newAccountAddButton.focusout();
     }
 }
