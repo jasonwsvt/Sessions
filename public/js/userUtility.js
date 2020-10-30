@@ -198,6 +198,7 @@ class UserUtility {
     }
 
     manage() {
+        
         this.settingsButton.html(this.current.userName);
         this.settingsDiv.css("left", String(this.settingsButton.position().left) + "px");
         this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
@@ -276,6 +277,49 @@ class UserUtility {
         }
 
         button.text(text);
+    }
+
+    frequencyName(seconds) {
+        if (seconds>60) { return (seconds/60==1) ? "1 minute" : String(seconds/60) + " minutes"; }
+        else { return seconds + " seconds"; }
+    }
+
+    get unameState() {
+        const current = this.current.userName;
+        const fieldVal = this.settingsDivUsername.val();
+        const deflt = this.group.defaultName;
+        if (fieldVal == deflt) { return "Default"; }
+        if (current.length == 0) { return "Empty"; }
+        if (current == fieldVal) { return "Unchanged"; }
+        if (deflt != current && this.group.findByName(current)) { return "Duplicate"; }
+        return "Valid";
+    }
+
+    get curPWState() {
+        const current = this.current.passwordHash;
+    }
+
+    get newPWState() {
+        const pw1 = this.settingsDivNewPassword1.val();
+        const pw2 = this.settingsDivNewPassword2.val();
+        const secure = /^(?=.*\d)(?=(.*\W){2})(?=.*[a-zA-Z])(?!.*\s).{1,15}$/;
+
+        if (pw1.length == 0 && pw2.length == 0) { return "Empty"; }
+        if (pw1 != pw2) { return "Different"; }
+        if (!pw1.text(secure)) { return "Insecure"; }
+        return "Secure";
+    }
+
+    get emailState() {
+        const fieldVal = this.settingsDivEmail.val();
+        const current = this.current.email;
+        const valid = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
+
+        if (fieldVal == current) { return "Unchanged"; }
+        if (!valid.test(fieldVal)) { return "Invalid"; }
+        if (fieldVal.length > 0 && current.length == 0) { return "Emptied"; }
+        if (fieldVal.length == 0 && current.length > 0) { return "Filled"; }
+        return "Changed";
     }
 
     closeMenus(except) {

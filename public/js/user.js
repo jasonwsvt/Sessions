@@ -77,8 +77,10 @@ class User extends Sibling {
             lastEdited: false,
             lastOpened: false,
             practitioner: false,
-            useLocalStorage: false,
-            useServerStorage: false
+            localAccount: false,
+            localBackupFrequency: null,
+            serverAccount: false,
+            serverBackupFrequency: null
         }
     }
 }
