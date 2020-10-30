@@ -137,7 +137,7 @@ class UserUtility {
     get newAccountDivUsername()         { return $("#" + this._createNewAccountDivUsernameID); }
     get newAccountDivPassword()         { return $("#" + this._createNewAccountDivPasswordID); }
 
-    _build() {
+    _init() {
         const plusIcon = this._plusIcon;
         const pencilIcon = this._pencilIcon;
         const searchIcon = this._searchIcon;
@@ -149,31 +149,18 @@ class UserUtility {
         const settingsButton = "<button id = '" + this._settingsButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const settingsDiv = "<div id = '" + this._settingsDivID + "' class = 'container userMenu hidden'></div>";
         const username =  "<input id = '" + this._settingsDivUsernameID + "' type = 'text' placeholder = 'username' size = '30'>";
-        const usernameLocalTool = "<button id = '" + this._settingsDivUsernameLocalToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
-        const usernameServerTool = "<button id = '" + this._settingsDivUsernameServerToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
-        const currentPassword = "<input id = '" + this._settingsDivCurrentPasswordID + "' type = 'password' placeholder = 'current password' size = '30'>";
+        const currentPassword = "<input id = '" + this._settingsDivCurrentPasswordID + "' type = 'password' placeholder = 'enter current password for settings' size = '30'>";
         const newPassword1 = "<input id = '" + this._settingsDivPassword1ID + "' type = 'password' placeholder = 'new password' size = '30'>";
         const newPassword2 = "<input id = '" + this._settingsDivPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
-        const passwordLocalTool = "<button id = '" + this._settingsDivPasswordLocalToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
-        const passwordServerTool = "<button id = '" + this._settingsDivPasswordServerToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
         const email = "<input id = '" + this._settingsDivEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
-        const emailLocalTool = "<button id = '" + this._settingsDivEmailLocalToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
-        const emailServerTool = "<button id = '" + this._settingsDivEmailServerToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
 
         const backupFrequencyLabel = "<label style = 'text-align: right; width: 100%'>Back-up Frequency:</label>";
-        var backupFrequencies = [2, 3, 4, 5, 10, 15, 20, 30, 40, 60]
-            .map(f => { return String(f) + " minutes"; })
-            .map(f => { return "<option value = '" + f + "'>" + f + "</option>"; })
-            .join("");
-        const backupFrequencyServerTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + backupFrequencies + "</select>";
-        backupFrequencies = [5, 10, 20, 30, 45]
-            .map(f => { return String(f) + " seconds"; })
-            .map(f => { return "<option value = '" + f + "'>" + f + "</option>"; })
-            .join("");
-        backupFrequencies.push("1 minute");
-        backupFrequencies.concat(backupFrequencies);
-        const backupFrequencyLocalTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + backupFrequencies + "</select>";
-
+        const localBackupFrequencies = [5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
+            .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join("");
+        const backupFrequencyLocalTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + localBackupFrequencies + "</select>";
+        const serverBackupFrequencies = [60, 120, 180, 240, 300, 600, 900, 1200, 1800, 2400, 3600]
+            .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join("");
+        const backupFrequencyServerTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + serverBackupFrequencies + "</select>";
 
 //        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
 //        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden userMenu'></div>";
@@ -197,61 +184,31 @@ class UserUtility {
 //        this.newAccountDiv.append(newAccountInput);
     }
 
-    manage() {
-        
-        this.settingsButton.html(this.current.userName);
-        this.settingsDiv.css("left", String(this.settingsButton.position().left) + "px");
-        this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
-        this.settingsDivUsername.val(this.current.userName);
-
-        this.manageSettingsDivForm();
-        
-//        this.loginDiv.css("left", String(this.loginButton.position().left) + "px");
-//        this.loginDiv.css("top", String(this.loginButton.position().top + this.loginButton.outerHeight()) + "px");
-//        this.newAccountDiv.css("left", String(this.newAccountButton.position().left) + "px");
-//        this.newAccountDiv.css("top", String(this.newAccountButton.position().top + this.newAccountButton.outerHeight()) + "px");
-                
+    manageSettings() {
+        const fields = [this.settingsDivUsername, this.settingsDivEmail, this.settingsDivCurrentPassword, this.settingsDivNewPassword1, this.settingsDivNewPassword2];
+        if (passwordVerfied()) {
+            fields.forEach(field, () => { if(field.hasClass("hidden")) { field.removeClass("hidden"); } });
+            this.settingsDivCurrentPassword.addClass("hidden");
+            this.settingsButton.html(this.current.userName);
+            this.settingsDiv.css("left", String(this.settingsButton.position().left) + "px");
+            this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
+            this.settingsDivUsername.val(this.current.userName);
+            this.manageSettingsDivForm();
+            }
+        else {
+            fields.forEach(field, () => { if(!field.hasClass("hidden")) { field.addClass("hidden"); } });
+            this.settingsDivCurrentPassword.removeClass("hidden");
+        }
     }
 
-    manageSettingsDivForm() {
-        var user = settingsDivUsername,
-            userLT = settingsDivUsernameLocalTool,
-            userST = settingsDivUsernameServerTool,
-            curpw = settingsDivCurrentPassword,
-            newpw1 = settingsDivNewPassword1,
-            newpw2 = settingsDivNewPassword2,
-            pwLT = settingsDivPasswordLocalTool,
-            pwST = settingsDivPasswordServerTool,
-            email = settingsDivEmail,
-            emailLT = settingsDivEmailLocalTool,
-            emailST = settingsDivEmailServerTool
-            setButton = this.setButton;
+    manageLoginMenu() {
+//        this.loginDiv.css("left", String(this.loginButton.position().left) + "px");
+//        this.loginDiv.css("top", String(this.loginButton.position().top + this.loginButton.outerHeight()) + "px");
+    }
 
-        if (!this.user.current.hasLocalAccount && !this.user.current.hasServerAccount) {
-            if (!curpw.parent.parent.hasClass("hidden")) { curpw.parent.parent.addClass("hidden"); }
-        }
-        else if (curpw.parent.parent.hasClass("hidden")) { curpw.parent.parent.removeClass("hidden"); }
-        
-        if (user.val() != this.current.userName) { 
-            setButton(userLT, "red", (this.group.findByName(user.val()) != null) ? "Must be unique." : "Update Username");
-            setButton(userST, "yellow", "Check if available"); 
-        }
-        else { userLT.text("No change."); userST.text("No change."); }
-
-        if (curpw.val().length) {
-            if (newpw1.val().length) {
-                if (newpw1.val() == newpw2.val()) {
-                    this.setButton(userLT, "green", "Reset password");
-
-                }
-                else {
-
-                }
-            }
-            else {
-
-            }
-        }
+    manageNewAccountMenu() {
+//        this.newAccountDiv.css("left", String(this.newAccountButton.position().left) + "px");
+//        this.newAccountDiv.css("top", String(this.newAccountButton.position().top + this.newAccountButton.outerHeight()) + "px");
     }
 
     setButton(button, color, text) {
@@ -284,14 +241,72 @@ class UserUtility {
         else { return seconds + " seconds"; }
     }
 
+    manageSettingsDivForm() {
+        var messages = [], actions = [];
+        const uname = this.unameState;
+        const curPW = this.curPWState;
+        const newPW = this.newPWState;
+        const email = this.emailState;
+        const server = this.current.hasServerAccount;
+        const local = this.current.hasLocalAccount;
+        
+        if (email == "Invalid") { messages.push("Email address must be valid or empty."); }
+        if (uname == "Local duplicate") { messages.push("Username is duplicated locally."); }
+        if (uname == "Server duplicate") { messages.push("Username is duplicated on the server."); }
+        if (curPW == "Invalid") { messages.push("Current password is invalid."); }
+        if (newPW == "Different") { messages.push("New passwords must match."); }
+        if (uname == "Empty") { messages.push("Username must have at least one character."); }
+    
+        if (local == false && server == false) {
+            if (uname == "Default") { messages.push("To create a server account, the username must not be the default."); }
+            if (uname == "Empty") { messages.push("Username must have at least one character."); }
+            if (curPW == "Insecure" || newPW == "Insecure") { messages.push("A server account would require a more secure password.")}
+            if (uname == "Valid" && ((["Empty", "Insecure", "Secure"].includes(CurPW) && newPW == "Empty") || ["Empty", "Insecure", "Secure"].includes(newPW)) && ["Empty", "Filled", "Changed"].includes(email)) {
+                actions.push("Create local account");
+            }
+            if (["Valid", "Local duplicate", "Unchanged"].includes(uname) &&
+                ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && ["Empty", "Filled", "Changed"].includes(email)) {
+                actions.push("Create server account");
+            }
+            if (["Valid", "Unchanged"].includes(uname) &&
+                ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && ["Empty", "Filled", "Changed"].includes(email)) {
+                actions.push("Create local and server accounts");
+            }
+
+        }
+
+        if (local == true && server == false) {
+            if (uname == "Default") { messages.push("Storing sessions on the server requires that the username not be the default."); }
+            if (["Valid", "Server duplicate"].includes(uname)) { actions.push("Change username"); }
+            if (email == "Filled") { actions.push("Set email address"); }
+            if (email == "Emptied") { actions.push("Remove email address"); }
+            if (email == "Changed") { actions.push("Change email address"); }
+            if (curPW == "Insecure" || newPW == "Insecure") { messages.push("A server account would require a more secure password."); }
+            if (["Empty", "Insecure", "Secure"].includes(newPW)) { actions.push("Change password"); }
+        }
+
+        if (local == false && server == true) {
+            if (uname == "Default") { messages.push("The username must not be the default."); }
+                
+        }
+
+        if (local == true && server == true) {
+            if (uname == "Default") { messages.push("The username must not be the default."); }
+        }
+    }
+
     get unameState() {
         const current = this.current.userName;
         const fieldVal = this.settingsDivUsername.val();
         const deflt = this.group.defaultName;
+        const localDup = this.findLocalDup(fieldVal);
+        const serverDup = false;
         if (fieldVal == deflt) { return "Default"; }
-        if (current.length == 0) { return "Empty"; }
+        if (fieldVal.length == 0) { return "Empty"; }
+        if (localDup && serverDup) { return "Duplicate"; }
+        if (localDup) { return "Local duplicate"; }
+        if (serverDup) { return "Server duplicate"; }
         if (current == fieldVal) { return "Unchanged"; }
-        if (deflt != current && this.group.findByName(current)) { return "Duplicate"; }
         return "Valid";
     }
 
