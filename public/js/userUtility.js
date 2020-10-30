@@ -18,8 +18,9 @@ class UserUtility {
     _settingsButtonID = "settingsButton";
     _settingsDivID = "settingsDiv";
     _settingsDivUsernameID = "settingsDivUsername";
-    _settingsDivPassword1ID = "settingsDivPassword1";
-    _settingsDivPassword2ID = "settingsDivPassword2";
+    _settingsDivCurrentPasswordID = "settingsDivCurrentPassword";
+    _settingsDivNewPassword1ID = "settingsDivNewPassword1";
+    _settingsDivNewPassword2ID = "settingsDivNewPassword2";
     _settingsDivEmailID = "settingsDivEmail";
     _settingsDivUsernameLocalToolID = "settingsDivUsernameLocalTool";
     _settingsDivUsernameServerToolID = "settingsDivUsernameServerTool";
@@ -27,6 +28,8 @@ class UserUtility {
     _settingsDivPasswordServerToolID = "settingsDivPasswordServerTool";
     _settingsDivEmailLocalToolID = "settingsDivEmailLocalTool";
     _settingsDivEmailServerToolID = "settingsDivEmailServerTool";
+    _backupFrequencyLocalToolID = "backupFrequencyLocalTool";
+    _backupFrequencyServerToolID = "backupFrequencyServerTool";
 
     _loginButtonID = "loginButton";
     _loginDivID = "loginDiv";
@@ -64,6 +67,10 @@ class UserUtility {
 
             self.settingsDiv.find("input").on("keyup", function(e) {
                 this.manageSettingsDivForm();
+            });
+
+            self.settingsDiv.on("click", function(e) {
+                e.stopPropagation();
             });
 
             self.loginButton.on("click", function(e) {
@@ -108,8 +115,9 @@ class UserUtility {
     get settingsDivPassword()           { return $("#" + this._settingsDivPasswordID); }
     get settingsDivFirstName()          { return $("#" + this._settingsDivFirstNameID); }
     get settingsDivUsername()           { return $("#" + this._settingsDivUsernameID); }
-    get settingsDivPassword1()          { return $("#" + this._settingsDivPassword1ID); }
-    get settingsDivPassword2()          { return $("#" + this._settingsDivPassword2ID); }
+    get settingsDivCurrentPassword()    { return $("#" + this._settingsDivCurrentPasswordID); }
+    get settingsDivNewPassword1()       { return $("#" + this._settingsDivNewPassword1ID); }
+    get settingsDivNewPassword2()       { return $("#" + this._settingsDivNewPassword2ID); }
     get settingsDivEmail()              { return $("#" + this._settingsDivEmailID); }
     get settingsDivUsernameLocalTool()  { return $("#" + this._settingsDivUsernameLocalToolID); }
     get settingsDivUsernameServerTool() { return $("#" + this._settingsDivUsernameServerToolID); }
@@ -117,6 +125,8 @@ class UserUtility {
     get settingsDivPasswordServerTool() { return $("#" + this._settingsDivPasswordServerToolID); }
     get settingsDivEmailLocalTool()     { return $("#" + this._settingsDivEmailLocalToolID); }
     get settingsDivEmailServerTool()    { return $("#" + this._settingsDivEmailServerToolID); }
+    get backupFrequencyLocalToolID()    { return $("#" + this._backupFrequencyLocalTool); }
+    get backupFrequencyServerToolID()   { return $("#" + this._backupFrequencyServerTool); }
     get loginButton()                   { return $("#" + this._loginButtonID); }
     get loginDiv()                      { return $("#" + this._loginDivID); }
     get loginDivUsername()              { return $("#" + this._loginDivUsernameID); }
@@ -141,24 +151,27 @@ class UserUtility {
         const username =  "<input id = '" + this._settingsDivUsernameID + "' type = 'text' placeholder = 'username' size = '30'>";
         const usernameLocalTool = "<button id = '" + this._settingsDivUsernameLocalToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
         const usernameServerTool = "<button id = '" + this._settingsDivUsernameServerToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
-        const password1 = "<input id = '" + this._settingsDivPassword1ID + "' type = 'password' placeholder = 'password' size = '30'>";
-        const password2 = "<input id = '" + this._settingsDivPassword2ID + "' type = 'password' placeholder = 'verify password' size = '30'>";
+        const currentPassword = "<input id = '" + this._settingsDivCurrentPasswordID + "' type = 'password' placeholder = 'current password' size = '30'>";
+        const newPassword1 = "<input id = '" + this._settingsDivPassword1ID + "' type = 'password' placeholder = 'new password' size = '30'>";
+        const newPassword2 = "<input id = '" + this._settingsDivPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
         const passwordLocalTool = "<button id = '" + this._settingsDivPasswordLocalToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
         const passwordServerTool = "<button id = '" + this._settingsDivPasswordServerToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
         const email = "<input id = '" + this._settingsDivEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
         const emailLocalTool = "<button id = '" + this._settingsDivEmailLocalToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
         const emailServerTool = "<button id = '" + this._settingsDivEmailServerToolID + "' type = 'button' class = 'btn btn-dark btn-sm'>";
 
-        const backupFrequencyLabel = "<label style = 'text-align: right'>Back-up Frequency:</label>";
-        var backupFrequencies = [1, 2, 3, 4, 5, 10, 15, 20, 30, 40, 60]
+        const backupFrequencyLabel = "<label style = 'text-align: right; width: 100%'>Back-up Frequency:</label>";
+        var backupFrequencies = [2, 3, 4, 5, 10, 15, 20, 30, 40, 60]
             .map(f => { return String(f) + " minutes"; })
             .map(f => { return "<option value = '" + f + "'>" + f + "</option>"; })
             .join("");
         const backupFrequencyServerTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + backupFrequencies + "</select>";
-        backupFrequencies = [10, 20, 30, 45]
+        backupFrequencies = [5, 10, 20, 30, 45]
             .map(f => { return String(f) + " seconds"; })
             .map(f => { return "<option value = '" + f + "'>" + f + "</option>"; })
-            .join("").concat(backupFrequencies);
+            .join("");
+        backupFrequencies.push("1 minute");
+        backupFrequencies.concat(backupFrequencies);
         const backupFrequencyLocalTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + backupFrequencies + "</select>";
 
 
@@ -171,11 +184,13 @@ class UserUtility {
 //        const newAccountInput = "<input id = '" + this._newAccountInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
 
         this.span.append(settingsButton + settingsDiv);
-        this.settingsDiv.append(prefix +                                  infix + "Local"                  + infix + "Server"                  + postfix);
-        this.settingsDiv.append(prefix + username                       + infix + usernameLocalTool        + infix + usernameServerTool        + postfix);
-        this.settingsDiv.append(prefix + password1 + "<br>" + password2 + infix + passwordLocalTool        + infix + passwordServerTool        + postfix);
-        this.settingsDiv.append(prefix + email                          + infix + emailLocalTool           + infix + emailServerTool           + postfix);
-        this.settingsDiv.append(prefix + backupFrequencyLabel           + infix + backupFrequencyLocalTool + infix + backupFrequencyServerTool + postfix);
+        this.settingsDiv.append(prefix + username             + infix + usernameTool        + postfix);
+        this.settingsDiv.append(prefix + currentPassword
+                                       + newPassword1 + "<br>"
+                                       + newPassword2         + infix + passwordTool        + postfix);
+        this.settingsDiv.append(prefix + email                + infix + emailTool           + postfix);
+        this.settingsDiv.append(prefix +                        infix + "Local"                  + infix + "Server"                  + postfix);
+        this.settingsDiv.append(prefix + backupFrequencyLabel + infix + backupFrequencyLocalTool + infix + backupFrequencyServerTool + postfix);
 //        this.span.append(loginButton + loginDiv);
 //        this.span.append(newAccountButton + newAccountDiv);
 //        this.newAccountDiv.addClass("hidden");
@@ -186,6 +201,9 @@ class UserUtility {
         this.settingsButton.html(this.current.userName);
         this.settingsDiv.css("left", String(this.settingsButton.position().left) + "px");
         this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
+        this.settingsDivUsername.val(this.current.userName);
+
+        this.manageSettingsDivForm();
         
 //        this.loginDiv.css("left", String(this.loginButton.position().left) + "px");
 //        this.loginDiv.css("top", String(this.loginButton.position().top + this.loginButton.outerHeight()) + "px");
@@ -195,17 +213,69 @@ class UserUtility {
     }
 
     manageSettingsDivForm() {
-        var validated = [], errors = [];
-        if (this.settingsDivUsername.value != this.current.username) { 
-            if (this.group.findByName(this.settingsDivUsername.val()) != null) { validated.push("username"); }
-            else { errors.push("Username is not unique."); }
+        var user = settingsDivUsername,
+            userLT = settingsDivUsernameLocalTool,
+            userST = settingsDivUsernameServerTool,
+            curpw = settingsDivCurrentPassword,
+            newpw1 = settingsDivNewPassword1,
+            newpw2 = settingsDivNewPassword2,
+            pwLT = settingsDivPasswordLocalTool,
+            pwST = settingsDivPasswordServerTool,
+            email = settingsDivEmail,
+            emailLT = settingsDivEmailLocalTool,
+            emailST = settingsDivEmailServerTool
+            setButton = this.setButton;
+
+        if (!this.user.current.hasLocalAccount && !this.user.current.hasServerAccount) {
+            if (!curpw.parent.parent.hasClass("hidden")) { curpw.parent.parent.addClass("hidden"); }
         }
-        if (this.current.hash(this.settingsDivPassword1.val()) != this.current.passwordHash) { validated.push("password1"); }
-        if (this.current.hash(this.settingsDivPassword2.val()) != this.current.passwordHash) { validated.push("password2"); }
-        if (this.settingsDivEmail.val() != this.current.email) { validated.push("email"); }
-        if (errors.length) {
-            this.settingsDivUpdateButton.val
+        else if (curpw.parent.parent.hasClass("hidden")) { curpw.parent.parent.removeClass("hidden"); }
+        
+        if (user.val() != this.current.userName) { 
+            setButton(userLT, "red", (this.group.findByName(user.val()) != null) ? "Must be unique." : "Update Username");
+            setButton(userST, "yellow", "Check if available"); 
         }
+        else { userLT.text("No change."); userST.text("No change."); }
+
+        if (curpw.val().length) {
+            if (newpw1.val().length) {
+                if (newpw1.val() == newpw2.val()) {
+                    this.setButton(userLT, "green", "Reset password");
+
+                }
+                else {
+
+                }
+            }
+            else {
+
+            }
+        }
+    }
+
+    setButton(button, color, text) {
+        if (button.hasClass("btn-primary"))   { button.removeClass("btn-primary"); }
+        if (button.hasClass("btn-secondary")) { button.removeClass("btn-secondary"); }
+        if (button.hasClass("btn-success"))   { button.removeClass("btn-success"); }
+        if (button.hasClass("btn-danger"))    { button.removeClass("btn-danger"); }
+        if (button.hasClass("btn-warning"))   { button.removeClass("btn-warning"); }
+        if (button.hasClass("btn-info"))      { button.removeClass("btn-info"); }
+        if (button.hasClass("btn-light"))     { button.removeClass("btn-light"); }
+        if (button.hasClass("btn-dark"))      { button.removeClass("btn-dark"); }
+
+        switch(color) {
+            case "blue":   button.addClass("btn-primary"); break;
+            case "gray":   button.addClass("btn-secondary"); break;
+            case "green":  button.addClass("btn-success"); break;
+            case "red":    button.addClass("btn-danger"); break;
+            case "yellow": button.addClass("btn-warning"); break;
+            case "cyan":   button.addClass("btn-info"); break;
+            case "white":  button.addClass("btn-light"); break;
+            case "black":  button.addClass("btn-dark"); break;
+            case "clear":  button.addClass("btn-link"); break;
+        }
+
+        button.text(text);
     }
 
     closeMenus(except) {

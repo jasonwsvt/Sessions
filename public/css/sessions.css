@@ -31,16 +31,18 @@
     transition-duration: .4s;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     opacity: 1;
-    width: 600px;
+    width: 570px;
 }
 
 .userMenu > div > div:nth-of-type(2) {
     text-align: center;
+    vertical-align: middle;
     border: 1px;
 }
 
 .userMenu > div > div:nth-of-type(3) {
     text-align: center;
+    vertical-align: middle;
     border: 1px;
 }
 
