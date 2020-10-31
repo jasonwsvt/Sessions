@@ -81,4 +81,12 @@ class Sibling {
     }
 
     _newData(id, parentId) { pass; }
+
+    _updateData() {
+        const newData = Object.keys(_newData(0, 0));
+        const data = this._data;
+        newData.map(entry => { if (!this._data.includes(entry)) {this._data[entry] == newData.entry; } });
+        data.map(entry => { if (!newData.includes(entry)) { delete this._data[entry]; } });
+        console.log(data);
+    }
 }
