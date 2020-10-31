@@ -64,8 +64,4 @@ class Users extends Siblings {
         }
         return false;
     }
-
-    hash(password) {
-        return "hashed " + password;
-    }
 }

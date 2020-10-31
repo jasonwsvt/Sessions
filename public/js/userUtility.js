@@ -178,27 +178,38 @@ class UserUtility {
         this.settingsDiv.append(prefix + email                + infix + emailTool           + postfix);
         this.settingsDiv.append(prefix +                        infix + "Local"                  + infix + "Server"                  + postfix);
         this.settingsDiv.append(prefix + backupFrequencyLabel + infix + backupFrequencyLocalTool + infix + backupFrequencyServerTool + postfix);
+
 //        this.span.append(loginButton + loginDiv);
 //        this.span.append(newAccountButton + newAccountDiv);
 //        this.newAccountDiv.addClass("hidden");
 //        this.newAccountDiv.append(newAccountInput);
     }
 
-    manageSettings() {
-        const fields = [this.settingsDivUsername, this.settingsDivEmail, this.settingsDivCurrentPassword, this.settingsDivNewPassword1, this.settingsDivNewPassword2];
-        if (passwordVerfied()) {
-            fields.forEach(field, () => { if(field.hasClass("hidden")) { field.removeClass("hidden"); } });
-            this.settingsDivCurrentPassword.addClass("hidden");
-            this.settingsButton.html(this.current.userName);
-            this.settingsDiv.css("left", String(this.settingsButton.position().left) + "px");
-            this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
-            this.settingsDivUsername.val(this.current.userName);
-            this.manageSettingsDivForm();
-            }
-        else {
-            fields.forEach(field, () => { if(!field.hasClass("hidden")) { field.addClass("hidden"); } });
-            this.settingsDivCurrentPassword.removeClass("hidden");
+    settingsMenuContents() {
+        if (this.current.passwordHash == "" || this.current.passwordVerified) {
+            this.showSettingsMenu();
         }
+        else {
+            this.showSettingsVerifyPasswordMenu();
+        }
+    }
+
+    showSettingsVerifyPasswordMenu() {
+        const fields = [this.settingsDivUsername, this.settingsDivEmail, this.settingsDivCurrentPassword, this.settingsDivNewPassword1, this.settingsDivNewPassword2];
+        fields.forEach(field, () => { if(!field.hasClass("hidden")) { field.addClass("hidden"); } });
+        this.settingsDivCurrentPassword.removeClass("hidden");
+
+    }
+
+    showSettingsMenu() {
+        const fields = [this.settingsDivUsername, this.settingsDivEmail, this.settingsDivCurrentPassword, this.settingsDivNewPassword1, this.settingsDivNewPassword2];
+        fields.forEach(field, () => { if(field.hasClass("hidden")) { field.removeClass("hidden"); } });
+        this.settingsDivCurrentPassword.addClass("hidden");
+        this.settingsButton.html(this.current.userName);
+        this.settingsDiv.css("left", String(this.settingsButton.position().left) + "px");
+        this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
+        this.settingsDivUsername.val(this.current.userName);
+        this.manageSettingsDivForm();
     }
 
     manageLoginMenu() {
@@ -242,86 +253,94 @@ class UserUtility {
     }
 
     manageSettingsDivForm() {
-        var messages = [], actions = [];
+        var messages = [], actions = [], options = [];
         const uname = this.unameState;
         const curPW = this.curPWState;
         const newPW = this.newPWState;
+        const equal = this.PWsEqual();
         const email = this.emailState;
         const server = this.current.hasServerAccount;
         const local = this.current.hasLocalAccount;
-        
-        if (uname == "Local duplicate")  { messages.push("Username is duplicated locally."); }
-        if (uname == "Server duplicate") { messages.push("Username is duplicated on the server."); }
-        if (uname == "Empty")            { messages.push("Username must have at least one character."); }
+
         if (curPW == "Invalid")          { messages.push("Current password is invalid."); }
-        if (newPW == "Different")        { messages.push("New passwords must match."); }
-        if (email == "Invalid")          { messages.push("Email address must be valid or empty."); }
+        else {
+            if (uname == "Local duplicate")  { messages.push("Username is duplicated locally."); }
+            if (uname == "Server duplicate") { messages.push("Username is duplicated on the server."); }
+            if (uname == "Empty")            { messages.push("Username must have at least one character."); }
+            if (newPW == "Different")        { messages.push("New passwords must match."); }
+            if (email == "Invalid")          { messages.push("Email address must be valid or empty."); }
 
-        if (local || server) {
-            if (email == "Filled") { actions.push("Set email address"); }
-            if (email == "Emptied") { actions.push("Remove email address"); }
-            if (email == "Changed") { actions.push("Change email address"); }
-        }
-
-        if (server == false) {
-            if (uname == "Default") { messages.push("To create a server account, the username must not be the default."); }
-            if (curPW == "Insecure" || newPW == "Insecure") { messages.push("A server account would require a more secure password.")}
-        }
-
-        if (server == true) {
-            if (uname == "Default") { messages.push("The username must not be the default."); }
-            actions.push("Remove server storage");
-        }
-
-        if (local == true) {
-            actions.push("Remove local storage");
-        }
-
-        if (local == false && server == false) {
-            if (["Valid", "Unchanged"].includes(uname) &&
-                ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
-                actions.push("Create an account with the ability to store data both locally and on the server");
+            if (!server) {
+                if (uname == "Default") { messages.push("Server storage requires a username that's not the default."); }
+                if (curPW != "Secure" || newPW != "Secure") { messages.push("Server storage requires a more secure password."); }
             }
-            if (["Valid", "Local duplicate", "Unchanged"].includes(uname) &&
-                ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
-                actions.push("Create an account with the ability to store data on the server");
+
+            if (server) {
+                if (uname == "Default") { messages.push("The username must not be the default."); }
+                options.push("Remove server storage");
             }
-            if (["Valid", "Server duplicate", "Unchanged"].includes(uname) == "Valid" && email != "Invalid" &&
-                ((["Empty", "Insecure", "Secure"].includes(CurPW) && newPW == "Empty") || ["Empty", "Insecure", "Secure"].includes(newPW))) {
-                actions.push("Create an account with the ability to store data locally");
+
+            if (local) {
+                options.push("Remove local storage");
+            }
+
+            if (!local && !server) {
+                if (["Valid", "Unchanged"].includes(uname) &&
+                    ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
+                    options.push("Create an account with local and server storage");
+                }
+                if (["Valid", "Local duplicate", "Unchanged"].includes(uname) &&
+                    ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
+                    options.push("Create an account with server storage");
+                }
+                if (["Valid", "Server duplicate", "Unchanged"].includes(uname) == "Valid" && email != "Invalid" &&
+                    ((["Empty", "Insecure", "Secure"].includes(CurPW) && newPW == "Empty") || ["Empty", "Insecure", "Secure"].includes(newPW))) {
+                    options.push("Create an account with local storage");
+                }
+            }
+
+            if (local && !server) {
+                if (["Valid", "Server duplicate"].includes(uname)) { actions.push("Change username"); }
+                if (["Insecure", "Secure"].includes(newPW)) { actions.push("Change password"); }
+                if (newPW == "Empty") { options.push("Remove password"); }
+                if (["Valid", "Unchanged"].includes(uname) &&
+                    ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
+                    options.push("Add server storage");
+                }
+            }
+
+            if (!local && server) {
+                if (["Valid", "Local duplicate"].includes(uname)) { actions.push("Change username"); }
+                if (newPW == "Secure") { actions.push("Change password"); }
+                if (["Valid", "Unchanged"].includes(uname) &&
+                    ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
+                    options.push("Add local storage");
+                }
+            }
+
+            if (local || server) {
+                if (email == "Filled") { actions.push("Set email address"); }
+                if (email == "Emptied") { actions.push("Remove email address"); }
+                if (email == "Changed") { actions.push("Change email address"); }
             }
         }
 
-        if (local == true && server == false) {
-            if (uname == "Default") { messages.push("If you would like to store sessions on the server, the username must not be the default."); }
-            if (curPW == "Insecure" || newPW == "Insecure") { messages.push("If you would like to store data on the server, you need a more secure password."); }
-
-            if (["Valid", "Server duplicate"].includes(uname)) { actions.push("Change username"); }
-            if (["Empty", "Insecure", "Secure"].includes(newPW)) { actions.push("Change password"); }
-            if (["Valid", "Unchanged"].includes(uname) &&
-                ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
-                actions.push("Add server storage");
-            }
+        if (actions.length >= 2) {
+            last = actions.pop();
+            secondToLast = actions.pop();
+            action = actions.join(", ") + [secondToLast, last].join(" and ");
         }
-
-        if (local == false && server == true) {
-            if (["Valid", "Local duplicate"].includes(uname)) { actions.push("Change username"); }
-            if (newPW == "Secure") { actions.push("Change password"); }
-            if (["Valid", "Unchanged"].includes(uname) &&
-                ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
-                actions.push("Add local storage");
-            }
-        }
+        else { action = actions[0]; }
     }
 
-    get unameState() {
+    get unameState() { //Unchanged, Emptied, Duplicate, Valid
         const current = this.current.userName;
         const fieldVal = this.settingsDivUsername.val();
         const deflt = this.group.defaultName;
         const localDup = this.findLocalDup(fieldVal);
         const serverDup = false;
         if (fieldVal == deflt) { return "Default"; }
-        if (fieldVal.length == 0) { return "Empty"; }
+        if (fieldVal.length == 0) { return "Emptied"; }
         if (localDup && serverDup) { return "Duplicate"; }
         if (localDup) { return "Local duplicate"; }
         if (serverDup) { return "Server duplicate"; }
@@ -329,22 +348,37 @@ class UserUtility {
         return "Valid";
     }
 
-    get curPWState() {
+    get curPWState() { //Invalid, Insecure, Secure
+        const fieldVal = this.settingsDivCurrentPassword.val();
+        const hashed = this.hashedPassword(fieldVal);
         const current = this.current.passwordHash;
+        const secure = /^(?=.*\d)(?=(.*\W){2})(?=.*[a-zA-Z])(?!.*\s).{1,15}$/;
+
+        if (hashed != current) { return "Invalid"; }
+        if (!fieldVal.test(secure)) { return "Insecure"; }
+        return "Secure";
     }
 
-    get newPWState() {
+    get newPWState() { //Empty, Different, Insecure, Secure
         const pw1 = this.settingsDivNewPassword1.val();
         const pw2 = this.settingsDivNewPassword2.val();
         const secure = /^(?=.*\d)(?=(.*\W){2})(?=.*[a-zA-Z])(?!.*\s).{1,15}$/;
 
         if (pw1.length == 0 && pw2.length == 0) { return "Empty"; }
         if (pw1 != pw2) { return "Different"; }
-        if (!pw1.text(secure)) { return "Insecure"; }
+        if (!pw1.test(secure)) { return "Insecure"; }
         return "Secure";
     }
 
-    get emailState() {
+    get PWsEqual() {
+        const pw1 = this.settingsDivNewPassword1.val();
+        const pw2 = this.settingsDivNewPassword2.val();
+        const cur = this.settingsDivCurrentPassword.val();
+
+        return (pw1 == pw2 && pw2 == cur);
+    }
+
+    get emailState() { //Unchanged, Invalid, Emptied, Filled, Changed
         const fieldVal = this.settingsDivEmail.val();
         const current = this.current.email;
         const valid = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
@@ -354,6 +388,10 @@ class UserUtility {
         if (fieldVal.length != 0 && current.length == 0) { return "Emptied"; }
         if (fieldVal.length == 0 && current.length != 0) { return "Filled"; }
         return "Changed";
+    }
+
+    hashedPassword(password) {
+        return "hashed " + password;
     }
 
     closeMenus(except) {

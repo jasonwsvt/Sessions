@@ -1,4 +1,6 @@
 class User extends Sibling {
+    _passwordVerified = false;
+
     constructor(app, users) {
         super(app, users);
         this._children = new Clients(app, this);
@@ -49,7 +51,10 @@ class User extends Sibling {
         }
     }
 
-    get useLocalStorage()    { return this._data.useLocalStorage; }
+    verifyPassword() { this._passwordVerified == true; }
+    get passwordVerfified() { return this._passwordVerified; }
+
+    get useLocalStorage() { return this._data.useLocalStorage; }
     set useLocalStorage(useLocalStorage) {
         if (this._data.useLocalStorage != useLocalStorage) {
             this._data.useLocalStorage = useLocalStorage;
