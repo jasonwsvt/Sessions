@@ -155,10 +155,10 @@ class UserUtility {
         const email = "<input id = '" + this._settingsDivEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
 
         const backupFrequencyLabel = "<label style = 'text-align: right; width: 100%'>Back-up Frequency:</label>";
-        const localBackupFrequencies = [5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
+        const localBackupFrequencies = [false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join("");
         const backupFrequencyLocalTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + localBackupFrequencies + "</select>";
-        const serverBackupFrequencies = [60, 120, 180, 240, 300, 600, 900, 1200, 1800, 2400, 3600]
+        const serverBackupFrequencies = [false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join("");
         const backupFrequencyServerTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + serverBackupFrequencies + "</select>";
 
@@ -171,11 +171,11 @@ class UserUtility {
 //        const newAccountInput = "<input id = '" + this._newAccountInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
 
         this.span.append(settingsButton + settingsDiv);
-        this.settingsDiv.append(prefix + username             + infix + usernameTool        + postfix);
-        this.settingsDiv.append(prefix + currentPassword
-                                       + newPassword1 + "<br>"
-                                       + newPassword2         + infix + passwordTool        + postfix);
-        this.settingsDiv.append(prefix + email                + infix + emailTool           + postfix);
+        this.settingsDiv.append(username);
+        this.settingsDiv.append(currentPassword);
+        this.settingsDiv.append(newPassword1);
+        this.settingsDiv.append(newPassword2);
+        this.settingsDiv.append(email);
         this.settingsDiv.append(prefix +                        infix + "Local"                  + infix + "Server"                  + postfix);
         this.settingsDiv.append(prefix + backupFrequencyLabel + infix + backupFrequencyLocalTool + infix + backupFrequencyServerTool + postfix);
 
@@ -248,8 +248,10 @@ class UserUtility {
     }
 
     frequencyName(seconds) {
-        if (seconds>60) { return (seconds/60==1) ? "1 minute" : String(seconds/60) + " minutes"; }
-        else { return seconds + " seconds"; }
+        return (seconds == false)  ? "Manual" : 
+               (seconds < 60)      ? `${seconds} seconds` : 
+              ((seconds / 60) < 1) ? `${seconds / 60} minutes` :
+                                     `${seconds / 3600} hours`;
     }
 
     manageSettingsDivForm() {
@@ -259,8 +261,8 @@ class UserUtility {
         const newPW = this.newPWState;
         const equal = this.PWsEqual();
         const email = this.emailState;
-        const server = this.current.hasServerAccount;
-        const local = this.current.hasLocalAccount;
+        const server = this.current.useServerStorage;
+        const local = this.current.useLocalStorage;
 
         if (curPW == "Invalid")          { messages.push("Current password is invalid."); }
         else {
@@ -301,8 +303,9 @@ class UserUtility {
 
             if (local && !server) {
                 if (["Valid", "Server duplicate"].includes(uname)) { actions.push("Change username"); }
-                if (["Insecure", "Secure"].includes(newPW)) { actions.push("Change password"); }
-                if (newPW == "Empty") { options.push("Remove password"); }
+                if (curPW == "Empty" && ["Insecure", "Secure"].includes(newPW)) { actions.push("Add password"); }
+                if (curPW != "Empty" && ["Insecure", "Secure"].includes(newPW)) { actions.push("Change password"); }
+                if (curPW != "Empty" && newPW == "Empty") { options.push("Remove password"); }
                 if (["Valid", "Unchanged"].includes(uname) &&
                     ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
                     options.push("Add server storage");
@@ -354,6 +357,7 @@ class UserUtility {
         const current = this.current.passwordHash;
         const secure = /^(?=.*\d)(?=(.*\W){2})(?=.*[a-zA-Z])(?!.*\s).{1,15}$/;
 
+        if (current == "" && fieldVal == "") { return "Empty"; }
         if (hashed != current) { return "Invalid"; }
         if (!fieldVal.test(secure)) { return "Insecure"; }
         return "Secure";
@@ -390,6 +394,32 @@ class UserUtility {
         return "Changed";
     }
 
+    action(action) {
+        switch (action) {
+            case "Set username":         this.current.userName = this.settingsDivUsername.val(); break;
+            case "Change username":      this.current.userName = this.settingsDivUsername.val(); break;
+            case "Add password": 
+            case "Change password":      this.current.passwordHash = this._newPasswordHash; break;
+            case "Set email address":
+            case "Change email address": this.current.email = this.settingsDivEmail.val(); break;
+            case "Remove email address": this.current.email = ""; break;
+            default: console.log(action + "is not supported.");
+        }
+    }
+
+    option(option) {
+        switch (option) {
+            case "Create an account with local and server storage": this.current.useServerStorage = true;
+            case "Add local storage":
+            case "Create an account with local storage":            this.current.useLocalStorage = true; break;
+            case "Add server storage":
+            case "Create an account with server storage":           this.current.useServerStorage = true; break;
+            case "Remove password":                                 this.current.passwordHash = "";
+            case "Remove server storage": break; //If no local storage, download all data to sessionStorage?
+            case "Remove local storage": break; //if no server storage, move all data to sessionStorage?
+            default: console.log(option + "is not supported.");
+        }
+    }
     hashedPassword(password) {
         return "hashed " + password;
     }
