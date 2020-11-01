@@ -52,6 +52,7 @@ class Sibling {
 
     load(data) {
         this._data = data;
+        this._updateData();
         this._postLoad();
         if (this._children) { this._children.load(this._data.id); }
     }
@@ -83,10 +84,12 @@ class Sibling {
     _newData(id, parentId) { pass; }
 
     _updateData() {
-        const newData = Object.keys(_newData(0, 0));
-        const data = this._data;
-        newData.map(entry => { if (!this._data.includes(entry)) {this._data[entry] == newData.entry; } });
-        data.map(entry => { if (!newData.includes(entry)) { delete this._data[entry]; } });
-        console.log(data);
+        const newData = this._newData(0, 0);
+        const newKeys = Object.keys(newData);
+        const curKeys = Object.keys(this._data);
+        var change = false;
+        newKeys.map(entry => { if (!curKeys.includes(entry)) { change = true; this._data[entry] = newData[entry]; } });
+        curKeys.map(entry => { if (!newKeys.includes(entry)) { change = true; delete this._data[entry]; } });
+        if (change) { this._save(); }
     }
 }

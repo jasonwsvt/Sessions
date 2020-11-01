@@ -54,10 +54,16 @@ class UserUtility {
         $(document).ready(function() {
             self.settingsButton.on("click", function(e) {
                 self.utilities.closeAllUtilityMenus(self._settingsButtonID);
-                console.log(self._type, self.settingsDiv.hasClass("hidden"))
                 if (self.settingsDiv.hasClass("hidden")) {
                     self.settingsDiv.removeClass("hidden");
                     this.blur();
+                    if (self.current.passwordHash == "" || self.current.passwordVerified) {
+                        self.showSettingsMenu();
+                        self.manageSettingsDivForm();
+                    }
+                    else {
+                        this.showSettingsVerifyPasswordMenu();
+                    }
                 }
                 else { console.log("got here");
                     self._closeSettingsMenu();
@@ -65,8 +71,13 @@ class UserUtility {
                 e.stopPropagation();
             });
 
+            self.settingsDiv.find("input").on("keypress", function(e) {
+                e.stopPropagation();
+            });
+
             self.settingsDiv.find("input").on("keyup", function(e) {
-                this.manageSettingsDivForm();
+                self.manageSettingsDivForm();
+                e.stopPropagation();
             });
 
             self.settingsDiv.on("click", function(e) {
@@ -137,7 +148,7 @@ class UserUtility {
     get newAccountDivUsername()         { return $("#" + this._createNewAccountDivUsernameID); }
     get newAccountDivPassword()         { return $("#" + this._createNewAccountDivPasswordID); }
 
-    _init() {
+    _build() {
         const plusIcon = this._plusIcon;
         const pencilIcon = this._pencilIcon;
         const searchIcon = this._searchIcon;
@@ -150,8 +161,8 @@ class UserUtility {
         const settingsDiv = "<div id = '" + this._settingsDivID + "' class = 'container userMenu hidden'></div>";
         const username =  "<input id = '" + this._settingsDivUsernameID + "' type = 'text' placeholder = 'username' size = '30'>";
         const currentPassword = "<input id = '" + this._settingsDivCurrentPasswordID + "' type = 'password' placeholder = 'enter current password for settings' size = '30'>";
-        const newPassword1 = "<input id = '" + this._settingsDivPassword1ID + "' type = 'password' placeholder = 'new password' size = '30'>";
-        const newPassword2 = "<input id = '" + this._settingsDivPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
+        const newPassword1 = "<input id = '" + this._settingsDivNewPassword1ID + "' type = 'password' placeholder = 'new password' size = '30'>";
+        const newPassword2 = "<input id = '" + this._settingsDivNewPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
         const email = "<input id = '" + this._settingsDivEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
 
         const backupFrequencyLabel = "<label style = 'text-align: right; width: 100%'>Back-up Frequency:</label>";
@@ -185,7 +196,7 @@ class UserUtility {
 //        this.newAccountDiv.append(newAccountInput);
     }
 
-    settingsMenuContents() {
+    manage() {
         if (this.current.passwordHash == "" || this.current.passwordVerified) {
             this.showSettingsMenu();
         }
@@ -195,21 +206,25 @@ class UserUtility {
     }
 
     showSettingsVerifyPasswordMenu() {
-        const fields = [this.settingsDivUsername, this.settingsDivEmail, this.settingsDivCurrentPassword, this.settingsDivNewPassword1, this.settingsDivNewPassword2];
-        fields.forEach(field, () => { if(!field.hasClass("hidden")) { field.addClass("hidden"); } });
-        this.settingsDivCurrentPassword.removeClass("hidden");
-
+        if (!this.settingsDivUsername.hasClass("hidden")) { this.settingsDivUsername.addClass("hidden"); }
+        if (!this.settingsDivEmail.hasClass("hidden")) { this.settingsDivEmail.addClass("hidden"); }
+        if (!this.settingsDivCurrentPassword.hasClass("hidden")) { this.settingsDivCurrentPassword.addClass("hidden"); }
+        if (!this.settingsDivNewPassword1.hasClass("hidden")) { this.settingsDivNewPassword1.addClass("hidden"); }
+        if (!this.settingsDivNewPassword2.hasClass("hidden")) { this.settingsDivNewPassword2.addClass("hidden"); }
+        if (this.settingsDivCurrentPassword.hasClass("hidden")) { this.settingsDivCurrentPassword.removeClass("hidden"); }
     }
 
     showSettingsMenu() {
-        const fields = [this.settingsDivUsername, this.settingsDivEmail, this.settingsDivCurrentPassword, this.settingsDivNewPassword1, this.settingsDivNewPassword2];
-        fields.forEach(field, () => { if(field.hasClass("hidden")) { field.removeClass("hidden"); } });
-        this.settingsDivCurrentPassword.addClass("hidden");
+        if(this.settingsDivUsername.hasClass("hidden")) { this.settingsDivUsername.removeClass("hidden"); }
+        if(this.settingsDivEmail.hasClass("hidden")) { this.settingsDivEmail.removeClass("hidden"); }
+        if(this.settingsDivCurrentPassword.hasClass("hidden")) { this.settingsDivCurrentPassword.removeClass("hidden"); }
+        if(this.settingsDivNewPassword1.hasClass("hidden")) { this.settingsDivNewPassword1.removeClass("hidden"); }
+        if(this.settingsDivNewPassword2.hasClass("hidden")) { this.settingsDivNewPassword2.removeClass("hidden"); }
+        if(!this.settingsDivCurrentPassword.hasClass("hidden")) { this.settingsDivCurrentPassword.addClass("hidden"); }
         this.settingsButton.html(this.current.userName);
         this.settingsDiv.css("left", String(this.settingsButton.position().left) + "px");
         this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
         this.settingsDivUsername.val(this.current.userName);
-        this.manageSettingsDivForm();
     }
 
     manageLoginMenu() {
@@ -248,24 +263,26 @@ class UserUtility {
     }
 
     frequencyName(seconds) {
-        return (seconds == false)  ? "Manual" : 
-               (seconds < 60)      ? `${seconds} seconds` : 
-              ((seconds / 60) < 1) ? `${seconds / 60} minutes` :
-                                     `${seconds / 3600} hours`;
+        return (seconds == false) ? "Manual" : 
+               (seconds < 60)     ? `${seconds} seconds` : 
+               (seconds == 60)    ? "1 minute" :
+               (seconds < 3600)   ? `${seconds / 60} minutes` :
+               (seconds == 3600)  ? "1 hour" :
+                                    `${seconds / 3600} hours`;
     }
 
     manageSettingsDivForm() {
-        var messages = [], actions = [], options = [];
+        var messages = [], actions = [], action = "", options = [];
         const uname = this.unameState;
         const curPW = this.curPWState;
         const newPW = this.newPWState;
-        const equal = this.PWsEqual();
         const email = this.emailState;
         const server = this.current.useServerStorage;
         const local = this.current.useLocalStorage;
 
-        if (curPW == "Invalid")          { messages.push("Current password is invalid."); }
+        if (curPW == "Invalid")              { messages.push("Current password is invalid."); }
         else {
+            if (uname == "Emptied")          { messages.push("Usernames are required."); }
             if (uname == "Local duplicate")  { messages.push("Username is duplicated locally."); }
             if (uname == "Server duplicate") { messages.push("Username is duplicated on the server."); }
             if (uname == "Empty")            { messages.push("Username must have at least one character."); }
@@ -274,7 +291,12 @@ class UserUtility {
 
             if (!server) {
                 if (uname == "Default") { messages.push("Server storage requires a username that's not the default."); }
-                if (curPW != "Secure" || newPW != "Secure") { messages.push("Server storage requires a more secure password."); }
+                if ((curPW == "Insecure" && newPW == "Empty") || newPW == "Insecure") {
+                    messages.push("Server storage requires a more secure password.");
+                }
+                if (curPW == "Empty" && newPW == "Empty") {
+                    messages.push("Server storage requires a secure password.");
+                }
             }
 
             if (server) {
@@ -287,35 +309,35 @@ class UserUtility {
             }
 
             if (!local && !server) {
-                if (["Valid", "Unchanged"].includes(uname) &&
-                    ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
+                if (["Filled", "Unchanged"].includes(uname) &&
+                    ((curPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
                     options.push("Create an account with local and server storage");
                 }
-                if (["Valid", "Local duplicate", "Unchanged"].includes(uname) &&
-                    ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
+                if (["Filled", "Local duplicate", "Unchanged"].includes(uname) &&
+                    ((curPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
                     options.push("Create an account with server storage");
                 }
-                if (["Valid", "Server duplicate", "Unchanged"].includes(uname) == "Valid" && email != "Invalid" &&
-                    ((["Empty", "Insecure", "Secure"].includes(CurPW) && newPW == "Empty") || ["Empty", "Insecure", "Secure"].includes(newPW))) {
+                if (["Filled", "Server duplicate", "Unchanged"].includes(uname) && email != "Invalid" &&
+                    ((["Empty", "Insecure", "Secure"].includes(curPW) && newPW == "Empty") || ["Empty", "Insecure", "Secure"].includes(newPW))) {
                     options.push("Create an account with local storage");
                 }
             }
 
             if (local && !server) {
-                if (["Valid", "Server duplicate"].includes(uname)) { actions.push("Change username"); }
+                if (["Filled", "Server duplicate"].includes(uname)) { actions.push("Change username"); }
                 if (curPW == "Empty" && ["Insecure", "Secure"].includes(newPW)) { actions.push("Add password"); }
                 if (curPW != "Empty" && ["Insecure", "Secure"].includes(newPW)) { actions.push("Change password"); }
                 if (curPW != "Empty" && newPW == "Empty") { options.push("Remove password"); }
-                if (["Valid", "Unchanged"].includes(uname) &&
-                    ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
+                if (["Filled", "Unchanged"].includes(uname) &&
+                    ((curPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
                     options.push("Add server storage");
                 }
             }
 
             if (!local && server) {
-                if (["Valid", "Local duplicate"].includes(uname)) { actions.push("Change username"); }
+                if (["Filled", "Local duplicate"].includes(uname)) { actions.push("Change username"); }
                 if (newPW == "Secure") { actions.push("Change password"); }
-                if (["Valid", "Unchanged"].includes(uname) &&
+                if (["Filled", "Unchanged"].includes(uname) &&
                     ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
                     options.push("Add local storage");
                 }
@@ -331,27 +353,29 @@ class UserUtility {
         if (actions.length >= 2) {
             last = actions.pop();
             secondToLast = actions.pop();
-            action = actions.join(", ") + [secondToLast, last].join(" and ");
+            action = actions.join(", ") + [secondToLast, last].join(", and ");
         }
         else { action = actions[0]; }
+        console.log(action, options, messages);
     }
 
-    get unameState() { //Unchanged, Emptied, Duplicate, Valid
+    get unameState() { //Unchanged, Emptied, Duplicate, Filled
         const current = this.current.userName;
         const fieldVal = this.settingsDivUsername.val();
         const deflt = this.group.defaultName;
-        const localDup = this.findLocalDup(fieldVal);
-        const serverDup = false;
+
         if (fieldVal == deflt) { return "Default"; }
-        if (fieldVal.length == 0) { return "Emptied"; }
+        if (current.length > 0 && fieldVal.length == 0) { return "Emptied"; }
+        const localDup = this.localDupExists(fieldVal);
+        const serverDup = false;
         if (localDup && serverDup) { return "Duplicate"; }
         if (localDup) { return "Local duplicate"; }
         if (serverDup) { return "Server duplicate"; }
         if (current == fieldVal) { return "Unchanged"; }
-        return "Valid";
+        return "Filled";
     }
 
-    get curPWState() { //Invalid, Insecure, Secure
+    get curPWState() { //Empty, Invalid, Insecure, Secure
         const fieldVal = this.settingsDivCurrentPassword.val();
         const hashed = this.hashedPassword(fieldVal);
         const current = this.current.passwordHash;
@@ -370,7 +394,8 @@ class UserUtility {
 
         if (pw1.length == 0 && pw2.length == 0) { return "Empty"; }
         if (pw1 != pw2) { return "Different"; }
-        if (!pw1.test(secure)) { return "Insecure"; }
+        console.log(pw1, typeof pw1);
+        if (!secure.test(pw1)) { return "Insecure"; }
         return "Secure";
     }
 
@@ -386,12 +411,16 @@ class UserUtility {
         const fieldVal = this.settingsDivEmail.val();
         const current = this.current.email;
         const valid = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
-
-        if (!valid.test(fieldVal) && fieldVal.length != 0) { return "Invalid"; }
         if (fieldVal == current) { return "Unchanged"; }
+        if (!valid.test(fieldVal) && fieldVal.length != 0) { return "Invalid"; }
         if (fieldVal.length != 0 && current.length == 0) { return "Emptied"; }
         if (fieldVal.length == 0 && current.length != 0) { return "Filled"; }
         return "Changed";
+    }
+    
+    localDupExists(userName) {
+        return Object.keys(localStorage).includes("users") 
+            ? JSTOR.parse(localStorage.getItem("users")).some(user => (user.userName == userName)) : false;
     }
 
     action(action) {

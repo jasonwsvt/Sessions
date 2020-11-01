@@ -43,12 +43,11 @@ class User extends Sibling {
             this._save();
         }
     }
-    set password(password) {
-        const newHash = this.hash(password);
-        if (this._data.passwordHash != newHash) {
-            this._data.passwordHash = newHash;
-            this._save();
-        }
+
+    get passwordHash() { return this._data.passwordHash; }
+    set passwordHash(passwordHash) {
+        this._data.passwordHash = passwordHash;
+        this._save();
     }
 
     verifyPassword() { this._passwordVerified == true; }
