@@ -446,32 +446,75 @@ class UserUtility {
             ? JSTOR.parse(localStorage.getItem("users")).some(user => (user.userName == userName)) : false;
     }
 
-    action(action) {
-        switch (action) {
-            case "Set username":
-            case "Change username":      this.current.userName = this.settingsDivUsername.val(); break;
-            case "Add password": 
-            case "Change password":      this.current.passwordHash = this._newPasswordHash; break;
-            case "Set email address":
-            case "Change email address": this.current.email = this.settingsDivEmail.val(); break;
-            case "Remove email address": this.current.email = ""; break;
-            default: console.log(action + "is not supported.");
-        }
+    action(actions) {
+        var funcs = [];
+        actions.forEach(action => {
+            switch (action) {
+                case "Set username":
+                case "Change username":      
+                    funcs.push(() => { this.current.userName = this.settingsDivUsername.val(); });
+                    break;
+                case "Add password": 
+                case "Change password":      
+                    funcs.push(() => { this.current.passwordHash = this._newPasswordHash; });
+                    break;
+                case "Set email address":
+                case "Change email address": 
+                    funcs.push(() => { this.current.email = this.settingsDivEmail.val(); });
+                    break;
+                case "Remove email address": 
+                    funcs.push(() => { this.current.email = ""; });
+                    break;
+                default: console.log(action + "is not supported.");
+            }
+        });
     }
 
-    option(option) {
-        switch (option) {
-            case "Create an account with local and server storage": this.current.useServerStorage = true;
-            case "Add local storage":
-            case "Create an account with local storage":            this.current.useLocalStorage = true; break;
-            case "Add server storage":
-            case "Create an account with server storage":           this.current.useServerStorage = true; break;
-            case "Remove password":                                 this.current.passwordHash = "";
-            case "Remove server storage": break; //If no local storage, download all data to sessionStorage?
-            case "Remove local storage": break; //if no server storage, move all data to sessionStorage?
-            default: console.log(option + "is not supported.");
-        }
+    option(options) {
+        var func;
+        options.forEach((option, index) => {
+            switch (option) {
+                case "Create an account with local and server storage":
+                    cl = "btn-success";
+                    func = () => { this.current.useServerStorage = true; this.current.useLocalStorage = true; };
+                    break;
+                case "Add local storage":                               
+                    cl = "btn-success";
+                    func = () => { this.current.useLocalStorage = true; };
+                    break;
+                case "Create an account with local storage":            
+                    cl = "btn-success";
+                    func = () => { this.current.useLocalStorage = true; };
+                    break;
+                case "Add server storage":                              
+                    cl = "btn-success";
+                    func = () => { this.current.useServerStorage = true; }; 
+                    break;
+                case "Create an account with server storage":           
+                    cl = "btn-success";
+                    func = () => { this.current.useServerStorage = true; }; 
+                    break;
+                case "Remove password":                                 
+                    cl = "btn-warning";
+                    func = () => { this.current.passwordHash = ""; }; 
+                    break;
+                case "Remove server storage":
+                    cl = "btn-danger";
+                    break; //If no local storage, download all data to sessionStorage?
+                case "Remove local storage": 
+                    cl = "btn-danger";
+                    break; //if no server storage, move all data to sessionStorage?
+                default: console.log(option + "is not supported.");
+            }
+
+            this.settingsDivOptions.append("<button id = 'settingsDivOption" + index + "' type = 'button' class = 'btn " + cl + "'></button>");
+            $("#settingsDivOption" + index).on("click", (e) => {
+                func();
+                self.manageSettingsDivForm();
+            });
+        });
     }
+
     hashedPassword(password) {
         return "hashed " + password;
     }
