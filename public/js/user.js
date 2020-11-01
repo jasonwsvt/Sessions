@@ -17,7 +17,7 @@ class User extends Sibling {
     get userName()           { return this._data.userName }
     set userName(userName)   {
         if (this._data.userName != userName) {
-            this._userName = userName;
+            this._data.userName = userName;
             this._save();
         }
     }
@@ -56,13 +56,13 @@ class User extends Sibling {
     get useLocalStorage() { return this._data.useLocalStorage; }
     set useLocalStorage(val) {
         if (this._data.useLocalStorage == false && val == true) {
-            this._data.useLocalStorage == true;
+            this._data.useLocalStorage = true;
             this._data.localBackupFrequency = 60;
             //tell the backup object to start backing up
             this._save();
         }
         if (this._data.useLocalStorage == true && val == false) {
-            this._data.useLocalStorage == false;
+            this._data.useLocalStorage = false;
             this._data.localBackupFrequency = false;
             //tell the backup object to stop backing up
             this._save();
@@ -72,13 +72,13 @@ class User extends Sibling {
     get useServerStorage()   { return this._data.useServerStorage; }
     set useServerStorage(val) {
             if (this._data.useServerStorage == false && val == true) {
-                this._data.useServerStorage == true;
+                this._data.useServerStorage = true;
                 this._data.serverBackupFrequency = 36000;
                 //tell the backup object to start backing up
                 this._save();
             }
             if (this._data.useServerStorage == true && val == false) {
-                this._data.useServerStorage == false;
+                this._data.useServerStorage = false;
                 this._data.serverBackupFrequency = false;
                 //tell the backup object to stop backing up
                 this._save();

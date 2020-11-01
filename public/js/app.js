@@ -6,6 +6,7 @@ class App {
 
     constructor() {
         this._users = new Users(this);
+        console.log(this._users);
         this._editor = new Editor(this);
         this._utilities = new Utilities(this);
         this._buttons = new Buttons(this);

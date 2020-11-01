@@ -46,6 +46,18 @@
     border: 1px;
 }
 
+#settingsDivMessages {
+    text-align: center;
+}
+
+#settingsDivAction {
+    text-align: center;
+}
+
+#settingsDivOptions {
+    text-align: center;
+}
+
 .utilityMenu {
     z-index: 2;
     position: absolute;

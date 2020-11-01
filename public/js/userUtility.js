@@ -207,6 +207,7 @@ class UserUtility {
         this.settingsDiv.css("left", String(this.settingsButton.position().left) + "px");
         this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
         this.settingsDivUsername.val(this.current.userName);
+        this.settingsDivEmail.val(this.current.email);
 
 //        this.span.append(loginButton + loginDiv);
 //        this.span.append(newAccountButton + newAccountDiv);
@@ -289,6 +290,7 @@ class UserUtility {
         var messages = [], actions = [], options = [];
         var action = "";
         const uname = this.unameState;
+        const isDefault = (uname == this.group.defaultName);
         const curPW = this.curPWState;
         const newPW = this.newPWState;
         const email = this.emailState;
@@ -342,7 +344,7 @@ class UserUtility {
             }
 
             if (local && !server) {
-                if (["Filled", "Default", "Server duplicate"].includes(uname)) { actions.push("Change username"); }
+                if (["Filled", "Server duplicate"].includes(uname)) { actions.push("Change username"); }
                 if (curPW == "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("Add password"); }
                 if (curPW != "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("Change password"); }
                 if (curPW != "Empty" && newPW == "Empty") { options.push("Remove password"); }
@@ -353,7 +355,7 @@ class UserUtility {
             }
 
             if (!local && server) {
-                if (["Filled", "Local duplicate"].includes(uname)) { actions.push("Change username"); }
+                if (["Filled", "Local duplicate"].includes(uname) && !isDefault) { actions.push("Change username"); }
                 if (newPW == "Strong") { actions.push("Change password"); }
                 if (["Filled", "Unchanged"].includes(uname) &&
                     ((CurPW == "Strong" && newPW == "Empty") || newPW == "Strong") && email != "Invalid") {
@@ -376,18 +378,16 @@ class UserUtility {
     get unameState() { //Unchanged, Emptied, Duplicate, Filled
         const current = this.current.userName;
         const fieldVal = this.settingsDivUsername.val();
-        const deflt = this.group.defaultName;
         const valid = /^[a-z0-9_\-.]{5,20}$/;
 
+        if (current == fieldVal) { return "Unchanged"; }
         if (!valid.test(fieldVal)) { return "Invalid"; }
-        if (fieldVal == deflt) { return "Default"; }
         if (current.length > 0 && fieldVal.length == 0) { return "Emptied"; }
         const localDup = this.localDupExists(fieldVal);
         const serverDup = false;
         if (localDup && serverDup) { return "Duplicate"; }
         if (localDup) { return "Local duplicate"; }
         if (serverDup) { return "Server duplicate"; }
-        if (current == fieldVal) { return "Unchanged"; }
         return "Filled";
     }
 
@@ -441,6 +441,9 @@ class UserUtility {
 
     actions(actions) {
         var funcs = [], actionText = "";
+        const self = this;
+
+        this.settingsDivAction.text("");
 
         if (actions.length) {
             if (actions.length == 1) { actionText = actions[0]; }
@@ -453,7 +456,7 @@ class UserUtility {
                 switch (action) {
                     case "Set username":
                     case "Change username":      
-                        funcs.push(() => { this.current.userName = this.settingsDivUsername.val(); });
+                        funcs.push(() => { this.current.userName = this.settingsDivUsername.val(); this.settingsButton.html(this.current.userName); });
                         break;
                     case "Add password": 
                     case "Change password":      
@@ -470,8 +473,8 @@ class UserUtility {
                 }
             });
 
-            this.settingsDivAction.append("<button id = 'settingsDivAction' type = 'button' class = 'btn btn-primary'>" + action + "</button>");
-            $("#settingsDivOption" + index).on("click", (e) => {
+            this.settingsDivAction.append("<button id = 'settingsDivActionButton' type = 'button' class = 'btn btn-primary'>" + actionText + "</button>");
+            $("#settingsDivActionButton").on("click", (e) => {
                 funcs.forEach(func => { func(); });
                 self.manageSettingsDivForm();
             });
@@ -480,6 +483,10 @@ class UserUtility {
 
     options(options) {
         var func, cl;
+        const self = this;
+
+        this.settingsDivOptions.text("");
+
         options.forEach((option, index) => {
             switch (option) {
                 case "Create an account with local and server storage":
@@ -515,7 +522,7 @@ class UserUtility {
                 default: console.log(option + "is not supported.");
             }
 
-            this.settingsDivOptions.append("<button id = 'settingsDivOption" + index + "' type = 'button' class = 'btn " + cl + "'></button>");
+            this.settingsDivOptions.append("<button id = 'settingsDivOption" + index + "' type = 'button' class = 'btn " + cl + "'>" + option + "</button><br>");
             $("#settingsDivOption" + index).on("click", (e) => {
                 func();
                 self.manageSettingsDivForm();
