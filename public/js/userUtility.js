@@ -31,8 +31,8 @@ class UserUtility {
     _settingsDivMessagesID = "settingsDivMessages";
     _settingsDivActionID = "settingsDivAction";
     _settingsDivOptionsID = "settingsDivOptions";
-    _backupFrequencyLocalToolID = "backupFrequencyLocalTool";
-    _backupFrequencyServerToolID = "backupFrequencyServerTool";
+    _localBackupFrequencyID = "localBackupFrequency";
+    _serverBackupFrequencyID = "serverBackupFrequency";
 
     _loginButtonID = "loginButton";
     _loginDivID = "loginDiv";
@@ -142,8 +142,8 @@ class UserUtility {
     get settingsDivMessages()           { return $("#" + this._settingsDivMessagesID); }
     get settingsDivAction()             { return $("#" + this._settingsDivActionID); }
     get settingsDivOptions()            { return $("#" + this._settingsDivOptionsID); }
-    get backupFrequencyLocalToolID()    { return $("#" + this._backupFrequencyLocalTool); }
-    get backupFrequencyServerToolID()   { return $("#" + this._backupFrequencyServerTool); }
+    get localBackupFrequencyID()        { return $("#" + this._localBackupFrequencyID); }
+    get serverBackupFrequencyID()       { return $("#" + this._serverBackupFrequencyID); }
     get loginButton()                   { return $("#" + this._loginButtonID); }
     get loginDiv()                      { return $("#" + this._loginDivID); }
     get loginDivUsername()              { return $("#" + this._loginDivUsernameID); }
@@ -160,8 +160,8 @@ class UserUtility {
         const searchIcon = this._searchIcon;
         const type = this._type;
 
-        const prefix = "<div class = 'row'><div class = 'col-6'>";
-        const infix = "</div><div class = 'col-3'>";
+        const prefix = "<div class = 'row'><div class = 'col'>";
+        const infix = "</div><div class = 'col'>";
         const postfix = "</div>";
         const settingsButton = "<button id = '" + this._settingsButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const settingsDiv = "<div id = '" + this._settingsDivID + "' class = 'container userMenu hidden'></div>";
@@ -170,14 +170,15 @@ class UserUtility {
         const newPassword1 = "<input id = '" + this._settingsDivNewPassword1ID + "' type = 'password' placeholder = 'new password' size = '30'>";
         const newPassword2 = "<input id = '" + this._settingsDivNewPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
         const email = "<input id = '" + this._settingsDivEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
+        const rememberMe = "<input id '" + this._settingsDivRememberMeID + "' type = 'checkbox' value = ''>Remember me";
 
         const backupFrequencyLabel = "<label style = 'text-align: right; width: 100%'>Back-up Frequency:</label>";
         const localBackupFrequencies = [false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join("");
-        const backupFrequencyLocalTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + localBackupFrequencies + "</select>";
+        const localBackupFrequency = "<select id = '" + this._localBackupFrequencyID + "'>" + localBackupFrequencies + "</select>";
         const serverBackupFrequencies = [false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join("");
-        const backupFrequencyServerTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + serverBackupFrequencies + "</select>";
+        const serverBackupFrequency = "<select id = '" + this._serverBackupFrequencyID + "'>" + serverBackupFrequencies + "</select>";
 
         const settingsDivMessages = "<div id = '" + this._settingsDivMessagesID + "'></div>";
         const settingsDivAction = "<div id = '" + this._settingsDivActionID + "'></div>";
@@ -197,8 +198,10 @@ class UserUtility {
         this.settingsDiv.append(newPassword1);
         this.settingsDiv.append(newPassword2);
         this.settingsDiv.append(email);
-        this.settingsDiv.append(prefix +                        infix + "Local"                  + infix + "Server"                  + postfix);
-        this.settingsDiv.append(prefix + backupFrequencyLabel + infix + backupFrequencyLocalTool + infix + backupFrequencyServerTool + postfix);
+        this.settingsDiv.append(prefix +              infix +                        infix + "Local"              + infix + "Server"              + postfix);
+        this.settingsDiv.append(prefix + rememberMe + infix + backupFrequencyLabel + infix + localBackupFrequency + infix + serverBackupFrequency + postfix);
+//        this.settingsDiv.append(prefix +                        infix + "Local"              + infix + "Server"              + postfix);
+//        this.settingsDiv.append(prefix + backupFrequencyLabel + infix + localBackupFrequency + infix + serverBackupFrequency + postfix);
         this.settingsDiv.append(settingsDivMessages);
         this.settingsDiv.append(settingsDivAction);
         this.settingsDiv.append(settingsDivOptions);
@@ -345,8 +348,8 @@ class UserUtility {
 
             if (local && !server) {
                 if (["Filled", "Server duplicate"].includes(uname)) { actions.push("Change username"); }
-                if (curPW == "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("Add password"); }
-                if (curPW != "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("Change password"); }
+                if (curPW == "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("add password"); }
+                if (curPW != "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("change password"); }
                 if (curPW != "Empty" && newPW == "Empty") { options.push("Remove password"); }
                 if (["Filled", "Unchanged"].includes(uname) &&
                     ((curPW == "Strong" && newPW == "Empty") || newPW == "Strong") && email != "Invalid") {
@@ -355,8 +358,8 @@ class UserUtility {
             }
 
             if (!local && server) {
-                if (["Filled", "Local duplicate"].includes(uname) && !isDefault) { actions.push("Change username"); }
-                if (newPW == "Strong") { actions.push("Change password"); }
+                if (["Filled", "Local duplicate"].includes(uname) && !isDefault) { actions.push("change username"); }
+                if (newPW == "Strong") { actions.push("change password"); }
                 if (["Filled", "Unchanged"].includes(uname) &&
                     ((CurPW == "Strong" && newPW == "Empty") || newPW == "Strong") && email != "Invalid") {
                     options.push("Add local storage");
@@ -364,9 +367,9 @@ class UserUtility {
             }
 
             if (local || server) {
-                if (email == "Filled") { actions.push("Set email address"); }
-                if (email == "Emptied") { actions.push("Remove email address"); }
-                if (email == "Changed") { actions.push("Change email address"); }
+                if (email == "Filled") { actions.push("set email address"); }
+                if (email == "Emptied") { actions.push("remove email address"); }
+                if (email == "Changed") { actions.push("change email address"); }
             }
         }
 
@@ -429,8 +432,8 @@ class UserUtility {
         const valid = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
         if (fieldVal == current) { return "Unchanged"; }
         if (!valid.test(fieldVal) && fieldVal.length != 0) { return "Invalid"; }
-        if (fieldVal.length != 0 && current.length == 0) { return "Emptied"; }
-        if (fieldVal.length == 0 && current.length != 0) { return "Filled"; }
+        if (current.length == 0 && fieldVal.length != 0) { return "Filled"; }
+        if (current.length != 0 && fieldVal.length == 0) { return "Emptied"; }
         return "Changed";
     }
     
@@ -451,22 +454,23 @@ class UserUtility {
             if (actions.length > 2) {
                 actionText = actions.slice(0, -1).join(", ") + ", and " + actions.slice(-1);
             }
+            actionText.replace(/^\w/, function(c) { return c.toUpperCase(); });
 
             actions.forEach(action => {
                 switch (action) {
-                    case "Set username":
-                    case "Change username":      
+                    case "set username":
+                    case "change username":      
                         funcs.push(() => { this.current.userName = this.settingsDivUsername.val(); this.settingsButton.html(this.current.userName); });
                         break;
-                    case "Add password": 
-                    case "Change password":      
+                    case "add password": 
+                    case "change password":      
                         funcs.push(() => { this.current.passwordHash = this._newPasswordHash; });
                         break;
-                    case "Set email address":
-                    case "Change email address": 
+                    case "set email address":
+                    case "change email address": 
                         funcs.push(() => { this.current.email = this.settingsDivEmail.val(); });
                         break;
-                    case "Remove email address": 
+                    case "remove email address": 
                         funcs.push(() => { this.current.email = ""; });
                         break;
                     default: console.log(action + "is not supported.");

@@ -28,22 +28,6 @@ class User extends Sibling {
     get name()               { return `${this._data.firstName} ${this._data.lastName}`; }
     set name(name)           { return; }
 
-    get firstName()          { return this._data.firstName; }
-    set firstName(firstName) {
-        if (this._data.firstName != firstName) {
-            this._firstName = firstName;
-            this._save();
-        }
-    }
-
-    get lastName()           { return this._data.lastName; }
-    set lastName(lastName) {
-        if (this._data.lastName != lastName) {
-            this._lastName = lastName;
-            this._save();
-        }
-    }
-
     get passwordHash() { return this._data.passwordHash; }
     set passwordHash(passwordHash) {
         this._data.passwordHash = passwordHash;
@@ -52,6 +36,14 @@ class User extends Sibling {
 
     verifyPassword() { this._passwordVerified == true; }
     get passwordVerfified() { return this._passwordVerified; }
+
+    get rememberMe()         { return this._data.rememberMe; }
+    set rememberMe(val) {
+        if (this._data.rememberMe != val) { 
+            this._data.rememberMe = val;
+            this._save;
+        }
+    }
 
     get useLocalStorage() { return this._data.useLocalStorage; }
     set useLocalStorage(val) {
@@ -66,6 +58,14 @@ class User extends Sibling {
             this._data.localBackupFrequency = false;
             //tell the backup object to stop backing up
             this._save();
+        }
+    }
+
+    get localBackupFrequency() { return this._data.localBackupFrequency; }
+    set localBackupFrequency(val) {
+        if (this._data.localBackupFrequency != val) {
+            this._data.localBackupFrequency = val;
+            this._save;
         }
     }
 
@@ -85,15 +85,22 @@ class User extends Sibling {
             }
         }
         
-    _newData(id, parentId) {
+        get serverBackupFrequency() { return this._data.serverBackupFrequency; }
+        set serverBackupFrequency(val) {
+            if (this._data.serverBackupFrequency != val) {
+                this._data.serverBackupFrequency = val;
+                this._save;
+            }
+        }
+    
+        _newData(id, parentId) {
         var name = this.siblings.defaultName;
         return {
             id: id,
             userName: name,
-            firstName: "",
-            lastName: "",
             email: "",
             passwordHash: "",
+            rememberMe: false,
             lastEdited: false,
             lastOpened: false,
             practitioner: false,
