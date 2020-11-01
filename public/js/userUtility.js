@@ -368,16 +368,9 @@ class UserUtility {
             }
         }
 
-        if (actions.length >= 2) {
-            last = actions.pop();
-            secondToLast = actions.pop();
-            action = actions.join(", ") + [secondToLast, last].join(", and ");
-        }
-        else if (actions.length) { action = actions[0]; }
-        else { action = ""; }
         this.settingsDivMessages.html(messages.join("<br>"));
-        this.settingsDivAction.html(action);
-        this.settingsDivOptions.html(options.join("<br>"));
+        this.actions(actions);
+        this.options(options);
     }
 
     get unameState() { //Unchanged, Emptied, Duplicate, Filled
@@ -446,32 +439,47 @@ class UserUtility {
             ? JSTOR.parse(localStorage.getItem("users")).some(user => (user.userName == userName)) : false;
     }
 
-    action(actions) {
-        var funcs = [];
-        actions.forEach(action => {
-            switch (action) {
-                case "Set username":
-                case "Change username":      
-                    funcs.push(() => { this.current.userName = this.settingsDivUsername.val(); });
-                    break;
-                case "Add password": 
-                case "Change password":      
-                    funcs.push(() => { this.current.passwordHash = this._newPasswordHash; });
-                    break;
-                case "Set email address":
-                case "Change email address": 
-                    funcs.push(() => { this.current.email = this.settingsDivEmail.val(); });
-                    break;
-                case "Remove email address": 
-                    funcs.push(() => { this.current.email = ""; });
-                    break;
-                default: console.log(action + "is not supported.");
+    actions(actions) {
+        var funcs = [], actionText = "";
+
+        if (actions.length) {
+            if (actions.length == 1) { actionText = actions[0]; }
+            if (actions.length == 2) { actionText = actions[0] + " and " + actions[1]; }
+            if (actions.length > 2) {
+                actionText = actions.slice(0, -1).join(", ") + ", and " + actions.slice(-1);
             }
-        });
+
+            actions.forEach(action => {
+                switch (action) {
+                    case "Set username":
+                    case "Change username":      
+                        funcs.push(() => { this.current.userName = this.settingsDivUsername.val(); });
+                        break;
+                    case "Add password": 
+                    case "Change password":      
+                        funcs.push(() => { this.current.passwordHash = this._newPasswordHash; });
+                        break;
+                    case "Set email address":
+                    case "Change email address": 
+                        funcs.push(() => { this.current.email = this.settingsDivEmail.val(); });
+                        break;
+                    case "Remove email address": 
+                        funcs.push(() => { this.current.email = ""; });
+                        break;
+                    default: console.log(action + "is not supported.");
+                }
+            });
+
+            this.settingsDivAction.append("<button id = 'settingsDivAction' type = 'button' class = 'btn btn-primary'>" + action + "</button>");
+            $("#settingsDivOption" + index).on("click", (e) => {
+                funcs.forEach(func => { func(); });
+                self.manageSettingsDivForm();
+            });
+        }
     }
 
-    option(options) {
-        var func;
+    options(options) {
+        var func, cl;
         options.forEach((option, index) => {
             switch (option) {
                 case "Create an account with local and server storage":
