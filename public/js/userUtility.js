@@ -28,6 +28,9 @@ class UserUtility {
     _settingsDivPasswordServerToolID = "settingsDivPasswordServerTool";
     _settingsDivEmailLocalToolID = "settingsDivEmailLocalTool";
     _settingsDivEmailServerToolID = "settingsDivEmailServerTool";
+    _settingsDivMessagesID = "settingsDivMessages";
+    _settingsDivActionID = "settingsDivAction";
+    _settingsDivOptionsID = "settingsDivOptions";
     _backupFrequencyLocalToolID = "backupFrequencyLocalTool";
     _backupFrequencyServerToolID = "backupFrequencyServerTool";
 
@@ -136,6 +139,9 @@ class UserUtility {
     get settingsDivPasswordServerTool() { return $("#" + this._settingsDivPasswordServerToolID); }
     get settingsDivEmailLocalTool()     { return $("#" + this._settingsDivEmailLocalToolID); }
     get settingsDivEmailServerTool()    { return $("#" + this._settingsDivEmailServerToolID); }
+    get settingsDivMessages()           { return $("#" + this._settingsDivMessagesID); }
+    get settingsDivAction()             { return $("#" + this._settingsDivActionID); }
+    get settingsDivOptions()            { return $("#" + this._settingsDivOptionsID); }
     get backupFrequencyLocalToolID()    { return $("#" + this._backupFrequencyLocalTool); }
     get backupFrequencyServerToolID()   { return $("#" + this._backupFrequencyServerTool); }
     get loginButton()                   { return $("#" + this._loginButtonID); }
@@ -173,6 +179,10 @@ class UserUtility {
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join("");
         const backupFrequencyServerTool = "<select id = '" + this._backupFrequencyServerToolID + "'>" + serverBackupFrequencies + "</select>";
 
+        const settingsDivMessages = "<div id = '" + this._settingsDivMessagesID + "'></div>";
+        const settingsDivAction = "<div id = '" + this._settingsDivActionID + "'></div>";
+        const settingsDivOptions = "<div id = '" + this._settingsDivOptionsID + "'></div>";
+
 //        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
 //        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden userMenu'></div>";
 //        const loginInput = "<input id = '" + this._loginInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
@@ -189,6 +199,9 @@ class UserUtility {
         this.settingsDiv.append(email);
         this.settingsDiv.append(prefix +                        infix + "Local"                  + infix + "Server"                  + postfix);
         this.settingsDiv.append(prefix + backupFrequencyLabel + infix + backupFrequencyLocalTool + infix + backupFrequencyServerTool + postfix);
+        this.settingsDiv.append(settingsDivMessages);
+        this.settingsDiv.append(settingsDivAction);
+        this.settingsDiv.append(settingsDivOptions);
 
 //        this.span.append(loginButton + loginDiv);
 //        this.span.append(newAccountButton + newAccountDiv);
@@ -272,7 +285,8 @@ class UserUtility {
     }
 
     manageSettingsDivForm() {
-        var messages = [], actions = [], action = "", options = [];
+        var messages = [], actions = [], options = [];
+        var action = "";
         const uname = this.unameState;
         const curPW = this.curPWState;
         const newPW = this.newPWState;
@@ -291,11 +305,11 @@ class UserUtility {
 
             if (!server) {
                 if (uname == "Default") { messages.push("Server storage requires a username that's not the default."); }
-                if ((curPW == "Insecure" && newPW == "Empty") || newPW == "Insecure") {
-                    messages.push("Server storage requires a more secure password.");
+                if ((curPW == "Weak" && newPW == "Empty") || newPW == "Weak") {
+                    messages.push("Server storage requires a stronger password.");
                 }
                 if (curPW == "Empty" && newPW == "Empty") {
-                    messages.push("Server storage requires a secure password.");
+                    messages.push("Server storage requires a stronger password.");
                 }
             }
 
@@ -310,35 +324,35 @@ class UserUtility {
 
             if (!local && !server) {
                 if (["Filled", "Unchanged"].includes(uname) &&
-                    ((curPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
+                    ((curPW == "Strong" && newPW == "Empty") || newPW == "Strong") && email != "Invalid") {
                     options.push("Create an account with local and server storage");
                 }
                 if (["Filled", "Local duplicate", "Unchanged"].includes(uname) &&
-                    ((curPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
+                    ((curPW == "Strong" && newPW == "Empty") || newPW == "Strong") && email != "Invalid") {
                     options.push("Create an account with server storage");
                 }
-                if (["Filled", "Server duplicate", "Unchanged"].includes(uname) && email != "Invalid" &&
-                    ((["Empty", "Insecure", "Secure"].includes(curPW) && newPW == "Empty") || ["Empty", "Insecure", "Secure"].includes(newPW))) {
+                if (["Filled", "Default", "Server duplicate", "Unchanged"].includes(uname) && email != "Invalid" &&
+                    ((["Empty", "Weak", "Strong"].includes(curPW) && newPW == "Empty") || ["Empty", "Weak", "Strong"].includes(newPW))) {
                     options.push("Create an account with local storage");
                 }
             }
 
             if (local && !server) {
-                if (["Filled", "Server duplicate"].includes(uname)) { actions.push("Change username"); }
-                if (curPW == "Empty" && ["Insecure", "Secure"].includes(newPW)) { actions.push("Add password"); }
-                if (curPW != "Empty" && ["Insecure", "Secure"].includes(newPW)) { actions.push("Change password"); }
+                if (["Filled", "Default", "Server duplicate"].includes(uname)) { actions.push("Change username"); }
+                if (curPW == "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("Add password"); }
+                if (curPW != "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("Change password"); }
                 if (curPW != "Empty" && newPW == "Empty") { options.push("Remove password"); }
                 if (["Filled", "Unchanged"].includes(uname) &&
-                    ((curPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
+                    ((curPW == "Strong" && newPW == "Empty") || newPW == "Strong") && email != "Invalid") {
                     options.push("Add server storage");
                 }
             }
 
             if (!local && server) {
                 if (["Filled", "Local duplicate"].includes(uname)) { actions.push("Change username"); }
-                if (newPW == "Secure") { actions.push("Change password"); }
+                if (newPW == "Strong") { actions.push("Change password"); }
                 if (["Filled", "Unchanged"].includes(uname) &&
-                    ((CurPW == "Secure" && newPW == "Empty") || newPW == "Secure") && email != "Invalid") {
+                    ((CurPW == "Strong" && newPW == "Empty") || newPW == "Strong") && email != "Invalid") {
                     options.push("Add local storage");
                 }
             }
@@ -355,8 +369,11 @@ class UserUtility {
             secondToLast = actions.pop();
             action = actions.join(", ") + [secondToLast, last].join(", and ");
         }
-        else { action = actions[0]; }
-        console.log(action, options, messages);
+        else if (actions.length) { action = actions[0]; }
+        else { action = ""; }
+        this.settingsDivMessages.html(messages.join("<br>"));
+        this.settingsDivAction.html(action);
+        this.settingsDivOptions.html(options.join("<br>"));
     }
 
     get unameState() { //Unchanged, Emptied, Duplicate, Filled
@@ -375,28 +392,27 @@ class UserUtility {
         return "Filled";
     }
 
-    get curPWState() { //Empty, Invalid, Insecure, Secure
+    get curPWState() { //Empty, Invalid, Insecure, Strong
         const fieldVal = this.settingsDivCurrentPassword.val();
         const hashed = this.hashedPassword(fieldVal);
         const current = this.current.passwordHash;
-        const secure = /^(?=.*\d)(?=(.*\W){2})(?=.*[a-zA-Z])(?!.*\s).{1,15}$/;
-
+        const strongComplexity = RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$-/:-?{-~!\"^_`\[\]])(?=.{8,127})");
+        const strongLength = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{20,127})");
         if (current == "" && fieldVal == "") { return "Empty"; }
         if (hashed != current) { return "Invalid"; }
-        if (!fieldVal.test(secure)) { return "Insecure"; }
-        return "Secure";
+        if (!strongComplexity.test(fieldVal) && !strongLength.test(fieldVal)) { return "Weak"; }
+        return "Strong";
     }
 
-    get newPWState() { //Empty, Different, Insecure, Secure
+    get newPWState() { //Empty, Different, Insecure, Strong
         const pw1 = this.settingsDivNewPassword1.val();
         const pw2 = this.settingsDivNewPassword2.val();
-        const secure = /^(?=.*\d)(?=(.*\W){2})(?=.*[a-zA-Z])(?!.*\s).{1,15}$/;
-
+        const strongComplexity = RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$-/:-?{-~!\"^_`\[\]])(?=.{8,127})");
+        const strongLength = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{20,127})");
         if (pw1.length == 0 && pw2.length == 0) { return "Empty"; }
         if (pw1 != pw2) { return "Different"; }
-        console.log(pw1, typeof pw1);
-        if (!secure.test(pw1)) { return "Insecure"; }
-        return "Secure";
+        if (!strongComplexity.test(pw1) && !strongLength.test(pw1)) { return "Weak"; }
+        return "Strong";
     }
 
     get PWsEqual() {
