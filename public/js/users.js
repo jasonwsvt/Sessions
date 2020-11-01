@@ -2,7 +2,7 @@ class Users extends Siblings {
     constructor(app) {
         super(app, User, "user");
         this._type = "users";
-        this._defaultName = "New User";
+        this._defaultName = "new_user";
         this.load();
     }
 

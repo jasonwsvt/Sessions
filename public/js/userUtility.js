@@ -203,6 +203,11 @@ class UserUtility {
         this.settingsDiv.append(settingsDivAction);
         this.settingsDiv.append(settingsDivOptions);
 
+        this.settingsButton.html(this.current.userName);
+        this.settingsDiv.css("left", String(this.settingsButton.position().left) + "px");
+        this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
+        this.settingsDivUsername.val(this.current.userName);
+
 //        this.span.append(loginButton + loginDiv);
 //        this.span.append(newAccountButton + newAccountDiv);
 //        this.newAccountDiv.addClass("hidden");
@@ -234,10 +239,6 @@ class UserUtility {
         if(this.settingsDivNewPassword1.hasClass("hidden")) { this.settingsDivNewPassword1.removeClass("hidden"); }
         if(this.settingsDivNewPassword2.hasClass("hidden")) { this.settingsDivNewPassword2.removeClass("hidden"); }
         if(!this.settingsDivCurrentPassword.hasClass("hidden")) { this.settingsDivCurrentPassword.addClass("hidden"); }
-        this.settingsButton.html(this.current.userName);
-        this.settingsDiv.css("left", String(this.settingsButton.position().left) + "px");
-        this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
-        this.settingsDivUsername.val(this.current.userName);
     }
 
     manageLoginMenu() {
@@ -296,6 +297,7 @@ class UserUtility {
 
         if (curPW == "Invalid")              { messages.push("Current password is invalid."); }
         else {
+            if (uname == "Invalid")          { messages.push("Usernames must contain only alphanumeric characters and ., -, and _.")}
             if (uname == "Emptied")          { messages.push("Usernames are required."); }
             if (uname == "Local duplicate")  { messages.push("Username is duplicated locally."); }
             if (uname == "Server duplicate") { messages.push("Username is duplicated on the server."); }
@@ -304,12 +306,14 @@ class UserUtility {
             if (email == "Invalid")          { messages.push("Email address must be valid or empty."); }
 
             if (!server) {
-                if (uname == "Default") { messages.push("Server storage requires a username that's not the default."); }
+                if (uname == "Default") {
+                    messages.push("Server storage requires a username that's not the default.");
+                }
                 if ((curPW == "Weak" && newPW == "Empty") || newPW == "Weak") {
                     messages.push("Server storage requires a stronger password.");
                 }
                 if (curPW == "Empty" && newPW == "Empty") {
-                    messages.push("Server storage requires a stronger password.");
+                    messages.push("Server storage requires a strong password.");
                 }
             }
 
@@ -380,7 +384,9 @@ class UserUtility {
         const current = this.current.userName;
         const fieldVal = this.settingsDivUsername.val();
         const deflt = this.group.defaultName;
+        const valid = /^[a-z0-9_\-.]{5,20}$/;
 
+        if (!valid.test(fieldVal)) { return "Invalid"; }
         if (fieldVal == deflt) { return "Default"; }
         if (current.length > 0 && fieldVal.length == 0) { return "Emptied"; }
         const localDup = this.localDupExists(fieldVal);
@@ -396,8 +402,8 @@ class UserUtility {
         const fieldVal = this.settingsDivCurrentPassword.val();
         const hashed = this.hashedPassword(fieldVal);
         const current = this.current.passwordHash;
-        const strongComplexity = RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$-/:-?{-~!\"^_`\[\]])(?=.{8,127})");
-        const strongLength = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{20,127})");
+        const strongComplexity = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#$%^&*()_+\-|~=`{}\[\]:\";\'<>?,.\/])(?=.{8,127})/;
+        const strongLength = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{20,127})/;
         if (current == "" && fieldVal == "") { return "Empty"; }
         if (hashed != current) { return "Invalid"; }
         if (!strongComplexity.test(fieldVal) && !strongLength.test(fieldVal)) { return "Weak"; }
@@ -407,8 +413,9 @@ class UserUtility {
     get newPWState() { //Empty, Different, Insecure, Strong
         const pw1 = this.settingsDivNewPassword1.val();
         const pw2 = this.settingsDivNewPassword2.val();
-        const strongComplexity = RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$-/:-?{-~!\"^_`\[\]])(?=.{8,127})");
-        const strongLength = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{20,127})");
+        const strongComplexity = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#$%^&*()_+\-|~=`{}\[\]:\";\'<>?,.\/])(?=.{8,127})/;
+        const strongLength = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{20,127})/;
+//        console.log(pw1, pw2, strongComplexity.test(pw1), strongLength.test(pw1));
         if (pw1.length == 0 && pw2.length == 0) { return "Empty"; }
         if (pw1 != pw2) { return "Different"; }
         if (!strongComplexity.test(pw1) && !strongLength.test(pw1)) { return "Weak"; }
@@ -441,7 +448,7 @@ class UserUtility {
 
     action(action) {
         switch (action) {
-            case "Set username":         this.current.userName = this.settingsDivUsername.val(); break;
+            case "Set username":
             case "Change username":      this.current.userName = this.settingsDivUsername.val(); break;
             case "Add password": 
             case "Change password":      this.current.passwordHash = this._newPasswordHash; break;
