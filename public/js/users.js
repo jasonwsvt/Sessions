@@ -64,4 +64,60 @@ class Users extends Siblings {
         }
         return false;
     }
+
+    backup() {
+        var sessionEntries, localEntries;
+        if (Object.keys(sessionStorage).includes(this.type) && 
+            (this.app.users.current.useLocalStorage || this.app.users.current.useServerStorage)) {
+            sessionEntries = JSON.parse(sessionStorage.getItem(this.type));
+            if (this.app.users.current.useLocalStorage) {
+                if (Object.keys(localStorage).includes(this.type)) {
+                    localEntries = JSON.parse(localStorage.getItem(this.type));
+                }
+                else { localEntries = []; }
+                sessionEntries.forEach(entry => {
+                    localEntries.find(localEntry => (localEntry.id == entry.id)) = entry;
+                });
+                localStorage.setItem(this.type, JSON.stringify(localEntries));
+            }
+            if (this.app.users.current.useServerStorage) {
+
+            }
+            sessionStorage.removeItem(this.type);
+        }
+    }
+
+    backupToLocal() {
+        if (Object.keys(sessionStorage).includes("backup")) {
+            const sessionBackup = JSON.parse(sessionStorage.getItem(backup));
+            useLocalStorage = sessionBackup.useLocalStorage;
+            useServerStorage = sessionBackup.useServerStorage;
+            sessionTypes = Object.keys(sessionBackup);
+            delete sessionTypes.useLocalStorage;
+            delete sessionTypes.useServerStorage;
+            sessionTypes.forEach(type => {
+                var allEntries = JSON.parse(sessionStorage.getItem(type));
+                sessionBackup[type].forEach(id, () => {
+                    allEntries.find(entry => { if (entry.id == id) { entriesToBackUp.push(entry); } });
+                    entriesToBackUp.
+                });
+            });
+            if (useServerStorage) {
+                var localBackup;
+                if (Object.keys(localStorage).includes("backup")) {
+                    localBackup = JSON.parse(localStorage.getItem("backup"));
+
+                    sessionBackup.forEach(type => {
+                        
+                    })
+                }
+                else { localBackup = backup; }
+                localStorage.setItem("backup", localBackup);
+            }
+        }
+    }
+
+    backupToServer() {
+
+    }
 }
