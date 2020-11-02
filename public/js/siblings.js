@@ -98,4 +98,34 @@ class Siblings {
         }
         return id;
     }
+
+    backup() {
+        var sessionEntries, localEntries;
+        if (Object.keys(sessionStorage).includes(this.type) && 
+            (this.app.users.current.useLocalStorage || this.app.users.current.useServerStorage)) {
+            sessionEntries = JSON.parse(sessionStorage.getItem(this.type));
+            if (this.app.users.current.useLocalStorage) {
+                if (Object.keys(localStorage).includes(this.type)) {
+                    localEntries = JSON.parse(localStorage.getItem(this.type));
+                }
+                else { localEntries = []; }
+                sessionEntries.forEach(entry => {
+                    localEntries.find(localEntry => (localEntry.id == entry.id)) = entry;
+                });
+                localStorage.setItem(this.type, JSON.stringify(localEntries));
+            }
+            if (this.app.users.current.useServerStorage) {
+
+            }
+            sessionStorage.removeItem(this.type);
+        }
+    }
+
+    localBackup() {
+        
+    }
+
+    serverBackup() {
+
+    }
 }

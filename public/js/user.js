@@ -76,29 +76,29 @@ class User extends Sibling {
 
     get useServerStorage()   { return this._data.useServerStorage; }
     set useServerStorage(val) {
-            if (this._data.useServerStorage == false && val == true) {
-                this._data.useServerStorage = true;
-                this._data.serverBackupFrequency = 36000;
-                //tell the backup object to start backing up
-                this._save();
-            }
-            if (this._data.useServerStorage == true && val == false) {
-                this._data.useServerStorage = false;
-                this._data.serverBackupFrequency = false;
-                //tell the backup object to stop backing up
-                this._save();
-            }
+        if (this._data.useServerStorage == false && val == true) {
+            this._data.useServerStorage = true;
+            this._data.serverBackupFrequency = 36000;
+            //tell the backup object to start backing up
+            this._save();
         }
+        if (this._data.useServerStorage == true && val == false) {
+            this._data.useServerStorage = false;
+            this._data.serverBackupFrequency = false;
+            //tell the backup object to stop backing up
+            this._save();
+        }
+    }
         
-        get serverBackupFrequency() { return this._data.serverBackupFrequency; }
-        set serverBackupFrequency(val) {
-            if (this._data.serverBackupFrequency != val) {
-                this._data.serverBackupFrequency = val;
-                this._save();
-            }
+    get serverBackupFrequency() { return this._data.serverBackupFrequency; }
+    set serverBackupFrequency(val) {
+        if (this._data.serverBackupFrequency != val) {
+            this._data.serverBackupFrequency = val;
+            this._save();
         }
+    }
     
-        _newData(id, parentId) {
+    _newData(id, parentId) {
         var name = this.siblings.defaultName;
         return {
             id: id,
@@ -113,6 +113,17 @@ class User extends Sibling {
             localBackupFrequency: false,
             useServerStorage: false,
             serverBackupFrequency: false
+        }
+    }
+
+    startBackupTimer() {
+        if (this.useLocalStorage && (this.nextLocalBackup == null || (this.nextLocalBackup != null && this.nextLocalBackup < this.now))) {
+            this.nextLocalBackup = this.now;
+            setTimeout(this.siblings.localBackup(), this.localBackupFrequency * 1000);
+        }
+        if (this.useServerStorage && (this.nextServerBackup == null || (this.nextServerBackup != null && this.nextServerBackup < this.now))) {
+            this.nextServerBackup = this.now;
+            setTimeout(this.siblings.serverBackup(), this.serverBackupFrequency * 1000);
         }
     }
 }
