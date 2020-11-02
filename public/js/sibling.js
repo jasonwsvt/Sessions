@@ -75,6 +75,8 @@ class Sibling {
 
 //        console.log(this.siblings.type, this._data.id, sessionData, JSON.stringify(sessionData));
         sessionStorage.setItem(this.siblings.type, JSON.stringify(sessionData));
+    
+        this.app.users.current.startBackupTimer();
     }
 
     get now() {
