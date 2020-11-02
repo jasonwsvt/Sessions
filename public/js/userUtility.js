@@ -28,6 +28,7 @@ class UserUtility {
     _settingsDivPasswordServerToolID = "settingsDivPasswordServerTool";
     _settingsDivEmailLocalToolID = "settingsDivEmailLocalTool";
     _settingsDivEmailServerToolID = "settingsDivEmailServerTool";
+    _settingsDivRememberMeID = "settingsDivRememberMe";
     _settingsDivMessagesID = "settingsDivMessages";
     _settingsDivActionID = "settingsDivAction";
     _settingsDivOptionsID = "settingsDivOptions";
@@ -87,6 +88,22 @@ class UserUtility {
                 e.stopPropagation();
             });
 
+            self.settingsDivRememberMe.on("click", function(e) {
+                self.current.rememberMe = ($(this).prop("checked"));
+            });
+
+            self.localBackupFrequency.on("change", function(e) {
+                const val = self.localBackupFrequency.find("option:selected").val();
+                self.current.localBackupFrequency = (val == "false") ? false : parseInt(val);
+                self.manageSettingsDivForm();
+            });
+
+            self.serverBackupFrequency.on("change", function(e) {
+                const val = self.serverBackupFrequency.find("option:selected").val();
+                self.current.serverBackupFrequency = (val == "false") ? false : parseInt(val);
+                self.manageSettingsDivForm();
+            });
+
             self.loginButton.on("click", function(e) {
                 self.utilities.closeAllUtilityMenus(self._loginButtonID);
                 if (self.loginDiv.hasClass("hidden")) {
@@ -139,11 +156,12 @@ class UserUtility {
     get settingsDivPasswordServerTool() { return $("#" + this._settingsDivPasswordServerToolID); }
     get settingsDivEmailLocalTool()     { return $("#" + this._settingsDivEmailLocalToolID); }
     get settingsDivEmailServerTool()    { return $("#" + this._settingsDivEmailServerToolID); }
+    get settingsDivRememberMe()         { return $("#" + this._settingsDivRememberMeID); }
     get settingsDivMessages()           { return $("#" + this._settingsDivMessagesID); }
     get settingsDivAction()             { return $("#" + this._settingsDivActionID); }
     get settingsDivOptions()            { return $("#" + this._settingsDivOptionsID); }
-    get localBackupFrequencyID()        { return $("#" + this._localBackupFrequencyID); }
-    get serverBackupFrequencyID()       { return $("#" + this._serverBackupFrequencyID); }
+    get localBackupFrequency()          { return $("#" + this._localBackupFrequencyID); }
+    get serverBackupFrequency()         { return $("#" + this._serverBackupFrequencyID); }
     get loginButton()                   { return $("#" + this._loginButtonID); }
     get loginDiv()                      { return $("#" + this._loginDivID); }
     get loginDivUsername()              { return $("#" + this._loginDivUsernameID); }
@@ -160,8 +178,8 @@ class UserUtility {
         const searchIcon = this._searchIcon;
         const type = this._type;
 
-        const prefix = "<div class = 'row'><div class = 'col'>";
-        const infix = "</div><div class = 'col'>";
+        const prefix = "<div class = 'row'><div class = 'col-3'>";
+        const infix = "</div><div class = 'col-3' style = 'text-align: center'>";
         const postfix = "</div>";
         const settingsButton = "<button id = '" + this._settingsButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const settingsDiv = "<div id = '" + this._settingsDivID + "' class = 'container userMenu hidden'></div>";
@@ -170,15 +188,11 @@ class UserUtility {
         const newPassword1 = "<input id = '" + this._settingsDivNewPassword1ID + "' type = 'password' placeholder = 'new password' size = '30'>";
         const newPassword2 = "<input id = '" + this._settingsDivNewPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
         const email = "<input id = '" + this._settingsDivEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
-        const rememberMe = "<input id '" + this._settingsDivRememberMeID + "' type = 'checkbox' value = ''>Remember me";
+        const rememberMe = "<input id = '" + this._settingsDivRememberMeID + "' type = 'checkbox'> Remember me";
 
-        const backupFrequencyLabel = "<label style = 'text-align: right; width: 100%'>Back-up Frequency:</label>";
-        const localBackupFrequencies = [false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
-            .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join("");
-        const localBackupFrequency = "<select id = '" + this._localBackupFrequencyID + "'>" + localBackupFrequencies + "</select>";
-        const serverBackupFrequencies = [false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
-            .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join("");
-        const serverBackupFrequency = "<select id = '" + this._serverBackupFrequencyID + "'>" + serverBackupFrequencies + "</select>";
+        const backupFrequencyLabel = "<label style = 'text-align: right'>Back-up Frequency:</label>";
+        const localBackupFrequency = "<select id = '" + this._localBackupFrequencyID + "'></select>";
+        const serverBackupFrequency = "<select id = '" + this._serverBackupFrequencyID + "'></select>";
 
         const settingsDivMessages = "<div id = '" + this._settingsDivMessagesID + "'></div>";
         const settingsDivAction = "<div id = '" + this._settingsDivActionID + "'></div>";
@@ -200,8 +214,6 @@ class UserUtility {
         this.settingsDiv.append(email);
         this.settingsDiv.append(prefix +              infix +                        infix + "Local"              + infix + "Server"              + postfix);
         this.settingsDiv.append(prefix + rememberMe + infix + backupFrequencyLabel + infix + localBackupFrequency + infix + serverBackupFrequency + postfix);
-//        this.settingsDiv.append(prefix +                        infix + "Local"              + infix + "Server"              + postfix);
-//        this.settingsDiv.append(prefix + backupFrequencyLabel + infix + localBackupFrequency + infix + serverBackupFrequency + postfix);
         this.settingsDiv.append(settingsDivMessages);
         this.settingsDiv.append(settingsDivAction);
         this.settingsDiv.append(settingsDivOptions);
@@ -211,6 +223,7 @@ class UserUtility {
         this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
         this.settingsDivUsername.val(this.current.userName);
         this.settingsDivEmail.val(this.current.email);
+        this.settingsDivRememberMe.prop("checked", this.current.rememberMe);
 
 //        this.span.append(loginButton + loginDiv);
 //        this.span.append(newAccountButton + newAccountDiv);
@@ -325,10 +338,31 @@ class UserUtility {
             if (server) {
                 if (uname == "Default") { messages.push("The username must not be the default."); }
                 options.push("Remove server storage");
+                this.serverBackupFrequency.html([false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
+                .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
+                this.serverBackupFrequency.prop("disabled", false);
+                this.serverBackupFrequency.val(String(this.current.serverBackupFrequency));
+                }
+
+            if (!server) {
+                this.serverBackupFrequency.html("<option>Disabled</option>");
+                this.serverBackupFrequency.prop("disabled", true);
             }
 
             if (local) {
                 options.push("Remove local storage");
+                this.settingsDivRememberMe.prop("disabled", false);
+                this.localBackupFrequency.html([false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
+                    .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
+                this.localBackupFrequency.prop("disabled", false);
+                this.localBackupFrequency.val(String(this.current.localBackupFrequency));
+                }
+
+            if (!local) {
+                this.settingsDivRememberMe.prop("checked", false);
+                this.settingsDivRememberMe.prop("disabled", true);
+                this.localBackupFrequency.html("<option>Disabled</option>");
+                this.localBackupFrequency.prop("disabled", true);
             }
 
             if (!local && !server) {
@@ -419,11 +453,11 @@ class UserUtility {
     }
 
     get PWsEqual() {
+        const cur = this.settingsDivCurrentPassword.val();
         const pw1 = this.settingsDivNewPassword1.val();
         const pw2 = this.settingsDivNewPassword2.val();
-        const cur = this.settingsDivCurrentPassword.val();
 
-        return (pw1 == pw2 && pw2 == cur);
+        return (cur == pw1 && cur == pw2);
     }
 
     get emailState() { //Unchanged, Invalid, Emptied, Filled, Changed
@@ -522,6 +556,7 @@ class UserUtility {
                     break; //If no local storage, download all data to sessionStorage?
                 case "Remove local storage": 
                     cl = "btn-danger";
+                    func = () => { this.current.useLocalStorage = false; };
                     break; //if no server storage, move all data to sessionStorage?
                 default: console.log(option + "is not supported.");
             }

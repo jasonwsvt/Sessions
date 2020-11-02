@@ -23,7 +23,12 @@ class User extends Sibling {
     }
 
     get email()              { return this._data.email; }
-    set email(email)         { this._data.email = email; }
+    set email(email)         {
+        if (this._data.email != email) {
+            this._data.email = email;
+            this._save();
+        }
+    }
 
     get name()               { return `${this._data.firstName} ${this._data.lastName}`; }
     set name(name)           { return; }
@@ -41,7 +46,7 @@ class User extends Sibling {
     set rememberMe(val) {
         if (this._data.rememberMe != val) { 
             this._data.rememberMe = val;
-            this._save;
+            this._save();
         }
     }
 
@@ -65,7 +70,7 @@ class User extends Sibling {
     set localBackupFrequency(val) {
         if (this._data.localBackupFrequency != val) {
             this._data.localBackupFrequency = val;
-            this._save;
+            this._save();
         }
     }
 
@@ -89,7 +94,7 @@ class User extends Sibling {
         set serverBackupFrequency(val) {
             if (this._data.serverBackupFrequency != val) {
                 this._data.serverBackupFrequency = val;
-                this._save;
+                this._save();
             }
         }
     

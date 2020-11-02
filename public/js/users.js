@@ -19,7 +19,7 @@ class Users extends Siblings {
         var entries, entry, userName;
 //        console.log(this._type, this._defaultName);
         if (Object.keys(sessionStorage).includes(this._type)) {
-            console.log("has sessionStorage users");
+//            console.log("has sessionStorage users");
             entries = JSON.parse(sessionStorage.getItem(this._type));
             entry = entries.pop(); //.find(entry => (entry.userName == this._defaultName));
             if (entry) {
