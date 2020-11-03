@@ -35,10 +35,9 @@ class Backup {
 
     backupToLocal() {
         var localRecords, sessionRecords;
-        this._nextLocalBackup = null;
+        sessionStorage.removeItem("nextLocalBackup");
         while (true) {
             const keys = Object.keys(sessionStorage);
-            keys.filter(key => (allTypes.includes(key)));
             if (!keys.length) { break; }
             keys.forEach(type => {
                 if (!Object.keys(localStorage).includes(type)) {
@@ -63,5 +62,11 @@ class Backup {
         //find everything from the last server backup time in both sessionStorage and localStorage
         //If the user uses localStorage, don't delete from sessionStorage.
         //
+    }
+
+    synchronizeWithServer() {
+        //send most recent time for each user with serverStorage
+        //server sends back everything afterward, or a most recent time if it's before / same
+        //if the server's most recent time is beforehand, set lastServerBackup and run backupToServer().
     }
 }

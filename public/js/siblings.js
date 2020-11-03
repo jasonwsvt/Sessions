@@ -98,11 +98,4 @@ class Siblings {
         }
         return id;
     }
-
-    allTypes() {
-        var types = [];
-        types.push(this.type);
-        if (this.canHaveChildren) { types.concat(this.unsorted[0].siblings.allTypes); }
-        return types;
-    }
 }

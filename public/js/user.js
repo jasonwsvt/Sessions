@@ -127,4 +127,12 @@ class User extends Sibling {
             serverBackupFrequency: false
         }
     }
-}
+
+    _postInit() {
+        sessionStorage.setItem("currentUser", this._data.userName);
+    }
+ 
+    _postLoad() {
+        sessionStorage.setItem("currentUser", this._data.userName);
+    }
+}}
