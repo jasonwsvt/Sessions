@@ -30,7 +30,7 @@ class Buttons {
 
             self.buttonsNav.find("button").on("click", function(e) {
                 const buttonIndex = $(this).parent().index();
-                const buttonRow = this.buttonRow(buttonIndex);
+                const buttonRow = self.buttonRow(buttonIndex);
 
                 //if ctrl+click, show this and hide all others
                 if (e.ctrlKey) {

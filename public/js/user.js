@@ -105,7 +105,7 @@ class User extends Sibling {
         if (this._data.serverBackupFrequency != val) {
             this._data.serverBackupFrequency = val;
             if (val == false) { sessionStorage.removeItem("backupToServer"); }
-            else { sessionStorage.setItem("backupToServer", true); }
+            else { sessionStorage.setItem("backupToServer", this.userName); }
             this._save();
         }
     }
@@ -126,47 +126,5 @@ class User extends Sibling {
             useServerStorage: false,
             serverBackupFrequency: false
         }
-    }
-
-    startBackupTimer() {
-        if (this._data.localBackupFrequency && (this.nextLocalBackup == null || this.nextLocalBackup <= this.now)) {
-            this._nextLocalBackup = (this.now + this._data.localBackupFrequency) * 1000;
-            this._localBackup = setTimeout(this.backupToLocal, this._data.localBackupFrequency * 1000);
-        }
-        if (this._data.serverBackupFrequency && (this.nextServerBackup == null || this.nextServerBackup <= this.now)) {
-            this._nextServerBackup = (this.now + this._data.serverBackupFrequency) * 1000;
-            this._serverBackup = setTimeout(this.backupToServer, this._data.serverBackupFrequency * 1000);
-        }
-    }
-
-    backupToLocal() {
-        var backupToServer, localRecords, sessionRecords;
-        sessionStorage.setItem("backupToLocalStorage", this.now);
-        const keys = Object.keys(sessionStorage);
-        if (keys.includes("backupToServer")) {
-            backupToServer = true;
-            delete keys.indexOf("backupToServer");
-        }
-        keys.forEach(type => {
-            if (!Object.keys(localStorage).includes(type)) {
-                localStorage.setItem(type, sessionStorage.getItem(type));
-            }
-            else {
-                localRecords = JSON.parse(localStorage.getItem(type));
-                sessionRecords = JSON.parse(sessionStorage.getItem(type));
-                sessionRecords.forEach(s => {
-                    localRecords.filter(l => (l.id != s.id));
-                    localRecords.push(s);
-                });
-                localStorage.setItem(type, JSON.stringify(localRecords));
-            }
-            sessionStorage.removeItem(type);
-        });
-    }
-
-    backupToServer() {
-        //find everything from the last server backup time in both sessionStorage and localStorage
-        //If the user uses localStorage, don't delete from sessionStorage.
-        //
     }
 }
