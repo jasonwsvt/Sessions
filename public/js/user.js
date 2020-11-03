@@ -1,5 +1,3 @@
-const { session } = require("passport");
-
 class User extends Sibling {
     _passwordVerified = false;
     _localBackup = null;
@@ -59,16 +57,14 @@ class User extends Sibling {
         if (this._data.useLocalStorage == false && val == true) {
             this._data.useLocalStorage = true;
             this._data.localBackupFrequency = 60;
-            sessionStorage.setItem("backupToLocalStorage", true);
-            //tell the backup object to start backing up
             this._save();
+            this.app.backup.backupToLocal();
         }
         if (this._data.useLocalStorage == true && val == false) {
             this._data.useLocalStorage = false;
             this._data.localBackupFrequency = false;
-            sessionStorage.setItem("backupToLocalStorage");
-            //tell the backup object to stop backing up
             this._save();
+            this.app.backup.stopLocalBackup();
         }
     }
 
@@ -76,8 +72,9 @@ class User extends Sibling {
     set localBackupFrequency(val) {
         if (this._data.localBackupFrequency != val) {
             this._data.localBackupFrequency = val;
-            if (val == false) { sessionStorage.removeItem("backupToLocalStorage"); }
-            else { sessionStorage.setItem("backupToLocalStorage", true); }
+            if (val == false) {
+                this.app.backup.stopLocalBackup();
+            }
             this._save();
         }
     }
@@ -87,15 +84,14 @@ class User extends Sibling {
         if (this._data.useServerStorage == false && val == true) {
             this._data.useServerStorage = true;
             this._data.serverBackupFrequency = 36000;
-            sessionStorage.setItem("backupToServer", true);
-            //tell the backup object to start backing up
+            this.app.backup.backupToServer();
             this._save();
         }
         if (this._data.useServerStorage == true && val == false) {
             this._data.useServerStorage = false;
             this._data.serverBackupFrequency = false;
-            sessionStorage.removeItem("backupToServer");
-            //tell the backup object to stop backing up
+            this.app.backup.stopServerBackup();
+            //should all data be pulled to the session?  An option to do so?  A warning that everything on the session will be deleted?
             this._save();
         }
     }
@@ -104,8 +100,9 @@ class User extends Sibling {
     set serverBackupFrequency(val) {
         if (this._data.serverBackupFrequency != val) {
             this._data.serverBackupFrequency = val;
-            if (val == false) { sessionStorage.removeItem("backupToServer"); }
-            else { sessionStorage.setItem("backupToServer", this.userName); }
+            if (val == false) {
+                this.app.backup.stopServerBackup();
+            }
             this._save();
         }
     }
@@ -135,4 +132,4 @@ class User extends Sibling {
     _postLoad() {
         sessionStorage.setItem("currentUser", this._data.userName);
     }
-}}
+}

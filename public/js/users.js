@@ -29,9 +29,11 @@ class Users extends Siblings {
         }
         else if (Object.keys(localStorage).includes("rememberMe")) {
             console.log("has RememberMe user");
-            userName = JSON.parse(localStorage.getItem(localStorage.getItem("rememberMe")));
-            entries = JSON.parse(sessionStorage.getItem(this._type));
+            userName = localStorage.getItem("rememberMe");
+            entries = JSON.parse(localStorage.getItem(this._type));
+            console.log(entries);
             entry = entries.find(entry => (entry.userName == userName));
+            console.log(userName, entry);
             this._current = entry.id;
             user = new this._SiblingClass(this);
             user.load(entry);
@@ -65,7 +67,7 @@ class Users extends Siblings {
         return false;
     }
 
-    backup() {
+/*    backup() {
         var sessionEntries, localEntries;
         if (Object.keys(sessionStorage).includes(this.type) && 
             (this.app.users.current.useLocalStorage || this.app.users.current.useServerStorage)) {
@@ -85,5 +87,5 @@ class Users extends Siblings {
             }
             sessionStorage.removeItem(this.type);
         }
-    }
+    } */
 }

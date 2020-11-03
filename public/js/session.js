@@ -64,10 +64,11 @@ class Session extends Sibling {
 
     _newData(id) {
         var issueId = this.parent.id;
+        var creation = this.now;
         return {
             id: id,
             issueId: issueId,
-            creation: this.now,
+            creation: creation,
             lastEdited: null,
             lastOpened: null,
             lines: []
