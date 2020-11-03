@@ -1,3 +1,5 @@
+const { session } = require("passport");
+
 class User extends Sibling {
     _passwordVerified = false;
     _localBackup = null;
@@ -138,36 +140,33 @@ class User extends Sibling {
     }
 
     backupToLocal() {
-        if (Object.keys(sessionStorage).includes("backup")) {
-            const sessionBackup = JSON.parse(sessionStorage.getItem(backup));
-            useLocalStorage = sessionBackup.useLocalStorage;
-            useServerStorage = sessionBackup.useServerStorage;
-            sessionTypes = Object.keys(sessionBackup);
-            delete sessionTypes.useLocalStorage;
-            delete sessionTypes.useServerStorage;
-            sessionTypes.forEach(type => {
-                var allEntries = JSON.parse(sessionStorage.getItem(type));
-                sessionBackup[type].forEach(id, () => {
-                    allEntries.find(entry => { if (entry.id == id) { entriesToBackUp.push(entry); } });
-                    entriesToBackUp.
-                });
-            });
-            if (useServerStorage) {
-                var localBackup;
-                if (Object.keys(localStorage).includes("backup")) {
-                    localBackup = JSON.parse(localStorage.getItem("backup"));
-
-                    sessionBackup.forEach(type => {
-                        
-                    })
-                }
-                else { localBackup = backup; }
-                localStorage.setItem("backup", localBackup);
-            }
+        var backupToServer, localRecords, sessionRecords;
+        sessionStorage.setItem("backupToLocalStorage", this.now);
+        const keys = Object.keys(sessionStorage);
+        if (keys.includes("backupToServer")) {
+            backupToServer = true;
+            delete keys.indexOf("backupToServer");
         }
+        keys.forEach(type => {
+            if (!Object.keys(localStorage).includes(type)) {
+                localStorage.setItem(type, sessionStorage.getItem(type));
+            }
+            else {
+                localRecords = JSON.parse(localStorage.getItem(type));
+                sessionRecords = JSON.parse(sessionStorage.getItem(type));
+                sessionRecords.forEach(s => {
+                    localRecords.filter(l => (l.id != s.id));
+                    localRecords.push(s);
+                });
+                localStorage.setItem(type, JSON.stringify(localRecords));
+            }
+            sessionStorage.removeItem(type);
+        });
     }
 
     backupToServer() {
-
+        //find everything from the last server backup time in both sessionStorage and localStorage
+        //If the user uses localStorage, don't delete from sessionStorage.
+        //
     }
 }
