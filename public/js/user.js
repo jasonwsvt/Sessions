@@ -73,6 +73,10 @@ class User extends Sibling {
     get localBackupFrequency() { return this._data.localBackupFrequency; }
     set localBackupFrequency(val) {
         if (this._data.localBackupFrequency != val) {
+            if (Object.keys(localStorage).includes("nextLocalBackup")) {
+                this.app.backup.stopLocalBackup();
+                this.app.backup.scheduleLocalBackup(this.now - localStorage.getItem("nextLocalBackup") + this._data.localBackupFrequency + val);
+            }
             this._data.localBackupFrequency = val;
             if (val == false) {
                 this.app.backup.stopLocalBackup();

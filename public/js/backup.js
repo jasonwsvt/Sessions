@@ -13,11 +13,11 @@ class Backup {
 
     scheduleBackups(localBackupSeconds, serverBackupSeconds) {
         console.log(localBackupSeconds, serverBackupSeconds);
-        if (localBackupSeconds) { this._scheduleLocalBackup(localBackupSeconds); }
-        if (serverBackupSeconds) { this._scheduleServerBackup(serverBackupSeconds); }
+        if (localBackupSeconds) { this.scheduleLocalBackup(localBackupSeconds); }
+        if (serverBackupSeconds) { this.scheduleServerBackup(serverBackupSeconds); }
     }
 
-    _scheduleLocalBackup(seconds) {
+    scheduleLocalBackup(seconds) {
         const nextBackup = (Object.keys(sessionStorage).includes("nextLocalBackup")) ? true : false;
         if (seconds && !nextBackup) {
             console.log("scheduling a local backup at", this.now + seconds);
@@ -26,7 +26,7 @@ class Backup {
         }
     }
 
-    _scheduleServerBackup(seconds) {
+    scheduleServerBackup(seconds) {
         const nextBackup = (Object.keys(sessionStorage).includes("nextServerBackup")) ? true : false;
         if (seconds && !nextBackup) {
             sessionStorage.setItem("nextServerBackup", (this.now + seconds) * 1000);
@@ -34,9 +34,20 @@ class Backup {
         }
     }
 
-    stopLocalBackup() { clearInterval(this._localBackup); }
+    stopLocalBackup() {
+        clearInterval(this._localBackup);
+        if (Object.keys(localStorage).includes("nextLocalBackup")) {
+            localStorage.removeItem("nextLocalBackup");
+        }
+    }
 
-    stopServerBackup() { clearInterval(this._serverBackup); }
+    stopServerBackup() {
+        clearInterval(this._serverBackup);
+        if (Object.keys(serverStorage).includes("nextLocalBackup")) {
+            serverStorage.removeItem("nextLocalBackup");
+        }
+    }
+
 
     backupToLocal() {
         var localRecords, localKeys, sessionRecords, sessionKeys, repeats = 0;
