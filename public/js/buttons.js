@@ -34,22 +34,22 @@ class Buttons {
 
                 //if ctrl+click, show this and hide all others
                 if (e.ctrlKey) {
-                    navButtons.each(function(index) {
+                    for (var index = 0; index < self.numNavButtons; index ++) {
                         if (index == buttonIndex) {
-                            if (this.navButton(index).hasClass("btn-secondary")) {
+                            if (self.navButton(index).hasClass("btn-secondary")) {
                                 $(this).toggleClass("btn-secondary");
                                 $(this).toggleClass("btn-info");
-                                this.buttonRow(index).toggleClass("hidden");
+                                self.buttonRow(index).toggleClass("hidden");
                             }
                         }
                         else {
-                            if (this.navButton(index).hasClass("btn-info")) {
+                            if (self.navButton(index).hasClass("btn-info")) {
                                 $(this).toggleClass("btn-secondary");
                                 $(this).toggleClass("btn-info");
-                                this.buttonRow(index).toggleClass("hidden");
+                                self.buttonRow(index).toggleClass("hidden");
                             }
                         }
-                    });
+                    }
                 }
 
                 //if shift+click, toggle disabled for nav button / hidden for button group
@@ -68,12 +68,12 @@ class Buttons {
                     }
                     buttonRow[0].scrollIntoView();
                 }
-                $("#" + buttonsID).trigger("scroll");
+                $("#" + this._buttonsID).trigger("scroll");
                 $(document).focus();
             });
 
             $(self.buttons).scroll(function(e) {
-                self = $(this);
+                const self = $(this);
                 self.find(".btn-block").each(function (index) {
                     const div = $(this).parent().parent();
                     if ($(this).outerHeight() < div.height()) {
@@ -110,11 +110,12 @@ class Buttons {
         });
     }
 
-    get cursor()     { return this._app.editor.cursor; }
-    get buttonsNav() { return $("#" + this._buttonsNavID); }
-    get buttons()    { return $("#" + this._buttonsID); }
-    navButton(index) { return this.buttonsNav.find("button").eq(index); }
-    buttonRow(index) { return $("#" + buttonsID + " > .container-fluid > .row").eq(index); }
+    get cursor()        { return this._app.editor.cursor; }
+    get buttonsNav()    { return $("#" + this._buttonsNavID); }
+    get buttons()       { return $("#" + this._buttonsID); }
+    get numNavButtons() { return this.buttonsNav.find("button").length; }
+    navButton(index)    { return this.buttonsNav.find("button").eq(index); }
+    buttonRow(index)    { return $("#" + this._buttonsID + " > .container-fluid > .row").eq(index); }
 
     _getButtonsJSON() {
         return becauseReasonsButtonsData;

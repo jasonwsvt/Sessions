@@ -5,7 +5,6 @@ class Session extends Sibling {
     }
 
     get sessions()         { return this._siblings; }
-    get currentUser()      { return this._siblings.parent.parent.parent.parent; }
 
     get creation()         { return this._data.creation; }
 
@@ -26,7 +25,7 @@ class Session extends Sibling {
                 this._data.lines = session.lines;
             }
             else if (this.currentUser.useLocalStorage && Object.keys(localStorage).includes(this.sessions.type)) {
-                session = JSON.parse(sessionStorage.getItem(this.sessions.type)).find(entry => (entry.id == this._data.id));
+                session = JSON.parse(localStorage.getItem(this.sessions.type)).find(entry => (entry.id == this._data.id));
                 this._data.lines = session.lines;
             }
             else if (this.currentUser.useServerStorage) { //request from server

@@ -46,10 +46,11 @@ class Backup {
             repeats += 1;
             sessionKeys = Object.keys(sessionStorage);
             console.log("sessionKeys before cull:", sessionKeys);
-            if (sessionKeys.includes("lastLocalBackup"))  { sessionKeys.splice(sessionKeys.indexOf("lastLocalBackup"), 1); }
-            if (sessionKeys.includes("lastServerBackup")) { sessionKeys.splice(sessionKeys.indexOf("lastServerBackup"), 1); }
-            if (sessionKeys.includes("nextServerBackup")) { sessionKeys.splice(sessionKeys.indexOf("nextServerBackup"), 1); }
-            if (sessionKeys.includes("currentUser"))      { sessionKeys.splice(sessionKeys.indexOf("currentUser"), 1); }
+            ["lastLocalBackup", "lastServerBackup", "nextServerBackup", "currentUser"].forEach(item => {
+                if (sessionKeys.includes(item)) {
+                    sessionKeys.splice(sessionKeys.indexOf(item), 1);
+                }
+            });
             console.log("sessionKeys after cull:", sessionKeys);
             if (!sessionKeys.length) { break; }
             sessionKeys.forEach(type => {
@@ -71,7 +72,7 @@ class Backup {
                 sessionStorage.removeItem(type);
             });
         }
-        sessionStorage.setItem("lastLocalBackup", this.now);
+        sessionStorage.setItem("lastLocalBackup", Math.floor(Date.now() / 1000));
     }
 
     backupToServer() {

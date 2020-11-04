@@ -7,7 +7,6 @@ class Client extends Sibling {
 
     get issues()           { return this._children; }
     get clients()          { return this._siblings; }
-    get currentUser()      { return this._siblings.parent; }
 
     get parentId()         { return (this._data.userId) ? this._data.userId : null; }
     set parentId(parentId) { if (this._data.userId != parentId) { this._data.userId = parentId; } }

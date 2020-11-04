@@ -9,6 +9,8 @@ class User extends Sibling {
         this._type = "user";
     }
 
+    get currentUser()        { return this; }
+
     get clients()            { return this._children; }
 
     get parentId()           { return null; }
@@ -126,10 +128,10 @@ class User extends Sibling {
     }
 
     _postInit() {
-        sessionStorage.setItem("currentUser", this._data.userName);
+        sessionStorage.setItem("currentUser", this._data.id);
     }
  
     _postLoad() {
-        sessionStorage.setItem("currentUser", this._data.userName);
+        sessionStorage.setItem("currentUser", this._data.id);
     }
 }

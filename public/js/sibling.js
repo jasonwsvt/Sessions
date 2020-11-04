@@ -10,9 +10,10 @@ class Sibling {
         this._siblings = siblings;
     }
     get app()              { return this._app; }
-    get siblings()         { return (this._siblings)        ? this._siblings        : null; }
-    get parent()           { return (this._siblings.parent) ? this._siblings.parent : null; }
-    get children()         { return (this._children)        ? this._children        : null; }
+    get siblings()         { return (this._siblings)        ? this._siblings          : null; }
+    get parent()           { return (this._siblings.parent) ? this._siblings.parent   : null; }
+    get currentUser()      { return (this.parent)           ? this.parent.currentUser : null; }
+    get children()         { return (this._children)        ? this._children          : null; }
     get type()             { return this._type; }
 
     set data(data)         { this._data = data; }
@@ -76,8 +77,8 @@ class Sibling {
 //        console.log(this.siblings.type, this._data.id, sessionData, JSON.stringify(sessionData));
         sessionStorage.setItem(this.siblings.type, JSON.stringify(sessionData));
     
-        this.app.backup.scheduleBackups(this.app.users.current.localBackupFrequency,
-                                        this.app.users.current.serverBackupFrequency);
+        this.app.backup.scheduleBackups(this.currentUser.localBackupFrequency,
+                                        this.currentUser.serverBackupFrequency);
     }
 
     get now() {

@@ -5,7 +5,5 @@ class Sessions extends Siblings {
         this._sortByLastX = true;
     }
 
-    get currentUser() { return this.parent.parent.parent; }
-
     findByCreation(creation)  { return this._sessions.find(session => (session.creation == creation)); }
 }

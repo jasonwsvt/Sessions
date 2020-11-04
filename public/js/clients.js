@@ -5,6 +5,4 @@ class Clients extends Siblings {
         this._defaultName = "New Client";
         this._defaultFirstName = "Self";
     }
-
-    get currentUser() { return this.parent; }
 }

@@ -4,6 +4,4 @@ class Issues extends Siblings {
         this._type = "issues";
         this._defaultName = "New Issue";
     }
-
-    get currentUser() { return this.parent.parent; }
 }

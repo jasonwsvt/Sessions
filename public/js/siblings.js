@@ -21,6 +21,7 @@ class Siblings {
     get type()                { return this._type; }
     get defaultName()         { return this._defaultName; }
     get defaultFirstName()    { return this._defaultFirstName; }
+    get currentUser()         { return this.parent.currentUser; }
 
     get firstCreated()        { return this.sortByCreation.slice(0)[0]; }
     get mostRecentlyCreated() { return this.sortByCreation.slice(-1)[0]; }
