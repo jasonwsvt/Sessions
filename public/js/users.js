@@ -17,15 +17,22 @@ class Users extends Siblings {
     get sortByName()          { return; }
 
     load() {
-        if (Object.keys(sessionStorage).includes(this._type)) { //Wasn't backed up
+        if (Object.keys(sessionStorage).includes(this._type)) {                      //Wasn't backed up
             this._current = JSON.parse(sessionStorage.getItem(this._type)).pop().id;
             this._loadFrom(sessionStorage);
         }
-        else if (Object.keys(localStorage).includes("rememberMe")) {
+        else if (Object.keys(localStorage).includes("rememberMe")) {                 //Remember Me set
             this._current = localStorage.getItem("rememberMe");
             this._loadFrom(localStorage);
         }
-        else {
+        else if (Object.keys(localStorage).includes(this._type)) {                   //One user, no PW
+            const users = JSON.parse(localStorage.getItem(this._type));
+            if (users.length == 1 && users[0].passwordHash == "") {
+                this._current = users[0].id;
+                this._loadFrom(localStorage);
+            }
+        }
+        if (this._current == null) {
             this.new();
         }
     }

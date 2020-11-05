@@ -20,8 +20,14 @@ class Backup {
     scheduleLocalBackup(seconds) {
         const nextBackup = (Object.keys(sessionStorage).includes("nextLocalBackup")) ? true : false;
         if (seconds && !nextBackup) {
+            var nextLocalBackup = this.now + seconds;
+            const nextServerBackup = (Object.keys(sessionStorage).includes("nextServerBackup")) ? sessionStorage.getItem("nextServerBackup") : false;
+            if (nextServerBackup) {
+                const difference = nextServerBackup - nextLocalBackup;
+                if (difference < 5 && difference > 5) { nextLocalBackup = nextServerBackup - 5; }
+            }
             console.log("scheduling a local backup at", this.now + seconds);
-            sessionStorage.setItem("nextLocalBackup", (this.now + seconds) * 1000);
+            sessionStorage.setItem("nextLocalBackup", (this.now + seconds));
             this._localBackup = setTimeout(this.backupToLocal, seconds * 1000);
         }
     }
@@ -29,22 +35,29 @@ class Backup {
     scheduleServerBackup(seconds) {
         const nextBackup = (Object.keys(sessionStorage).includes("nextServerBackup")) ? true : false;
         if (seconds && !nextBackup) {
-            sessionStorage.setItem("nextServerBackup", (this.now + seconds) * 1000);
+            var nextServerBackup = this.now + seconds;
+            const nextLocalBackup = (Object.keys(sessionStorage).includes("nextLocalBackup")) ? sessionStorage.getItem("nextLocalBackup") : false;
+            if (nextLocalBackup) {
+                const difference = nextLocalBackup - nextServerBackup;
+                if (difference < 5 && difference > 5) { nextServerBackup = nextLocalBackup + 5; }
+            }
+            sessionStorage.setItem("nextServerBackup", (this.now + seconds));
             this._serverBackup = setTimeout(this.backupToServer, seconds * 1000);
         }
     }
 
     stopLocalBackup() {
+        console.log("Cancelling local backup");
         clearInterval(this._localBackup);
-        if (Object.keys(localStorage).includes("nextLocalBackup")) {
-            localStorage.removeItem("nextLocalBackup");
+        if (Object.keys(sessionStorage).includes("nextLocalBackup")) {
+            sessionStorage.removeItem("nextLocalBackup");
         }
     }
 
     stopServerBackup() {
         clearInterval(this._serverBackup);
-        if (Object.keys(serverStorage).includes("nextLocalBackup")) {
-            serverStorage.removeItem("nextLocalBackup");
+        if (Object.keys(sessionStorage).includes("nextLocalBackup")) {
+            sessionStorage.removeItem("nextLocalBackup");
         }
     }
 
@@ -72,10 +85,10 @@ class Backup {
                 else {
                     console.log("localKeys:", localKeys);
                     console.log("type:", type);
-                    localRecords = (localKeys.includes(type)) ? JSON.parse(localStorage.getItem(type)) : [];
+                    localRecords = JSON.parse(localStorage.getItem(type));
                     sessionRecords = JSON.parse(sessionStorage.getItem(type));
                     sessionRecords.forEach(s => {
-                        localRecords.filter(l => (l.id != s.id));
+                        localRecords = localRecords.filter(l => (l.id != s.id));
                         localRecords.push(s);
                     });
                     localStorage.setItem(type, JSON.stringify(localRecords));

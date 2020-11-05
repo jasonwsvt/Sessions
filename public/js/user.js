@@ -71,16 +71,28 @@ class User extends Sibling {
     }
 
     get localBackupFrequency() { return this._data.localBackupFrequency; }
-    set localBackupFrequency(val) {
-        if (this._data.localBackupFrequency != val) {
-            if (Object.keys(localStorage).includes("nextLocalBackup")) {
+    set localBackupFrequency(newFrequency) {
+        console.log("changing backup frequency from", this._data.localBackupFrequency, "to", newFrequency);
+        if (this._data.localBackupFrequency != newFrequency) {
+            console.log("not the same");
+            if (Object.keys(sessionStorage).includes("nextLocalBackup")) {
+                console.log("localStorage item exists")
                 this.app.backup.stopLocalBackup();
-                var seconds = this.now - localStorage.getItem("nextLocalBackup") + this._data.localBackupFrequency + val;
-                if (seconds < 0) { seconds = 0; }
-                this.app.backup.scheduleLocalBackup(seconds);
+                var secondsFromPreviousScheduling = this.now - sessionStorage.getItem("nextLocalBackup") + this._data.localBackupFrequency;
+                if (secondsFromPreviousScheduling > newFrequency) {
+                    console.log("backing up now")
+                    this.app.backup.backupToLocal();
+                }
+                else {
+                    console.log("scheduling backup", newFrequency - secondsFromPreviousScheduling, "seconds from now");
+                    this.app.backup.scheduleLocalBackup(newFrequency - secondsFromPreviousScheduling);
+                }
             }
-            this._data.localBackupFrequency = val;
-            if (val == false) {
+            else {
+                this.app.backup.scheduleLocalBackup(newFrequency);
+            }
+            this._data.localBackupFrequency = newFrequency;
+            if (newFrequency == false) {
                 this.app.backup.stopLocalBackup();
             }
             this._save();
