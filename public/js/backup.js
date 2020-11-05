@@ -105,8 +105,8 @@ class Backup {
 
     backupToServer() {
         //nextServerBackup contains username and backup time
-        //find everything from the last server backup time in both sessionStorage and localStorage
-        //If the user uses localStorage, don't delete from sessionStorage.
+        //find everything from the last server backup time in both session Storage and localStorage
+        //If the user uses localStorage, don't delete from session Storage.
         //
     }
 
