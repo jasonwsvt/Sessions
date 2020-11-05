@@ -56,7 +56,7 @@ class UserUtility {
         this._build();
 
         $(document).ready(function() {
-            self.settingsButton.on("click", function(e) {
+            self.settingsButton.on("click", (e) => {
                 self.utilities.closeAllUtilityMenus(self._settingsButtonID);
                 if (self.settingsDiv.hasClass("hidden")) {
                     self.settingsDiv.removeClass("hidden");
@@ -75,20 +75,20 @@ class UserUtility {
                 e.stopPropagation();
             });
 
-            self.settingsDiv.find("input").on("keypress", function(e) {
+            self.settingsDiv.find("input").on("keypress", (e) => {
                 e.stopPropagation();
             });
 
-            self.settingsDiv.find("input").on("keyup", function(e) {
+            self.settingsDiv.find("input").on("keyup", (e) => {
                 self.manageSettingsDivForm();
                 e.stopPropagation();
             });
 
-            self.settingsDiv.on("click", function(e) {
+            self.settingsDiv.on("click", (e) => {
                 e.stopPropagation();
             });
 
-            self.settingsDivRememberMe.on("click", function(e) {
+            self.settingsDivRememberMe.on("click", (e) => {
                 if ($(this).prop("checked")) {
                     localStorage.setItem("rememberMe", self.current.id);
                 }
@@ -97,19 +97,19 @@ class UserUtility {
                 }
             });
 
-            self.localBackupFrequency.on("change", function(e) {
+            self.localBackupFrequency.on("change", (e) => {
                 const val = self.localBackupFrequency.find("option:selected").val();
                 self.current.localBackupFrequency = (val == "false") ? false : parseInt(val);
                 self.manageSettingsDivForm();
             });
 
-            self.serverBackupFrequency.on("change", function(e) {
+            self.serverBackupFrequency.on("change", (e) => {
                 const val = self.serverBackupFrequency.find("option:selected").val();
                 self.current.serverBackupFrequency = (val == "false") ? false : parseInt(val);
                 self.manageSettingsDivForm();
             });
 
-            self.loginButton.on("click", function(e) {
+            self.loginButton.on("click", (e) => {
                 self.utilities.closeAllUtilityMenus(self._loginButtonID);
                 if (self.loginDiv.hasClass("hidden")) {
                     self.loginDiv.removeClass("hidden");
@@ -121,7 +121,7 @@ class UserUtility {
                 e.stopPropagation();
             });
 
-            self.newAccountButton.on("click", function(e) {
+            self.newAccountButton.on("click", (e) => {
                 self.utilities.closeAllUtilityMenus(self._newAccountButtonID);
                 if (self.newAccountDiv.hasClass("hidden")) {
                     self.newAccountDiv.removeClass("hidden");

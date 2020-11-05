@@ -4,10 +4,14 @@ class Backup {
 
     constructor() {
         const keys = Object.keys(sessionStorage);
-        const userName = (keys.includes("userName")) ? sessionStorage.getItem("userName") : false;
-        if (userName) {
-            if (keys.includes("nextLocalBackup")) { this.backupToLocal(); }
-            if (keys.includes("nextServerBackup")) { this.backupToServer(); }
+        const id = (keys.includes("currentUser")) ? sessionStorage.getItem("currentUser") : false;
+        if (id) {
+            user = (keys.includes("users")) ?
+                JSON.parse(sessionStorage.getItem("users")).find(entry => (entry.id == id)) : false;
+            if (user) {
+                if (user.nextLocalBackup) { this.backupToLocal(); }
+                if (user.nextServerBackup) { this.backupToServer(); }
+            }
         }       
     }
 
