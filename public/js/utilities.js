@@ -33,10 +33,6 @@ class Utilities {
             $("html").on("click", function(e) {
                 self.closeAllUtilityMenus();
             });
-
-            $(window).resize(function() {
-                self.buttons.adjustDivHeights();
-            });
         });
     }
 

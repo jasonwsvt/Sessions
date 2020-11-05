@@ -19,6 +19,10 @@ class Buttons {
         this.adjustDivHeights();
 
         $(document).ready(function() {
+            $(window).resize(function() {
+                self.adjustDivHeights();
+            });
+
             $('[data-toggle="popover"]').popover({
                 placement: 'top',
                 trigger: 'hover',
