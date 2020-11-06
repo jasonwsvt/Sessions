@@ -138,6 +138,8 @@ class User extends Sibling {
             lastEdited: false,
             lastOpened: false,
             practitioner: false,
+            updateContainer: "sessionStorage",
+            storageContainer: "sessionStorage",
             useLocalStorage: false,
             localBackupFrequency: false,
             useServerStorage: false,

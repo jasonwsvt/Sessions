@@ -99,4 +99,40 @@ class Siblings {
         }
         return id;
     }
+
+    _store() {
+        console.log("backing up to storage");
+        this.updateContainer.removeItem("next_" + this._type + "_backup");
+        if (!this.storageExists) {
+            this.storage = this.update;
+        }
+        else {
+            var storageRecords = JSON.parse(this.storage);
+            JSON.parse(this.update).forEach(s => {
+                storageRecords = storageRecords.filter(l => (l.id != s.id));
+                storageRecords.push(s);
+            });
+            this.storage = JSON.stringify(storageRecords);
+        }
+        this.update = null;
+        this.updateContainer.setItem("lastLocalBackup", Math.floor(Date.now() / 1000));
+    }
+
+    _backup() {
+        if (this.currentUser.useServerStorage) {
+
+        }
+    }
+
+    get updateContainer()  { return (this.currentUser.updateStorage == "localStorage") ? localStorage : sessionStorage; }
+    get updateExists()     { return (Object.keys(this.updateContainer).includes("update_" + this._type)); }
+    get update()           { return this.updateContainer.getItem("update_" + this._type); }
+    set update(value)      { this.updateContainer.setItem("update_" + this._type, value); }
+    removeUpdate()         { this.updateContainer.removeItem("update_" + this._type); }
+
+    get storageContainer() { return (this.currentUser.useLocalStorage) ? localStorage : sessionStorage; }
+    get storageExists()    { return (Object.keys(this.storageContainer).includes(this._type)); }
+    get storage()          { return this.storageContainer.getItem(this._type); }
+    set storage(value)     { this.storageContainer.setItem(this._type, value); }
+    removeStorage()        { this.storageContainer.removeItem(this._type); }
 }
