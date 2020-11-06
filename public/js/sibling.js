@@ -77,8 +77,7 @@ class Sibling {
 //        console.log(this.siblings.type, this._data.id, sessionData, JSON.stringify(sessionData));
         sessionStorage.setItem(this.siblings.type, JSON.stringify(sessionData));
     
-        this.app.backup.scheduleBackups(this.currentUser.localBackupFrequency,
-                                        this.currentUser.serverBackupFrequency);
+        this.siblings.schedulePushes();
     }
 
     get now() {

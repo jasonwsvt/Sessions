@@ -100,8 +100,13 @@ class Siblings {
         return id;
     }
 
-    schedulePushToStorage() {
-        if (this.currentUser.pushToStorageFrequency && !this.nextPushToStorage) {
+    schedulePushes() {
+        if (this.currentUser.pushToStorageFrequency) { this.schedulePushToStorage(); }
+        if (this.currentUser.pushToServerFrequency)  { this.schedulePushToServer(); }
+    }
+
+    schedulePushToStorage(seconds = this.currentUser.pushToStorageFrequency) {
+        if (seconds && !this.nextPushToStorage) {
             this.nextPushToStorage = this.now + this.currentUser.pushToStorageFrequency;
             if (this.nextPushToServer) {
                 const difference = this.nextPushToServer - this.nextPushToStorage;
@@ -137,29 +142,31 @@ class Siblings {
     pushToServer() {
     }
 
-    get updateContainer()    { return (this.currentUser.updateStorage == "localStorage") ? localStorage : sessionStorage; }
-    get updateExists()       { return (Object.keys(this.updateContainer).includes("update_" + this._type)); }
-    get update()             { return this.updateContainer.getItem("update_" + this._type); }
-    set update(value)        { this.updateContainer.setItem("update_" + this._type, value); }
-    removeUpdateContainer()  { this.updateContainer.removeItem("update_" + this._type); }
-    updateItem(id, newX)     { this.update = this.update.map(x => ((x.id == id) ? newX : x)); }
+    get updateContainer()       { return (this.currentUser.useLocalStorage) ? localStorage : sessionStorage; }
+    get updateExists()          { return (Object.keys(this.updateContainer).includes("update_" + this._type)); }
+    get update()                { return this.updateContainer.getItem("update_" + this._type); }
+    set update(value)           { this.updateContainer.setItem("update_" + this._type, value); }
+    removeUpdateContainer()     { this.updateContainer.removeItem("update_" + this._type); }
+    updateChangeItem(newX)      { this.update = JSON.stringify(JSON.parse(this.update).map(x => ((x.id == newX.id) ? newX : x))); }
+    updateNewItem(newX)         { this.update = JSON.stringify(JSON.parse(this.update).push(newX)); }
 
-    get storageContainer()   { return (this.currentUser.useLocalStorage) ? localStorage : sessionStorage; }
-    get storageExists()      { return (Object.keys(this.storageContainer).includes(this._type)); }
-    get storage()            { return this.storageContainer.getItem(this._type); }
-    set storage(value)       { this.storageContainer.setItem(this._type, value); }
-    removeStorageContainer() { this.storageContainer.removeItem(this._type); }
-    storeItem(id, newX)      { this.storage = this.storage.map(x => ((x.id == id) ? newX : x)); }
+    get storageContainer()      { return (this.currentUser.useLocalStorage) ? localStorage : sessionStorage; }
+    get storageExists()         { return (Object.keys(this.storageContainer).includes(this._type)); }
+    get storage()               { return this.storageContainer.getItem(this._type); }
+    set storage(value)          { this.storageContainer.setItem(this._type, value); }
+    removeStorageContainer()    { this.storageContainer.removeItem(this._type); }
+    storageChangeItem(newX)     { this.storage = JSON.stringify(JSON.parse(this.storage).map(x => ((x.id == newX.id) ? newX : x))); }
+    storageNewItem(newX)        { this.storage = JSON.stringify(JSON.parse(this.storage).push(newX)); }
 
-    get lastPushToStorage()     { this.storageContainer.getItem("lastStorageBackup"); }
-    set lastPushToStorage(time) { this.storageContainer.setItem("lastStorageBackup", time); }
-    get nextPushToStorage()     { this.storageContainer.getItem("nextStorageBackup"); }
-    set nextPushToStorage()     { this.storageContainer.setItem("nextStorageBackup", time); }
-    removeNextPushToStorage()   { this.storageContainer.removeItem("nextStorageBackup"); }
+    get lastPushToStorage()     { this.storageContainer.getItem("lastPushToStorage"); }
+    set lastPushToStorage(time) { this.storageContainer.setItem("lastPushToStorage", time); }
+    get nextPushToStorage()     { this.storageContainer.getItem("nextPushToStorage"); }
+    set nextPushToStorage(time) { this.storageContainer.setItem("nextPushToStorage", time); }
+    removeNextPushToStorage()   { this.storageContainer.removeItem("nextPushToStorage"); }
 
-    get lastPushToServer()      { this.storageContainer.getItem("lastServerBackup");}
-    set lastPushToServer()      { this.storageContainer.setItem("lastServerBackup", time);}
-    get nextPushToServer()      { this.storageContainer.getItem("nextServerBackup");}
-    get nextPushToServer()      { this.storageContainer.setItem("nextServerBackup", time);}
-    removeNextPushToServer()    { this.storageContainer.removeItem("nextServerBackup"); }
+    get lastPushToServer()      { this.storageContainer.getItem("lastPushToServer");}
+    set lastPushToServer(time)  { this.storageContainer.setItem("lastPushToServer", time);}
+    get nextPushToServer()      { this.storageContainer.getItem("nextPushToServer");}
+    get nextPushToServer(time)  { this.storageContainer.setItem("nextPushToServer", time);}
+    removeNextPushToServer()    { this.storageContainer.removeItem("nextPushToServer"); }
 }

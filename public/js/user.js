@@ -58,42 +58,43 @@ class User extends Sibling {
     set useLocalStorage(val) {
         if (this._data.useLocalStorage == false && val == true) {
             this._data.useLocalStorage = true;
-            this._data.localBackupFrequency = 60;
+            this._data.pushToStorageFrequency = 60;
             this._save();
             this.app.backup.backupToLocal();
         }
         if (this._data.useLocalStorage == true && val == false) {
             this._data.useLocalStorage = false;
-            this._data.localBackupFrequency = false;
+            this._data.pushToStorageFrequency = false;
             this._save();
             this.app.backup.stopLocalBackup();
         }
     }
 
-    get localBackupFrequency() { return this._data.localBackupFrequency; }
-    set localBackupFrequency(newFrequency) {
-        console.log("changing backup frequency from", this._data.localBackupFrequency, "to", newFrequency);
-        if (this._data.localBackupFrequency != newFrequency) {
+    get pushToStorageFrequency() { return this._data.pushToStorageFrequency; }
+    set pushToStorageFrequency(newFrequency) {
+        console.log("changing backup frequency from", this._data.pushToStorageFrequency, "to", newFrequency);
+        if (this._data.pushToStorageFrequency != newFrequency) {
             console.log("not the same");
-            if (Object.keys(sessionStorage).includes("nextLocalBackup")) {
+            const nextPushToStorage = this.siblings.nextPushToStorage;
+            if (nextPushToStorage) {
                 console.log("localStorage item exists")
-                this.app.backup.stopLocalBackup();
-                var secondsFromPreviousScheduling = this.now - sessionStorage.getItem("nextLocalBackup") + this._data.localBackupFrequency;
+                this.siblings.stopPushToStorage();
+                var secondsFromPreviousScheduling = this.now - nextPushToStorage + this._data.pushToStorageFrequency;
                 if (secondsFromPreviousScheduling > newFrequency) {
                     console.log("backing up now")
-                    this.app.backup.backupToLocal();
+                    this.siblings.pushToStorage();
                 }
                 else {
                     console.log("scheduling backup", newFrequency - secondsFromPreviousScheduling, "seconds from now");
-                    this.app.backup.scheduleLocalBackup(newFrequency - secondsFromPreviousScheduling);
+                    this.schedulePushToStorage(newFrequency - secondsFromPreviousScheduling);
                 }
             }
             else {
-                this.app.backup.scheduleLocalBackup(newFrequency);
+                this.siblings.schedulePushToStorage(newFrequency);
             }
-            this._data.localBackupFrequency = newFrequency;
+            this._data.pushToStorageFrequency = newFrequency;
             if (newFrequency == false) {
-                this.app.backup.stopLocalBackup();
+                this.siblings.stopPushToStorage();
             }
             this._save();
         }
@@ -103,23 +104,23 @@ class User extends Sibling {
     set useServerStorage(val) {
         if (this._data.useServerStorage == false && val == true) {
             this._data.useServerStorage = true;
-            this._data.serverBackupFrequency = 36000;
+            this._data.pushToServerFrequency = 36000;
             this.app.backup.backupToServer();
             this._save();
         }
         if (this._data.useServerStorage == true && val == false) {
             this._data.useServerStorage = false;
-            this._data.serverBackupFrequency = false;
+            this._data.pushToServerFrequency = false;
             this.app.backup.stopServerBackup();
             //should all data be pulled to the session?  An option to do so?  A warning that everything on the session will be deleted?
             this._save();
         }
     }
         
-    get serverBackupFrequency() { return this._data.serverBackupFrequency; }
-    set serverBackupFrequency(val) {
-        if (this._data.serverBackupFrequency != val) {
-            this._data.serverBackupFrequency = val;
+    get pushToServerFrequency() { return this._data.pushToServerFrequency; }
+    set pushToServerFrequency(val) {
+        if (this._data.pushToServerFrequency != val) {
+            this._data.pushToServerFrequency = val;
             if (val == false) {
                 this.app.backup.stopServerBackup();
             }
@@ -128,7 +129,7 @@ class User extends Sibling {
     }
     
     _newData(id, parentId) {
-        var name = this.siblings.defaultName;
+        const name = this.siblings.defaultName;
         return {
             id: id,
             userName: name,
@@ -138,12 +139,10 @@ class User extends Sibling {
             lastEdited: false,
             lastOpened: false,
             practitioner: false,
-            updateContainer: "sessionStorage",
-            storageContainer: "sessionStorage",
             useLocalStorage: false,
-            localBackupFrequency: false,
+            pushToStorageFrequency: false,
             useServerStorage: false,
-            serverBackupFrequency: false
+            pushToServerFrequency: false
         }
     }
 
