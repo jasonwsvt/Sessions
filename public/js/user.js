@@ -145,10 +145,10 @@ class User extends Sibling {
     }
 
     _postInit() {
-        sessionStorage.setItem("currentUser", this._data.id);
+        this.storageContainer.setItem("currentUser", this._data.id);
     }
  
     _postLoad() {
-        sessionStorage.setItem("currentUser", this._data.id);
+        this.storageContainer.setItem("currentUser", this._data.id);
     }
 }

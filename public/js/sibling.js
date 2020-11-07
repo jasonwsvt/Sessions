@@ -1,4 +1,4 @@
-class Sibling {
+class Sibling extends StorageUtility {
     _app = null;
     _siblings = false;
     _type = null;
@@ -6,15 +6,20 @@ class Sibling {
     _children = false;
     
     constructor(app, siblings) {
+        super();
         this._app = app;
         this._siblings = siblings;
     }
-    get app()              { return this._app; }
-    get siblings()         { return (this._siblings)        ? this._siblings          : null; }
-    get parent()           { return (this._siblings.parent) ? this._siblings.parent   : null; }
-    get currentUser()      { return (this.parent)           ? this.parent.currentUser : null; }
-    get children()         { return (this._children)        ? this._children          : null; }
-    get type()             { return this._type; }
+    get app()                    { return this._app; }
+    get currentUser()            { return (this.parent)           ? this.parent.currentUser : null; }
+    get useLocalStorage()        { return this.currentUser.useLocalStorage; }
+    get useServerStorage()       { return this.currentUser.useServerStorage; }
+    get pushToStorageFrequency() { return this.currentUser.pushToStorageFrequency; }
+    get pushToServerFrequency()  { return this.currentUser.pushToServerFrequency; }
+    get parent()                 { return (this._siblings.parent) ? this._siblings.parent   : null; }
+    get type()                   { return this._type; }
+    get siblings()               { return (this._siblings)        ? this._siblings          : null; }
+    get children()               { return (this._children)        ? this._children          : null; }
 
     set data(data)         { this._data = data; }
     get data()             { return this._data; }
@@ -61,22 +66,8 @@ class Sibling {
     _postLoad() { return; }
 
     _save() {
-        var sessionData = [];
         this._data.lastEdited = this.now;
-        if (Object.keys(sessionStorage).includes(this.siblings.type)) {
-            sessionData = JSON.parse(sessionStorage.getItem(this.siblings.type));
-        }
-        sessionData = sessionData.filter(session => {
-//            console.log(session.id, (session.id == this._data.id), this._data.id);
-            if (Number(session.id) != Number(this._data.id)) {
-                return session;
-            }
-        });
-        sessionData.push(this._data);
-
-//        console.log(this.siblings.type, this._data.id, sessionData, JSON.stringify(sessionData));
-        sessionStorage.setItem(this.siblings.type, JSON.stringify(sessionData));
-    
+        this.updateChangeItem(this._data);
         this.siblings.schedulePushes();
     }
 
