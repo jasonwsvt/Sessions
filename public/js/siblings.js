@@ -15,6 +15,7 @@ class Siblings {
         this._SiblingClass = SiblingClass;
         if (parent != undefined) { this._parent = parent; }
     }
+
     get app()                 { return this._app; }
     get parent()              { return (this._parent) ? this._parent : null; }
     get canHaveChildren()     { return this._canHaveChildren; }
@@ -100,6 +101,12 @@ class Siblings {
         return id;
     }
 
+    initialPush() {
+        if (this.currentUser.pushToStorageFrequency) { this.pushToStorage(); }
+        if (this.currentUser.pushToServerFrequency)  { this.pushToServer(); }
+        if (this.canHaveChildren) { this.current.children.initialPush(); }
+    }
+
     schedulePushes() {
         if (this.currentUser.pushToStorageFrequency) { this.schedulePushToStorage(); }
         if (this.currentUser.pushToServerFrequency)  { this.schedulePushToServer(); }
@@ -107,13 +114,13 @@ class Siblings {
 
     schedulePushToStorage(seconds = this.currentUser.pushToStorageFrequency) {
         if (seconds && !this.nextPushToStorage) {
-            this.nextPushToStorage = this.now + this.currentUser.pushToStorageFrequency;
-            if (this.nextPushToServer) {
+            this.nextPushToStorage = this.now + seconds;
+            if (Number.isInteger(this.nextPushToServer)) {
                 const difference = this.nextPushToServer - this.nextPushToStorage;
                 if (difference < 5 && difference > 5) { this.nextPushToStorage = this.nextPushToStorage - 5; }
             }
-            console.log("scheduling a local backup at", this.nextPushToStorage);
             this._scheduledPushToStorage = setTimeout(this.pushToStorage, (this.nextPushToStorage - this.now) * 1000);
+            console.log("scheduled a storage push at", this.nextPushToStorage);
         }
     }
 
@@ -158,15 +165,15 @@ class Siblings {
     storageChangeItem(newX)     { this.storage = JSON.stringify(JSON.parse(this.storage).map(x => ((x.id == newX.id) ? newX : x))); }
     storageNewItem(newX)        { this.storage = JSON.stringify(JSON.parse(this.storage).push(newX)); }
 
-    get lastPushToStorage()     { this.storageContainer.getItem("lastPushToStorage"); }
+    get lastPushToStorage()     { return this.storageContainer.getItem("lastPushToStorage"); }
     set lastPushToStorage(time) { this.storageContainer.setItem("lastPushToStorage", time); }
-    get nextPushToStorage()     { this.storageContainer.getItem("nextPushToStorage"); }
+    get nextPushToStorage()     { return this.storageContainer.getItem("nextPushToStorage"); }
     set nextPushToStorage(time) { this.storageContainer.setItem("nextPushToStorage", time); }
     removeNextPushToStorage()   { this.storageContainer.removeItem("nextPushToStorage"); }
 
-    get lastPushToServer()      { this.storageContainer.getItem("lastPushToServer");}
+    get lastPushToServer()      { return this.storageContainer.getItem("lastPushToServer");}
     set lastPushToServer(time)  { this.storageContainer.setItem("lastPushToServer", time);}
-    get nextPushToServer()      { this.storageContainer.getItem("nextPushToServer");}
-    get nextPushToServer(time)  { this.storageContainer.setItem("nextPushToServer", time);}
+    get nextPushToServer()      { return this.storageContainer.getItem("nextPushToServer");}
+    set nextPushToServer(time)  { this.storageContainer.setItem("nextPushToServer", time);}
     removeNextPushToServer()    { this.storageContainer.removeItem("nextPushToServer"); }
 }

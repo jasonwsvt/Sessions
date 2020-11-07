@@ -34,7 +34,7 @@ class Utility {
         this._build();
 
         $(document).ready(function() {
-            self.pickerButton.on("click", (e) => {
+            self.pickerButton.on("click", function (e) {
                 self.utilities.closeAllUtilityMenus(self._pickerButtonID);
                 if (self.entries > 1) {
                     if (self.pickerDiv.hasClass("hidden")) {
@@ -57,15 +57,15 @@ class Utility {
                 e.stopPropagation();
             });
 
-            self.pickerSearchInput.on("click", (e) => {
+            self.pickerSearchInput.on("click", function (e) {
                 e.stopPropagation();
             });
 
-            self.pickerSearchInput.on("keypress", (e) => {
+            self.pickerSearchInput.on("keypress", function (e) {
                 e.stopPropagation();
             });
 
-            self.pickerSearchInput.on("keyup", (e) => {
+            self.pickerSearchInput.on("keyup", function (e) {
                 for (var i = 0; i < self.entries; i++) {
                     if (!self.button(i).text().includes($(this).val())) {
                         self.row(i).addClass("hidden");
@@ -77,11 +77,11 @@ class Utility {
                 e.stopPropagation();
             });
 
-            self.pickerScrollDiv.on("click", (e) => {
+            self.pickerScrollDiv.on("click", function (e) {
                 e.stopPropagation();
             });
 
-            self.pickerDiv.on("click", (e) => {
+            self.pickerDiv.on("click", function (e) {
                 e.stopPropagation();
             });
 //
@@ -89,7 +89,7 @@ class Utility {
 //            });
 
             if (self._naming) {
-                self.renameButton.on("click", (e) => {
+                self.renameButton.on("click", function (e) {
                     self.utilities.closeAllUtilityMenus(self._renameButtonID);
                     if (self.renameDiv.hasClass("hidden")) {
                         self.renameDiv.removeClass("hidden");
@@ -105,7 +105,7 @@ class Utility {
                     e.stopPropagation();
                 });
 
-                self.renameInput.on("keypress", (e) => {
+                self.renameInput.on("keypress", function (e) {
                     if (e.key == "Enter") {
                         self.renameDiv.addClass("hidden");
                         self.renameDiv.removeClass("utilityMenu");
@@ -116,7 +116,7 @@ class Utility {
                     e.stopPropagation();
                 });
 
-                self.addButton.on("click", (e) => {
+                self.addButton.on("click", function (e) {
                     self.utilities.closeAllUtilityMenus(self._addButtonID);
                     if (self.addDiv.hasClass("hidden")) {
                         self.addDiv.removeClass("hidden");
@@ -131,7 +131,7 @@ class Utility {
                     e.stopPropagation();
                 });
 
-                self.addInput.on("keypress", (e) => {
+                self.addInput.on("keypress", function (e) {
                     if (e.key == "Enter") {
                         self.group.new();
                         self.current.name = this.value;
@@ -143,7 +143,7 @@ class Utility {
                 });
             }
             else {
-                self.addButton.on("click", (e) => {
+                self.addButton.on("click", function (e) {
                     self.group.new();
                     self.editor.load();
                     self.utilities.manage(self._type);
@@ -242,7 +242,7 @@ class Utility {
             code += "</div>";
             this.pickerScrollDiv.append(code);
 
-            this.pickerScrollDiv.find("button").on("click", (e) => {
+            this.pickerScrollDiv.find("button").on("click", function (e) {
                 self.group.findById(this.value).setAsCurrent();
                 self.editor.load();
                 self.closeMenus();

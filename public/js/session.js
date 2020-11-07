@@ -19,7 +19,7 @@ class Session extends Sibling {
         var session;
         console.log("loading lines for", this._data.id);
         if (this._data.lines.length == 0) {
-            //On the off-chance the app crashed and on reload the backup didn't catch them yet
+            //On the off-chance the app crashed and on reload the push to storage didn't catch them yet
             if (Object.keys(sessionStorage).includes(this.sessions.type)) {
                 session = JSON.parse(sessionStorage.getItem(this.sessions.type)).find(entry => (entry.id == this._data.id));
                 this._data.lines = session.lines;

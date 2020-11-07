@@ -1,7 +1,7 @@
 class User extends Sibling {
     _passwordVerified = false;
-    _localBackup = null;
-    _serverBackup = null;
+    _pushToStorage = null;
+    _pushToServer = null;
 
     constructor(app, users) {
         super(app, users);
@@ -60,33 +60,32 @@ class User extends Sibling {
             this._data.useLocalStorage = true;
             this._data.pushToStorageFrequency = 60;
             this._save();
-            this.app.backup.backupToLocal();
         }
         if (this._data.useLocalStorage == true && val == false) {
             this._data.useLocalStorage = false;
             this._data.pushToStorageFrequency = false;
+            this.siblings.stopPushToStorage();
             this._save();
-            this.app.backup.stopLocalBackup();
         }
     }
 
     get pushToStorageFrequency() { return this._data.pushToStorageFrequency; }
     set pushToStorageFrequency(newFrequency) {
-        console.log("changing backup frequency from", this._data.pushToStorageFrequency, "to", newFrequency);
+        console.log("changing push to storage frequency from", this._data.pushToStorageFrequency, "to", newFrequency);
         if (this._data.pushToStorageFrequency != newFrequency) {
             console.log("not the same");
             const nextPushToStorage = this.siblings.nextPushToStorage;
             if (nextPushToStorage) {
-                console.log("localStorage item exists")
+                console.log("next push to storage exists")
                 this.siblings.stopPushToStorage();
                 var secondsFromPreviousScheduling = this.now - nextPushToStorage + this._data.pushToStorageFrequency;
                 if (secondsFromPreviousScheduling > newFrequency) {
-                    console.log("backing up now")
+                    console.log("pushing to storage now")
                     this.siblings.pushToStorage();
                 }
                 else {
-                    console.log("scheduling backup", newFrequency - secondsFromPreviousScheduling, "seconds from now");
-                    this.schedulePushToStorage(newFrequency - secondsFromPreviousScheduling);
+                    console.log("scheduling a push to storage at ", newFrequency - secondsFromPreviousScheduling, "seconds from now");
+                    this.siblings.schedulePushToStorage(newFrequency - secondsFromPreviousScheduling);
                 }
             }
             else {
@@ -105,13 +104,12 @@ class User extends Sibling {
         if (this._data.useServerStorage == false && val == true) {
             this._data.useServerStorage = true;
             this._data.pushToServerFrequency = 36000;
-            this.app.backup.backupToServer();
             this._save();
         }
         if (this._data.useServerStorage == true && val == false) {
             this._data.useServerStorage = false;
             this._data.pushToServerFrequency = false;
-            this.app.backup.stopServerBackup();
+            this.siblings.stopPushToServer();
             //should all data be pulled to the session?  An option to do so?  A warning that everything on the session will be deleted?
             this._save();
         }
@@ -122,7 +120,7 @@ class User extends Sibling {
         if (this._data.pushToServerFrequency != val) {
             this._data.pushToServerFrequency = val;
             if (val == false) {
-                this.app.backup.stopServerBackup();
+                this.siblings.stopPushToServer();
             }
             this._save();
         }

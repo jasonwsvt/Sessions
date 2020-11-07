@@ -32,8 +32,8 @@ class UserUtility {
     _settingsDivMessagesID = "settingsDivMessages";
     _settingsDivActionID = "settingsDivAction";
     _settingsDivOptionsID = "settingsDivOptions";
-    _localBackupFrequencyID = "localBackupFrequency";
-    _serverBackupFrequencyID = "serverBackupFrequency";
+    _pushToStorageFrequencyID = "pushToStorageFrequency";
+    _pushToServerFrequencyID = "pushToServerFrequency";
 
     _loginButtonID = "loginButton";
     _loginDivID = "loginDiv";
@@ -56,7 +56,7 @@ class UserUtility {
         this._build();
 
         $(document).ready(function() {
-            self.settingsButton.on("click", (e) => {
+            self.settingsButton.on("click", function (e) {
                 self.utilities.closeAllUtilityMenus(self._settingsButtonID);
                 if (self.settingsDiv.hasClass("hidden")) {
                     self.settingsDiv.removeClass("hidden");
@@ -75,20 +75,20 @@ class UserUtility {
                 e.stopPropagation();
             });
 
-            self.settingsDiv.find("input").on("keypress", (e) => {
+            self.settingsDiv.find("input").on("keypress", function (e) {
                 e.stopPropagation();
             });
 
-            self.settingsDiv.find("input").on("keyup", (e) => {
+            self.settingsDiv.find("input").on("keyup", function (e) {
                 self.manageSettingsDivForm();
                 e.stopPropagation();
             });
 
-            self.settingsDiv.on("click", (e) => {
+            self.settingsDiv.on("click", function (e) {
                 e.stopPropagation();
             });
 
-            self.settingsDivRememberMe.on("click", (e) => {
+            self.settingsDivRememberMe.on("click", function (e) {
                 if ($(this).prop("checked")) {
                     localStorage.setItem("rememberMe", self.current.id);
                 }
@@ -97,19 +97,19 @@ class UserUtility {
                 }
             });
 
-            self.localBackupFrequency.on("change", (e) => {
-                const val = self.localBackupFrequency.find("option:selected").val();
-                self.current.localBackupFrequency = (val == "false") ? false : parseInt(val);
+            self.pushToStorageFrequency.on("change", function (e) {
+                const val = $(this).find("option:selected").val();
+                self.current.pushToStorageFrequency = (val == "false") ? false : parseInt(val);
                 self.manageSettingsDivForm();
             });
 
-            self.serverBackupFrequency.on("change", (e) => {
-                const val = self.serverBackupFrequency.find("option:selected").val();
-                self.current.serverBackupFrequency = (val == "false") ? false : parseInt(val);
+            self.pushToServerFrequency.on("change", function (e) {
+                const val = $(this).find("option:selected").val();
+                self.current.pushToServerFrequency = (val == "false") ? false : parseInt(val);
                 self.manageSettingsDivForm();
             });
 
-            self.loginButton.on("click", (e) => {
+            self.loginButton.on("click", function (e) {
                 self.utilities.closeAllUtilityMenus(self._loginButtonID);
                 if (self.loginDiv.hasClass("hidden")) {
                     self.loginDiv.removeClass("hidden");
@@ -121,7 +121,7 @@ class UserUtility {
                 e.stopPropagation();
             });
 
-            self.newAccountButton.on("click", (e) => {
+            self.newAccountButton.on("click", function (e) {
                 self.utilities.closeAllUtilityMenus(self._newAccountButtonID);
                 if (self.newAccountDiv.hasClass("hidden")) {
                     self.newAccountDiv.removeClass("hidden");
@@ -165,8 +165,8 @@ class UserUtility {
     get settingsDivMessages()           { return $("#" + this._settingsDivMessagesID); }
     get settingsDivAction()             { return $("#" + this._settingsDivActionID); }
     get settingsDivOptions()            { return $("#" + this._settingsDivOptionsID); }
-    get localBackupFrequency()          { return $("#" + this._localBackupFrequencyID); }
-    get serverBackupFrequency()         { return $("#" + this._serverBackupFrequencyID); }
+    get pushToStorageFrequency()          { return $("#" + this._pushToStorageFrequencyID); }
+    get pushToServerFrequency()         { return $("#" + this._pushToServerFrequencyID); }
     get loginButton()                   { return $("#" + this._loginButtonID); }
     get loginDiv()                      { return $("#" + this._loginDivID); }
     get loginDivUsername()              { return $("#" + this._loginDivUsernameID); }
@@ -195,9 +195,9 @@ class UserUtility {
         const email = "<input id = '" + this._settingsDivEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
         const rememberMe = "<input id = '" + this._settingsDivRememberMeID + "' type = 'checkbox'> Remember me";
 
-        const backupFrequencyLabel = "<label style = 'text-align: right'>Back-up Frequency:</label>";
-        const localBackupFrequency = "<select id = '" + this._localBackupFrequencyID + "'></select>";
-        const serverBackupFrequency = "<select id = '" + this._serverBackupFrequencyID + "'></select>";
+        const pushToStorageFrequencyLabel = "<label style = 'text-align: right'>Back-up Frequency:</label>";
+        const pushToStorageFrequency = "<select id = '" + this._pushToStorageFrequencyID + "'></select>";
+        const pushToServerFrequency = "<select id = '" + this._pushToServerFrequencyID + "'></select>";
 
         const settingsDivMessages = "<div id = '" + this._settingsDivMessagesID + "'></div>";
         const settingsDivAction = "<div id = '" + this._settingsDivActionID + "'></div>";
@@ -218,7 +218,7 @@ class UserUtility {
         this.settingsDiv.append(newPassword2);
         this.settingsDiv.append(email);
         this.settingsDiv.append(prefix +              infix +                        infix + "Local"              + infix + "Server"              + postfix);
-        this.settingsDiv.append(prefix + rememberMe + infix + backupFrequencyLabel + infix + localBackupFrequency + infix + serverBackupFrequency + postfix);
+        this.settingsDiv.append(prefix + rememberMe + infix + pushToStorageFrequencyLabel + infix + pushToStorageFrequency + infix + pushToServerFrequency + postfix);
         this.settingsDiv.append(settingsDivMessages);
         this.settingsDiv.append(settingsDivAction);
         this.settingsDiv.append(settingsDivOptions);
@@ -342,31 +342,31 @@ class UserUtility {
             if (server) {
                 if (uname == "Default") { messages.push("The username must not be the default."); }
                 options.push("Remove server storage");
-                this.serverBackupFrequency.html([false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
+                this.pushToServerFrequency.html([false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
                 .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
                 this.settingsDivRememberMe.prop("checked", (localStorage.getItem("rememberMe") == this.current.id));
                 this.settingsDivRememberMe.prop("disabled", (localStorage.getItem("rememberMe") != null && !localStorage.getItem("rememberMe") == this.current.id));
-                this.serverBackupFrequency.val(String(this.current.serverBackupFrequency));
+                this.pushToServerFrequency.val(String(this.current.pushToServerFrequency));
                 }
 
             if (!server) {
-                this.serverBackupFrequency.html("<option>Disabled</option>");
-                this.serverBackupFrequency.prop("disabled", true);
+                this.pushToServerFrequency.html("<option>Disabled</option>");
+                this.pushToServerFrequency.prop("disabled", true);
             }
 
             if (local) {
                 options.push("Remove local storage");
                 this.settingsDivRememberMe.prop("checked", (localStorage.getItem("rememberMe") == this.current.id));
                 this.settingsDivRememberMe.prop("disabled", (localStorage.getItem("rememberMe") != null && !localStorage.getItem("rememberMe") == this.current.id));
-                        this.localBackupFrequency.html([false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
+                        this.pushToStorageFrequency.html([false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
                     .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
-                this.localBackupFrequency.prop("disabled", false);
-                this.localBackupFrequency.val(String(this.current.localBackupFrequency));
+                this.pushToStorageFrequency.prop("disabled", false);
+                this.pushToStorageFrequency.val(String(this.current.pushToStorageFrequency));
                 }
 
             if (!local) {
-                this.localBackupFrequency.html("<option>Disabled</option>");
-                this.localBackupFrequency.prop("disabled", true);
+                this.pushToStorageFrequency.html("<option>Disabled</option>");
+                this.pushToStorageFrequency.prop("disabled", true);
             }
 
             if (!local && !server) {
@@ -522,7 +522,7 @@ class UserUtility {
             });
 
             this.settingsDivAction.append("<button id = 'settingsDivActionButton' type = 'button' class = 'btn btn-primary'>" + actionText + "</button>");
-            $("#settingsDivActionButton").on("click", (e) => {
+            $("#settingsDivActionButton").on("click", function (e) {
                 funcs.forEach(func => { func(); });
                 self.manageSettingsDivForm();
             });
@@ -619,7 +619,7 @@ class UserUtility {
                             this.settingsDivRememberMe.prop("disabled", true);
                         }
                     };
-                    break; //If no local storage, download all data to sessionStorage?
+                    break; //If no local storage, download all data to session Storage?
                 case "Remove local storage": 
                     cl = "btn-danger";
                     func = () => {
@@ -632,12 +632,12 @@ class UserUtility {
                             this.settingsDivRememberMe.prop("disabled", true);
                         }
                     };
-                    break; //if no server storage, move all data to sessionStorage?
+                    break; //if no server storage, move all data to session Storage?
                 default: console.log(option + "is not supported.");
             }
 
             this.settingsDivOptions.append("<button id = 'settingsDivOption" + index + "' type = 'button' class = 'btn " + cl + "'>" + option + "</button><br>");
-            $("#settingsDivOption" + index).on("click", (e) => {
+            $("#settingsDivOption" + index).on("click", function (e) {
                 func();
                 self.manageSettingsDivForm();
             });
