@@ -6,9 +6,11 @@ class StorageUtility {
     get canHaveChindren()        { return false; }
 
     initialPush() {
-        if (this.pushToStorageFrequency) { this.pushToStorage(); }
-        if (this.pushToServerFrequency)  { this.pushToServer(); }
-        if (this.canHaveChildren) { this.current.children.initialPush(); }
+        if (this.pushToStorageFrequency || this.pushToServerFrequency) {
+            if (this.pushToStorageFrequency) { this.pushToStorage(); }
+            if (this.pushToServerFrequency)  { this.pushToServer(); }
+            if (this.canHaveChildren) { this.current.children.initialPush(); }
+        }
     }
 
     schedulePushes() {
@@ -47,54 +49,57 @@ class StorageUtility {
             });
             this.storage = JSON.stringify(storageRecords);
         }
-        this.removeUpdateItem();
+        this.removeUpdateRecords();
     }
 
     pushToServer() {
     }
 
-    get updateItem()            { return "update_" + this.storageItem; }
-    get storageItem()           { return ""; }
     get container()             { return (this.useLocalStorage) ? localStorage : sessionStorage; }
-    removeUpdateItem()          { this.container.removeItem(this.updateItem); }
-    get updateExists()          { return this.itemExists(this.updateItem); }
-    get update()                { return this.getItem(this.updateItem); }
-    set update(value)           { this.setItem(this.updateItem, value); }
-    updateRemoveItem(id)        { this.removeItem(this.updateItem, id); }
-    updateNewItem(newX)         { this.newItem(this.updateItem, newX); }
-    updateChangeItem(newX)      { this.changeItem(this.updateItem, newX); }
 
-    removeStorageItem()         { this.container.removeItem(this.storageItem); }
+    get updateItem()            { return "update_" + this.storageItem; }
+    removeUpdateRecords()       { this.container.removeItem(this.updateItem); }
+    get updateExists()          { return this.itemExists(this.updateItem); }
+    get update()                { return this.getRecord(this.updateItem); }
+    set update(value)           { this.setRecord(this.updateItem, value); }
+    updateRemoveRecord(id)      { this.removeRecord(this.updateItem, id); }
+    updateNewRecord(newX)       { this.newRecord(this.updateItem, newX); }
+    updateChangeRecord(newX)    { this.changeRecord(this.updateItem, newX); }
+
+    get storageItem()           { return ""; }  //set this in extended class;
+    removeStorageRecords()      { this.container.removeItem(this.storageItem); }
     get storageExists()         { return this.itemExists(this.storageItem); }
-    get storage()               { return this.getItem(this.storageItem); }
+    get storage()               { return this.getRecord(this.storageItem); }
     set storage(value)          { this.setItem(this.storageItem, value); }
-    storageRemoveItem(id)       { this.removeItem(this.storageItem, id); }
-    storageNewItem(newX)        { this.newItem(this.storageItem, newX); }
-    storageChangeItem(newX)     { this.changeItem(this.storageItem, newX); }
+    storageRemoveRecord(id)     { this.removeRecord(this.storageItem, id); }
+    storageNewRecord(newX)      { this.newRecord(this.storageItem, newX); }
+    storageChangeRecord(newX)   { this.changeRecord(this.storageItem, newX); }
 
     itemExists(item) {
-        return (Object.keys(this.container).includes(item));
+        const val = (Object.keys(this.container).includes(item));
+        return val;
     }
 
-    getItem(item) {
-        return (this.itemExists(item)) ? JSON.parse(this.container.getItem(item)) : [];
+    getRecord(item) {
+        const val = (this.itemExists(item)) ? JSON.parse(this.container.getItem(item)) : [];
+        return val;
     }
 
-    setItem(item, value) {
+    setRecord(item, value) {
         console.trace();
         console.log(value); 
         this.container.setItem(item, JSON.stringify(value));
     }
 
-    removeItem(item, id) {
+    removeRecord(item, id) {
         this.setItem(item, this.itemExists(item) ? this.getItem(item).filter(x => (x.id != id)) : []);
     }
 
-    newItem(item, newX) {
+    newRecord(item, newX) {
         this.setItem(item, this.itemExists(item) ? this.getItem(item).push(newX) : [].push(newX));
     }
 
-    changeItem(item, newX) {
+    changeRecord(item, newX) {
         var records = (this.itemExists(item)) ? this.getItem(item).filter(x => (x.id != newX.id)) : [];
         console.log("Records:", records);
         console.log("newX:", newX);
