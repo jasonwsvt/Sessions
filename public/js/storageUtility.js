@@ -4,6 +4,7 @@ class StorageUtility {
     get pushToStorageFrequency() { return false; }
     get pushToServerFrequency()  { return false; }
     get canHaveChindren()        { return false; }
+    get itemName()               { return ""; }
 
     initialPush() {
         if (this.pushToStorageFrequency) { this.pushToStorage(); }
@@ -40,8 +41,8 @@ class StorageUtility {
         this.lastPushToStorage = this.now;
         if (!this.storageExists) { this.storage = this.update; }
         else {
-            var storageRecords = JSON.parse(this.storage);
-            JSON.parse(this.update).forEach(s => {
+            var storageRecords = this.storage;
+            this.update.forEach(s => {
                 storageRecords = storageRecords.filter(l => (l.id != s.id));
                 storageRecords.push(s);
             });
@@ -54,22 +55,22 @@ class StorageUtility {
     }
 
     get updateContainer()       { return (this.useLocalStorage) ? localStorage : sessionStorage; }
-    get updateExists()          { return (Object.keys(this.updateContainer).includes("update_" + this._type)); }
-    get update()                { return (this.updateExists) ? this.updateContainer.getItem("update_" + this._type) : []; }
-    set update(value)           { this.updateContainer.setItem("update_" + this._type, value); }
-    removeUpdateContainer()     { this.updateContainer.removeItem("update_" + this._type); }
-    updateNewItem(newX)         { this.update = JSON.stringify(JSON.parse(this.update).push(newX)); }
-    updateRemoveItem(id)        { this.update = JSON.stringify(JSON.parse(this.update).filter(x => (x.id != id))); }
-    updateChangeItem(newX)      { var records = JSON.stringify(JSON.parse(this.update).filter(x => (x.id != newX.id)));
-                                  this.update = JSON.stringify(records.push(newX)); }
+    get updateExists()          { return (Object.keys(this.updateContainer).includes("update_" + this._itemName)); }
+    get update()                { return (this.updateExists) ? JSON.parse(this.updateContainer.getItem("update_" + this._itemName)) : []; }
+    set update(value)           { this.updateContainer.setItem("update_" + this._itemName, JSON.stringify(value)); }
+    removeUpdateContainer()     { this.updateContainer.removeItem("update_" + this._itemName); }
+    updateNewItem(newX)         { this.update = this.update.push(newX); }
+    updateRemoveItem(id)        { this.update = this.update.filter(x => (x.id != id)); }
+    updateChangeItem(newX)      { console.log(this.update); var records = this.update.filter(x => (x.id != newX.id));
+                                  this.update = records.push(newX); }
 
     get storageContainer()      { return (this.useLocalStorage) ? localStorage : sessionStorage; }
-    get storageExists()         { return (Object.keys(this.storageContainer).includes(this._type)); }
-    get storage()               { return this.storageContainer.getItem(this._type); }
-    set storage(value)          { this.storageContainer.setItem(this._type, value); }
-    removeStorageContainer()    { this.storageContainer.removeItem(this._type); }
-    storageChangeItem(newX)     { this.storage = JSON.stringify(JSON.parse(this.storage).map(x => ((x.id == newX.id) ? newX : x))); }
-    storageNewItem(newX)        { this.storage = JSON.stringify(JSON.parse(this.storage).push(newX)); }
+    get storageExists()         { return (Object.keys(this.storageContainer).includes(this._itemName)); }
+    get storage()               { return this.storageContainer.getItem(this._itemName); }
+    set storage(value)          { this.storageContainer.setItem(this._itemName, value); }
+    removeStorageContainer()    { this.storageContainer.removeItem(this._itemName); }
+    storageChangeItem(newX)     { this.storage = this.storage.map(x => ((x.id == newX.id) ? newX : x)); }
+    storageNewItem(newX)        { this.storage = this.storage.push(newX); }
 
     get lastPushToStorage()     { return this.storageContainer.getItem("lastPushToStorage"); }
     set lastPushToStorage(time) { this.storageContainer.setItem("lastPushToStorage", time); }

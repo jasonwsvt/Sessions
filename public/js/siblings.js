@@ -25,6 +25,7 @@ class Siblings extends StorageUtility {
     get pushToServerFrequency()  { return this.currentUser.pushToServerFrequency; }
     get parent()                 { return (this._parent) ? this._parent : null; }
     get type()                   { return this._type; }
+    get itemName()               { return this._type; }
     get canHaveChildren()        { return this._canHaveChildren; }
     get defaultName()            { return this._defaultName; }
     get defaultFirstName()       { return this._defaultFirstName; }

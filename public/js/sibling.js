@@ -20,14 +20,15 @@ class Sibling extends StorageUtility {
     get type()                   { return this._type; }
     get siblings()               { return (this._siblings)        ? this._siblings          : null; }
     get children()               { return (this._children)        ? this._children          : null; }
+    get itemName()               { return this.siblings.type; }
 
-    set data(data)         { this._data = data; }
-    get data()             { return this._data; }
+    set data(data)               { this._data = data; }
+    get data()                   { return this._data; }
 
-    get name()             { return this._data.name; }
-    set name(name)         { this._data.name = name; this._save(); }
+    get name()                   { return this._data.name; }
+    set name(name)               { this._data.name = name; this._save(); }
 
-    get id()               { return this._data.id; }
+    get id()                     { return this._data.id; }
     set id(id) {
         if (this._data.id != id) {
             this._data.id = id;
