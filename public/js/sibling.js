@@ -20,7 +20,7 @@ class Sibling extends StorageUtility {
     get type()                   { return this._type; }
     get siblings()               { return (this._siblings)        ? this._siblings          : null; }
     get children()               { return (this._children)        ? this._children          : null; }
-    get itemName()               { return this.siblings.type; }
+    get storageItem()            { return this.siblings.type; }
 
     set data(data)               { this._data = data; }
     get data()                   { return this._data; }

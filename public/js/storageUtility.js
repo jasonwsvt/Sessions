@@ -4,7 +4,6 @@ class StorageUtility {
     get pushToStorageFrequency() { return false; }
     get pushToServerFrequency()  { return false; }
     get canHaveChindren()        { return false; }
-    get itemName()               { return ""; }
 
     initialPush() {
         if (this.pushToStorageFrequency) { this.pushToStorage(); }
@@ -48,39 +47,70 @@ class StorageUtility {
             });
             this.storage = JSON.stringify(storageRecords);
         }
-        this.removeUpdateContainer();
+        this.removeUpdateItem();
     }
 
     pushToServer() {
     }
 
-    get updateContainer()       { return (this.useLocalStorage) ? localStorage : sessionStorage; }
-    get updateExists()          { return (Object.keys(this.updateContainer).includes("update_" + this._itemName)); }
-    get update()                { return (this.updateExists) ? JSON.parse(this.updateContainer.getItem("update_" + this._itemName)) : []; }
-    set update(value)           { this.updateContainer.setItem("update_" + this._itemName, JSON.stringify(value)); }
-    removeUpdateContainer()     { this.updateContainer.removeItem("update_" + this._itemName); }
-    updateNewItem(newX)         { this.update = this.update.push(newX); }
-    updateRemoveItem(id)        { this.update = this.update.filter(x => (x.id != id)); }
-    updateChangeItem(newX)      { console.log(this.update); var records = this.update.filter(x => (x.id != newX.id));
-                                  this.update = records.push(newX); }
+    get updateItem()            { return "update_" + this.storageItem; }
+    get storageItem()           { return ""; }
+    get container()             { return (this.useLocalStorage) ? localStorage : sessionStorage; }
+    removeUpdateItem()          { this.container.removeItem(this.updateItem); }
+    get updateExists()          { return this.itemExists(this.updateItem); }
+    get update()                { return this.getItem(this.updateItem); }
+    set update(value)           { this.setItem(this.updateItem, value); }
+    updateRemoveItem(id)        { this.removeItem(this.updateItem, id); }
+    updateNewItem(newX)         { this.newItem(this.updateItem, newX); }
+    updateChangeItem(newX)      { this.changeItem(this.updateItem, newX); }
 
-    get storageContainer()      { return (this.useLocalStorage) ? localStorage : sessionStorage; }
-    get storageExists()         { return (Object.keys(this.storageContainer).includes(this._itemName)); }
-    get storage()               { return this.storageContainer.getItem(this._itemName); }
-    set storage(value)          { this.storageContainer.setItem(this._itemName, value); }
-    removeStorageContainer()    { this.storageContainer.removeItem(this._itemName); }
-    storageChangeItem(newX)     { this.storage = this.storage.map(x => ((x.id == newX.id) ? newX : x)); }
-    storageNewItem(newX)        { this.storage = this.storage.push(newX); }
+    removeStorageItem()         { this.container.removeItem(this.storageItem); }
+    get storageExists()         { return this.itemExists(this.storageItem); }
+    get storage()               { return this.getItem(this.storageItem); }
+    set storage(value)          { this.setItem(this.storageItem, value); }
+    storageRemoveItem(id)       { this.removeItem(this.storageItem, id); }
+    storageNewItem(newX)        { this.newItem(this.storageItem, newX); }
+    storageChangeItem(newX)     { this.changeItem(this.storageItem, newX); }
 
-    get lastPushToStorage()     { return this.storageContainer.getItem("lastPushToStorage"); }
-    set lastPushToStorage(time) { this.storageContainer.setItem("lastPushToStorage", time); }
-    get nextPushToStorage()     { return this.storageContainer.getItem("nextPushToStorage"); }
-    set nextPushToStorage(time) { this.storageContainer.setItem("nextPushToStorage", time); }
-    removeNextPushToStorage()   { this.storageContainer.removeItem("nextPushToStorage"); }
+    itemExists(item) {
+        return (Object.keys(this.container).includes(item));
+    }
 
-    get lastPushToServer()      { return this.storageContainer.getItem("lastPushToServer");}
-    set lastPushToServer(time)  { this.storageContainer.setItem("lastPushToServer", time);}
-    get nextPushToServer()      { return this.storageContainer.getItem("nextPushToServer");}
-    set nextPushToServer(time)  { this.storageContainer.setItem("nextPushToServer", time);}
-    removeNextPushToServer()    { this.storageContainer.removeItem("nextPushToServer"); }
+    getItem(item) {
+        return (this.itemExists(item)) ? JSON.parse(this.container.getItem(item)) : [];
+    }
+
+    setItem(item, value) {
+        console.trace();
+        console.log(value); 
+        this.container.setItem(item, JSON.stringify(value));
+    }
+
+    removeItem(item, id) {
+        this.setItem(item, this.itemExists(item) ? this.getItem(item).filter(x => (x.id != id)) : []);
+    }
+
+    newItem(item, newX) {
+        this.setItem(item, this.itemExists(item) ? this.getItem(item).push(newX) : [].push(newX));
+    }
+
+    changeItem(item, newX) {
+        var records = (this.itemExists(item)) ? this.getItem(item).filter(x => (x.id != newX.id)) : [];
+        console.log("Records:", records);
+        console.log("newX:", newX);
+        console.log("records.push(NewX):", records.push(newX));
+        this.setItem(item, records.push(newX));
+    }
+
+    get lastPushToStorage()     { return this.container.getItem("lastPushToStorage"); }
+    set lastPushToStorage(time) { this.container.setItem("lastPushToStorage", time); }
+    get nextPushToStorage()     { return this.container.getItem("nextPushToStorage"); }
+    set nextPushToStorage(time) { this.container.setItem("nextPushToStorage", time); }
+    removeNextPushToStorage()   { this.container.removeItem("nextPushToStorage"); }
+
+    get lastPushToServer()      { return this.container.getItem("lastPushToServer");}
+    set lastPushToServer(time)  { this.container.setItem("lastPushToServer", time);}
+    get nextPushToServer()      { return this.container.getItem("nextPushToServer");}
+    set nextPushToServer(time)  { this.container.setItem("nextPushToServer", time);}
+    removeNextPushToServer()    { this.container.removeItem("nextPushToServer"); }
 }

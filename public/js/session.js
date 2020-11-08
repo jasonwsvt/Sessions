@@ -22,10 +22,13 @@ class Session extends Sibling {
             //On the off-chance the app crashed and on reload the push to storage didn't catch them yet
             if (this.updateExists) {
                 console.log(this.update);
-                this._data.lines = this.update.find(entry => (entry.id == this._data.id)).lines;
+                session = this.update.find(entry => (entry.id == this._data.id));
+                this._data.lines = session.lines;
             }
             else if (this.storageExists) {
-                this._data.lines = this.storage.find(entry => (entry.id == this._data.id)).lines;
+                console.log(this.storage, this._data.id);
+                session = this.storage.find(entry => (entry.id == this._data.id));
+                this._data.lines = session.lines;
             }
             else if (this.currentUser.useServerStorage) { //request from server
 
