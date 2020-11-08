@@ -21,11 +21,12 @@ class StorageUtility {
     schedulePushToStorage(seconds = this.pushToStorageFrequency) {
         if (seconds && !this.nextPushToStorage) {
             this.nextPushToStorage = this.now + seconds;
-            if (Number.isInteger(this.nextPushToServer)) {
+            if (this.nextPushToServer) {
                 const difference = this.nextPushToServer - this.nextPushToStorage;
                 if (difference < 5 && difference > 5) { this.nextPushToStorage = this.nextPushToStorage - 5; }
             }
-            this._scheduledPushToStorage = setTimeout(this.pushToStorage, (this.nextPushToStorage - this.now) * 1000);
+            this._scheduledPushToStorage = setTimeout(this._pushToStorage, (this.nextPushToStorage - this.now) * 1000);
+            console.log(this._scheduledPushToStorage, this.pushToStorage, this.nextPushToStorage, this.now);
             console.log("scheduled a storage push at", this.nextPushToStorage);
         }
     }
@@ -49,62 +50,63 @@ class StorageUtility {
             });
             this.storage = JSON.stringify(storageRecords);
         }
-        this.removeUpdateRecords();
+        this.removeUpdateTable();
     }
 
     pushToServer() {
     }
 
-    get container()             { return (this.useLocalStorage) ? localStorage : sessionStorage; }
+    get container()           { return (this.useLocalStorage) ? localStorage : sessionStorage; }
 
-    get updateItem()            { return "update_" + this.storageItem; }
-    removeUpdateRecords()       { this.container.removeItem(this.updateItem); }
-    get updateExists()          { return this.itemExists(this.updateItem); }
-    get update()                { return this.getRecord(this.updateItem); }
-    set update(value)           { this.setRecord(this.updateItem, value); }
-    updateRemoveRecord(id)      { this.removeRecord(this.updateItem, id); }
-    updateNewRecord(newX)       { this.newRecord(this.updateItem, newX); }
-    updateChangeRecord(newX)    { this.changeRecord(this.updateItem, newX); }
+    get updateTableName()     { return "update_" + this.storageTableName; }
+    removeUpdateTable()       { this.container.removeItem(this.updateTableName); }
+    get updateExists()        { return this.tableExists(this.updateTableName); }
+    get update()              { return this.getRecord(this.updateTableName); }
+    set update(value)         { this.setRecord(this.updateTableName, value); }
+    updateRemoveRecord(id)    { this.removeRecord(this.updateTableName, id); }
+    updateNewRecord(newX)     { this.newRecord(this.updateTableName, newX); }
+    updateChangeRecord(newX)  { this.changeRecord(this.updateTableName, newX); }
 
-    get storageItem()           { return ""; }  //set this in extended class;
-    removeStorageRecords()      { this.container.removeItem(this.storageItem); }
-    get storageExists()         { return this.itemExists(this.storageItem); }
-    get storage()               { return this.getRecord(this.storageItem); }
-    set storage(value)          { this.setItem(this.storageItem, value); }
-    storageRemoveRecord(id)     { this.removeRecord(this.storageItem, id); }
-    storageNewRecord(newX)      { this.newRecord(this.storageItem, newX); }
-    storageChangeRecord(newX)   { this.changeRecord(this.storageItem, newX); }
+    get storageTableName()    { return ""; }  //set this in extended class;
+    removeStorageTable()      { this.container.removeItem(this.storageTableName); }
+    get storageExists()       { return this.tableExists(this.storageTableName); }
+    get storage()             { return this.getRecord(this.storageTableName); }
+    set storage(value)        { this.setRecord(this.storageTableName, value); }
+    storageRemoveRecord(id)   { this.removeRecord(this.storageTableName, id); }
+    storageNewRecord(newX)    { this.newRecord(this.storageTableName, newX); }
+    storageChangeRecord(newX) { this.changeRecord(this.storageTableName, newX); }
 
-    itemExists(item) {
-        const val = (Object.keys(this.container).includes(item));
+    tableExists(tableName) {
+        const val = (Object.keys(this.container).includes(tableName));
         return val;
     }
 
-    getRecord(item) {
-        const val = (this.itemExists(item)) ? JSON.parse(this.container.getItem(item)) : [];
+    getRecord(tableName) {
+        const val = (this.tableExists(tableName)) ? JSON.parse(this.container.getItem(tableName)) : [];
         return val;
     }
 
-    setRecord(item, value) {
+    setRecord(tableName, value) {
         console.trace();
         console.log(value); 
-        this.container.setItem(item, JSON.stringify(value));
+        this.container.setItem(tableName, JSON.stringify(value));
     }
 
-    removeRecord(item, id) {
-        this.setItem(item, this.itemExists(item) ? this.getItem(item).filter(x => (x.id != id)) : []);
+    removeRecord(tableName, id) {
+        this.setRecord(tableName, this.getRecord(tableName).filter(x => (x.id != id)));
     }
 
-    newRecord(item, newX) {
-        this.setItem(item, this.itemExists(item) ? this.getItem(item).push(newX) : [].push(newX));
+    newRecord(tableName, newX) {
+        this.setRecord(tableName, this.getRecord(tableName).push(newX));
     }
 
-    changeRecord(item, newX) {
-        var records = (this.itemExists(item)) ? this.getItem(item).filter(x => (x.id != newX.id)) : [];
-        console.log("Records:", records);
+    changeRecord(tableName, newX) {
+        var records = this.getRecord(tableName).filter(x => (x.id != newX.id));
         console.log("newX:", newX);
-        console.log("records.push(NewX):", records.push(newX));
-        this.setItem(item, records.push(newX));
+        console.log("Records before push newX:", records);
+        records.push(newX);
+        console.log("Records afterward:", records);
+        this.setRecord(tableName, records);
     }
 
     get lastPushToStorage()     { return this.container.getItem("lastPushToStorage"); }
@@ -118,4 +120,8 @@ class StorageUtility {
     get nextPushToServer()      { return this.container.getItem("nextPushToServer");}
     set nextPushToServer(time)  { this.container.setItem("nextPushToServer", time);}
     removeNextPushToServer()    { this.container.removeItem("nextPushToServer"); }
+
+    get now() {
+        return Math.floor(Date.now() / 1000);
+    }
 }
