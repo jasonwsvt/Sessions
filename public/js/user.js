@@ -57,41 +57,45 @@ class User extends Sibling {
     get useLocalStorage() { return this._data.useLocalStorage; }
     set useLocalStorage(val) {
         if (this._data.useLocalStorage == false && val == true) {
+            this._transitionStorages = true;
             this._data.useLocalStorage = true;
+            this.migrate();
             this._data.pushToStorageFrequency = 60;
+            this.schedulePushToStorage();
             this._save();
         }
         if (this._data.useLocalStorage == true && val == false) {
             this._data.useLocalStorage = false;
+            this.migrate();
             this._data.pushToStorageFrequency = false;
-            this.siblings.stopPushToStorage();
+            this.stopPushToStorage();
             this._save();
         }
     }
 
     get pushToStorageFrequency() { return this._data.pushToStorageFrequency; }
     set pushToStorageFrequency(newFrequency) {
-        console.log("changing push to storage frequency from", this._data.pushToStorageFrequency, "to", newFrequency);
+        console.log("Old storage frequency:", this._data.pushToStorageFrequency, "new:", newFrequency);
         if (this._data.pushToStorageFrequency != newFrequency) {
             console.log("not the same");
             const nextPushToStorage = this.nextPushToStorage;
             if (newFrequency) {
                 if (nextPushToStorage) {
                     console.log("next push to storage exists")
-                    this.siblings.stopPushToStorage();
+                    this.stopPushToStorage();
                     var secondsFromPreviousScheduling = this.now - nextPushToStorage + this._data.pushToStorageFrequency;
                     console.log(secondsFromPreviousScheduling, nextPushToStorage, this._data.pushToStorageFrequency);
                     if (secondsFromPreviousScheduling > newFrequency) {
                         console.log("pushing to storage now")
-                        this.siblings.pushToStorage();
+                        this.pushToStorage();
                     }
                     else {
                         console.log("scheduling a push to storage at ", newFrequency - secondsFromPreviousScheduling, "seconds from now");
-                        this.siblings.schedulePushToStorage(newFrequency - secondsFromPreviousScheduling);
+                        this.schedulePushToStorage(newFrequency - secondsFromPreviousScheduling);
                     }
                 }
                 else {
-                    this.siblings.schedulePushToStorage(newFrequency);
+                    this.schedulePushToStorage(newFrequency);
                 }
             }
             else {

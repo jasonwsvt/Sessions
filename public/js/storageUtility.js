@@ -25,7 +25,7 @@ class StorageUtility {
                 const difference = this.nextPushToServer - this.nextPushToStorage;
                 if (difference < 5 && difference > 5) { this.nextPushToStorage = this.nextPushToStorage - 5; }
             }
-            this._scheduledPushToStorage = setTimeout(this._pushToStorage, (this.nextPushToStorage - this.now) * 1000);
+            this._scheduledPushToStorage = setTimeout(() => this.pushToStorage, (this.nextPushToStorage - this.now) * 1000);
             console.log(this._scheduledPushToStorage, this.pushToStorage, this.nextPushToStorage, this.now);
             console.log("scheduled a storage push at", this.nextPushToStorage);
         }
@@ -37,7 +37,7 @@ class StorageUtility {
         this.removeNextPushToStorage();
     }
 
-    _pushToStorage() {
+    pushToStorage() {
         console.log("backing up to storage");
         this.removeNextPushToStorage();
         this.lastPushToStorage = this.now;
@@ -56,7 +56,16 @@ class StorageUtility {
     pushToServer() {
     }
 
-    get container()           { return (this.useLocalStorage) ? localStorage : sessionStorage; }
+    migrate() {
+        var from = (this.useLocalStorage) ? sessionStorage : localStorage;
+        var to = (this.useLocalStorage) ? localStorage : sessionStorage;
+        [this.updateTableName, this.storageTableName].forEach(table => {
+            to.setItem(table, from.getItem(table));
+        });
+        if (this.canHaveChildren) { this.current.children.migrateToLocalStorage(); }
+    }
+
+    get container()     { return (this.useLocalStorage) ? localStorage : sessionStorage; }
 
     get updateTableName()     { return "update_" + this.storageTableName; }
     removeUpdateTable()       { this.container.removeItem(this.updateTableName); }
