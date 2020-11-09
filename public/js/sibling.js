@@ -68,7 +68,7 @@ class Sibling extends StorageUtility {
 
     _save() {
         this._data.lastEdited = this.now;
-        this.updateChangeRecord(this._data);
+        this.setRecordInUpdate(this._data);
         this.siblings.schedulePushes();
     }
 

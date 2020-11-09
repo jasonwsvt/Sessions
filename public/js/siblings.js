@@ -63,17 +63,9 @@ class Siblings extends StorageUtility {
     }
 
     load(parentId) {
-        this._loadFrom(sessionStorage, parentId);
-        if (this.currentUser.useLocalStorage)   { this._loadFrom(localStorage, parentId); }
-        if (this.currentUser.useServerStorage)  { this._loadFrom(serverStorage, parentId); }
-        if (this.entries == 0) { this.new(parentId); }
-        this._current = this.unsorted.sort((a,b) => (Number(a._data.lastOpened) - Number(b._data.lastOpened))).slice(-1)[0].id;
-    }
-
-    _loadFrom(container, parentId) {
         var data = [], sibling;
-        if (Object.keys(container).includes(this._type)) {
-            data = JSON.parse(container.getItem(this._type)).filter(entry =>
+        if (this.storageTableExists) {
+            data = this.storageTable.filter(entry =>
                 ((parentId == undefined || parentId == entry[this.parent.type + "Id"]) &&
                     (!this.findById(entry.id)) ||
                      (this.findById(entry.id) &&
@@ -84,9 +76,13 @@ class Siblings extends StorageUtility {
                 this._siblings.push(sibling);
             });
         }
+
+        if (this.entries == 0) { this.new(parentId); }
+        this._current = this.unsorted.sort((a,b) => (Number(a._data.lastOpened) - Number(b._data.lastOpened))).slice(-1)[0].id;
     }
 
     new() {
+        console.log("new", this.type);
         var id = this.newId;
 //        var parentId = this.parent.id;
 //        console.log(parentId);

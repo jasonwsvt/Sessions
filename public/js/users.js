@@ -17,26 +17,28 @@ class Users extends Siblings {
     get sortByName()          { return; }
 
     load() {
-        var containers = [sessionStorage, localStorage];
         var tables = ["update_" + this._type, this._type];
-        tables.forEach(tableName => { // order: session:update, local:update, session:users, local:users
+        var containers = [sessionStorage, localStorage];
+        tables.forEach(tableName => { // If only one user in update_users or users
             containers.forEach(container => {
                 if (Object.keys(container).includes(tableName)) {
-                    var table = container.getItem(tableName);
+                    var table = JSON.parse(container.getItem(tableName));
                     if (table.length == 1 && table[0].passwordHash == "") {
                         this._current = table[0].id;
+                        console.log("one user without password found:", container, table, this._current);
                         this._loadFrom(container, tableName);
                         return;
                     }
                 }
             })
         })
-        if (Object.keys(localStorage).includes("rememberMe")) {                 //Remember Me set
+        if (!this._current && Object.keys(localStorage).includes("rememberMe")) {                 //Remember Me set
             this._current = localStorage.getItem("rememberMe");
             tables.forEach(tableName => { // order: session:update, local:update, session:users, local:users
                 containers.forEach(container => {
                     if (Object.keys(container).includes(tableName)) {
-                        if (container.getItem(tableName).find(user => (user.id == this._current))) {
+                        if (JSON.parse(container.getItem(tableName)).find(user => (user.id == this._current))) {
+                            console.log("rememberMe user found:", container, table, this._current);
                             this._loadFrom(container, tableName);
                             return;
                         }
@@ -44,9 +46,7 @@ class Users extends Siblings {
                 })
             })
         }
-        if (this._current == null) {
-            this.new();
-        }
+        if (!this.current) { this.new(); }
     }
 
     _loadFrom(container, tableName, parentId) {
@@ -59,7 +59,7 @@ class Users extends Siblings {
         data.forEach(entry => {
             user = new this._SiblingClass(this._app, this);
             user.load(entry);
-            this._siblings.push(sibling);
+            this._siblings.push(user);
         });
     }
 

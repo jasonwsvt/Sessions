@@ -6,6 +6,7 @@ class StorageUtility {
     get canHaveChindren()        { return false; }
 
     initialPush() {
+        console.log("initialPush");
         if (this.pushToStorageFrequency || this.pushToServerFrequency) {
             if (this.pushToStorageFrequency) { this.pushToStorage(); }
             if (this.pushToServerFrequency)  { this.pushToServer(); }
@@ -14,11 +15,13 @@ class StorageUtility {
     }
 
     schedulePushes() {
+        console.log("schedulePushes")
         if (this.pushToStorageFrequency) { this.schedulePushToStorage(); }
         if (this.pushToServerFrequency)  { this.schedulePushToServer(); }
     }
 
     schedulePushToStorage(seconds = this.pushToStorageFrequency) {
+        console.log("schedulePushToStorage("+seconds+")");
         if (seconds && !this.nextPushToStorage) {
             this.nextPushToStorage = this.now + seconds;
             if (this.nextPushToServer) {
@@ -26,29 +29,28 @@ class StorageUtility {
                 if (difference < 5 && difference > 5) { this.nextPushToStorage = this.nextPushToStorage - 5; }
             }
             this._scheduledPushToStorage = setTimeout(() => this.pushToStorage, (this.nextPushToStorage - this.now) * 1000);
-            console.log(this._scheduledPushToStorage, this.pushToStorage, this.nextPushToStorage, this.now);
-            console.log("scheduled a storage push at", this.nextPushToStorage);
+//            console.log("scheduled a storage push at", this.nextPushToStorage);
         }
     }
 
     stopPushToStorage() {
-        console.log("Cancelling push to storage");
+        console.log("stopPushToStorage");
         clearInterval(this._scheduledPushToStorage);
         this.removeNextPushToStorage();
     }
 
     pushToStorage() {
-        console.log("backing up to storage");
+        console.log("pushToStorage");
         this.removeNextPushToStorage();
         this.lastPushToStorage = this.now;
-        if (!this.storageExists) { this.storage = this.update; }
+        if (!this.storageTableExists) { this.storageTable = this.updateTable; }
         else {
-            var storageRecords = this.storage;
-            this.update.forEach(s => {
+            var storageRecords = this.storageTable;
+            this.updateTable.forEach(s => {
                 storageRecords = storageRecords.filter(l => (l.id != s.id));
                 storageRecords.push(s);
             });
-            this.storage = JSON.stringify(storageRecords);
+            this.storageTable = JSON.stringify(storageRecords);
         }
         this.removeUpdateTable();
     }
@@ -57,6 +59,7 @@ class StorageUtility {
     }
 
     migrate() {
+        console.log("migrate");
         var from = (this.useLocalStorage) ? sessionStorage : localStorage;
         var to = (this.useLocalStorage) ? localStorage : sessionStorage;
         [this.updateTableName, this.storageTableName].forEach(table => {
@@ -69,53 +72,54 @@ class StorageUtility {
 
     get updateTableName()     { return "update_" + this.storageTableName; }
     removeUpdateTable()       { this.container.removeItem(this.updateTableName); }
-    get updateExists()        { return this.tableExists(this.updateTableName); }
-    get update()              { return this.getRecord(this.updateTableName); }
-    set update(value)         { this.setRecord(this.updateTableName, value); }
-    updateRemoveRecord(id)    { this.removeRecord(this.updateTableName, id); }
-    updateNewRecord(newX)     { this.newRecord(this.updateTableName, newX); }
-    updateChangeRecord(newX)  { this.changeRecord(this.updateTableName, newX); }
+    get updateTableExists()   { return this.tableExists(this.updateTableName); }
+    get updateTable()         { return this.getTable(this.updateTableName); }
+    set updateTable(value)    { this.setTable(this.updateTableName, value); }
+    removeRecordInUpdate(id)  { this.removeRecord(this.updateTableName, id); }
+    addRecordToUpdate(newX)   { this.newRecord(this.updateTableName, newX); }
+    setRecordInUpdate(newX)   { this.setRecord(this.updateTableName, newX); }
 
     get storageTableName()    { return ""; }  //set this in extended class;
     removeStorageTable()      { this.container.removeItem(this.storageTableName); }
-    get storageExists()       { return this.tableExists(this.storageTableName); }
-    get storage()             { return this.getRecord(this.storageTableName); }
-    set storage(value)        { this.setRecord(this.storageTableName, value); }
-    storageRemoveRecord(id)   { this.removeRecord(this.storageTableName, id); }
-    storageNewRecord(newX)    { this.newRecord(this.storageTableName, newX); }
-    storageChangeRecord(newX) { this.changeRecord(this.storageTableName, newX); }
+    get storageTableExists()  { return this.tableExists(this.storageTableName); }
+    get storageTable()        { return this.getTable(this.storageTableName); }
+    set storageTable(value)   { this.setTable(this.storageTableName, value); }
+    removeRecordInStorage(id) { this.removeRecord(this.storageTableName, id); }
+    addRecordToStorage(newX)  { this.newRecord(this.storageTableName, newX); }
+    setRecordInStorage(newX)  { this.setRecord(this.storageTableName, newX); }
 
     tableExists(tableName) {
         const val = (Object.keys(this.container).includes(tableName));
+        console.log("tableExists("+tableName+"):", val);
         return val;
     }
 
-    getRecord(tableName) {
+    getTable(tableName) {
         const val = (this.tableExists(tableName)) ? JSON.parse(this.container.getItem(tableName)) : [];
+        console.log("getTable("+tableName+"):", val);
         return val;
     }
 
-    setRecord(tableName, value) {
-        console.trace();
-        console.log(value); 
+    setTable(tableName, value) {
+        console.log(this.container+".setTable("+tableName+", "+value+")");
         this.container.setItem(tableName, JSON.stringify(value));
     }
 
     removeRecord(tableName, id) {
-        this.setRecord(tableName, this.getRecord(tableName).filter(x => (x.id != id)));
+        console.log("removeRecord("+tableName+", "+id+")");
+        this.setTable(tableName, this.getTable(tableName).filter(x => (x.id != id)));
     }
 
     newRecord(tableName, newX) {
-        this.setRecord(tableName, this.getRecord(tableName).push(newX));
+        console.log("newRecord("+tableName+",",newX,")");
+        this.setTable(tableName, this.getTable(tableName).push(newX));
     }
 
-    changeRecord(tableName, newX) {
-        var records = this.getRecord(tableName).filter(x => (x.id != newX.id));
-        console.log("newX:", newX);
-        console.log("Records before push newX:", records);
+    setRecord(tableName, newX) {
+        console.log("setRecord("+tableName+",",newX,")");
+        var records = this.getTable(tableName).filter(x => (x.id != newX.id));
         records.push(newX);
-        console.log("Records afterward:", records);
-        this.setRecord(tableName, records);
+        this.setTable(tableName, records);
     }
 
     get lastPushToStorage()     { return this.container.getItem("lastPushToStorage"); }

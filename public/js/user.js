@@ -1,7 +1,5 @@
 class User extends Sibling {
     _passwordVerified = false;
-    _pushToStorage = null;
-    _pushToServer = null;
 
     constructor(app, users) {
         super(app, users);
