@@ -1,5 +1,5 @@
 class StorageUtility {
-    get useLocalStorage()        { return false; }
+    get storagePermanence()        { return false; }
     get useServerStorage()       { return false; }
     get pushToStorageFrequency() { return false; }
     get pushToServerFrequency()  { return false; }
@@ -60,15 +60,15 @@ class StorageUtility {
 
     migrate() {
         console.log("migrate");
-        var from = (this.useLocalStorage) ? sessionStorage : localStorage;
-        var to = (this.useLocalStorage) ? localStorage : sessionStorage;
+        var from = (this.storagePermanence) ? sessionStorage : localStorage;
+        var to = (this.storagePermanence) ? localStorage : sessionStorage;
         [this.updateTableName, this.storageTableName].forEach(table => {
             to.setItem(table, from.getItem(table));
         });
         if (this.canHaveChildren) { this.current.children.migrateToLocalStorage(); }
     }
 
-    get container()     { return (this.useLocalStorage) ? localStorage : sessionStorage; }
+    get container()     { return (this.storagePermanence) ? localStorage : sessionStorage; }
 
     get updateTableName()     { return "update_" + this.storageTableName; }
     removeUpdateTable()       { this.container.removeItem(this.updateTableName); }

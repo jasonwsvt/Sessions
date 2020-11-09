@@ -19,7 +19,7 @@ class Siblings extends StorageUtility {
 
     get app()                    { return this._app; }
     get currentUser()            { return this.parent.currentUser; }
-    get useLocalStorage()        { return this.currentUser.useLocalStorage; }
+    get storagePermanence()        { return this.currentUser.storagePermanence; }
     get useServerStorage()       { return this.currentUser.useServerStorage; }
     get pushToStorageFrequency() { return this.currentUser.pushToStorageFrequency; }
     get pushToServerFrequency()  { return this.currentUser.pushToServerFrequency; }

@@ -29,6 +29,7 @@ class UserUtility {
     _settingsDivEmailLocalToolID = "settingsDivEmailLocalTool";
     _settingsDivEmailServerToolID = "settingsDivEmailServerTool";
     _settingsDivRememberMeID = "settingsDivRememberMe";
+    _settingsDivStorageID = "settingsDivStorage";
     _settingsDivMessagesID = "settingsDivMessages";
     _settingsDivActionID = "settingsDivAction";
     _settingsDivOptionsID = "settingsDivOptions";
@@ -162,6 +163,7 @@ class UserUtility {
     get settingsDivEmailLocalTool()     { return $("#" + this._settingsDivEmailLocalToolID); }
     get settingsDivEmailServerTool()    { return $("#" + this._settingsDivEmailServerToolID); }
     get settingsDivRememberMe()         { return $("#" + this._settingsDivRememberMeID); }
+    get settingsDivStorage()            { return $("#" + this._settingsDivStorageID); }
     get settingsDivMessages()           { return $("#" + this._settingsDivMessagesID); }
     get settingsDivAction()             { return $("#" + this._settingsDivActionID); }
     get settingsDivOptions()            { return $("#" + this._settingsDivOptionsID); }
@@ -194,8 +196,10 @@ class UserUtility {
         const newPassword2 = "<input id = '" + this._settingsDivNewPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
         const email = "<input id = '" + this._settingsDivEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
         const rememberMe = "<input id = '" + this._settingsDivRememberMeID + "' type = 'checkbox'> Remember me";
+        const storage = "<select id = '" + this._settingsDivStorageID + "'></select>"; 
+        const storagePermanenceLabel = "<label style = 'text-align: right'>Storage permanence:</label>";
 
-        const pushToStorageFrequencyLabel = "<label style = 'text-align: right'>Back-up Frequency:</label>";
+        const pushToStorageFrequencyLabel = "<label style = 'text-align: right'>Storage frequency:</label>";
         const pushToStorageFrequency = "<select id = '" + this._pushToStorageFrequencyID + "'></select>";
         const pushToServerFrequency = "<select id = '" + this._pushToServerFrequencyID + "'></select>";
 
@@ -217,7 +221,7 @@ class UserUtility {
         this.settingsDiv.append(newPassword1);
         this.settingsDiv.append(newPassword2);
         this.settingsDiv.append(email);
-        this.settingsDiv.append(prefix +              infix +                        infix + "Local"              + infix + "Server"              + postfix);
+        this.settingsDiv.append(prefix +              infix + storagePermanenceLabel      + infix + storage                + infix + "Server"              + postfix);
         this.settingsDiv.append(prefix + rememberMe + infix + pushToStorageFrequencyLabel + infix + pushToStorageFrequency + infix + pushToServerFrequency + postfix);
         this.settingsDiv.append(settingsDivMessages);
         this.settingsDiv.append(settingsDivAction);
@@ -228,6 +232,11 @@ class UserUtility {
         this.settingsDiv.css("top", String(this.settingsButton.position().top + this.settingsButton.outerHeight()) + "px");
         this.settingsDivUsername.val(this.current.userName);
         this.settingsDivEmail.val(this.current.email);
+        this.settingsDivStorage.append("<option value = 'true'>Browser</option>");
+        this.settingsDivStorage.append("<option value = 'false'>Session</option>");
+        this.pushToStorageFrequency.html([5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
+            .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
+        this.pushToStorageFrequency.val(String(this.current.pushToStorageFrequency));
 
 //        this.span.append(loginButton + loginDiv);
 //        this.span.append(newAccountButton + newAccountDiv);
@@ -315,7 +324,9 @@ class UserUtility {
         const newPW = this.newPWState;
         const email = this.emailState;
         const server = this.current.useServerStorage;
-        const local = this.current.useLocalStorage;
+        const local = this.current.storagePermanence;
+
+        this.settingsDivStorage.val(String(local));
 
         if (curPW == "Invalid")              { messages.push("Current password is invalid."); }
         else {
@@ -337,36 +348,22 @@ class UserUtility {
                 if (curPW == "Empty" && newPW == "Empty") {
                     messages.push("Server storage requires a strong password.");
                 }
+                this.pushToServerFrequency.html("<option>Disabled</option>");
+                this.pushToServerFrequency.prop("disabled", true);
             }
 
             if (server) {
                 if (uname == "Default") { messages.push("The username must not be the default."); }
                 options.push("Remove server storage");
                 this.pushToServerFrequency.html([false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
-                .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
+                    .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
                 this.settingsDivRememberMe.prop("checked", (localStorage.getItem("rememberMe") == this.current.id));
-                this.settingsDivRememberMe.prop("disabled", (localStorage.getItem("rememberMe") != null && !localStorage.getItem("rememberMe") == this.current.id));
                 this.pushToServerFrequency.val(String(this.current.pushToServerFrequency));
                 }
-
-            if (!server) {
-                this.pushToServerFrequency.html("<option>Disabled</option>");
-                this.pushToServerFrequency.prop("disabled", true);
-            }
 
             if (local) {
                 options.push("Remove local storage");
                 this.settingsDivRememberMe.prop("checked", (localStorage.getItem("rememberMe") == this.current.id));
-                this.settingsDivRememberMe.prop("disabled", (localStorage.getItem("rememberMe") != null && !localStorage.getItem("rememberMe") == this.current.id));
-                        this.pushToStorageFrequency.html([false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
-                    .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
-                this.pushToStorageFrequency.prop("disabled", false);
-                this.pushToStorageFrequency.val(String(this.current.pushToStorageFrequency));
-                }
-
-            if (!local) {
-                this.pushToStorageFrequency.html("<option>Disabled</option>");
-                this.pushToStorageFrequency.prop("disabled", true);
             }
 
             if (!local && !server) {
@@ -382,7 +379,6 @@ class UserUtility {
                     ((["Empty", "Weak", "Strong"].includes(curPW) && newPW == "Empty") || ["Empty", "Weak", "Strong"].includes(newPW))) {
                     options.push("Create an account with local storage");
                 }
-                this.settingsDivRememberMe.prop("disabled", true);
             }
 
             if (local && !server) {
@@ -541,7 +537,7 @@ class UserUtility {
                     cl = "btn-success";
                     func = () => {
                         this.current.useServerStorage = true;
-                        this.current.useLocalStorage = true;
+                        this.current.storagePermanence = true;
                         this.current.userName = this.settingsDivUsername.val();
                         this.settingsButton.html(this.current.userName);
                         if (["Weak", "Strong"].includes(this.newPWState)) {
@@ -551,20 +547,18 @@ class UserUtility {
                             this.settingsDivNewPassword2.val("");
                         }
                         this.current.email = this.settingsDivEmail.val();
-                        this.settingsDivRememberMe.prop("disabled", (![null, this.current.id].includes(localStorage.getItem("RememberMe"))));
                     };
                     break;
                 case "Add local storage":                               
                     cl = "btn-success";
                     func = () => {
-                        this.current.useLocalStorage = true;
-                        this.settingsDivRememberMe.prop("disabled", (![null, this.current.id].includes(localStorage.getItem("RememberMe"))));
+                        this.current.storagePermanence = true;
                     };
                     break;
                 case "Create an account with local storage":            
                     cl = "btn-success";
                     func = () => {
-                        this.current.useLocalStorage = true;
+                        this.current.storagePermanence = true;
                         this.current.userName = this.settingsDivUsername.val();
                         this.settingsButton.html(this.current.userName);
                         if (["Weak", "Strong"].includes(this.newPWState)) {
@@ -574,14 +568,12 @@ class UserUtility {
                             this.settingsDivNewPassword2.val("");
                         }
                         this.current.email = this.settingsDivEmail.val();
-                        this.settingsDivRememberMe.prop("disabled", (![null, this.current.id].includes(localStorage.getItem("RememberMe"))));
                     };
                     break;
                 case "Add server storage":                              
                     cl = "btn-success";
                     func = () => {
                         this.current.useServerStorage = true;
-                        this.settingsDivRememberMe.prop("disabled", (![null, this.current.id].includes(localStorage.getItem("RememberMe"))));
                     };
                     break;
                 case "Create an account with server storage":           
@@ -597,7 +589,6 @@ class UserUtility {
                             this.settingsDivNewPassword2.val("");
                         }
                         this.current.email = this.settingsDivEmail.val();
-                        settingsDivRememberMe.prop("disabled", (![null, this.current.id].includes(localStorage.getItem("RememberMe"))));
                     };
                     break;
                 case "Remove password":                                 
@@ -611,25 +602,23 @@ class UserUtility {
                     cl = "btn-danger";
                     func = () => {
                         this.current.useServerStorage = false;
-                        if (this.current.useLocalStorage == false) {
+                        if (this.current.storagePermanence == false) {
                             if (localStorage.getItem("rememberMe") == this.current.id) {
                                 localStorage.removeItem("rememberMe");
                                 this.settingsDivRememberMe.prop("checked", false);
                             }
-                            this.settingsDivRememberMe.prop("disabled", true);
                         }
                     };
                     break; //If no local storage, download all data to session Storage?
                 case "Remove local storage": 
                     cl = "btn-danger";
                     func = () => {
-                        this.current.useLocalStorage = false;
+                        this.current.storagePermanence = false;
                         if (this.current.useSessionStorage == false) {
                             if (localStorage.getItem("rememberMe") == this.current.id) {
                                 localStorage.removeItem("rememberMe");
                                 this.settingsDivRememberMe.prop("checked", false);
                             }
-                            this.settingsDivRememberMe.prop("disabled", true);
                         }
                     };
                     break; //if no server storage, move all data to session Storage?

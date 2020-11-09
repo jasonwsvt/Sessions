@@ -52,21 +52,11 @@ class User extends Sibling {
         }
     }
 
-    get useLocalStorage() { return this._data.useLocalStorage; }
-    set useLocalStorage(val) {
-        if (this._data.useLocalStorage == false && val == true) {
-            this._transitionStorages = true;
-            this._data.useLocalStorage = true;
+    get storagePermanence() { return this._data.storagePermanence; }
+    set storagePermanence(val) {
+        if (this._data.storagePermanence != val) {
+            this._data.storagePermanence = val;
             this.migrate();
-            this._data.pushToStorageFrequency = 60;
-            this.schedulePushToStorage();
-            this._save();
-        }
-        if (this._data.useLocalStorage == true && val == false) {
-            this._data.useLocalStorage = false;
-            this.migrate();
-            this._data.pushToStorageFrequency = false;
-            this.stopPushToStorage();
             this._save();
         }
     }
@@ -77,27 +67,25 @@ class User extends Sibling {
         if (this._data.pushToStorageFrequency != newFrequency) {
             console.log("not the same");
             const nextPushToStorage = this.nextPushToStorage;
-            if (newFrequency) {
-                if (nextPushToStorage) {
-                    console.log("next push to storage exists")
-                    this.stopPushToStorage();
+            if (nextPushToStorage) {
+                console.log("next push to storage exists")
+                this.stopPushToStorage();
+                if (newFrequency) {
                     var secondsFromPreviousScheduling = this.now - nextPushToStorage + this._data.pushToStorageFrequency;
                     console.log(secondsFromPreviousScheduling, nextPushToStorage, this._data.pushToStorageFrequency);
                     if (secondsFromPreviousScheduling > newFrequency) {
-                        console.log("pushing to storage now")
+                        console.log("cancelling and pushing to storage now")
                         this.pushToStorage();
                     }
                     else {
-                        console.log("scheduling a push to storage at ", newFrequency - secondsFromPreviousScheduling, "seconds from now");
+                        console.log("rescheduling push to storage at ", newFrequency - secondsFromPreviousScheduling, "seconds from now");
                         this.schedulePushToStorage(newFrequency - secondsFromPreviousScheduling);
                     }
                 }
-                else {
-                    this.schedulePushToStorage(newFrequency);
-                }
             }
             else {
-                this.siblings.stopPushToStorage();
+                console.log("Scheduling push to storage at", newFrequency);
+                this.schedulePushToStorage(newFrequency);
             }
             this._data.pushToStorageFrequency = newFrequency;
             this._save();
@@ -142,8 +130,8 @@ class User extends Sibling {
             lastEdited: false,
             lastOpened: false,
             practitioner: false,
-            useLocalStorage: false,
-            pushToStorageFrequency: false,
+            storagePermanence: false,
+            pushToStorageFrequency: 60,
             useServerStorage: false,
             pushToServerFrequency: false
         }

@@ -3,6 +3,7 @@ class Users extends Siblings {
         super(app, User, "user");
         this._type = "users";
         this._defaultName = "new_user";
+        this.initialPushToStorage();
         this.load();
     }
 
@@ -76,5 +77,29 @@ class Users extends Siblings {
             }
         }
         return false;
+    }
+
+    initialPushToStorage() {
+        var containers = [sessionStorage, localStorage];
+        containers.forEach(container => {
+            var keys = Object.keys(container);
+            var updateTables = keys.filter(name => name.startsWith("update_"));
+            updateTables.forEach(updateTable => { 
+                var updateRecords = JSON.parse(container.getItem(updateTable));
+                var storageTable = (keys.includes(name.split("_")[1])); //everything after update_
+                if (storageTable) {
+                    storageRecords = container.getItem(storageTable);
+                    updateRecords.forEach(updateRecord => {
+                        storageRecords.filter(storageRecord => (storageRecord.id != updateRecord.id));
+                        storageRecords.push(updateRecord);
+                    });
+                    container.setItem(storageTable, storageRecords);
+                }
+                else {
+                    container.setItem(storageTable, updateRecords);
+                }
+                container.removeItem(updateTable);
+            });
+        });
     }
 }
