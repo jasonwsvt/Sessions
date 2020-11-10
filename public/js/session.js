@@ -17,23 +17,16 @@ class Session extends Sibling {
 
     get lines() {
         var session;
-        console.log("loading lines for", this._data.id);
+//        console.log("loading lines for", this._data.id);
         if (this._data.lines.length == 0) {
             //On the off-chance the app crashed and on reload the push to storage didn't catch them yet
-            if (this.updateTableExists) {
-                console.log(this.updateTable);
-                session = this.updateTable.find(entry => (entry.id == this._data.id));
-                this._data.lines = session.lines;
-            }
-            else if (this.storageTableExists) {
-                console.log(this.storageTable, this._data.id);
-                session = this.storageTable.find(entry => (entry.id == this._data.id));
-                this._data.lines = session.lines;
+            if (this.storageTableExists) {
+//                console.log(this.storageRecords, this._data.id);
+                session = this.storageRecords.find(entry => (entry.id == this._data.id));
+                if (session && Object.keys(session).includes("lines")) { this._data.lines = session.lines; }
             }
             else if (this.currentUser.useServerStorage) { //request from server
-
             }
-            return (this._data.lines) ? this._data.lines : [];
         }
         this._data.lastOpened = this.now;
         this._save();

@@ -65,7 +65,7 @@ class Siblings extends StorageUtility {
     load(parentId) {
         var data = [], sibling;
         if (this.storageTableExists) {
-            data = this.storageTable.filter(entry =>
+            data = this.storageRecords.filter(entry =>
                 ((parentId == undefined || parentId == entry[this.parent.type + "Id"]) &&
                     (!this.findById(entry.id)) ||
                      (this.findById(entry.id) &&
