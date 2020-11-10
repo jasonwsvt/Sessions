@@ -63,10 +63,11 @@ class Siblings extends StorageUtility {
     }
 
     load(parentId) {
+        console.log("load(", parentId, ")");
         var data = [], sibling;
         if (this.storageTableExists) {
             data = this.storageRecords.filter(entry =>
-                ((parentId == undefined || parentId == entry[this.parent.type + "Id"]) &&
+                ((parentId == entry[this.parent.type + "Id"]) &&
                     (!this.findById(entry.id)) ||
                      (this.findById(entry.id) &&
                       this.findById(entry.id)._data.lastEdited < entry.lastEdited)));
@@ -82,10 +83,9 @@ class Siblings extends StorageUtility {
     }
 
     new() {
-        console.log("new", this.type);
+        //console.trace();
+        //console.log("new", this.type);
         var id = this.newId;
-//        var parentId = this.parent.id;
-//        console.log(parentId);
         this._current = id;
         var sibling = new this._SiblingClass(this._app, this);
 //        console.log(this._type, "new", parentId, id, "Current:", this._current, "Entries:", this.entries);

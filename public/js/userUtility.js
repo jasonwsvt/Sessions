@@ -70,7 +70,7 @@ class UserUtility {
                         this.showSettingsVerifyPasswordMenu();
                     }
                 }
-                else { console.log("got here");
+                else { //console.log("got here");
                     self._closeSettingsMenu();
                 }
                 e.stopPropagation();

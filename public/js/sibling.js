@@ -12,7 +12,7 @@ class Sibling extends StorageUtility {
     }
     get app()                    { return this._app; }
     get currentUser()            { return (this.parent)           ? this.parent.currentUser : null; }
-    get storagePermanence()        { return this.currentUser.storagePermanence; }
+    get storagePermanence()      { return this.currentUser.storagePermanence; }
     get useServerStorage()       { return this.currentUser.useServerStorage; }
     get pushToStorageFrequency() { return this.currentUser.pushToStorageFrequency; }
     get pushToServerFrequency()  { return this.currentUser.pushToServerFrequency; }
@@ -21,6 +21,7 @@ class Sibling extends StorageUtility {
     get siblings()               { return (this._siblings)        ? this._siblings          : null; }
     get children()               { return (this._children)        ? this._children          : null; }
     get storageTableName()       { return this.siblings.type; }
+    get canHaveChildren()        { return this.siblings.canHaveChildren; }
 
     set data(data)               { this._data = data; }
     get data()                   { return this._data; }

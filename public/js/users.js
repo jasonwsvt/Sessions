@@ -18,32 +18,32 @@ class Users extends Siblings {
     get sortByName()          { return; }
 
     load() {
-        var tables = ["update_" + this._type, this._type];
         var containers = [sessionStorage, localStorage];
         containers.forEach(container => {
+            //console.log("looking for one user without password in", container, this.type);
             if (Object.keys(container).includes(this._type)) {
-                console.log(container, this._type);
                 var userRecords = JSON.parse(container.getItem(this._type));
                 if (userRecords.length == 1 && userRecords[0].passwordHash == "") {
                     this._current = userRecords[0].id;
-                    console.log("one user without password found:", container, userRecords, this._current);
+                    //console.log("one user without password found:", container, userRecords[0], this._current);
                     this._loadFrom(container, this._type);
-                    return;
                 }
             }
         });
-        if (!this._current && Object.keys(localStorage).includes("rememberMe")) {                 //Remember Me set
-            this._current = localStorage.getItem("rememberMe");
-            tables.forEach(tableName => { // order: session:update, local:update, session:users, local:users
-                containers.forEach(container => {
-                    if (Object.keys(container).includes(tableName)) {
-                        if (JSON.parse(container.getItem(tableName)).find(user => (user.id == this._current))) {
-                            console.log("rememberMe user found:", container, table, this._current);
-                            this._loadFrom(container, tableName);
-                            return;
+        if (!this.current) {
+            containers.forEach(container => {
+                //console.log("looking for remember me user");
+                if (Object.keys(container).includes("rememberMe")) {   //Remember Me set
+                    this._current = container.getItem("rememberMe");
+                    tables.forEach(tableName => { // order: session:update, local:update, session:users, local:users
+                        if (Object.keys(container).includes(tableName)) {
+                            if (JSON.parse(container.getItem(tableName)).find(user => (user.id == this._current))) {
+                                //console.log("rememberMe user found:", container, table, this._current);
+                                this._loadFrom(container, tableName);
+                            }
                         }
-                    }
-                })
+                    })
+                }
             })
         }
         if (!this.current) { this.new(); }
@@ -79,28 +79,30 @@ class Users extends Siblings {
     }
 
     initialPushToStorage() {
+        //console.log("initialPushToStorage():");
         var containers = [sessionStorage, localStorage];
-        var itemsToRemove = ["currentUser", "lastPushToStorage", "nextPushToStorage", "lastPushToServer", "nextPushToServer"];
         containers.forEach(container => {
             var keys = Object.keys(container);
-            itemsToRemove.forEach(item => { if (keys.includes(item)) { container.removeItem(item); } });
+            //console.log("Keys:", keys);
+            if (keys.includes("currentUser")) { container.removeItem("currentUser"); }
             var updateTables = keys.filter(name => name.startsWith("update_"));
+            //console.log("updateTables:", updateTables);
             updateTables.forEach(updateTable => { 
-                console.log(updateTable);
+                //console.log(updateTable);
                 var updateRecords = JSON.parse(container.getItem(updateTable));
                 var storageTable = updateTable.split("_")[1]; //everything after update_
                 if (keys.includes(storageTable)) {
                     var storageRecords = JSON.parse(container.getItem(storageTable));
-                    console.log(storageTable, storageRecords);
+                    //console.log(storageTable, storageRecords);
                     updateRecords.forEach(updateRecord => {
-                        console.log(updateRecord);
+                        //console.log(updateRecord);
                         storageRecords.filter(storageRecord => (storageRecord.id != updateRecord.id));
                         storageRecords.push(updateRecord);
                     });
                     container.setItem(storageTable, JSON.stringify(storageRecords));
                 }
                 else {
-                    console.log(storageTable, "does not exist.  Creating with", updateRecords);
+                    //console.log(storageTable, "does not exist.  Creating with", updateRecords);
                     container.setItem(storageTable, JSON.stringify(updateRecords));
                 }
                 container.removeItem(updateTable);

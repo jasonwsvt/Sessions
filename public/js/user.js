@@ -63,30 +63,10 @@ class User extends Sibling {
 
     get pushToStorageFrequency() { return this._data.pushToStorageFrequency; }
     set pushToStorageFrequency(newFrequency) {
-        console.log("Old storage frequency:", this._data.pushToStorageFrequency, "new:", newFrequency);
+        //console.log("Old storage frequency:", this._data.pushToStorageFrequency, "new:", newFrequency);
         if (this._data.pushToStorageFrequency != newFrequency) {
-            console.log("not the same");
-            const nextPushToStorage = this.nextPushToStorage;
-            if (nextPushToStorage) {
-                console.log("next push to storage exists")
-                this.stopPushToStorage();
-                if (newFrequency) {
-                    var secondsFromPreviousScheduling = this.now - nextPushToStorage + this._data.pushToStorageFrequency;
-                    console.log(secondsFromPreviousScheduling, nextPushToStorage, this._data.pushToStorageFrequency);
-                    if (secondsFromPreviousScheduling > newFrequency) {
-                        console.log("cancelling and pushing to storage now")
-                        this.pushToStorage();
-                    }
-                    else {
-                        console.log("rescheduling push to storage at ", newFrequency - secondsFromPreviousScheduling, "seconds from now");
-                        this.schedulePushToStorage(newFrequency - secondsFromPreviousScheduling);
-                    }
-                }
-            }
-            else {
-                console.log("Scheduling push to storage at", newFrequency);
-                this.schedulePushToStorage(newFrequency);
-            }
+            //console.log("not the same");
+            this.reschedulePushToStorage(newFrequency);
             this._data.pushToStorageFrequency = newFrequency;
             this._save();
         }
