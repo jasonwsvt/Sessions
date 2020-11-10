@@ -57,6 +57,9 @@ class User extends Sibling {
         if (this._data.storagePermanence != val) {
             this._data.storagePermanence = val;
             this.migrate();
+            if (val == false && this.rememberMe == this.id) {
+                this.clearRememberMe();
+            }
             this._save();
         }
     }

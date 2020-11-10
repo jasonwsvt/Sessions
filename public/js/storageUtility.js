@@ -9,7 +9,7 @@ class StorageUtility {
     get canHaveChidren()         { return false; }
 
     schedulePushes() {
-        console.log("schedulePushes")
+        console.log("schedulePushes", this.type, this.pushToStorageFrequency, this.pushToServerFrequency);
         if (this.pushToStorageFrequency) { this.schedulePushToStorage(); }
         if (this.pushToServerFrequency)  { this.schedulePushToServer(); }
     }
@@ -18,14 +18,14 @@ class StorageUtility {
         console.log(this.type, "schedulePushToStorage("+seconds+")");
         if (seconds && !this.nextPushToStorage) {
             this.nextPushToStorage = this.now + seconds;
-            console.log(this.nextPushToStorage);
+            //console.log(this.nextPushToStorage);
             if (this.nextPushToServer) {
                 const difference = this.nextPushToServer - this.nextPushToStorage;
                 if (difference < 5 && difference > 5) { this.nextPushToStorage = this.nextPushToStorage - 5; }
             }
             var time = (this.nextPushToStorage - this.now) * 1000;
             this._scheduledPushToStorage = setTimeout(() => this.pushToStorage(), time);
-            console.log("scheduled a storage push in", seconds, "seconds at", this.nextPushToStorage);
+            console.log("scheduled", this.type, "storage push in", seconds, "seconds at", this.nextPushToStorage);
         }
     }
 
@@ -39,11 +39,11 @@ class StorageUtility {
                 var secondsFromPreviousScheduling = this.now - nextPushToStorage + this.pushToStorageFrequency;
                 console.log(secondsFromPreviousScheduling, nextPushToStorage, this._data.pushToStorageFrequency);
                 if (secondsFromPreviousScheduling > newFrequency) {
-                    console.log("cancelling and pushing to storage now")
+                    console.log("cancelling", this.type, "push and pushing to storage now")
                     this.pushToStorage();
                 }
                 else {
-                    console.log("rescheduling push to storage at ", newFrequency - secondsFromPreviousScheduling, "seconds from now");
+                    console.log("rescheduling", this.type, "push at ", newFrequency - secondsFromPreviousScheduling, "seconds from now");
                     this.schedulePushToStorage(newFrequency - secondsFromPreviousScheduling);
                 }
             }
@@ -59,7 +59,7 @@ class StorageUtility {
     }
 
     pushToStorage() {
-        console.log("pushToStorage");
+        console.log("pushToStorage", this.type);
         this.removeNextPushToStorage();
         this.lastPushToStorage = this.now;
         if (!this.storageTableExists) { 
@@ -160,6 +160,11 @@ class StorageUtility {
     get nextPushToServer()      { return this._nextPushToServer;}
     set nextPushToServer(time)  { this._nextPushToServer = time;}
     removeNextPushToServer()    { this._nextPushToServer = false; }
+
+    get rememberMeExists()      { return (Object.keys(localStorage).includes("rememberMe")); }
+    get rememberMe()            { return (this.rememberMeExists) ? localStorage.getItem("rememberMe") : null; }
+    set rememberMe(id)          { localStorage.setItem("rememberMe", id) }
+    clearRememberMe()           { localStorage.removeItem("rememberMe"); }
 
     get now() {
         return Math.floor(Date.now() / 1000);

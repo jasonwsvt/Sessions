@@ -1,7 +1,7 @@
 /* utilities class links to sessions class
 */
 
-class UserUtility {
+class UserUtility extends StorageUtility {
     _utilities = null;
     _utilityID = null;
     _type = null;
@@ -48,6 +48,7 @@ class UserUtility {
     _newAccountDivPasswordID = "createNewAccountDivPassword";
 
     constructor (utilities, group) {
+        super();
         const self = this;
         this._utilities = utilities;
         this._group = group;
@@ -91,10 +92,10 @@ class UserUtility {
 
             self.settingsDivRememberMe.on("click", function (e) {
                 if ($(this).prop("checked")) {
-                    localStorage.setItem("rememberMe", self.current.id);
+                    this.rememberMe = this.current.id;
                 }
                 else {
-                    localStorage.removeItem("rememberMe");
+                    this.clearRememberMe();
                 }
             });
 
@@ -142,6 +143,7 @@ class UserUtility {
     get current()                       { return this.group.current; }
     get lines()                         { return this.app.editor.lines; }
     get buttons()                       { return this.app.buttons; }
+    get storagePermanence()             { return this.current.storagePermanence; }
     get span()                          { return $("#" + this._utilityID); }
     get loginDiv()                      { return $("#" + this._loginDivID); }
     get settingsDiv()                   { return $("#" + this._settingsDivID); }
@@ -324,12 +326,26 @@ class UserUtility {
         const newPW = this.newPWState;
         const email = this.emailState;
         const server = this.current.useServerStorage;
-        const local = this.current.storagePermanence;
+        const storagePermanence = this.current.storagePermanence;
 
-        this.settingsDivStorage.val(String(local));
+        this.settingsDivStorage.val(String(storagePermanence));
 
         if (curPW == "Invalid")              { messages.push("Current password is invalid."); }
         else {
+            //SetUp
+            if (!server) {
+                this.pushToServerFrequency.html("<option>Disabled</option>");
+                this.pushToServerFrequency.prop("disabled", true);
+            }
+            else {
+                this.pushToServerFrequency.html([false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
+                    .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
+                this.pushToServerFrequency.val(String(this.current.pushToServerFrequency));
+            }
+            this.settingsDivRememberMe.prop("disabled", (!storagePermanence));
+            this.settingsDivRememberMe.prop("checked", (this.rememberMeId == this.current.id));
+
+            //Messages
             if (uname == "Invalid")          { messages.push("Usernames must contain only alphanumeric characters and ., -, and _.")}
             if (uname == "Emptied")          { messages.push("Usernames are required."); }
             if (uname == "Local duplicate")  { messages.push("Username is duplicated locally."); }
@@ -348,63 +364,34 @@ class UserUtility {
                 if (curPW == "Empty" && newPW == "Empty") {
                     messages.push("Server storage requires a strong password.");
                 }
-                this.pushToServerFrequency.html("<option>Disabled</option>");
-                this.pushToServerFrequency.prop("disabled", true);
             }
-
-            if (server) {
+            else {
                 if (uname == "Default") { messages.push("The username must not be the default."); }
-                options.push("Remove server storage");
-                this.pushToServerFrequency.html([false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
-                    .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
-                this.settingsDivRememberMe.prop("checked", (localStorage.getItem("rememberMe") == this.current.id));
-                this.pushToServerFrequency.val(String(this.current.pushToServerFrequency));
-                }
-
-            if (local) {
-                options.push("Remove local storage");
-                this.settingsDivRememberMe.prop("checked", (localStorage.getItem("rememberMe") == this.current.id));
             }
-
-            if (!local && !server) {
-                if (["Filled", "Unchanged"].includes(uname) &&
-                    ((curPW == "Strong" && newPW == "Empty") || newPW == "Strong") && email != "Invalid") {
-                    options.push("Create an account with local and server storage");
-                }
-                if (["Filled", "Local duplicate", "Unchanged"].includes(uname) &&
-                    ((curPW == "Strong" && newPW == "Empty") || newPW == "Strong") && email != "Invalid") {
-                    options.push("Create an account with server storage");
-                }
-                if (["Filled", "Default", "Server duplicate", "Unchanged"].includes(uname) && email != "Invalid" &&
-                    ((["Empty", "Weak", "Strong"].includes(curPW) && newPW == "Empty") || ["Empty", "Weak", "Strong"].includes(newPW))) {
-                    options.push("Create an account with local storage");
-                }
-            }
-
-            if (local && !server) {
+            //Actions
+            if (!server) {
                 if (["Filled", "Server duplicate"].includes(uname)) { actions.push("change username"); }
                 if (curPW == "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("add password"); }
                 if (curPW != "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("change password"); }
+            }
+            else {
+                if (["Filled", "Local duplicate"].includes(uname) && !isDefault) { actions.push("change username"); }
+                if (newPW == "Strong") { actions.push("change password"); }
+            }
+            if (email == "Filled") { actions.push("set email address"); }
+            if (email == "Emptied") { actions.push("remove email address"); }
+            if (email == "Changed") { actions.push("change email address"); }
+    
+            //Options
+            if (!server) {
                 if (curPW != "Empty" && newPW == "Empty") { options.push("Remove password"); }
                 if (["Filled", "Unchanged"].includes(uname) &&
                     ((curPW == "Strong" && newPW == "Empty") || newPW == "Strong") && email != "Invalid") {
                     options.push("Add server storage");
                 }
             }
-
-            if (!local && server) {
-                if (["Filled", "Local duplicate"].includes(uname) && !isDefault) { actions.push("change username"); }
-                if (newPW == "Strong") { actions.push("change password"); }
-                if (["Filled", "Unchanged"].includes(uname) &&
-                    ((CurPW == "Strong" && newPW == "Empty") || newPW == "Strong") && email != "Invalid") {
-                    options.push("Add local storage");
-                }
-            }
-
-            if (local || server) {
-                if (email == "Filled") { actions.push("set email address"); }
-                if (email == "Emptied") { actions.push("remove email address"); }
-                if (email == "Changed") { actions.push("change email address"); }
+            else {
+                options.push("Remove server storage");
             }
         }
 
@@ -533,41 +520,11 @@ class UserUtility {
 
         options.forEach((option, index) => {
             switch (option) {
-                case "Create an account with local and server storage":
-                    cl = "btn-success";
+                case "Remove password":                                 
+                    cl = "btn-warning";
                     func = () => {
-                        this.current.useServerStorage = true;
-                        this.current.storagePermanence = true;
-                        this.current.userName = this.settingsDivUsername.val();
-                        this.settingsButton.html(this.current.userName);
-                        if (["Weak", "Strong"].includes(this.newPWState)) {
-                            this.settingsDivCurrentPassword.val(this.settingsDivNewPassword1.val());
-                            this.current.passwordHash = this._newPasswordHash;
-                            this.settingsDivNewPassword1.val("");
-                            this.settingsDivNewPassword2.val("");
-                        }
-                        this.current.email = this.settingsDivEmail.val();
-                    };
-                    break;
-                case "Add local storage":                               
-                    cl = "btn-success";
-                    func = () => {
-                        this.current.storagePermanence = true;
-                    };
-                    break;
-                case "Create an account with local storage":            
-                    cl = "btn-success";
-                    func = () => {
-                        this.current.storagePermanence = true;
-                        this.current.userName = this.settingsDivUsername.val();
-                        this.settingsButton.html(this.current.userName);
-                        if (["Weak", "Strong"].includes(this.newPWState)) {
-                            this.settingsDivCurrentPassword.val(this.settingsDivNewPassword1.val());
-                            this.current.passwordHash = this._newPasswordHash;
-                            this.settingsDivNewPassword1.val("");
-                            this.settingsDivNewPassword2.val("");
-                        }
-                        this.current.email = this.settingsDivEmail.val();
+                        this.settingsDivCurrentPassword.val("");
+                        this.current.passwordHash = "";
                     };
                     break;
                 case "Add server storage":                              
@@ -576,52 +533,12 @@ class UserUtility {
                         this.current.useServerStorage = true;
                     };
                     break;
-                case "Create an account with server storage":           
-                    cl = "btn-success";
-                    func = () => {
-                        this.current.useServerStorage = true;
-                        this.current.userName = this.settingsDivUsername.val();
-                        this.settingsButton.html(this.current.userName);
-                        if (["Weak", "Strong"].includes(this.newPWState)) {
-                            this.settingsDivCurrentPassword.val(this.settingsDivNewPassword1.val());
-                            this.current.passwordHash = this._newPasswordHash;
-                            this.settingsDivNewPassword1.val("");
-                            this.settingsDivNewPassword2.val("");
-                        }
-                        this.current.email = this.settingsDivEmail.val();
-                    };
-                    break;
-                case "Remove password":                                 
-                    cl = "btn-warning";
-                    func = () => {
-                        this.settingsDivCurrentPassword.val("");
-                        this.current.passwordHash = "";
-                    };
-                    break;
                 case "Remove server storage":
                     cl = "btn-danger";
                     func = () => {
                         this.current.useServerStorage = false;
-                        if (this.current.storagePermanence == false) {
-                            if (localStorage.getItem("rememberMe") == this.current.id) {
-                                localStorage.removeItem("rememberMe");
-                                this.settingsDivRememberMe.prop("checked", false);
-                            }
-                        }
                     };
                     break; //If no local storage, download all data to session Storage?
-                case "Remove local storage": 
-                    cl = "btn-danger";
-                    func = () => {
-                        this.current.storagePermanence = false;
-                        if (this.current.useSessionStorage == false) {
-                            if (localStorage.getItem("rememberMe") == this.current.id) {
-                                localStorage.removeItem("rememberMe");
-                                this.settingsDivRememberMe.prop("checked", false);
-                            }
-                        }
-                    };
-                    break; //if no server storage, move all data to session Storage?
                 default: console.log(option + "is not supported.");
             }
 

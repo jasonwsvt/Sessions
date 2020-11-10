@@ -7,15 +7,17 @@ class Users extends Siblings {
         this.load();
     }
 
-    get currentUser()         { return (this._current) ? this._current : null; }
-    get firstCreated()        { return; }
-    get mostRecentlyCreated() { return; }
-    get mostRecentlyOpened()  { return; }
-    get mostRecentlyEdited()  { return; }
-    get sortByCreation()      { return; }
-    get sortByLastEdited()    { return; }
-    get sortByLastOpened()    { return; }
-    get sortByName()          { return; }
+    get currentUser()            { return (this._current) ? this.current : null; }
+    get firstCreated()           { return; }
+    get mostRecentlyCreated()    { return; }
+    get mostRecentlyOpened()     { return; }
+    get mostRecentlyEdited()     { return; }
+    get sortByCreation()         { return; }
+    get sortByLastEdited()       { return; }
+    get sortByLastOpened()       { return; }
+    get sortByName()             { return; }
+    get pushToStorageFrequency() { return (this.current) ? this.current.pushToStorageFrequency : null; }
+    get pushToServerFrequency()  { return (this.current) ? this.current.pushToServerFrequency : null; }
 
     load() {
         var containers = [sessionStorage, localStorage];
