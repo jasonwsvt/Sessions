@@ -403,14 +403,18 @@ class UserUtility extends StorageUtility {
     get unameState() { //Unchanged, Emptied, Duplicate, Filled
         const current = this.current.userName;
         const fieldVal = this.settingsDivUsername.val();
+        const server = this.current.useServerStorage;
         const valid = /^[a-z0-9_\-.]{5,20}$/;
 
         if (current == fieldVal) { return "Unchanged"; }
         if (!valid.test(fieldVal)) { return "Invalid"; }
         if (current.length > 0 && fieldVal.length == 0) { return "Emptied"; }
-        const localDup = this.localDupExists(fieldVal);
+        const storageDup = this.storageUserNameExists(fieldVal);
+        const localDup = this.otherContainerUsernameExists(fieldVal);
         const serverDup = false;
-        if (localDup && serverDup) { return "Duplicate"; }
+        if (storageDup && serverDup) { return "Storage and server duplicate"; }
+        if (localDup && serverDup) { return "Local and server duplicate"; }
+        if (storageDup) { return "Storage duplicate"; }
         if (localDup) { return "Local duplicate"; }
         if (serverDup) { return "Server duplicate"; }
         return "Filled";
@@ -459,11 +463,6 @@ class UserUtility extends StorageUtility {
         return "Changed";
     }
     
-    localDupExists(userName) {
-        return Object.keys(localStorage).includes("users") 
-            ? JSON.parse(localStorage.getItem("users")).some(user => (user.userName == userName)) : false;
-    }
-
     actions(actions) {
         var funcs = [], actionText = "";
         const self = this;

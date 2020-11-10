@@ -85,15 +85,14 @@ class StorageUtility {
 
     migrate() {
         //console.log("migrate");
-        var from = (this.storagePermanence) ? sessionStorage : localStorage;
-        var to = (this.storagePermanence) ? localStorage : sessionStorage;
         [this.updateTableName, this.storageTableName].forEach(table => {
-            to.setItem(table, JSON.stringify(from.getItem(table)));
+            this.container.setItem(table, JSON.stringify(this.otherContainer.getItem(table)));
         });
-        if (this.canHaveChildren) { this.current.children.migrateToLocalStorage(); }
+        if (this.canHaveChildren) { this.current.children.migrate(); }
     }
 
-    get container()     { return (this.storagePermanence) ? localStorage : sessionStorage; }
+    get container()             { return (this.storagePermanence) ? localStorage : sessionStorage; }
+    get otherContainer()        { return (this.storagePermanence) ? sessionStorage : localStorage; }
 
     get updateTableName()       { return "update_" + this.storageTableName; }
     removeUpdateTable()         { this.container.removeItem(this.updateTableName); }
@@ -147,6 +146,17 @@ class StorageUtility {
         records.push(newX);
         //console.log("After push:", records);
         this.setRecords(tableName, records);
+    }
+
+    localUserNameExists(userName) { return (this.storageUserNameExists(userName) && this.otherContainerUserNameExists(userName)); }
+    storageUserNameExists(userName) { return this.userNameExists(this.container, userName); }
+    otherContainerUsernameExists(userName) { return this.userNameExists(this.otherContainer, userName); }
+    userNameExists(container, userName) {
+        if (Object.keys(container).includes("users") &&
+            JSON.parse(container.getItem("users")).find(record => (record.userName == userName))) {
+                return true;
+        }
+        return false;
     }
 
     get lastPushToStorage()     { return this._lastPushToStorage; }

@@ -91,12 +91,12 @@ class Cursor {
     _setCursorX()            { this._cursorX = this.lines.distanceToElement(this._lineIndex, this._cursorIndex); }
 
     get _prevLineClosestIndex() {
-        console.log("prevLineClosestIndex " + this._prevLineIndex + " " + this._cursorX);
+        //console.log("prevLineClosestIndex " + this._prevLineIndex + " " + this._cursorX);
         return this.lines.closestIndex(this._prevLineIndex, this._cursorX);
     }
 
     get _nextLineClosestIndex() {
-        console.log("nextLineClosestIndex " + this._nextLineIndex + " " + this._cursorX);
+        //console.log("nextLineClosestIndex " + this._nextLineIndex + " " + this._cursorX);
         return this.lines.closestIndex(this._nextLineIndex, this._cursorX);
     }
 
@@ -146,11 +146,11 @@ class Cursor {
     //if it's not equal, get the value for the width minus the width of the current element
     //if _cursorX is closer to the left, add it before the element, otherwise add it after
     get up() {
-        console.log("up");
+        //console.log("up");
         if (!this._prevLineExists) {if (this._prevElementExists) { this.home; } }
         else {
             const x = this._prevLineClosestIndex;
-            console.log("this._prevLineClosestIndex: " + x);
+            //console.log("this._prevLineClosestIndex: " + x);
             if (x == this._prevLineLength) {
                 this.lines.appendToLine(this._prevLineIndex, this._detachCursor);
             }
@@ -166,17 +166,17 @@ class Cursor {
     //if it's not equal, get the value for the width minus the width of the current element
     //if _cursorX is closer to the left, add it before the element, otherwise add it after
     get down() {
-        console.log("down");
+        //console.log("down");
         if (!this._nextLineExists) { if (this._nextElementExists) { this.end; } }
         else {
             const x = this._nextLineClosestIndex;
-            console.log("this._nextLineClosestIndex: " + x);
+            //console.log("this._nextLineClosestIndex: " + x);
             if (x == this._nextLineLength) {
-                console.log("insert at end of line");
+                //console.log("insert at end of line");
                 this.lines.appendToLine(this._nextLineIndex, this._detachCursor);
             }
             else {
-                console.log("insert before element " + x);
+                //console.log("insert before element " + x);
                 this.lines.insertBefore(this._nextLineIndex, x, this._detachCursor);
             }
         }
@@ -236,20 +236,20 @@ class Cursor {
     //if the subsequent element is typed and has contents, delete the first character
     //if no subsequent element exists, but the next line exists, move contents of below line to current line
     get delete() {
-        console.log("delete");
+        //console.log("delete");
         if (this._nextElementExists) {
-            console.log("next element exists");
+            //console.log("next element exists");
             if (!this._nextElement.hasClass("typed") || (this._nextElement.hasClass("typed") && this._nextElement.text().length == 1)) {
-                console.log("next element not typed or (is typed but has only one character)");
+                //console.log("next element not typed or (is typed but has only one character)");
                 this.lines.removeElement(this._lineIndex, this._nextElementIndex);
             }
             else {
-                console.log("next element is typed and has more than one character");
+                //console.log("next element is typed and has more than one character");
                 this._nextElement.text(this._nextElement.text().slice(1));
             }
         }
         else if (this._nextLineExists) {
-            console.log("next line exists");
+            //console.log("next line exists");
             this.lines.appendToLine(this._lineIndex, this.lines.detachLine(this._nextLineIndex));
             this.lines.removeLine(this._nextLineIndex);
         }
@@ -258,7 +258,7 @@ class Cursor {
 
     //move cursor to beginning of line
     get home() {
-        console.log("home");
+        //console.log("home");
         this.lines.prependToLine(this._lineIndex, this._detachCursor);
         this.manageHiddenCursor();
         this._setCursorX();
@@ -266,7 +266,7 @@ class Cursor {
 
     //move cursor to end of line
     get end() {
-        console.log("end");
+        //console.log("end");
         this.lines.appendToLine(this._lineIndex, this._detachCursor);
         this.manageHiddenCursor();
         this._setCursorX();
@@ -275,7 +275,7 @@ class Cursor {
     //do up a certain number of times
     get pageup() {
         var n;
-        console.log("pageup");
+        //console.log("pageup");
         if (this._lineIndex >= this._numVisibleLines) { n = this._numVisibleLines; }
         else { n = this._lineIndex; }
         for (i = 0; i < n; i--) { this.up; }
@@ -285,7 +285,7 @@ class Cursor {
     //do down a certain number of times
     get pagedown() {
         var n;
-        console.log("pagedown");
+        //console.log("pagedown");
         if (this._lineIndex + this._numVisibleLines < this.lines.numLines) { n = this._numVisibleLines; }
         else { n = this.lines.numLines - 1; }
         for (i = 0; i < n; i--) { this.down; }
