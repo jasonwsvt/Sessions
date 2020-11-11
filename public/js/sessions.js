@@ -3,6 +3,7 @@ class Sessions extends Siblings {
         super(app, Session, parent);
         this._type = "sessions";
         this._sortByLastX = true;
+        this._canHaveChildren = false;
     }
 
     findByCreation(creation)  { return this._sessions.find(session => (session.creation == creation)); }

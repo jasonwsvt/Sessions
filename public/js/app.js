@@ -1,5 +1,3 @@
-const { isValidObjectId } = require("mongoose");
-
 class App {
     _users = null;
     _buttons = null;
@@ -21,25 +19,17 @@ class App {
     get buttons()   { return this._buttons; }
 }
 
-var app = new App();
-
-function isFunction(v)         { return v && {}.toString.call(v) === '[object Function]'; }
-function isString(v)           { return (typeof v == "string"); }
-function isArrayOfObjects(v)   { return (isArray(v) && v.forEach(x => isObject(x))); }
-function isArrayOfStrings(v)   { return (isArray(v) && v.forEach(x => isString(x))); }
-function isUndefined(v)        { return v == undefined; }
-function isNull(v)             { return v == null; }
-function isNumber(v)           { return (typeof v === 'number' && isFinite(v)); }
-function isInteger(v)          { return !isNaN(v) && parseInt(Number(v)) == v && !isNaN(parseInt(v, 10)); }
-function isBoolean(v)          { return Boolean(v); }
-function isSecondsFromEpoch(v) { return (isInteger(v) && v > 1600000000000); }
-
-function isArray(v) {
-    try { var j = JSON.stringify(v); }
-    catch (error) { return false; }
-    if (j.startsWith("[")) { return true; }
-    return false;
-}
+var isFunction         = (v) => { return v && {}.toString.call(v) === '[object Function]'; }
+var isString           = (v) => { return (typeof v == "string"); }
+var isArray            = (v) => { return Array.isArray(v); }
+var isArrayOfObjects   = (v) => { return (isArray(v) && v.forEach(x => isObject(x))); }
+var isArrayOfStrings   = (v) => { return (isArray(v) && v.forEach(x => isString(x))); }
+var isUndefined        = (v) => { return v == undefined; }
+var isNull             = (v) => { return v == null; }
+var isNumber           = (v) => { return (typeof v === 'number' && isFinite(v)); }
+var isInteger          = (v) => { return !isNaN(v) && parseInt(Number(v)) == v && !isNaN(parseInt(v, 10)); }
+var isBoolean          = (v) => { return Boolean(v); }
+var isSecondsFromEpoch = (v) => { return (isInteger(v) && v > 1600000000000); }
 
 function isObject(v) {
     try { var j = JSON.stringify(v); }
@@ -48,25 +38,35 @@ function isObject(v) {
     return false;
 }
 
+//*******************************************************************
+// params: v - any variable
+// returns: a string representing the type of the variable
 function varType(v) {
     if (isFunction(v))         { return "function"; }
     if (isString(v))           { return "string"; }
     if (isArrayOfObjects(v))   { return "arrayOfObjects"; }
     if (isArrayOfStrings(v))   { return "arrayOfStrings"; }
+    if (isArray(v))            { return "array"; }
     if (isUndefined(v))        { return "undefined"; }
     if (isNull(v))             { return "null"; }
-    if (isNumber(v))           { return "number"; }
     if (isInteger(v))          { return "integer"; }
+    if (isNumber(v))           { return "number"; }
     if (isBoolean(v))          { return "boolean"; }
     if (isSecondsFromEpoch(v)) { return "secondsFromEpoch"; }
-    if (is(v)) { return ""; }
-    if (is(v)) { return ""; }
+    console.log("Unsure what it is.  Typeof says it's of type " + typeof v + ".", v);
+    return "Unknown";
 }
 
-function varErr(v, func) {
-    var varType = varType(v);
-    var funcName = func.name;
-    var varName = Object.keys(v);
-    if (!func(v)) { console.log(funcName,"(",varName,") returned false. Is", varType,"\n", v);}
+//*******************************************************************
+// params: v - any variable
+//         f - a function with one parameter that returns whether or not the parameter is of a certain type
+//   desc: If f(v) returns false, throw an informational message to console.log.
+function varErr(v, f) {
+    if (!f(v)) { console.log(f.name,"returned false. Is of type " + varType(v) + ".");}
 }
 
+console.log(varType(undefined));
+varErr(undefined, isString);
+varErr(varType, isFunction);
+
+var app = new App();

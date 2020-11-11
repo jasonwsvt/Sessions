@@ -1,12 +1,13 @@
 class StorageUtility {
     _lastPushToStorage = false;
     _lastPushToServer = false;
+    _scheduledPushToStorage = null;
 
     get storagePermanence()      { return false; }
     get useServerStorage()       { return false; }
     get pushToStorageFrequency() { return false; }
     get pushToServerFrequency()  { return false; }
-    get canHaveChidren()         { return false; }
+    get canHaveChildren()        { return false; }
 
     schedulePushes() {
         console.log("schedulePushes", this.type, this.pushToStorageFrequency, this.pushToServerFrequency);
@@ -30,29 +31,29 @@ class StorageUtility {
     }
 
     reschedulePushToStorage(newFrequency = this.pushToStorageFrequency) {
-        console.log(this.type, "reschedulePushToStorage(", newFrequency, ")");
+        console.log(this.type, "reschedulePushToStorage(", newFrequency, ")", this.nextPushToStorage);
         const nextPushToStorage = this.nextPushToStorage;
         if (nextPushToStorage) {
-            //console.log("next push to storage exists")
+            console.log(this.type, "next push to storage exists")
             this.stopPushToStorage();
             if (newFrequency) {
                 var secondsFromPreviousScheduling = this.now - nextPushToStorage + this.pushToStorageFrequency;
-                console.log(secondsFromPreviousScheduling, nextPushToStorage, this._data.pushToStorageFrequency);
+                //console.log(secondsFromPreviousScheduling, nextPushToStorage, this.pushToStorageFrequency);
                 if (secondsFromPreviousScheduling > newFrequency) {
-                    console.log("cancelling", this.type, "push and pushing to storage now")
+                    console.log(this.type, "canceling", this.type, "push and pushing to storage now")
                     this.pushToStorage();
                 }
                 else {
-                    console.log("rescheduling", this.type, "push at ", newFrequency - secondsFromPreviousScheduling, "seconds from now");
+                    console.log(this.type, "rescheduling", this.type, "push at ", newFrequency - secondsFromPreviousScheduling, "seconds from now");
                     this.schedulePushToStorage(newFrequency - secondsFromPreviousScheduling);
                 }
             }
         }
-        if (this.canHaveChildren) { this.current.children.reschedulePushToStorage(); }
+        if (this.canHaveChildren) { this.children.current.reschedulePushToStorage(newFrequency); }
     }
 
     stopPushToStorage() {
-        console.log("stopPushToStorage");
+        console.log(this.type, "stopPushToStorage");
         clearTimeout(this._scheduledPushToStorage);
         this.removeNextPushToStorage();
         

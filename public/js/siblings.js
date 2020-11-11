@@ -9,6 +9,7 @@ class Siblings extends StorageUtility {
     _defaultName = null;
     _defaultFirstName = null;
     _sortByLastX = false;
+    _canHaveChildren = true;
 
     constructor(app, SiblingClass, parent) {
         super();
@@ -19,7 +20,7 @@ class Siblings extends StorageUtility {
 
     get app()                    { return this._app; }
     get currentUser()            { return this.parent.currentUser; }
-    get storagePermanence()        { return this.currentUser.storagePermanence; }
+    get storagePermanence()      { return this.currentUser.storagePermanence; }
     get useServerStorage()       { return this.currentUser.useServerStorage; }
     get pushToStorageFrequency() { return this.currentUser.pushToStorageFrequency; }
     get pushToServerFrequency()  { return this.currentUser.pushToServerFrequency; }
