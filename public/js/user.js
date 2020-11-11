@@ -69,7 +69,7 @@ class User extends Sibling {
         //console.log("Old storage frequency:", this._data.pushToStorageFrequency, "new:", newFrequency);
         if (this._data.pushToStorageFrequency != newFrequency) {
             //console.log("not the same");
-            this.reschedulePushToStorage(newFrequency);
+            this.siblings.reschedulePushToStorage(newFrequency);
             this._data.pushToStorageFrequency = newFrequency;
             this._save();
         }

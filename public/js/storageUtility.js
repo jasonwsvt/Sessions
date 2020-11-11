@@ -10,6 +10,7 @@ class StorageUtility {
     get canHaveChildren()        { return false; }
 
     schedulePushes() {
+        console.trace();
         console.log("schedulePushes", this.type, this.pushToStorageFrequency, this.pushToServerFrequency);
         if (this.pushToStorageFrequency) { this.schedulePushToStorage(); }
         if (this.pushToServerFrequency)  { this.schedulePushToServer(); }
@@ -49,7 +50,7 @@ class StorageUtility {
                 }
             }
         }
-        if (this.canHaveChildren) { this.children.current.reschedulePushToStorage(newFrequency); }
+        if (this.canHaveChildren) { this.current.children.reschedulePushToStorage(newFrequency); }
     }
 
     stopPushToStorage() {
