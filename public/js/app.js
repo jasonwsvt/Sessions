@@ -28,10 +28,11 @@ var isUndefined        = (v) => { return v == undefined; }
 var isNull             = (v) => { return v == null; }
 var isNumber           = (v) => { return (typeof v === 'number' && isFinite(v)); }
 var isInteger          = (v) => { return !isNaN(v) && parseInt(Number(v)) == v && !isNaN(parseInt(v, 10)); }
-var isBoolean          = (v) => { return Boolean(v); }
+var isBoolean          = (v) => { return (v === true || v === false); }
 var isSecondsFromEpoch = (v) => { return (isInteger(v) && v > 1600000000000); }
 
 function isObject(v) {
+    if (isNull(v) || isUndefined(v) || isBoolean(v)) { return false; }
     try { var j = JSON.stringify(v); }
     catch (error) { return false; }
     if (j.startsWith("{")) { return true; }
@@ -62,7 +63,7 @@ function varType(v) {
 //         f - a function with one parameter that returns whether or not the parameter is of a certain type
 //   desc: If f(v) returns false, throw an informational message to console.log.
 function varErr(v, f, vName) {
-    if (!f(v)) { console.log(f.name,"returned false. " + vName + " Is of type " + varType(v) + "."); }
+    if (!f(v)) { console.log(f.name,"returned false. " + vName + " is of type " + varType(v) + "."); }
 }
 
 var app = new App();

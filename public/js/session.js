@@ -5,9 +5,7 @@ class Session extends Sibling {
     }
 
     get sessions()         { return this._siblings; }
-
     get creation()         { return this._data.creation; }
-
     get parentId()         { return (this._data.issueId) ? this._data.issueId : null; }
     set parentId(parentId) {
         if (this._data.issueId && this._data.issueId != parentId) {
@@ -17,12 +15,10 @@ class Session extends Sibling {
 
     get lines() {
         var session;
-//        console.log("loading lines for", this._data.id);
+        console.log("loading lines for", this._data.id);
         if (this._data.lines.length == 0) {
-            //On the off-chance the app crashed and on reload the push to storage didn't catch them yet
             if (this.storageTableExists) {
-//                console.log(this.storageRecords, this._data.id);
-                session = this.storageRecords.find(entry => (entry.id == this._data.id));
+                session = this.findRecordByIdInStorage(this._data.id);
                 if (session && Object.keys(session).includes("lines")) { this._data.lines = session.lines; }
             }
             else if (this.currentUser.useServerStorage) { //request from server

@@ -22,12 +22,12 @@ class Users extends Siblings {
     load() {
         var containers = [sessionStorage, localStorage];
         containers.forEach(container => {
-            console.log("looking for one user without password");
+            //console.log("looking for one user without password");
             if (Object.keys(container).includes(this._type)) {
                 var userRecords = JSON.parse(container.getItem(this._type));
                 if (userRecords.length == 1 && userRecords[0].passwordHash == "") {
                     this._current = userRecords[0].id;
-                    console.log("one user without password found: ", this._current);
+                    //console.log("one user without password found: ", this._current);
                     this._loadFrom(container);
                 }
             }
@@ -48,7 +48,7 @@ class Users extends Siblings {
                 }
             })
         }
-        if (!this.current) { sessionStorage.clear(); this.new(); }
+        if (!this.current) { this.new(); }
     }
 
     _loadFrom(container, parentId) {

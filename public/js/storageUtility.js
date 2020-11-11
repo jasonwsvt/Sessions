@@ -105,7 +105,7 @@ class StorageUtility {
     set updateRecords(value)    { this.setRecords(this.updateTableName, value); }
     removeRecordInUpdate(id)    { this.removeRecord(this.updateTableName, id); }
     setRecordInUpdate(newX)     { this.setRecord(this.updateTableName, newX); }
-    findRecordByIdInUpdate(id)  { this.findRecordById(this.updateTableName, id); }
+    findRecordByIdInUpdate(id)  { return this.findRecordById(this.updateTableName, id); }
 
     get storageTableName()      { return ""; }  //set this in extended class;
     removeStorageTable()        { this.container.removeItem(this.storageTableName); }
@@ -114,7 +114,7 @@ class StorageUtility {
     set storageRecords(value)   { this.setRecords(this.storageTableName, value); }
     removeRecordInStorage(id)   { this.removeRecord(this.storageTableName, id); }
     setRecordInStorage(newX)    { this.setRecord(this.storageTableName, newX); }
-    findRecordByIdInStorage(id) { this.findRecordById(this.storageTableName, id); }
+    findRecordByIdInStorage(id) { return this.findRecordById(this.storageTableName, id); }
 
     tableExists(tableName) {
         const exists = (Object.keys(this.container).includes(tableName));
@@ -139,6 +139,10 @@ class StorageUtility {
     }
 
     findRecordById(tableName, id) {
+        //varErr(this.getRecords(tableName), isArrayOfObjects, "table records");
+        //console.log(this.getRecords(tableName));
+        //varErr(this.getRecords(tableName).find(record => (record.id == id)), isObject, "record");
+        //console.log(this.getRecords(tableName).find(record => (record.id == id)));
         return this.getRecords(tableName).find(record => (record.id == id));
     }
 
