@@ -7,7 +7,7 @@ class Users extends Siblings {
         this.load();
     }
 
-    get currentUser()            { return (this._current) ? this._current : null; }
+    get currentUser()            { return (this._current) ? this.findById(this._current) : null; }
     get firstCreated()           { return; }
     get mostRecentlyCreated()    { return; }
     get mostRecentlyOpened()     { return; }
@@ -16,8 +16,8 @@ class Users extends Siblings {
     get sortByLastEdited()       { return; }
     get sortByLastOpened()       { return; }
     get sortByName()             { return; }
-    get pushToStorageFrequency() { return (this._currentUser) ? this.currentUser.pushToStorageFrequency : null; }
-    get pushToServerFrequency()  { return (this._current) ? this.currentUser.pushToServerFrequency : null; }
+    get pushToStorageFrequency() { return this.currentUser.pushToStorageFrequency; }
+    get pushToServerFrequency()  { return this.currentUser.pushToServerFrequency; }
 
     load() {
         var containers = [sessionStorage, localStorage];

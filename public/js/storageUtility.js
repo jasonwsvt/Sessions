@@ -10,14 +10,16 @@ class StorageUtility {
     get canHaveChildren()        { return false; }
 
     schedulePushes() {
-        console.trace();
-        console.log("schedulePushes", this.type, this.pushToStorageFrequency, this.pushToServerFrequency);
+        if (varType(this.pushToStorageFrequency) != "integer") {
+            console.trace();
+            console.log("schedulePushes", this.type, this.pushToStorageFrequency, this.pushToServerFrequency);
+        }
         if (this.pushToStorageFrequency) { this.schedulePushToStorage(); }
         if (this.pushToServerFrequency)  { this.schedulePushToServer(); }
     }
 
     schedulePushToStorage(seconds = this.pushToStorageFrequency) {
-        console.log(this.type, "schedulePushToStorage("+seconds+")");
+        //console.log(this.type, "schedulePushToStorage("+seconds+")");
         if (seconds && !this.nextPushToStorage) {
             this.nextPushToStorage = this.now + seconds;
             //console.log(this.nextPushToStorage);
@@ -27,7 +29,7 @@ class StorageUtility {
             }
             var time = (this.nextPushToStorage - this.now) * 1000;
             this._scheduledPushToStorage = setTimeout(() => this.pushToStorage(), time);
-            console.log("scheduled", this.type, "storage push in", seconds, "seconds at", this.nextPushToStorage);
+            //console.log("scheduled", this.type, "storage push in", seconds, "seconds at", this.nextPushToStorage);
         }
     }
 
