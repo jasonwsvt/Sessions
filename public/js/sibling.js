@@ -68,7 +68,7 @@ class Sibling extends StorageUtility {
 //        console.log("New:", this.siblings.type, "Entries:", this.siblings.entries, this._data);
         this._postInit();
         this._data.lastOpened = this.now;
-        this._update();
+        this._save();
         if (this._children) { this._children.new(id); }
     }
 
@@ -76,8 +76,8 @@ class Sibling extends StorageUtility {
 
     load(data) {
         this._data = data;
-        this._updateData();
         this._data.lastOpened = this.now;
+        this._updateData();
         this._postLoad();
         this._save();
         if (this._children) { this._children.load(this._data.id); }
@@ -92,7 +92,7 @@ class Sibling extends StorageUtility {
     }
 
     _save() {
-//        console.log(this._type, this._data.id, "saving");
+        //console.log(this._type, this._data, "saving");
         this.setRecordInUpdate(this._data);
         this.siblings.schedulePushes();
     }
