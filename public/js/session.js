@@ -6,12 +6,12 @@ class Session extends Sibling {
 
     get sessions()         { return this._siblings; }
     get creation()         { return this._data.creation; }
-    get parentId()         { return (this._data.issueId) ? this._data.issueId : null; }
-    set parentId(parentId) {
-        if (this._data.issueId && this._data.issueId != parentId) {
-            this._data.issueId = parentId; this._save();
-        }
-    }
+//    get parentId()         { return (this._data.issueId) ? this._data.issueId : null; }
+//    set parentId(parentId) {
+//        if (this._data.issueId && this._data.issueId != parentId) {
+//            this._data.issueId = parentId; this._save();
+//        }
+//    }
 
     get lines() {
         var session;
@@ -33,12 +33,11 @@ class Session extends Sibling {
 //            console.log(this._data.lines, lines);
             //console.log("_setLines(" + lines + ") for " + this._data.creation);
             this._data.lines = lines;
-            this._data.lastEdited = this.now;
-            this._save();
+            this._update();
         }
     }
 
-    set name(name) { pass; }
+    set name(name) { return; }
     get name() {
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         const d = new Date(this._data.creation * 1000);

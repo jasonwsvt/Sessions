@@ -8,6 +8,7 @@ class StorageUtility {
     get pushToStorageFrequency() { return false; }
     get pushToServerFrequency()  { return false; }
     get canHaveChildren()        { return false; }
+    get parentIdName()           { return this.parent.type + "Id"; }
 
     schedulePushes() {
         if (varType(this.pushToStorageFrequency) != "integer") {
@@ -106,6 +107,7 @@ class StorageUtility {
     removeRecordInUpdate(id)    { this.removeRecord(this.updateTableName, id); }
     setRecordInUpdate(newX)     { this.setRecord(this.updateTableName, newX); }
     findRecordByIdInUpdate(id)  { return this.findRecordById(this.updateTableName, id); }
+    findRecordsByParentIdInUpdate(parentId) { return this.findRecordsByParentId(this.updateTableName, parentId); }
 
     get storageTableName()      { return ""; }  //set this in extended class;
     removeStorageTable()        { this.container.removeItem(this.storageTableName); }
@@ -115,6 +117,7 @@ class StorageUtility {
     removeRecordInStorage(id)   { this.removeRecord(this.storageTableName, id); }
     setRecordInStorage(newX)    { this.setRecord(this.storageTableName, newX); }
     findRecordByIdInStorage(id) { return this.findRecordById(this.storageTableName, id); }
+    findRecordsByParentIdInStorage(parentId) { return this.findRecordsByParentId(this.storageTableName, parentId); }
 
     tableExists(tableName) {
         const exists = (Object.keys(this.container).includes(tableName));
@@ -138,14 +141,6 @@ class StorageUtility {
         this.setRecords(tableName, this.getRecords(tableName).filter(x => (x.id != id)));
     }
 
-    findRecordById(tableName, id) {
-        //varErr(this.getRecords(tableName), isArrayOfObjects, "table records");
-        //console.log(this.getRecords(tableName));
-        //varErr(this.getRecords(tableName).find(record => (record.id == id)), isObject, "record");
-        //console.log(this.getRecords(tableName).find(record => (record.id == id)));
-        return this.getRecords(tableName).find(record => (record.id == id));
-    }
-
     setRecord(tableName, newX) {
         //console.log("setRecord("+tableName+",",newX,")");
         var records = this.getRecords(tableName).filter(x => (x.id != newX.id));
@@ -154,6 +149,23 @@ class StorageUtility {
         records.push(newX);
         //console.log("After push:", records);
         this.setRecords(tableName, records);
+    }
+
+    findRecordById(tableName, id) {
+        //varErr(this.getRecords(tableName), isArrayOfObjects, "table records");
+        //console.log(this.getRecords(tableName));
+        //varErr(this.getRecords(tableName).find(record => (record.id == id)), isObject, "record");
+        //console.log(this.getRecords(tableName).find(record => (record.id == id)));
+        return this.getRecords(tableName).find(record => (record.id == id));
+    }
+
+    findRecordsByParentId(tableName, parentId) {
+        if (this.tableExists(tableName)) {
+            return this.getRecords(tableName).filter(entry =>
+                ((parentId == entry[this.parentIdName]) &&
+                    (!this.findById(entry.id)) ||
+                     (this.findById(entry.id).lastEdited < entry.lastEdited)));
+        }
     }
 
     localUserNameExists(userName) { return (this.storageUserNameExists(userName) && this.otherContainerUserNameExists(userName)); }

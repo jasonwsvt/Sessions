@@ -24,16 +24,29 @@ class Sibling extends StorageUtility {
     get canHaveChildren()        { return this.siblings.canHaveChildren; }
 
     set data(data)               { this._data = data; }
-    get data()                   { return this._data; }
+    get data()                   { return this._data; } //get and set data are not used?
+
+    get parentId()               { return (this._type && this._data[this._type + "Id"]) ? this._data[this._type + "Id"] : null; }
+    set parentId(parentId)       {
+        if (this._type && this._data[this.type + "Id"] != parentId) {
+            this._data[this.type + "Id"] = parentId;
+            this._update();
+        }
+    }
 
     get name()                   { return this._data.name; }
-    set name(name)               { this._data.name = name; this._save(); }
+    set name(name)               {
+        if (this._data.name != name) {
+            this._data.name = name;
+            this._update();
+        }
+    }
 
     get id()                     { return this._data.id; }
     set id(id) {
         if (this._data.id != id) {
             this._data.id = id;
-            this._save();
+            this._update();
             if (this._children) {
                 this._children.unsorted.forEach(child => (child._data.parentId = id));
             }
@@ -52,7 +65,8 @@ class Sibling extends StorageUtility {
         this._data = this._newData(id);
 //        console.log("New:", this.siblings.type, "Entries:", this.siblings.entries, this._data);
         this._postInit();
-        this._save();
+        this._data.lastOpened = this.now;
+        this._update();
         if (this._children) { this._children.new(id); }
     }
 
@@ -61,14 +75,22 @@ class Sibling extends StorageUtility {
     load(data) {
         this._data = data;
         this._updateData();
+        this._data.lastOpened = this.now;
         this._postLoad();
+        this._save();
         if (this._children) { this._children.load(this._data.id); }
     }
 
     _postLoad() { return; }
 
-    _save() {
+
+    _update() {
         this._data.lastEdited = this.now;
+        this._save;
+    }
+
+    _save() {
+//        this._data.lastEdited = this.now;  //should only update lastEdited when data other than lastOpened is changed.
         this.setRecordInUpdate(this._data);
         this.siblings.schedulePushes();
     }

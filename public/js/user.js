@@ -20,7 +20,7 @@ class User extends Sibling {
     set userName(userName)   {
         if (this._data.userName != userName) {
             this._data.userName = userName;
-            this._save();
+            this._update();
         }
     }
 
@@ -28,17 +28,17 @@ class User extends Sibling {
     set email(email)         {
         if (this._data.email != email) {
             this._data.email = email;
-            this._save();
+            this._update();
         }
     }
 
-    get name()               { return `${this._data.firstName} ${this._data.lastName}`; }
-    set name(name)           { return; }
+//    get name()               { return `${this._data.firstName} ${this._data.lastName}`; }
+//    set name(name)           { return; }
 
     get passwordHash() { return this._data.passwordHash; }
     set passwordHash(passwordHash) {
         this._data.passwordHash = passwordHash;
-        this._save();
+        this._update();
     }
 
     verifyPassword() { this._passwordVerified == true; }
@@ -48,7 +48,7 @@ class User extends Sibling {
     set rememberMe(val) {
         if (this._data.rememberMe != val) { 
             this._data.rememberMe = val;
-            this._save();
+            this._update();
         }
     }
 
@@ -60,7 +60,7 @@ class User extends Sibling {
             if (val == false && this.rememberMe == this.id) {
                 this.clearRememberMe();
             }
-            this._save();
+            this._update();
         }
     }
 
@@ -71,7 +71,7 @@ class User extends Sibling {
             //console.log("not the same");
             this.siblings.reschedulePushToStorage(newFrequency);
             this._data.pushToStorageFrequency = newFrequency;
-            this._save();
+            this._update();
         }
     }
 
@@ -80,14 +80,14 @@ class User extends Sibling {
         if (this._data.useServerStorage == false && val == true) {
             this._data.useServerStorage = true;
             this._data.pushToServerFrequency = 36000;
-            this._save();
+            this._update();
         }
         if (this._data.useServerStorage == true && val == false) {
             this._data.useServerStorage = false;
             this._data.pushToServerFrequency = false;
             this.siblings.stopPushToServer();
             //should all data be pulled to the session?  An option to do so?  A warning that everything on the session will be deleted?
-            this._save();
+            this._update();
         }
     }
         
@@ -98,7 +98,7 @@ class User extends Sibling {
             if (val == false) {
                 this.siblings.stopPushToServer();
             }
-            this._save();
+            this._update();
         }
     }
     

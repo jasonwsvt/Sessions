@@ -8,8 +8,8 @@ class Issue extends Sibling {
     get sessions()         { return this._children; }
     get issues()           { return this._siblings; }
 
-    get parentId()         { return (this._data.clientId) ? this._data.clientId : null; }
-    set parentId(parentId) { if (this._data.clientId != parentId) { this._data.clientId = parentId; } }
+//    get parentId()         { return (this._data.clientId) ? this._data.clientId : null; }
+//    set parentId(parentId) { if (this._data.clientId != parentId) { this._data.clientId = parentId; } }
 
     _newData(id) {
         var clientId = this.parent.id;
