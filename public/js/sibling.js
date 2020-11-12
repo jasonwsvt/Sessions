@@ -10,6 +10,8 @@ class Sibling extends StorageUtility {
         this._app = app;
         this._siblings = siblings;
     }
+
+    _newData(id, parentId)       { pass; }
     get app()                    { return this._app; }
     get currentUser()            { return (this.parent)           ? this.parent.currentUser : null; }
     get storagePermanence()      { return this.currentUser.storagePermanence; }
@@ -86,16 +88,14 @@ class Sibling extends StorageUtility {
 
     _update() {
         this._data.lastEdited = this.now;
-        this._save;
+        this._save();
     }
 
     _save() {
-//        this._data.lastEdited = this.now;  //should only update lastEdited when data other than lastOpened is changed.
+//        console.log(this._type, this._data.id, "saving");
         this.setRecordInUpdate(this._data);
         this.siblings.schedulePushes();
     }
-
-    _newData(id, parentId) { pass; }
 
     _updateData() {
         const newData = this._newData(0, 0);

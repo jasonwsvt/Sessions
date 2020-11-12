@@ -68,21 +68,20 @@ class StorageUtility {
         this.removeNextPushToStorage();
         this.lastPushToStorage = this.now;
         if (!this.storageTableExists) { 
-            //console.log(this.storageTableName, "doesn't exist");
+            console.log(this.storageTableName, "doesn't exist");
             this.storageRecords = this.updateRecords;
         }
         else {
             var storageRecords = this.storageRecords;
             this.updateRecords.forEach(updateRecord => {
-                //console.log(this.storageTableName, "before:", storageRecords)
+                console.log(this.storageTableName, "before:", storageRecords)
                 storageRecords = storageRecords.filter(storageRecord => (storageRecord.id != updateRecord.id));
                 storageRecords.push(updateRecord);
-                //console.log(this.storageTableName, "after:", storageRecords)
+                console.log(this.storageTableName, "after:", storageRecords)
             });
             this.storageRecords = storageRecords;
         }
         this.removeUpdateTable();
-        //console.log(this.updateTableExists);
     }
 
     pushToServer() {
@@ -160,11 +159,22 @@ class StorageUtility {
     }
 
     findRecordsByParentId(tableName, parentId) {
+        console.log(tableName, parentId, this.parentIdName);
         if (this.tableExists(tableName)) {
+/*            this.getRecords(tableName).forEach(entry => {
+                if (parentId == entry[this.parentIdName]) {
+                    if (!this.findById(entry.id)) {
+                        console.log("entry not found");
+                    }
+                    else if (this.findById(entry.id).lastEdited < entry.lastEdited) {
+                        console.log("entry found and lastEdited newer");
+                    }
+                }
+            }); */
             return this.getRecords(tableName).filter(entry =>
                 ((parentId == entry[this.parentIdName]) &&
-                    (!this.findById(entry.id)) ||
-                     (this.findById(entry.id).lastEdited < entry.lastEdited)));
+                    (!this.findById(entry.id) ||
+                     (this.findById(entry.id).lastEdited < entry.lastEdited))));
         }
     }
 

@@ -4,14 +4,7 @@ class Session extends Sibling {
         this._type = "session";
     }
 
-    get sessions()         { return this._siblings; }
-    get creation()         { return this._data.creation; }
-//    get parentId()         { return (this._data.issueId) ? this._data.issueId : null; }
-//    set parentId(parentId) {
-//        if (this._data.issueId && this._data.issueId != parentId) {
-//            this._data.issueId = parentId; this._save();
-//        }
-//    }
+    get creation()  { return this._data.creation; }
 
     get lines() {
         var session;

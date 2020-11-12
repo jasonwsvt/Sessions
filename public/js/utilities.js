@@ -53,15 +53,15 @@ class Utilities {
     }
 
     currentUserClients()   {
-        return this.app.users.current.clients;
+        return this.app.users.current.children;
     }
 
     currentClientIssues()  {
-        return this.app.users.current.clients.current.issues;
+        return this.app.users.current.children.current.children;
     }
 
     currentIssueSessions() {
-        return this.app.users.current.clients.current.issues.current.sessions;
+        return this.app.users.current.children.current.children.current.children;
     }
         
     closeAllUtilityMenus(except) {

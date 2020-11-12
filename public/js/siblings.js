@@ -90,14 +90,13 @@ class Siblings extends StorageUtility {
     new() {
         //console.trace();
         console.log("new", this.type);
-        var id = this.newId;
-        this._current = id;
-        var sibling = new this._SiblingClass(this._app, this);
-//        console.log(this._type, "new", parentId, id, "Current:", this._current, "Entries:", this.entries);
-//        sibling.init(id);
-        this._siblings.push(sibling);
-        this._siblings[this._siblings.length-1].init(id);
-        return id;
+        this._current = this.newId;
+//        console.log(this._type, "new", id);
+//        console.log("Current:", this._current);
+//        console.log("Entries:", this.entries);
+        this._siblings.push(new this._SiblingClass(this._app, this));
+        this._siblings[this._siblings.length-1].init(this._current);
+        return this._current;
     }
 
     get newId() {

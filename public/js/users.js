@@ -5,9 +5,12 @@ class Users extends Siblings {
         this._defaultName = "new_user";
         this.initialPushToStorage();
         this.load();
+        if (Object.keys(sessionStorage).includes("users") && JSON.parse(sessionStorage.getItem("users")).length >= 1) { sessionStorage.clear(); }
     }
 
     get currentUser()            { return (this._current) ? this.findById(this._current) : null; }
+    get pushToStorageFrequency() { return this.currentUser.pushToStorageFrequency; }
+    get pushToServerFrequency()  { return this.currentUser.pushToServerFrequency; }
     get firstCreated()           { return; }
     get mostRecentlyCreated()    { return; }
     get mostRecentlyOpened()     { return; }
@@ -16,67 +19,44 @@ class Users extends Siblings {
     get sortByLastEdited()       { return; }
     get sortByLastOpened()       { return; }
     get sortByName()             { return; }
-    get pushToStorageFrequency() { return this.currentUser.pushToStorageFrequency; }
-    get pushToServerFrequency()  { return this.currentUser.pushToServerFrequency; }
 
     load() {
         var containers = [sessionStorage, localStorage];
         containers.forEach(container => {
-            //console.log("looking for one user without password");
             if (Object.keys(container).includes(this._type)) {
+                console.log("looking for one user without password");
                 var userRecords = JSON.parse(container.getItem(this._type));
                 if (userRecords.length == 1 && userRecords[0].passwordHash == "") {
-                    this._current = userRecords[0].id;
-                    //console.log("one user without password found: ", this._current);
-                    this._loadFrom(container);
+                    console.log("one user without password found: ", userRecords[0].id);
+                    this._loadFrom(container, userRecords[0].id);
                 }
+                else { console.log("didn't find a user without a password"); }
             }
         });
         if (!this.current) {
-            containers.forEach(container => {
-                //console.log("looking for remember me user");
-                if (Object.keys(container).includes("rememberMe")) {   //Remember Me set
-                    this._current = container.getItem("rememberMe");
-                    tables.forEach(tableName => { // order: session:update, local:update, session:users, local:users
-                        if (Object.keys(container).includes(tableName)) {
-                            if (JSON.parse(container.getItem(tableName)).find(user => (user.id == this._current))) {
-                                //console.log("rememberMe user found:", container, table, this._current);
-                                this._loadFrom(container, tableName);
-                            }
-                        }
-                    })
+            //console.log("looking for remember me user");
+            if (Object.keys(localStorage).includes("rememberMe")) {   //Remember Me set
+                if (Object.keys(localStorage).includes("users")) {
+                    if (JSON.parse(localStorage.getItem("users")).find(user => (user.id == localStorage.getItem("rememberMe")))) {
+                        //console.log("rememberMe user found:", this._current);
+                        this._loadFrom(localStorage, localStorage.getItem("rememberMe"));
+                    }
+                    else { console.log("didn't find a rememberMe user with that id"); }
                 }
-            })
+            }
         }
         if (!this.current) { this.new(); }
     }
 
-    _loadFrom(container, parentId) {
-        var data = [], user;
-        data = JSON.parse(container.getItem(this._type)).filter(entry =>
-            ((parentId == undefined || parentId == entry[this.parent.type + "Id"]) &&
-                (!this.findById(entry.id)) ||
-                 (this.findById(entry.id) &&
-                  this.findById(entry.id)._data.lastEdited < entry.lastEdited)));
-        data.forEach(entry => {
-            user = new this._SiblingClass(this._app, this);
-            user.load(entry);
-            this._siblings.push(user);
-        });
+    _loadFrom(container, id) {
+        var data = JSON.parse(container.getItem(this._type)).find(entry => (entry.id == id));
+        this._siblings.push(new this._SiblingClass(this._app, this));
+        this._current = id;
+        this._siblings[this._siblings.length - 1].load(data);
     }
 
 
     logIn(userName, password) {
-        if (Object.keys(localStorage).includes(userName)) {
-            data = JSON.parse(localStorage.getItem(userName));
-            if ((password == "" && data.passwordHash == "") || (data.passwordHash == this.hash(password))) {
-                this._current = data.id;
-                user = new this._SiblingClass(this._app, this);
-                user.load(data);
-                this._users.push(user);
-                return true;
-            }
-        }
         return false;
     }
 

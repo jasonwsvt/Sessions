@@ -9,8 +9,6 @@ class User extends Sibling {
 
     get currentUser()        { return this; }
 
-    get clients()            { return this._children; }
-
     get parentId()           { return null; }
     set parentId(parentId)   { return null; }
 
@@ -31,9 +29,6 @@ class User extends Sibling {
             this._update();
         }
     }
-
-//    get name()               { return `${this._data.firstName} ${this._data.lastName}`; }
-//    set name(name)           { return; }
 
     get passwordHash() { return this._data.passwordHash; }
     set passwordHash(passwordHash) {

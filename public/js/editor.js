@@ -21,7 +21,8 @@ class Editor {
     get cursor()          { return this._cursor; }
     get buttons()         { return this.app.buttons; }
     get session()         {
-        return this.app.users.current.clients.current.issues.current.sessions.current;
+        //              users user    clients  client  issues   issue   sessions session
+        return this.app.users.current.children.current.children.current.children.current;
     }
     get lineHeight()      { return this.lines.div.children().eq(0).height(); }
     get height()          { return parseInt(this.lines.div.css("height")); }
