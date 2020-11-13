@@ -165,6 +165,7 @@ class Utility {
     get pickerDiv()         { return $("#" + this._pickerDivID); }
     get pickerSearch()      { return $("#" + this._pickerSearchID); }
     get pickerSearchInput() { return $("#" + this._pickerSearchInputID); }
+    get pickerSort()        { return $("#" + this._pickerSortID); }
     get pickerScrollDiv()   { return $("#" + this._pickerScrollDivID); }
     get renameButton()      { return $("#" + this._renameButtonID); }
     get renameDiv()         { return $("#" + this._renameDivID); }
@@ -182,6 +183,7 @@ class Utility {
         this._pickerSearchID = this._type + "PickerSearch";
         this._pickerSearchInputID = this._type + "PickerSearchInput";
         this._pickerScrollDivID = this._type + "PickerScrollDiv";
+        this._pickerSortID = this._type + "PickerSort";
         this._renameButtonID = this._type + "RenameButton";
         this._renameDivID = this._type + "RenameDiv";
         this._renameInputID = this._type + "RenameInput";
@@ -198,8 +200,13 @@ class Utility {
 
         const pickerButton = "<button id = '" + this._pickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const pickerDiv = "<div id = '" + this._pickerDivID + "' class = 'hidden'></div>";
-        const pickerSearchInput = "<input id = '" + this._pickerSearchInputID + "' placeholder = 'search'> " + searchIcon;
+        const pickerSearchInput = "<input id = '" + this._pickerSearchInputID + "' placeholder = 'search'>";
         const pickerScrollDiv = "<div id = '" + this._pickerScrollDivID + "'></div>";
+        const pickerSort = "<div id = '" + this._pickerSortID + "' class='btn-group btn-group-sm' role='group'></div>";
+        const pickerSort1 = "<button type='button' class='btn btn-secondary'>Name</button>";
+        const pickerSort2 = "<button type='button' class='btn btn-secondary'>Creation</button>";
+        const pickerSort3 = "<button type='button' class='btn btn-secondary'>Edit</button>";
+        const pickerSort4 = "<button type='button' class='btn btn-secondary'>Open</button>";
 
         const renameButton = "<button id = '" + this._renameButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
         const renameDiv = "<div id = '" + this._renameDivID + "' class = 'hidden'></div>";
@@ -210,7 +217,8 @@ class Utility {
         const addInput = "<input id = '" + this._addInputID + "' placeholder = 'add a new " + type + "'>";
 
         this.span.append(pickerButton + pickerDiv);
-        this.pickerDiv.append(pickerSearchInput + pickerScrollDiv);
+        this.pickerDiv.append(pickerSearchInput + pickerSort + pickerScrollDiv);
+        this.pickerSort.append(pickerSort1 + pickerSort2 + pickerSort3 + pickerSort4);
 
         if (this._naming) {
             this.span.append(renameButton + renameDiv);

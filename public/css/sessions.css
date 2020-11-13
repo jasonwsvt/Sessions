@@ -83,6 +83,12 @@
     opacity: 1;
 }
 
+.btn-group-sm {
+    display: flex !important;
+    flex-direction: row !important;
+    flex: 0 0 auto;
+}
+
 .utilityMenu > div > div > .row {
     margin-left: 0px !important;
     margin-right: 0px !important;
