@@ -12,8 +12,8 @@ class StorageUtility {
 
     schedulePushes() {
         if (varType(this.pushToStorageFrequency) != "integer") {
-            //console.trace();
-            //console.log("schedulePushes", this.type, this.pushToStorageFrequency, this.pushToServerFrequency);
+            console.trace();
+            console.log("schedulePushes", this.type, this.pushToStorageFrequency, this.pushToServerFrequency);
         }
         if (this.pushToStorageFrequency) { this.schedulePushToStorage(); }
         if (this.pushToServerFrequency)  { this.schedulePushToServer(); }
@@ -67,6 +67,8 @@ class StorageUtility {
         //console.log("pushToStorage", this.type);
         this.removeNextPushToStorage();
         this.lastPushToStorage = this.now;
+        //this.showContents();
+        //console.log(this.type, "Before push:", this.updateRecords, this.storageRecords);
         if (!this.storageTableExists) { 
             //console.log(this.storageTableName, "doesn't exist");
             this.storageRecords = this.updateRecords;
@@ -74,15 +76,14 @@ class StorageUtility {
         else {
             var storageRecords = this.storageRecords;
             this.updateRecords.forEach(updateRecord => {
-                //console.log(this.storageTableName, "before:", storageRecords)
                 storageRecords = storageRecords.filter(storageRecord => (storageRecord.id != updateRecord.id));
                 storageRecords.push(updateRecord);
-                //console.log(this.storageTableName, "after:", storageRecords)
             });
             this.storageRecords = storageRecords;
         }
+        //console.log(this.type, "After push:", this.updateRecords, this.storageRecords);
         this.removeUpdateTable();
-        //console.log(this.updateTableExists);
+        //console.log(this.type, "After delete:", this.updateRecords, this.storageRecords);
     }
 
     pushToServer() {
@@ -97,7 +98,9 @@ class StorageUtility {
     }
 
     get container()             { return (this.storagePermanence) ? localStorage : sessionStorage; }
+    get containerName()         { return (this.storagePermanence) ? "localStorage" : "sessionStorage"; }
     get otherContainer()        { return (this.storagePermanence) ? sessionStorage : localStorage; }
+    get otherContainerName()    { return (this.storagePermanence) ? "sessionStorage" : "localStorage"; }
 
     get updateTableName()       { return "update_" + this.storageTableName; }
     removeUpdateTable()         { this.container.removeItem(this.updateTableName); }
@@ -107,6 +110,7 @@ class StorageUtility {
     removeRecordInUpdate(id)    { this.removeRecord(this.updateTableName, id); }
     setRecordInUpdate(newX)     { this.setRecord(this.updateTableName, newX); }
     findRecordByIdInUpdate(id)  { return this.findRecordById(this.updateTableName, id); }
+    findRecordsByParentIdInUpdate(parentId) { return this.findRecordsByParentId(this.updateTableName, parentId); }
 
     get storageTableName()      { return ""; }  //set this in extended class;
     removeStorageTable()        { this.container.removeItem(this.storageTableName); }
@@ -116,32 +120,39 @@ class StorageUtility {
     removeRecordInStorage(id)   { this.removeRecord(this.storageTableName, id); }
     setRecordInStorage(newX)    { this.setRecord(this.storageTableName, newX); }
     findRecordByIdInStorage(id) { return this.findRecordById(this.storageTableName, id); }
-    findRecordsByParentIdInStorage(parentId) {
-        var records = this.findRecordsByParentId(this.storageTableName, parentId);
-        console.log(this.storageTableName, parentId, records);
-        return records;
-    }
+    findRecordsByParentIdInStorage(parentId) { return this.findRecordsByParentId(this.storageTableName, parentId); }
 
     tableExists(tableName) {
         const exists = (Object.keys(this.container).includes(tableName));
-//        console.log("tableExists("+tableName+"):", val);
+        //console.log("tableExists("+tableName+"):", val);
         return exists;
     }
 
     getRecords(tableName) {
         const records = (this.tableExists(tableName)) ? JSON.parse(this.container.getItem(tableName)) : [];
-//        console.log("getRecords("+tableName+"):", val);
+        //console.log("getRecords("+tableName+"):", val);
         return records;
     }
 
     setRecords(tableName, value) {
-//        console.log(this.container,".setRecords(",tableName,", ",value,")");
         this.container.setItem(tableName, JSON.stringify(value));
     }
 
     removeRecord(tableName, id) {
-        console.log("removeRecord(",tableName,", ",id,")");
         this.setRecords(tableName, this.getRecords(tableName).filter(x => (x.id != id)));
+    }
+
+    setRecord(tableName, newX) {
+        varErr(newX, isObject, "new record");
+        var recordsBefore = this.getRecords(tableName);
+        varErr(recordsBefore, isArrayOfObjects, "records");
+        var recordsFiltered = recordsBefore.filter(x => (x.id != newX.id));
+        varErr(recordsFiltered, isArrayOfObjects, "filtered records");
+        var recordsNewX = recordsFiltered.push(newX);
+        varErr(recordsNewX, isArrayOfObjects, "records with new record");
+        this.setRecords(tableName, recordsNewX);
+        var recordsAfter = this.getRecords(tableName);
+        varErr(recordsAfter, isArrayOfObjects, "records after setting");
     }
 
     findRecordById(tableName, id) {
@@ -153,40 +164,25 @@ class StorageUtility {
     }
 
     findRecordsByParentId(tableName, parentId) {
-        console.trace();
-        console.log("findRecordsBy" + this.parentIdName + "(",tableName, ",", parentId, ")");
+        //console.log("findRecordsBy" + this.parentIdName + "(",tableName, ",", parentId, ")");
         if (this.tableExists(tableName)) {
-            console.log("Records in " + tableName + ":", this.getRecords(tableName));
-            this.getRecords(tableName).forEach(entry => {
-                console.log(entry[this.parentIdName], "and", parentId, "are equal:", entry[this.parentIdName] == parentId);
+            //console.log(this.getRecords(tableName));
+/*            this.getRecords(tableName).forEach(entry => {
                 if (entry[this.parentIdName] == parentId) {
-                    console.log(entry);
+                    //console.log(entry);
                     if (!this.findById(entry.id)) {
-                        console.log("entry not already loaded");
+                        //console.log("entry not already loaded");
                     }
                     else if (this.findById(entry.id).lastEdited < entry.lastEdited) {
-                        console.log("entry found and lastEdited newer");
+                        //console.log("entry found and lastEdited newer");
                     }
                 }
-            });
-            var records = this.getRecords(tableName).filter(entry =>
-                (parentId == entry[this.parentIdName] &&
+            }); */
+            return this.getRecords(tableName).filter(entry =>
+                ((parentId == entry[this.parentIdName]) &&
                     (!this.findById(entry.id) ||
                      (this.findById(entry.id).lastEdited < entry.lastEdited))));
-
-            console.log("Found records:", records);
-            return records;
         }
-    }
-    
-    setRecord(tableName, newX) {
-        //console.log("setRecord("+tableName+",",newX,")");
-        var records = this.getRecords(tableName).filter(x => (x.id != newX.id));
-        //console.log(tableName, "records:", this.getRecords(tableName));
-        //console.log("Before push:", records);
-        records.push(newX);
-        //console.log("After push:", records);
-        this.setRecords(tableName, records);
     }
 
     localUserNameExists(userName) { return (this.storageUserNameExists(userName) && this.otherContainerUserNameExists(userName)); }
@@ -219,5 +215,15 @@ class StorageUtility {
 
     get now() {
         return Math.floor(Date.now() / 1000);
+    }
+
+    showContents() {
+        Object.keys(this.container).forEach(item => {
+            try { console.log(item + ":", JSON.parse(this.container.getItem(item))); }
+            catch { 
+                try { console.log(item + ":", this.container.getItem(item)); }
+                catch { console.log("Unable to display " + item); }
+            }
+        })
     }
 }

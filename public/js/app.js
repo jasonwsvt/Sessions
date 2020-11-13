@@ -63,7 +63,10 @@ function varType(v) {
 //         f - a function with one parameter that returns whether or not the parameter is of a certain type
 //   desc: If f(v) returns false, throw an informational message to console.log.
 function varErr(v, f, vName) {
-    if (!f(v)) { console.log(f.name,"returned false. " + vName + " is of type " + varType(v) + "."); }
+    if (!f(v)) {
+        console.log(vName + ": " + f.name + " false, " + varType(v) + " true.");
+        console.log(v);
+    }
 }
 
 var app = new App();

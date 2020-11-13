@@ -4,8 +4,8 @@ class Users extends Siblings {
         this._type = "users";
         this._defaultName = "new_user";
         this.initialPushToStorage();
+        //if (Object.keys(sessionStorage).includes("users") && JSON.parse(sessionStorage.getItem("users")).length >= 1) { sessionStorage.clear(); }
         this.load();
-        if (Object.keys(sessionStorage).includes("users") && JSON.parse(sessionStorage.getItem("users")).length >= 1) { sessionStorage.clear(); }
     }
 
     get currentUser()            { return (this._current) ? this.findById(this._current) : null; }
