@@ -118,7 +118,7 @@ class StorageUtility {
     findRecordByIdInStorage(id) { return this.findRecordById(this.storageTableName, id); }
     findRecordsByParentIdInStorage(parentId) {
         var records = this.findRecordsByParentId(this.storageTableName, parentId);
-        console.log(this.storageTableName, parentId, records);
+        //console.log(this.storageTableName, parentId, records);
         return records;
     }
 
@@ -153,19 +153,18 @@ class StorageUtility {
     }
 
     findRecordsByParentId(tableName, parentId) {
-        console.trace();
-        console.log("findRecordsBy" + this.parentIdName + "(",tableName, ",", parentId, ")");
+        //console.log("findRecordsBy" + this.parentIdName + "(",tableName, ",", parentId, ")");
         if (this.tableExists(tableName)) {
-            console.log("Records in " + tableName + ":", this.getRecords(tableName));
+            //console.log("Records in " + tableName + ":", this.getRecords(tableName));
             this.getRecords(tableName).forEach(entry => {
-                console.log(entry[this.parentIdName], "and", parentId, "are equal:", entry[this.parentIdName] == parentId);
+                //console.log(entry[this.parentIdName], "and", parentId, "are equal:", entry[this.parentIdName] == parentId);
                 if (entry[this.parentIdName] == parentId) {
-                    console.log(entry);
+                    //console.log(entry);
                     if (!this.findById(entry.id)) {
-                        console.log("entry not already loaded");
+                        //console.log("entry not already loaded");
                     }
                     else if (this.findById(entry.id).lastEdited < entry.lastEdited) {
-                        console.log("entry found and lastEdited newer");
+                        //console.log("entry found and lastEdited newer");
                     }
                 }
             });
@@ -174,19 +173,26 @@ class StorageUtility {
                     (!this.findById(entry.id) ||
                      (this.findById(entry.id).lastEdited < entry.lastEdited))));
 
-            console.log("Found records:", records);
+            //console.log("Found records:", records);
             return records;
         }
     }
     
     setRecord(tableName, newX) {
-        //console.log("setRecord("+tableName+",",newX,")");
-        var records = this.getRecords(tableName).filter(x => (x.id != newX.id));
-        //console.log(tableName, "records:", this.getRecords(tableName));
-        //console.log("Before push:", records);
-        records.push(newX);
-        //console.log("After push:", records);
-        this.setRecords(tableName, records);
+        //console.log("\nsetRecord");
+        //console.log("Table name:", tableName);
+        //console.log("newX:", newX);
+        var records = this.getRecords(tableName);
+        //console.log("Table records:", records);
+        var filtered = records.filter(x => (x.id != newX.id));
+        //console.log("Filtered records:", filtered);
+        var afterPush = filtered;
+        afterPush.push(newX);
+        //console.log(filtered, ".push(", newX, "):", afterPush);
+        if (isArray(afterPush)) {
+            //console.log("saving array to", tableName);
+            this.setRecords(tableName, afterPush);
+        }
     }
 
     localUserNameExists(userName) { return (this.storageUserNameExists(userName) && this.otherContainerUserNameExists(userName)); }

@@ -6,7 +6,7 @@ class Client extends Sibling {
     }
 
     _newData(id) {
-        var name = (this.siblings.entries == 0 && this.siblings.defaultFirstName) ? this.siblings.defaultFirstName : this.siblings.defaultName;
+        var name = (this.siblings.entries == 1 && this.siblings.defaultFirstName) ? this.siblings.defaultFirstName : this.siblings.defaultName;
         var userId = this.parent.id;
         return {
             id: id,
