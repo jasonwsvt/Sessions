@@ -72,14 +72,20 @@ class Users extends Siblings {
             updateTables.forEach(updateTable => { 
                 //console.log(updateTable);
                 var updateRecords = JSON.parse(container.getItem(updateTable));
+                //console.log("updateTable:", updateTable);
+                //console.log("updateRecords:", updateRecords);
                 var storageTable = updateTable.split("_")[1]; //everything after update_
                 if (keys.includes(storageTable)) {
                     var storageRecords = JSON.parse(container.getItem(storageTable));
-                    //console.log(storageTable, storageRecords);
+                    //console.log("storageTable:", storageTable);
+                    //console.log("storageRecords:", storageRecords);
                     updateRecords.forEach(updateRecord => {
-                        //console.log(updateRecord);
-                        storageRecords.filter(storageRecord => (storageRecord.id != updateRecord.id));
+                        //console.log("updateRecord:", updateRecord);
+                        //console.log("StorageRecords before:", storageRecords);
+                        storageRecords = storageRecords.filter(storageRecord => (storageRecord.id != updateRecord.id));
+                        //console.log("StorageRecords after filter:", storageRecords);
                         storageRecords.push(updateRecord);
+                        //console.log("StorageRecords after push:", storageRecords);
                     });
                     container.setItem(storageTable, JSON.stringify(storageRecords));
                 }
