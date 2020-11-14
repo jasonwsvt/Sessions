@@ -22,12 +22,12 @@ class UserUtility extends StorageUtility {
     _settingsDivNewPassword1ID = "settingsDivNewPassword1";
     _settingsDivNewPassword2ID = "settingsDivNewPassword2";
     _settingsDivEmailID = "settingsDivEmail";
-    _settingsDivUsernameLocalToolID = "settingsDivUsernameLocalTool";
-    _settingsDivUsernameServerToolID = "settingsDivUsernameServerTool";
-    _settingsDivPasswordLocalToolID = "settingsDivPasswordLocalTool";
-    _settingsDivPasswordServerToolID = "settingsDivPasswordServerTool";
-    _settingsDivEmailLocalToolID = "settingsDivEmailLocalTool";
-    _settingsDivEmailServerToolID = "settingsDivEmailServerTool";
+//    _settingsDivUsernameLocalToolID = "settingsDivUsernameLocalTool";
+//    _settingsDivUsernameServerToolID = "settingsDivUsernameServerTool";
+//    _settingsDivPasswordLocalToolID = "settingsDivPasswordLocalTool";
+//    _settingsDivPasswordServerToolID = "settingsDivPasswordServerTool";
+//    _settingsDivEmailLocalToolID = "settingsDivEmailLocalTool";
+//    _settingsDivEmailServerToolID = "settingsDivEmailServerTool";
     _settingsDivRememberMeID = "settingsDivRememberMe";
     _settingsDivStorageID = "settingsDivStorage";
     _settingsDivMessagesID = "settingsDivMessages";
@@ -158,12 +158,12 @@ class UserUtility extends StorageUtility {
     get settingsDivNewPassword1()       { return $("#" + this._settingsDivNewPassword1ID); }
     get settingsDivNewPassword2()       { return $("#" + this._settingsDivNewPassword2ID); }
     get settingsDivEmail()              { return $("#" + this._settingsDivEmailID); }
-    get settingsDivUsernameLocalTool()  { return $("#" + this._settingsDivUsernameLocalToolID); }
-    get settingsDivUsernameServerTool() { return $("#" + this._settingsDivUsernameServerToolID); }
-    get settingsDivPasswordLocalTool()  { return $("#" + this._settingsDivPasswordLocalToolID); }
-    get settingsDivPasswordServerTool() { return $("#" + this._settingsDivPasswordServerToolID); }
-    get settingsDivEmailLocalTool()     { return $("#" + this._settingsDivEmailLocalToolID); }
-    get settingsDivEmailServerTool()    { return $("#" + this._settingsDivEmailServerToolID); }
+//    get settingsDivUsernameLocalTool()  { return $("#" + this._settingsDivUsernameLocalToolID); }
+//    get settingsDivUsernameServerTool() { return $("#" + this._settingsDivUsernameServerToolID); }
+//    get settingsDivPasswordLocalTool()  { return $("#" + this._settingsDivPasswordLocalToolID); }
+//    get settingsDivPasswordServerTool() { return $("#" + this._settingsDivPasswordServerToolID); }
+//    get settingsDivEmailLocalTool()     { return $("#" + this._settingsDivEmailLocalToolID); }
+//    get settingsDivEmailServerTool()    { return $("#" + this._settingsDivEmailServerToolID); }
     get settingsDivRememberMe()         { return $("#" + this._settingsDivRememberMeID); }
     get settingsDivStorage()            { return $("#" + this._settingsDivStorageID); }
     get settingsDivMessages()           { return $("#" + this._settingsDivMessagesID); }
@@ -256,20 +256,20 @@ class UserUtility extends StorageUtility {
     }
 
     showSettingsVerifyPasswordMenu() {
-        if (!this.settingsDivUsername.hasClass("hidden")) { this.settingsDivUsername.addClass("hidden"); }
-        if (!this.settingsDivEmail.hasClass("hidden")) { this.settingsDivEmail.addClass("hidden"); }
+        if (!this.settingsDivUsername.hasClass("hidden"))        { this.settingsDivUsername.addClass("hidden"); }
+        if (!this.settingsDivEmail.hasClass("hidden"))           { this.settingsDivEmail.addClass("hidden"); }
         if (!this.settingsDivCurrentPassword.hasClass("hidden")) { this.settingsDivCurrentPassword.addClass("hidden"); }
-        if (!this.settingsDivNewPassword1.hasClass("hidden")) { this.settingsDivNewPassword1.addClass("hidden"); }
-        if (!this.settingsDivNewPassword2.hasClass("hidden")) { this.settingsDivNewPassword2.addClass("hidden"); }
-        if (this.settingsDivCurrentPassword.hasClass("hidden")) { this.settingsDivCurrentPassword.removeClass("hidden"); }
+        if (!this.settingsDivNewPassword1.hasClass("hidden"))    { this.settingsDivNewPassword1.addClass("hidden"); }
+        if (!this.settingsDivNewPassword2.hasClass("hidden"))    { this.settingsDivNewPassword2.addClass("hidden"); }
+        if (this.settingsDivCurrentPassword.hasClass("hidden"))  { this.settingsDivCurrentPassword.removeClass("hidden"); }
     }
 
     showSettingsMenu() {
-        if(this.settingsDivUsername.hasClass("hidden")) { this.settingsDivUsername.removeClass("hidden"); }
-        if(this.settingsDivEmail.hasClass("hidden")) { this.settingsDivEmail.removeClass("hidden"); }
-        if(this.settingsDivCurrentPassword.hasClass("hidden")) { this.settingsDivCurrentPassword.removeClass("hidden"); }
-        if(this.settingsDivNewPassword1.hasClass("hidden")) { this.settingsDivNewPassword1.removeClass("hidden"); }
-        if(this.settingsDivNewPassword2.hasClass("hidden")) { this.settingsDivNewPassword2.removeClass("hidden"); }
+        if(this.settingsDivUsername.hasClass("hidden"))         { this.settingsDivUsername.removeClass("hidden"); }
+        if(this.settingsDivEmail.hasClass("hidden"))            { this.settingsDivEmail.removeClass("hidden"); }
+        if(this.settingsDivCurrentPassword.hasClass("hidden"))  { this.settingsDivCurrentPassword.removeClass("hidden"); }
+        if(this.settingsDivNewPassword1.hasClass("hidden"))     { this.settingsDivNewPassword1.removeClass("hidden"); }
+        if(this.settingsDivNewPassword2.hasClass("hidden"))     { this.settingsDivNewPassword2.removeClass("hidden"); }
         if(!this.settingsDivCurrentPassword.hasClass("hidden")) { this.settingsDivCurrentPassword.addClass("hidden"); }
     }
 
@@ -283,7 +283,7 @@ class UserUtility extends StorageUtility {
 //        this.newAccountDiv.css("top", String(this.newAccountButton.position().top + this.newAccountButton.outerHeight()) + "px");
     }
 
-    setButton(button, color, text) {
+/*    setButton(button, color, text) {
         if (button.hasClass("btn-primary"))   { button.removeClass("btn-primary"); }
         if (button.hasClass("btn-secondary")) { button.removeClass("btn-secondary"); }
         if (button.hasClass("btn-success"))   { button.removeClass("btn-success"); }
@@ -306,7 +306,7 @@ class UserUtility extends StorageUtility {
         }
 
         button.text(text);
-    }
+    } */
 
     frequencyName(seconds) {
         return (seconds == false) ? "Manual" : 
@@ -342,6 +342,7 @@ class UserUtility extends StorageUtility {
                     .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
                 this.pushToServerFrequency.val(String(this.current.pushToServerFrequency));
             }
+            this.settingsDivStorage.prop("disabled", (uname == "Local duplicate"));
             this.settingsDivRememberMe.prop("disabled", (!storagePermanence));
             this.settingsDivRememberMe.prop("checked", (this.rememberMeId == this.current.id));
 
@@ -358,7 +359,19 @@ class UserUtility extends StorageUtility {
                 if (uname == "Default") {
                     messages.push("Server storage requires a username that's not the default.");
                 }
-                if ((curPW == "Weak" && newPW == "Empty") || newPW == "Weak") {
+                if (uname == "Storage and server duplicate") {
+                    messages.push("Username is unavailable in local storage and on the server.");
+                }
+                if (uname == "Local and server duplicate") {
+                    messages.push("Username is unavailable locally and on the server.");
+                }
+                if (uname == "Storage duplicate") {
+                    messages.push("Username is unavailable on the server.");
+                }
+                if (uname == "Server duplicate") {
+                    messages.push("username is unavailable on the server.");
+                }
+                        if ((curPW == "Weak" && newPW == "Empty") || newPW == "Weak") {
                     messages.push("Server storage requires a stronger password.");
                 }
                 if (curPW == "Empty" && newPW == "Empty") {
@@ -367,15 +380,39 @@ class UserUtility extends StorageUtility {
             }
             else {
                 if (uname == "Default") { messages.push("The username must not be the default."); }
+                if (uname == "Storage and server duplicate") {
+                    messages.push("Username is duplicated in local storage and on the server.");
+                }
+                if (uname == "Local and server duplicate") {
+                    messages.push("Username is duplicated locally and on the server.");
+                }
+                if (uname == "Storage duplicate") {
+                    messages.push("");
+                }
+                if (uname == "Local duplicate") {
+                    messages.push("");
+                }
+                if (uname == "Server duplicate") {
+                    messages.push("");
+                }
             }
+
             //Actions
             if (!server) {
-                if (["Filled", "Server duplicate"].includes(uname)) { actions.push("change username"); }
-                if (curPW == "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("add password"); }
-                if (curPW != "Empty" && ["Weak", "Strong"].includes(newPW)) { actions.push("change password"); }
+                if (["Filled", "Local and server duplicate", "Local duplicate", "Server duplicate"].includes(uname)) {
+                    actions.push("change username");
+                }
+                if (curPW == "Empty" && ["Weak", "Strong"].includes(newPW)) {
+                    actions.push("add password");
+                }
+                if (curPW != "Empty" && ["Weak", "Strong"].includes(newPW)) {
+                    actions.push("change password");
+                }
             }
             else {
-                if (["Filled", "Local duplicate"].includes(uname) && !isDefault) { actions.push("change username"); }
+                if (["Filled", "Local duplicate"].includes(uname) && !isDefault) {
+                    actions.push("change username");
+                }
                 if (newPW == "Strong") { actions.push("change password"); }
             }
             if (email == "Filled") { actions.push("set email address"); }

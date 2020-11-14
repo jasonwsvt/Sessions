@@ -48,6 +48,7 @@
 
 #settingsDivMessages {
     text-align: center;
+    background-color: rgba(200, 0, 0, 0.33)
 }
 
 #settingsDivAction {

@@ -48,6 +48,7 @@ class Utility {
                             $(this).html(self.current.name);
                         }
                         self.pickerDiv.removeClass("hidden");
+                        this.blur();
                         self.pickerDiv.css("left", String(self.pickerButton.position().left) + "px");
                         self.pickerDiv.css("top", String(self.pickerButton.position().top + self.pickerButton.outerHeight()) + "px");
                         self.pickerDiv.addClass("utilityMenu");
@@ -101,6 +102,7 @@ class Utility {
                     self.utilities.closeAllUtilityMenus(self._renameButtonID);
                     if (self.renameDiv.hasClass("hidden")) {
                         self.renameDiv.removeClass("hidden");
+                        this.blur();
                         self.renameDiv.css("left", String(self.renameButton.position().left) + "px");
                         self.renameDiv.css("top", String(self.renameButton.position().top + self.renameButton.outerHeight()) + "px");
                         self.renameDiv.addClass("utilityMenu");
@@ -128,6 +130,7 @@ class Utility {
                     self.utilities.closeAllUtilityMenus(self._addButtonID);
                     if (self.addDiv.hasClass("hidden")) {
                         self.addDiv.removeClass("hidden");
+                        this.blur();
                         self.addDiv.css("left", String(self.addButton.position().left) + "px");
                         self.addDiv.css("top", String(self.addButton.position().top + self.addButton.outerHeight()) + "px");
                         self.addDiv.addClass("utilityMenu");
