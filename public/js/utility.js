@@ -4,7 +4,6 @@ class Utility {
     _group = null;
     _type = null;
     _naming = null;
-    _lastSortMethod = null;
 
     _caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
     _caretUpIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-up-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/></svg>";
@@ -214,8 +213,8 @@ class Utility {
         const pickerSort = "<div id = '" + this._pickerSortID + "' class='btn-group btn-group-sm' role='group'></div>";
         const pickerSort1 = "<button type = 'button' class = 'btn btn-secondary' value = 'name'>A-Z</button>";
         const pickerSort2 = "<button type = 'button' class = 'btn btn-secondary' value = 'creation'>Creation</button>";
-        const pickerSort3 = "<button type = 'button' class = 'btn btn-secondary' value = 'lastEdited'>Edited</button>";
-        const pickerSort4 = "<button type = 'button' class = 'btn btn-secondary' value = 'lastOpened'>Opened</button>";
+        const pickerSort3 = "<button type = 'button' class = 'btn btn-secondary' value = 'edited'>Edited</button>";
+        const pickerSort4 = "<button type = 'button' class = 'btn btn-secondary' value = 'opened'>Opened</button>";
 
         const renameButton = "<button id = '" + this._renameButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
         const renameDiv = "<div id = '" + this._renameDivID + "' class = 'hidden'></div>";
@@ -267,64 +266,39 @@ class Utility {
             this.pickerScrollDiv.css("height", String(scrollDivHeight) + "px");
             this.pickerDiv.css("height", String(parseInt(this.pickerSearchInput.outerHeight) + parseInt(this.pickerScrollDiv.outerHeight) + 10) + "px");
 
-            this.addButton.attr("disabled", (this.group.findByName(this.group.defaultName) != null));
-//            if (this.group.findByName(this.group.defaultName)) { this.addButton.attr("disabled", true); }
-//            else                                               { this.addButton.attr("disabled", false); }
+            this.addButton.attr("disabled", (this.group.findByName(this.group.defaultName) != undefined));
         }
 
     }
 
-    pickerButtons(method = this._lastSortMethod) {
-        var code = "<div style = 'display: grid'>", sort;
+    pickerButtons(method) {
+        var code, sort;
         const upArrow = this._upArrow;
         const downArrow = this._downArrow;
 
-        if (method) { this._lastSortMethod = method; }
-        if (this._lastSortMethod == null) { this._lastSortMethod = "name"; }
-
-        switch (this._lastSortMethod.split("_")[0]) {
-            case "name":
-                sort = this.group.sortByName; console.log(sort);
-                if (this._lastSortMethod == "name") {
-                    this._lastSortMethod = "name_reverse";
-                    sort.reverse();
-                }
-                else {
-                    this._lastSortMethod = "name";
-                } 
-                break;
-            case "creation":
-                sort = this.group.sortByCreation;
-                if (this._lastSortMethod == "creation") {
-                    this._lastSortMethod = "creation_reverse";
-                    sort.reverse();
-                }
-                else {
-                    this._lastSortMethod = "creation";
-                }
-                break;
-            case "lastEdited":
-                sort = this.group.sortByLastEdited;
-                if (this._lastSortMethod == "lastEdited") {
-                    this._lastSortMethod = "lastEdited_reverse";
-                    sort.reverse();
-                }
-                else {
-                    this._lastSortMethod = "lastEdited";
-                }
-                break;
-            case "lastOpened":
-                sort = this.group.sortByLastOpened;
-                if (this._lastSortMethod == "lastOpened") {
-                    this._lastSortMethod = "lastOpened_reverse";
-                    sort.reverse();
-                }
-                else {
-                    this._lastSortMethod = "lastOpened";
-                }
-                break;
+        if (method) {
+            this.group.sortMethod = (this.group.sortMethod == method) ? method + "_reverse" : method;
         }
 
+        ["name", "creation", "edited", "opened"].forEach((value, index) => {
+            var sort = "", label = value.charAt(0).toUpperCase() + value.slice(1);
+            if (this.group.sortMethod == value)              { sort = downArrow + " "; }
+            if (this.group.sortMethod == value + "_reverse") { sort = upArrow + " "; }
+            this.pickerSort.find("button").eq(index).html(sort + label);
+        });
+        
+        switch (this.group.sortMethod) {
+            case "name":             sort = this.group.sortByName;                       break;
+            case "name_reverse":     sort = this.group.sortByName;       sort.reverse(); break;
+            case "creation":         sort = this.group.sortByCreation;                   break;
+            case "creation_reverse": sort = this.group.sortByCreation;   sort.reverse(); break;
+            case "edited":           sort = this.group.sortByLastEdited;                 break;
+            case "edited_reverse":   sort = this.group.sortByLastEdited; sort.reverse(); break;
+            case "opened":           sort = this.group.sortByLastOpened;                 break;
+            case "opened_reverse":   sort = this.group.sortByLastOpened; sort.reverse(); break;
+        }
+
+        code = "<div style = 'display: grid'>";
         sort.forEach((entry) => {
             code += "<div class = 'row'><button type='button' class='btn btn-block ";
             if (entry.id == this.current.id) { code += "btn-info"; }

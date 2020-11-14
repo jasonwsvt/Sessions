@@ -63,6 +63,19 @@ class Siblings extends StorageUtility {
         return this._siblings;
     }
 
+    get sortMethod() {
+        if (this.currentUser.sortMethod(this.type)) {
+            return this.currentUser.sortMethod(this.type);
+        }
+        else {
+            return "name";
+        }
+    }
+
+    set sortMethod(method) {
+        this.currentUser.setSortMethod(this.type, method);
+    }
+
     load(parentId) {
         //console.log("load(", parentId, ")");
         var data = [], sibling;

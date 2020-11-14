@@ -96,6 +96,16 @@ class User extends Sibling {
             this._update();
         }
     }
+
+    sortMethod(type) {
+        return (Object.keys(this._data).includes(type + "Sort"))
+            ? this._data[type + "Sort"] : null;
+    }
+
+    setSortMethod(type, method) {
+        this._data[type + "Sort"] = method;
+        this._update();
+    }
     
     _newData(id, parentId) {
         const name = this.siblings.defaultName;
