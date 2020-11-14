@@ -21,6 +21,7 @@ class SliderUtility {
         $(document).ready(function() {
             self._slideUpButton.on("click", function() {
                 self.editor.reduceVisibleLines();
+                this.blur();
                 return false;
             });
 
@@ -31,6 +32,7 @@ class SliderUtility {
 
             self._slideDownButton.on("click", function() {
                 self.editor.increaseVisibleLines();
+                this.blur();
                 return false;
             });
 
@@ -41,7 +43,7 @@ class SliderUtility {
         }); 
     }
 
-    get span()                    { return $("#" + this._utilityID); }
+    get div()                     { return $("#" + this._utilityID); }
     get app()                     { return this._utilities.app; }
     get editor()                  { return this.app.editor; }
     get buttons()                 { return this.app.buttons; }
@@ -56,7 +58,9 @@ class SliderUtility {
         const slideUpButton = "<button id = '" + this._slideUpButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + scrollUpIcon + "</button>";
         const slideDownButton = "<button id = '" + this._slideDownButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + scrollDownIcon + "</button>";
 
-        this.span.append(slideUpButton + slideDownButton);
+        this.div.addClass("btn-group");
+        this.div.attr("role", "group");
+        this.div.append(slideUpButton + slideDownButton);
     }
 
     manage() {

@@ -8,16 +8,11 @@ class Utilities {
     _transferUtility = null;
     _infoUtility = null;
 
-    _dotIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-dot my-2' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'/></svg>";
+//    _dotIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-dot my-2' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'/></svg>";
 
     constructor(app) {
         var self = this;
         this._app = app;
-        $("#userUtility").after(this._dotIcon);
-        $("#clientUtility").after(this._dotIcon);
-        $("#issueUtility").after(this._dotIcon);
-        $("#sliderUtility").after(this._dotIcon);
-        $("#transferUtility").after(this._dotIcon);
 
         this._userUtility = new UserUtility(this, this.users);
         this._clientUtility = new Utility(this, this.currentUserClients, "client");

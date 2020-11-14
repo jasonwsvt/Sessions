@@ -144,7 +144,7 @@ class UserUtility extends StorageUtility {
     get lines()                         { return this.app.editor.lines; }
     get buttons()                       { return this.app.buttons; }
     get storagePermanence()             { return this.current.storagePermanence; }
-    get span()                          { return $("#" + this._utilityID); }
+    get div()                           { return $("#" + this._utilityID); }
     get loginDiv()                      { return $("#" + this._loginDivID); }
     get settingsDiv()                   { return $("#" + this._settingsDivID); }
     get settingsButton()                { return $("#" + this._settingsButtonID); }
@@ -217,7 +217,9 @@ class UserUtility extends StorageUtility {
 //        const newAccountDiv = "<div id = '" + this._newAccountDivID + "' class = 'hidden userMenu'></div>";
 //        const newAccountInput = "<input id = '" + this._newAccountInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
 
-        this.span.append(settingsButton + settingsDiv);
+        this.div.addClass("btn-group");
+        this.div.attr("role", "group");
+        this.div.append(settingsButton + settingsDiv);
         this.settingsDiv.append(username);
         this.settingsDiv.append(currentPassword);
         this.settingsDiv.append(newPassword1);
@@ -240,8 +242,8 @@ class UserUtility extends StorageUtility {
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
         this.pushToStorageFrequency.val(String(this.current.pushToStorageFrequency));
 
-//        this.span.append(loginButton + loginDiv);
-//        this.span.append(newAccountButton + newAccountDiv);
+//        this.div.append(loginButton + loginDiv);
+//        this.div.append(newAccountButton + newAccountDiv);
 //        this.newAccountDiv.addClass("hidden");
 //        this.newAccountDiv.append(newAccountInput);
     }

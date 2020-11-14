@@ -50,7 +50,7 @@ class Utility {
                         self.pickerDiv.removeClass("hidden");
                         this.blur();
                         self.pickerDiv.css("left", String(self.pickerButton.position().left) + "px");
-                        self.pickerDiv.css("top", String(self.pickerButton.position().top + self.pickerButton.outerHeight()) + "px");
+                        self.pickerDiv.css("top", String($(this).position().top + 32) + "px");
                         self.pickerDiv.addClass("utilityMenu");
                         self.pickerSearchInput.focus();
                         }
@@ -103,8 +103,8 @@ class Utility {
                     if (self.renameDiv.hasClass("hidden")) {
                         self.renameDiv.removeClass("hidden");
                         this.blur();
-                        self.renameDiv.css("left", String(self.renameButton.position().left) + "px");
-                        self.renameDiv.css("top", String(self.renameButton.position().top + self.renameButton.outerHeight()) + "px");
+                        self.renameDiv.css("left", String(self.pickerButton.position().left) + "px");
+                        self.renameDiv.css("top", String($(this).position().top + 32) + "px");
                         self.renameDiv.addClass("utilityMenu");
                         self.renameInput.val(self.current.name);
                         self.renameInput.focus();
@@ -131,13 +131,13 @@ class Utility {
                     if (self.addDiv.hasClass("hidden")) {
                         self.addDiv.removeClass("hidden");
                         this.blur();
-                        self.addDiv.css("left", String(self.addButton.position().left) + "px");
-                        self.addDiv.css("top", String(self.addButton.position().top + self.addButton.outerHeight()) + "px");
+                        self.addDiv.css("left", String(self.pickerButton.position().left) + "px");
+                        self.addDiv.css("top", String($(this).position().top + 32) + "px");
                         self.addDiv.addClass("utilityMenu");
                         self.addInput.focus();
                     }
                     else {
-                        self.utilities.closeMenus();
+                        self.closeMenus();
                     }
                     e.stopPropagation();
                 });
@@ -159,13 +159,14 @@ class Utility {
                     self.editor.load();
                     self.utilities.manage(self._type);
                     self.utilities.closeAllUtilityMenus();
+                    this.blur();
                     e.stopPropagation();
                 });
             }
         }); 
     }
 
-    get span()              { return $("#" + this._spanID); }
+    get div()               { return $("#" + this._divID); }
     get utilities()         { return this._utilities; }
     get app()               { return this.utilities.app; }
     get group()             { return this._group(); }
@@ -188,7 +189,7 @@ class Utility {
     button(i)               { return this.pickerScrollDiv.find("button").eq(i); }
 
     _init() {
-        this._spanID = this._type + "Utility";
+        this._divID = this._type + "Utility";
         this._pickerButtonID = this._type + "PickerButton";
         this._pickerDivID = this._type + "PickerDiv";
         this._pickerSearchID = this._type + "PickerSearch";
@@ -227,16 +228,18 @@ class Utility {
         const addDiv = "<div id = '" + this._addDivID + "' class = 'hidden'></div>";
         const addInput = "<input id = '" + this._addInputID + "' placeholder = 'add a new " + type + "'>";
 
-        this.span.append(pickerButton + pickerDiv);
+        this.div.addClass("btn-group");
+        this.div.attr("role", "group");
+        this.div.append(pickerButton + pickerDiv);
         this.pickerDiv.append(pickerSearchInput + pickerSort + pickerScrollDiv);
         this.pickerSort.append(pickerSort1 + pickerSort2 + pickerSort3 + pickerSort4);
 
         if (this._naming) {
-            this.span.append(renameButton + renameDiv);
+            this.div.append(renameButton + renameDiv);
             this.renameDiv.append(renameInput);
         }
 
-        this.span.append(addButton + addDiv);
+        this.div.append(addButton + addDiv);
         this.addDiv.append(addInput);
     }
 
