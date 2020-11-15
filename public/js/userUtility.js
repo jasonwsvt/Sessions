@@ -63,15 +63,9 @@ class UserUtility extends StorageUtility {
                 if (self.settingsDiv.hasClass("hidden")) {
                     self.settingsDiv.removeClass("hidden");
                     this.blur();
-                    if (self.current.passwordHash == "" || self.current.passwordVerified) {
-                        self.showSettingsMenu();
-                        self.manageSettingsDivForm();
-                    }
-                    else {
-                        this.showSettingsVerifyPasswordMenu();
-                    }
+                    self._manageSettingsMenu();
                 }
-                else { //console.log("got here");
+                else {
                     self._closeSettingsMenu();
                 }
                 e.stopPropagation();
@@ -123,6 +117,19 @@ class UserUtility extends StorageUtility {
                 e.stopPropagation();
             });
 
+            self.loginDiv.find("input").on("keypress", function (e) {
+                e.stopPropagation();
+            });
+
+            self.loginDiv.find("input").on("keyup", function (e) {
+                self.manageSettingsDivForm();
+                e.stopPropagation();
+            });
+
+            self.loginDiv.on("click", function (e) {
+                e.stopPropagation();
+            });
+
             self.newAccountButton.on("click", function (e) {
                 self.utilities.closeAllUtilityMenus(self._newAccountButtonID);
                 if (self.newAccountDiv.hasClass("hidden")) {
@@ -169,7 +176,7 @@ class UserUtility extends StorageUtility {
     get settingsDivMessages()           { return $("#" + this._settingsDivMessagesID); }
     get settingsDivAction()             { return $("#" + this._settingsDivActionID); }
     get settingsDivOptions()            { return $("#" + this._settingsDivOptionsID); }
-    get pushToStorageFrequency()          { return $("#" + this._pushToStorageFrequencyID); }
+    get pushToStorageFrequency()        { return $("#" + this._pushToStorageFrequencyID); }
     get pushToServerFrequency()         { return $("#" + this._pushToServerFrequencyID); }
     get loginButton()                   { return $("#" + this._loginButtonID); }
     get loginDiv()                      { return $("#" + this._loginDivID); }
@@ -182,11 +189,12 @@ class UserUtility extends StorageUtility {
     get newAccountDivPassword()         { return $("#" + this._createNewAccountDivPasswordID); }
 
     _build() {
-        const plusIcon = this._plusIcon;
-        const pencilIcon = this._pencilIcon;
-        const searchIcon = this._searchIcon;
-        const type = this._type;
+        this._buildSettingsMenu();
+        this._buildLoginMenu();
+        this._buildNewAccountMenu();
+    }
 
+    _buildSettingsMenu() {
         const prefix = "<div class = 'row'><div class = 'col-3'>";
         const infix = "</div><div class = 'col-3' style = 'text-align: center'>";
         const postfix = "</div>";
@@ -208,14 +216,6 @@ class UserUtility extends StorageUtility {
         const settingsDivMessages = "<div id = '" + this._settingsDivMessagesID + "'></div>";
         const settingsDivAction = "<div id = '" + this._settingsDivActionID + "'></div>";
         const settingsDivOptions = "<div id = '" + this._settingsDivOptionsID + "'></div>";
-
-//        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + pencilIcon + "</button>";
-//        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden userMenu'></div>";
-//        const loginInput = "<input id = '" + this._loginInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
-
-//        const newAccountButton = "<button id = '" + this._newAccountButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
-//        const newAccountDiv = "<div id = '" + this._newAccountDivID + "' class = 'hidden userMenu'></div>";
-//        const newAccountInput = "<input id = '" + this._newAccountInputID + "' placeholder = 'rename the selected " + type + "' size = '50'>";
 
         this.div.addClass("btn-group");
         this.div.attr("role", "group");
@@ -241,87 +241,74 @@ class UserUtility extends StorageUtility {
         this.pushToStorageFrequency.html([5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
         this.pushToStorageFrequency.val(String(this.current.pushToStorageFrequency));
-
-//        this.div.append(loginButton + loginDiv);
-//        this.div.append(newAccountButton + newAccountDiv);
-//        this.newAccountDiv.addClass("hidden");
-//        this.newAccountDiv.append(newAccountInput);
     }
 
-    manage() {
-        if (this.current.passwordHash == "" || this.current.passwordVerified) {
-            this.showSettingsMenu();
-        }
-        else {
-            this.showSettingsVerifyPasswordMenu();
-        }
-    }
+    _buildLoginMenu() {
+        const loginIcon = this._loginIcon;
 
-    showSettingsVerifyPasswordMenu() {
-        if (!this.settingsDivUsername.hasClass("hidden"))        { this.settingsDivUsername.addClass("hidden"); }
-        if (!this.settingsDivEmail.hasClass("hidden"))           { this.settingsDivEmail.addClass("hidden"); }
-        if (!this.settingsDivCurrentPassword.hasClass("hidden")) { this.settingsDivCurrentPassword.addClass("hidden"); }
-        if (!this.settingsDivNewPassword1.hasClass("hidden"))    { this.settingsDivNewPassword1.addClass("hidden"); }
-        if (!this.settingsDivNewPassword2.hasClass("hidden"))    { this.settingsDivNewPassword2.addClass("hidden"); }
-        if (this.settingsDivCurrentPassword.hasClass("hidden"))  { this.settingsDivCurrentPassword.removeClass("hidden"); }
-    }
+        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + loginIcon + "</button>";
+        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden userMenu'></div>";
+        const loginInput = "<input id = '" + this._loginInputID + "' placeholder = 'login' size = '50'>";
 
-    showSettingsMenu() {
-        if(this.settingsDivUsername.hasClass("hidden"))         { this.settingsDivUsername.removeClass("hidden"); }
-        if(this.settingsDivEmail.hasClass("hidden"))            { this.settingsDivEmail.removeClass("hidden"); }
-        if(this.settingsDivCurrentPassword.hasClass("hidden"))  { this.settingsDivCurrentPassword.removeClass("hidden"); }
-        if(this.settingsDivNewPassword1.hasClass("hidden"))     { this.settingsDivNewPassword1.removeClass("hidden"); }
-        if(this.settingsDivNewPassword2.hasClass("hidden"))     { this.settingsDivNewPassword2.removeClass("hidden"); }
-        if(!this.settingsDivCurrentPassword.hasClass("hidden")) { this.settingsDivCurrentPassword.addClass("hidden"); }
-    }
-
-    manageLoginMenu() {
+        this.div.append(loginButton + loginDiv);
+   
 //        this.loginDiv.css("left", String(this.loginButton.position().left) + "px");
 //        this.loginDiv.css("top", String(this.loginButton.position().top + this.loginButton.outerHeight()) + "px");
-    }
+}
 
-    manageNewAccountMenu() {
+    _buildNewAccountMenu() {
+        const plusIcon = this._plusIcon;
+
+        const newAccountButton = "<button id = '" + this._newAccountButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
+        const newAccountDiv = "<div id = '" + this._newAccountDivID + "' class = 'hidden userMenu'></div>";
+        const newAccountInput = "<input id = '" + this._newAccountInputID + "' placeholder = 'create a new account' size = '50'>";
+
+        this.div.append(newAccountButton + newAccountDiv);
+        this.newAccountDiv.addClass("hidden");
+        this.newAccountDiv.append(newAccountInput);
+
 //        this.newAccountDiv.css("left", String(this.newAccountButton.position().left) + "px");
 //        this.newAccountDiv.css("top", String(this.newAccountButton.position().top + this.newAccountButton.outerHeight()) + "px");
     }
 
-/*    setButton(button, color, text) {
-        if (button.hasClass("btn-primary"))   { button.removeClass("btn-primary"); }
-        if (button.hasClass("btn-secondary")) { button.removeClass("btn-secondary"); }
-        if (button.hasClass("btn-success"))   { button.removeClass("btn-success"); }
-        if (button.hasClass("btn-danger"))    { button.removeClass("btn-danger"); }
-        if (button.hasClass("btn-warning"))   { button.removeClass("btn-warning"); }
-        if (button.hasClass("btn-info"))      { button.removeClass("btn-info"); }
-        if (button.hasClass("btn-light"))     { button.removeClass("btn-light"); }
-        if (button.hasClass("btn-dark"))      { button.removeClass("btn-dark"); }
+    manage() {
+        this._manageSettingsMenu();
+        this._manageLoginMenu();
+        this._manageNewAccountMenu();
+    }
 
-        switch(color) {
-            case "blue":   button.addClass("btn-primary"); break;
-            case "gray":   button.addClass("btn-secondary"); break;
-            case "green":  button.addClass("btn-success"); break;
-            case "red":    button.addClass("btn-danger"); break;
-            case "yellow": button.addClass("btn-warning"); break;
-            case "cyan":   button.addClass("btn-info"); break;
-            case "white":  button.addClass("btn-light"); break;
-            case "black":  button.addClass("btn-dark"); break;
-            case "clear":  button.addClass("btn-link"); break;
+    _manageSettingsMenu() {
+        var fields = [this.settingsDivUsername, this.settingsDivEmail, this.settingsDivCurrentPassword, this.settingsDivNewPassword1, this.settingsDivNewPassword2];
+
+        if (this.current.passwordHash == "" || this.current.passwordVerified) {
+            fields.forEach(field => {
+                if (field.hasClass("hidden")) { field.removeClass("hidden"); }
+            });
+            if (!this.settingsDivCurrentPassword.hasClass("hidden")) {
+                this.settingsDivCurrentPassword.addClass("hidden");
+            }
+            this.manageSettingsDivForm();
         }
+        else {
+            fields.forEach(field => {
+                if (!field.hasClass("hidden")) { field.addClass("hidden"); }
+            });
+            if (this.settingsDivCurrentPassword.hasClass("hidden")) {
+                this.settingsDivCurrentPassword.removeClass("hidden");
+            }
+        }
+    }
 
-        button.text(text);
-    } */
+    _manageLoginMenu() {
 
-    frequencyName(seconds) {
-        return (seconds == false) ? "Manual" : 
-               (seconds < 60)     ? `${seconds} seconds` : 
-               (seconds == 60)    ? "1 minute" :
-               (seconds < 3600)   ? `${seconds / 60} minutes` :
-               (seconds == 3600)  ? "1 hour" :
-                                    `${seconds / 3600} hours`;
+    }
+
+    _manageNewAccountMenu() {
+
     }
 
     manageSettingsDivForm() {
         var messages = [], actions = [], options = [];
-        var action = "";
         const uname = this.unameState;
         const isDefault = (uname == this.group.defaultName);
         const curPW = this.curPWState;
@@ -332,7 +319,7 @@ class UserUtility extends StorageUtility {
 
         this.settingsDivStorage.val(String(storagePermanence));
 
-        if (curPW == "Invalid")              { messages.push("Current password is invalid."); }
+        if (curPW == "Invalid") { messages.push("Current password is invalid."); }
         else {
             //SetUp
             if (!server) {
@@ -373,7 +360,7 @@ class UserUtility extends StorageUtility {
                 if (uname == "Server duplicate") {
                     messages.push("username is unavailable on the server.");
                 }
-                        if ((curPW == "Weak" && newPW == "Empty") || newPW == "Weak") {
+                if ((curPW == "Weak" && newPW == "Empty") || newPW == "Weak") {
                     messages.push("Server storage requires a stronger password.");
                 }
                 if (curPW == "Empty" && newPW == "Empty") {
@@ -417,7 +404,7 @@ class UserUtility extends StorageUtility {
                 }
                 if (newPW == "Strong") { actions.push("change password"); }
             }
-            if (email == "Filled") { actions.push("set email address"); }
+            if (email == "Filled")  { actions.push("set email address"); }
             if (email == "Emptied") { actions.push("remove email address"); }
             if (email == "Changed") { actions.push("change email address"); }
     
@@ -444,18 +431,18 @@ class UserUtility extends StorageUtility {
         const fieldVal = this.settingsDivUsername.val();
         const server = this.current.useServerStorage;
         const valid = /^[a-z0-9_\-.]{5,20}$/;
-
-        if (current == fieldVal) { return "Unchanged"; }
-        if (!valid.test(fieldVal)) { return "Invalid"; }
-        if (current.length > 0 && fieldVal.length == 0) { return "Emptied"; }
         const storageDup = this.storageUserNameExists(fieldVal);
         const localDup = this.otherContainerUsernameExists(fieldVal);
         const serverDup = false;
-        if (storageDup && serverDup) { return "Storage and server duplicate"; }
-        if (localDup && serverDup) { return "Local and server duplicate"; }
-        if (storageDup) { return "Storage duplicate"; }
-        if (localDup) { return "Local duplicate"; }
-        if (serverDup) { return "Server duplicate"; }
+
+        if (current == fieldVal)                        { return "Unchanged"; }
+        if (!valid.test(fieldVal))                      { return "Invalid"; }
+        if (current.length > 0 && fieldVal.length == 0) { return "Emptied"; }
+        if (storageDup && serverDup)                    { return "Storage and server duplicate"; }
+        if (localDup && serverDup)                      { return "Local and server duplicate"; }
+        if (storageDup)                                 { return "Storage duplicate"; }
+        if (localDup)                                   { return "Local duplicate"; }
+        if (serverDup)                                  { return "Server duplicate"; }
         return "Filled";
     }
 
@@ -465,8 +452,9 @@ class UserUtility extends StorageUtility {
         const current = this.current.passwordHash;
         const strongComplexity = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#$%^&*()_+\-|~=`{}\[\]:\";\'<>?,.\/])(?=.{8,127})/;
         const strongLength = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{20,127})/;
-        if (current == "" && fieldVal == "") { return "Empty"; }
-        if (hashed != current) { return "Invalid"; }
+
+        if (current == "" && fieldVal == "")                                  { return "Empty"; }
+        if (hashed != current)                                                { return "Invalid"; }
         if (!strongComplexity.test(fieldVal) && !strongLength.test(fieldVal)) { return "Weak"; }
         return "Strong";
     }
@@ -476,9 +464,9 @@ class UserUtility extends StorageUtility {
         const pw2 = this.settingsDivNewPassword2.val();
         const strongComplexity = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#$%^&*()_+\-|~=`{}\[\]:\";\'<>?,.\/])(?=.{8,127})/;
         const strongLength = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{20,127})/;
-//        console.log(pw1, pw2, strongComplexity.test(pw1), strongLength.test(pw1));
-        if (pw1.length == 0 && pw2.length == 0) { return "Empty"; }
-        if (pw1 != pw2) { return "Different"; }
+
+        if (pw1.length == 0 && pw2.length == 0)                     { return "Empty"; }
+        if (pw1 != pw2)                                             { return "Different"; }
         if (!strongComplexity.test(pw1) && !strongLength.test(pw1)) { return "Weak"; }
         return "Strong";
     }
@@ -495,10 +483,11 @@ class UserUtility extends StorageUtility {
         const fieldVal = this.settingsDivEmail.val();
         const current = this.current.email;
         const valid = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
-        if (fieldVal == current) { return "Unchanged"; }
+
+        if (fieldVal == current)                           { return "Unchanged"; }
         if (!valid.test(fieldVal) && fieldVal.length != 0) { return "Invalid"; }
-        if (current.length == 0 && fieldVal.length != 0) { return "Filled"; }
-        if (current.length != 0 && fieldVal.length == 0) { return "Emptied"; }
+        if (current.length == 0 && fieldVal.length != 0)   { return "Filled"; }
+        if (current.length != 0 && fieldVal.length == 0)   { return "Emptied"; }
         return "Changed";
     }
     
@@ -592,6 +581,15 @@ class UserUtility extends StorageUtility {
         return "hashed " + password;
     }
 
+    frequencyName(seconds) {
+        return (seconds == false) ? "Manual" : 
+               (seconds < 60)     ? `${seconds} seconds` : 
+               (seconds == 60)    ? "1 minute" :
+               (seconds < 3600)   ? `${seconds / 60} minutes` :
+               (seconds == 3600)  ? "1 hour" :
+                                    `${seconds / 3600} hours`;
+    }
+
     closeMenus(except) {
         if (except != this._settingsButtonID)   { this._closeSettingsMenu(); }
 //        if (except != this._loginButtonID)      { this._closeLoginMenu(); }
@@ -600,19 +598,16 @@ class UserUtility extends StorageUtility {
 
     _closeSettingsMenu() {
         this.settingsDiv.addClass("hidden");
-//        this.settingsDiv.removeClass("userMenu");
         this.settingsButton.blur();
     }
 
     _closeLoginMenu() {
         this.loginDiv.addClass("hidden");
-        this.loginDiv.removeClass("userMenu");
         this.loginButton.focusout();
     }
 
     _closeNewAccountMenu() {
         this.newAccountDiv.addClass("hidden");
-        this.newAccountAddDiv.removeClass("userMenu");
         this.newAccountAddButton.focusout();
     }
 }
