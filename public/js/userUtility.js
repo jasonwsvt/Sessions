@@ -40,6 +40,7 @@ class UserUtility extends StorageUtility {
     _loginDivMessages = "loginDivMessages";
     _loginDivAction = "loginDivAction";
     _loginDivForgotPasswordButtonID = "loginDivForgotPasswordButton";
+    _loginButtonID = "loginButton";
 
     _newAccountButtonID = "createNewAccountButton";
 
@@ -180,6 +181,7 @@ class UserUtility extends StorageUtility {
     get loginDivMessages()              { return $("#" + this._loginDivMessagesID); }
     get loginDivAction()                { return $("#" + this._loginDivActionID); }
     get loginDivForgotPasswordButton()  { return $("#" + this._loginDivForgotPasswordButtonID); }
+    get loginButton()                   { return $("#" + this._loginButtonID); }
 
     get newAccountButton()              { return $("#" + this._createNewAccountButtonID); }
 
@@ -249,6 +251,7 @@ class UserUtility extends StorageUtility {
         const password = "<input id = '" + this._loginDivPasswordID + "' type = 'password' placeholder = 'password' size = '30'>";
         const messages = "<div id = '" + this._loginDivMessagesID + "'></div>";
         const action = "<div id = '" + this._loginDivActionID + "'></div>";
+        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button'>Log in</button>";
 
         this.div.append(loginButton + loginDiv);
         this.loginDiv.addClass("container");
@@ -261,6 +264,7 @@ class UserUtility extends StorageUtility {
    
         this.loginDiv.css("left", String(this.settingsButton.position().left) + "px");
         this.loginDiv.css("top", String(this.settingsButton.position().top + 32) + "px");
+        this._propagateUserNameButtons();
 }
 
     _buildNewAccountMenu() {
@@ -269,9 +273,6 @@ class UserUtility extends StorageUtility {
         const newAccountButton = "<button id = '" + this._newAccountButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
 
         this.div.append(newAccountButton);
-
-//        this.newAccountDiv.css("left", String(this.newAccountButton.position().left) + "px");
-//        this.newAccountDiv.css("top", String(this.newAccountButton.position().top + this.newAccountButton.outerHeight()) + "px");
     }
 
     manage() {
@@ -303,28 +304,58 @@ class UserUtility extends StorageUtility {
     }
 
     _manageLoginMenu() {
-        if (!this.loginDivUsername.val()) { this.showUserNames(); }
-        else { this.showLoginPage(); } 
+        if (!this.loginDivUsername.val() && !this.loginDivSelectedUserName) { this.selectUserName(); }
+        else { this.enterPassword(); }
+    }
 
-    _showUserNames() {
+    _propagateUserNameButtons() {
         const self = this;
-        const browserUsers = this.group.browserUsers.filter(r => (r.userName != this.current.userName));
+        const browserUsers = this.group.browserUsers.filter(r => (r.id != this.current.id && !r.hidden));
         this.loginDivBrowserUsers.empty();
         browserUsers.forEach(r => {
             this.loginDivBrowserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.userName + "</button>");
         });
-        browserUsers.on("click", function (e) {
-            self.manageLoginAction(this.val());
+        this.loginDivBrowserUsers.find("button").on("click", function (e) {
+            $(this).prop("selected", !$(this).prop("selected"));
+            self.loginDivSelectedUserName = (this.loginDivSelectedUserName != $(this).val()) ? $(this).val() : null;
+            self._manageLoginMenu();
         });
 
         const sessionUsers = this.group.sessionUsers.filter(r => (r.userName != this.current.userName));
         this.loginDivSessionUsers.empty();
         sessionUsers.forEach(r => {
-            this.loginDivSessionUsers.append("<button type = 'button' class = 'btn btn-primary'>" + r + "</button>");
+            this.loginDivSessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.username + "</button>");
+        });
+        this.loginDivSessionUsers.find("button").on("click", function (e) {
+            this.loginDivSelectedUserName = (this.loginDivSelectedUserName != $(this).val()) ? $(this).val() : null;
+            self._manageLoginMenu();
         });
     }
 
-    showLoginPage() {
+    _selectUserName() {
+        this.loginDivBrowserUsers.find("button").forEach(button => {
+            button.prop("hidden", false);
+        });
+        this.loginDivSessionUsers.find("button").forEach(button => {
+            button.prop("hidden", false);
+        });
+        this.loginDivPassword.prop("hidden", true);
+        this.loginDivAction.prop("hidden", true);
+    }
+
+    _enterPassword() {
+        this.loginDivBrowserUsers.find("button").forEach(button => {
+            button.prop("hidden", !button.prop("selected"));
+        });
+        this.loginDivSessionUsers.find("button").forEach(button => {
+            button.prop("hidden", !button.prop("selected"));
+        });
+        this.loginDivUsername.prop("hidden", (this.loginDivUsername.val() == ""));
+        this.loginDivPassword.prop("hidden", false);
+        this.loginDivAction.prop("hidden", false);
+    }
+
+    verifyCredentials() {
         
     }
 

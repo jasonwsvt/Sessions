@@ -210,7 +210,7 @@ class StorageUtility {
     userNames(container) {
         if (Object.keys(container).includes("users")) {
             return JSON.parse(container.getItem("users")).map(user => {
-                return { "id": user.id, "userName": user.userName }
+                return { "id": user.id, "userName": user.userName, "hidden": user.hidden }
             });
         }
         return [];
