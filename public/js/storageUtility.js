@@ -205,6 +205,16 @@ class StorageUtility {
         }
         return false;
     }
+    get browserUserNames() { return this.userNames(localStorage); }
+    get sessionUserNames() { return this.userNames(sessionStorage); }
+    userNames(container) {
+        if (Object.keys(container).includes("users")) {
+            return JSON.parse(container.getItem("users")).map(user => {
+                return { "id": user.id, "userName": user.userName }
+            });
+        }
+        return [];
+    }
 
     get lastPushToStorage()     { return this._lastPushToStorage; }
     set lastPushToStorage(time) { this._lastPushToStorage = time; }
@@ -212,10 +222,10 @@ class StorageUtility {
     set nextPushToStorage(time) { this._nextPushToStorage = time; }
     removeNextPushToStorage()   { this._nextPushToStorage = false; }
 
-    get lastPushToServer()      { return this._lastPushToServer;}
-    set lastPushToServer(time)  { this._lastPushToServer = time;}
-    get nextPushToServer()      { return this._nextPushToServer;}
-    set nextPushToServer(time)  { this._nextPushToServer = time;}
+    get lastPushToServer()      { return this._lastPushToServer; }
+    set lastPushToServer(time)  { this._lastPushToServer = time; }
+    get nextPushToServer()      { return this._nextPushToServer; }
+    set nextPushToServer(time)  { this._nextPushToServer = time; }
     removeNextPushToServer()    { this._nextPushToServer = false; }
 
     get rememberMeExists()      { return (Object.keys(localStorage).includes("rememberMe")); }
@@ -223,7 +233,5 @@ class StorageUtility {
     set rememberMe(id)          { localStorage.setItem("rememberMe", id) }
     clearRememberMe()           { localStorage.removeItem("rememberMe"); }
 
-    get now() {
-        return Math.floor(Date.now() / 1000);
-    }
+    get now() { return Math.floor(Date.now() / 1000); }
 }

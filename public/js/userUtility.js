@@ -22,12 +22,6 @@ class UserUtility extends StorageUtility {
     _settingsDivNewPassword1ID = "settingsDivNewPassword1";
     _settingsDivNewPassword2ID = "settingsDivNewPassword2";
     _settingsDivEmailID = "settingsDivEmail";
-//    _settingsDivUsernameLocalToolID = "settingsDivUsernameLocalTool";
-//    _settingsDivUsernameServerToolID = "settingsDivUsernameServerTool";
-//    _settingsDivPasswordLocalToolID = "settingsDivPasswordLocalTool";
-//    _settingsDivPasswordServerToolID = "settingsDivPasswordServerTool";
-//    _settingsDivEmailLocalToolID = "settingsDivEmailLocalTool";
-//    _settingsDivEmailServerToolID = "settingsDivEmailServerTool";
     _settingsDivRememberMeID = "settingsDivRememberMe";
     _settingsDivStorageID = "settingsDivStorage";
     _settingsDivMessagesID = "settingsDivMessages";
@@ -38,14 +32,16 @@ class UserUtility extends StorageUtility {
 
     _loginButtonID = "loginButton";
     _loginDivID = "loginDiv";
+    _loginDivBrowserUsersID = "loginDivBrowserUsers";
+    _loginDivSessionUsersID = "loginDivSessionUsers";
+//    _loginInput = "loginDivInput";
     _loginDivUsernameID = "loginDivUsername";
     _loginDivPasswordID = "loginDivPassword";
+    _loginDivMessages = "loginDivMessages";
+    _loginDivAction = "loginDivAction";
     _loginDivForgotPasswordButtonID = "loginDivForgotPasswordButton";
 
     _newAccountButtonID = "createNewAccountButton";
-    _newAccountDivID = "createNewAccountDiv";
-    _newAccountDivUsernameID = "createNewAccountDivUsername";
-    _newAccountDivPasswordID = "createNewAccountDivPassword";
 
     constructor (utilities, group) {
         super();
@@ -106,10 +102,12 @@ class UserUtility extends StorageUtility {
             });
 
             self.loginButton.on("click", function (e) {
+                console.log("got here");
                 self.utilities.closeAllUtilityMenus(self._loginButtonID);
                 if (self.loginDiv.hasClass("hidden")) {
                     self.loginDiv.removeClass("hidden");
                     this.blur();
+                    self._manageLoginMenu();
                 }
                 else {
                     self._closeLoginMenu();
@@ -152,9 +150,9 @@ class UserUtility extends StorageUtility {
     get buttons()                       { return this.app.buttons; }
     get storagePermanence()             { return this.current.storagePermanence; }
     get div()                           { return $("#" + this._utilityID); }
-    get loginDiv()                      { return $("#" + this._loginDivID); }
-    get settingsDiv()                   { return $("#" + this._settingsDivID); }
+
     get settingsButton()                { return $("#" + this._settingsButtonID); }
+    get settingsDiv()                   { return $("#" + this._settingsDivID); }
     get settingsDivID()                 { return $("#" + this._settingsDivID); }
     get settingsDivUsername()           { return $("#" + this._settingsDivUsernameID); }
     get settingsDivEmail()              { return $("#" + this._settingsDivEmailID); }
@@ -165,12 +163,6 @@ class UserUtility extends StorageUtility {
     get settingsDivNewPassword1()       { return $("#" + this._settingsDivNewPassword1ID); }
     get settingsDivNewPassword2()       { return $("#" + this._settingsDivNewPassword2ID); }
     get settingsDivEmail()              { return $("#" + this._settingsDivEmailID); }
-//    get settingsDivUsernameLocalTool()  { return $("#" + this._settingsDivUsernameLocalToolID); }
-//    get settingsDivUsernameServerTool() { return $("#" + this._settingsDivUsernameServerToolID); }
-//    get settingsDivPasswordLocalTool()  { return $("#" + this._settingsDivPasswordLocalToolID); }
-//    get settingsDivPasswordServerTool() { return $("#" + this._settingsDivPasswordServerToolID); }
-//    get settingsDivEmailLocalTool()     { return $("#" + this._settingsDivEmailLocalToolID); }
-//    get settingsDivEmailServerTool()    { return $("#" + this._settingsDivEmailServerToolID); }
     get settingsDivRememberMe()         { return $("#" + this._settingsDivRememberMeID); }
     get settingsDivStorage()            { return $("#" + this._settingsDivStorageID); }
     get settingsDivMessages()           { return $("#" + this._settingsDivMessagesID); }
@@ -178,15 +170,18 @@ class UserUtility extends StorageUtility {
     get settingsDivOptions()            { return $("#" + this._settingsDivOptionsID); }
     get pushToStorageFrequency()        { return $("#" + this._pushToStorageFrequencyID); }
     get pushToServerFrequency()         { return $("#" + this._pushToServerFrequencyID); }
+
     get loginButton()                   { return $("#" + this._loginButtonID); }
     get loginDiv()                      { return $("#" + this._loginDivID); }
+    get loginDivBrowserUsers()          { return $("#" + this._loginDivBrowserUsersID); }
+    get loginDivSessionUsers()          { return $("#" + this._loginDivSessionUsersID); }
     get loginDivUsername()              { return $("#" + this._loginDivUsernameID); }
     get loginDivPassword()              { return $("#" + this._loginDivPasswordID); }
+    get loginDivMessages()              { return $("#" + this._loginDivMessagesID); }
+    get loginDivAction()                { return $("#" + this._loginDivActionID); }
     get loginDivForgotPasswordButton()  { return $("#" + this._loginDivForgotPasswordButtonID); }
+
     get newAccountButton()              { return $("#" + this._createNewAccountButtonID); }
-    get newAccountDiv()                 { return $("#" + this._createNewAccountDivID); }
-    get newAccountDivUsername()         { return $("#" + this._createNewAccountDivUsernameID); }
-    get newAccountDivPassword()         { return $("#" + this._createNewAccountDivPasswordID); }
 
     _build() {
         this._buildSettingsMenu();
@@ -248,24 +243,32 @@ class UserUtility extends StorageUtility {
 
         const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + loginIcon + "</button>";
         const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden userMenu'></div>";
-        const loginInput = "<input id = '" + this._loginInputID + "' placeholder = 'login' size = '50'>";
+        const browserUsers = "<div id = '" + this._loginDivBrowserUsersID + "'></div>";
+        const sessionUsers = "<div id = '" + this._loginDivSessionUsersID + "'></div>";
+        const username = "<input id = '" + this._loginDivUsernameID + "' placeholder = 'username' size = '50'>";
+        const password = "<input id = '" + this._loginDivPasswordID + "' type = 'password' placeholder = 'password' size = '30'>";
+        const messages = "<div id = '" + this._loginDivMessagesID + "'></div>";
+        const action = "<div id = '" + this._loginDivActionID + "'></div>";
 
         this.div.append(loginButton + loginDiv);
+        this.loginDiv.addClass("container");
+        this.loginDiv.append(browserUsers);
+        this.loginDiv.append(sessionUsers);
+        this.loginDiv.append(username);
+        this.loginDiv.append(password);
+        this.loginDiv.append(messages);
+        this.loginDiv.append(action);
    
-//        this.loginDiv.css("left", String(this.loginButton.position().left) + "px");
-//        this.loginDiv.css("top", String(this.loginButton.position().top + this.loginButton.outerHeight()) + "px");
+        this.loginDiv.css("left", String(this.settingsButton.position().left) + "px");
+        this.loginDiv.css("top", String(this.settingsButton.position().top + 32) + "px");
 }
 
     _buildNewAccountMenu() {
         const plusIcon = this._plusIcon;
 
         const newAccountButton = "<button id = '" + this._newAccountButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
-        const newAccountDiv = "<div id = '" + this._newAccountDivID + "' class = 'hidden userMenu'></div>";
-        const newAccountInput = "<input id = '" + this._newAccountInputID + "' placeholder = 'create a new account' size = '50'>";
 
-        this.div.append(newAccountButton + newAccountDiv);
-        this.newAccountDiv.addClass("hidden");
-        this.newAccountDiv.append(newAccountInput);
+        this.div.append(newAccountButton);
 
 //        this.newAccountDiv.css("left", String(this.newAccountButton.position().left) + "px");
 //        this.newAccountDiv.css("top", String(this.newAccountButton.position().top + this.newAccountButton.outerHeight()) + "px");
@@ -300,11 +303,40 @@ class UserUtility extends StorageUtility {
     }
 
     _manageLoginMenu() {
+        if (!this.loginDivUsername.val()) { this.showUserNames(); }
+        else { this.showLoginPage(); } 
 
+    _showUserNames() {
+        const self = this;
+        const browserUsers = this.group.browserUsers.filter(r => (r.userName != this.current.userName));
+        this.loginDivBrowserUsers.empty();
+        browserUsers.forEach(r => {
+            this.loginDivBrowserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.userName + "</button>");
+        });
+        browserUsers.on("click", function (e) {
+            self.manageLoginAction(this.val());
+        });
+
+        const sessionUsers = this.group.sessionUsers.filter(r => (r.userName != this.current.userName));
+        this.loginDivSessionUsers.empty();
+        sessionUsers.forEach(r => {
+            this.loginDivSessionUsers.append("<button type = 'button' class = 'btn btn-primary'>" + r + "</button>");
+        });
     }
 
-    _manageNewAccountMenu() {
+    showLoginPage() {
+        
+    }
 
+    manageLoginAction(clickedUserName) {
+
+        //if the user has no password, login.
+        //if the user has a password, hide the other buttons and the username field.
+    }
+
+
+    _manageNewAccountMenu() {
+        this.newAccountButton.prop("disabled", (this.current.userName == this.group.defaultName));
     }
 
     manageSettingsDivForm() {
@@ -592,7 +624,7 @@ class UserUtility extends StorageUtility {
 
     closeMenus(except) {
         if (except != this._settingsButtonID)   { this._closeSettingsMenu(); }
-//        if (except != this._loginButtonID)      { this._closeLoginMenu(); }
+        if (except != this._loginButtonID)      { this._closeLoginMenu(); }
 //        if (except != this._newAccountButtonID) { this._closeNewAccountMenu(); }
     }
 
