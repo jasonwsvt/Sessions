@@ -28,7 +28,7 @@ class Users extends Siblings {
                 var userRecords = JSON.parse(container.getItem(this._type));
                 if (userRecords.length == 1 && userRecords[0].passwordHash == "") {
                     console.log("one user without password found: ", userRecords[0].id);
-                    this._loadFrom(container, userRecords[0].id);
+                    this.loadFrom(container, userRecords[0].id);
                 }
                 else { console.log("didn't find a user without a password"); }
             }
@@ -39,7 +39,7 @@ class Users extends Siblings {
                 if (Object.keys(localStorage).includes("users")) {
                     if (JSON.parse(localStorage.getItem("users")).find(user => (user.id == localStorage.getItem("rememberMe")))) {
                         //console.log("rememberMe user found:", this._current);
-                        this._loadFrom(localStorage, localStorage.getItem("rememberMe"));
+                        this.loadFrom(localStorage, localStorage.getItem("rememberMe"));
                     }
                     else { console.log("didn't find a rememberMe user with that id"); }
                 }
@@ -48,7 +48,7 @@ class Users extends Siblings {
         if (!this.current) { this.new(); }
     }
 
-    _loadFrom(container, id) {
+    loadFrom(container, id) {
         var data = JSON.parse(container.getItem(this._type)).find(entry => (entry.id == id));
         this._siblings.push(new this._SiblingClass(this._app, this));
         this._current = id;

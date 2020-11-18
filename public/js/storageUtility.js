@@ -205,8 +205,8 @@ class StorageUtility {
         }
         return false;
     }
-    get browserUserNames() { return this.userNames(localStorage); }
-    get sessionUserNames() { return this.userNames(sessionStorage); }
+    get browserUsers() { return this.userNames(localStorage); }
+    get sessionUsers() { return this.userNames(sessionStorage); }
     userNames(container) {
         if (Object.keys(container).includes("users")) {
             return JSON.parse(container.getItem("users")).map(user => {

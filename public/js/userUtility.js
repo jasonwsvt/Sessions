@@ -131,13 +131,10 @@ class UserUtility extends StorageUtility {
 
             self.newAccountButton.on("click", function (e) {
                 self.utilities.closeAllUtilityMenus(self._newAccountButtonID);
-                if (self.newAccountDiv.hasClass("hidden")) {
-                    self.newAccountDiv.removeClass("hidden");
-                    this.blur();
-                }
-                else {
-                    self._closeNewAccountMenu();
-                }
+                this.blur();
+                self.group.new();
+                self.manage();
+                self.settingsButton.trigger('click');
                 e.stopPropagation();
             });
         }); 
@@ -250,8 +247,8 @@ class UserUtility extends StorageUtility {
         const username = "<input id = '" + this._loginDivUsernameID + "' placeholder = 'username' size = '50'>";
         const password = "<input id = '" + this._loginDivPasswordID + "' type = 'password' placeholder = 'password' size = '30'>";
         const messages = "<div id = '" + this._loginDivMessagesID + "'></div>";
-        const action = "<div id = '" + this._loginDivActionID + "'></div>";
-        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button'>Log in</button>";
+        const action = "<div id = '" + this._loginDivActionID + "'>Log in</div>";
+        const loginAction = "<button id = '" + this._loginButtonID + "' type = 'button'>Log in</button>";
 
         this.div.append(loginButton + loginDiv);
         this.loginDiv.addClass("container");
@@ -261,6 +258,7 @@ class UserUtility extends StorageUtility {
         this.loginDiv.append(password);
         this.loginDiv.append(messages);
         this.loginDiv.append(action);
+        this.loginDiv.append(loginAction);
    
         this.loginDiv.css("left", String(this.settingsButton.position().left) + "px");
         this.loginDiv.css("top", String(this.settingsButton.position().top + 32) + "px");
@@ -304,7 +302,7 @@ class UserUtility extends StorageUtility {
     }
 
     _manageLoginMenu() {
-        if (!this.loginDivUsername.val() && !this.loginDivSelectedUserName) { this.selectUserName(); }
+        if (!this.loginDivUsername.val() && !this.loginDivSelectedUserName) { this._selectUserName(); }
         else { this.enterPassword(); }
     }
 
@@ -333,14 +331,15 @@ class UserUtility extends StorageUtility {
     }
 
     _selectUserName() {
-        this.loginDivBrowserUsers.find("button").forEach(button => {
+        this.loginDivBrowserUsers.find("button").toArray().forEach(button => {
             button.prop("hidden", false);
         });
-        this.loginDivSessionUsers.find("button").forEach(button => {
+        this.loginDivSessionUsers.find("button").toArray().forEach(button => {
             button.prop("hidden", false);
         });
         this.loginDivPassword.prop("hidden", true);
         this.loginDivAction.prop("hidden", true);
+        this.loginDivMessages.empty();
     }
 
     _enterPassword() {
@@ -356,15 +355,50 @@ class UserUtility extends StorageUtility {
     }
 
     verifyCredentials() {
-        
+        var container, user, userName, userId;
+        if (this.loginDivBrowserUsers.find("button:selected")) {
+            userName = this.loginDivBrowserUsers.find("button:selected").text();
+            user = userExists(container, userName);
+            container = localStorage;
+        }
+        else if (this.loginDivSessionUsers.find("button:selected")) {
+            userName = this.loginDivSessionUsers.find("button:selected").text();
+            container = sessionStorage;
+            user = userExists(container, userName);
+        }
+        else if (this.loginDivUsername.val() != "") {
+            [localStorage, sessionStorage].forEach(c => {
+                if (!user && Object.keys(c).includes("users")) {
+                    user = userExists(c, userName);
+                    if (user) { container = c; }
+                }
+            });
+        }
+
+        if (user) {
+            if ((this.loginDivPassword.val() == "" && user.passwordHash == "") ||
+                (this.hashedPassword(this.loginDivPassword.val()) == user.passwordHash)) {
+                this.group.loadFrom(container, user);
+            }
+            else {
+                this.loginDivMessages.text("Password invalid.");
+            }
+        }
+        else {
+            this.loginDivMessages.text("Username invalid.");
+        }
+
+        //Not found locally, so try logging in on the server.
     }
 
-    manageLoginAction(clickedUserName) {
-
-        //if the user has no password, login.
-        //if the user has a password, hide the other buttons and the username field.
+    userExists(container, userName) {
+        if (Object.keys(container).includes("users")) {
+            const users = JSON.parse(container.getItem("users"));
+            const user = users.find(user => (user.userName = userName));
+            return (user) ? user : undefined;
+        }
+        return undefined;
     }
-
 
     _manageNewAccountMenu() {
         this.newAccountButton.prop("disabled", (this.current.userName == this.group.defaultName));
