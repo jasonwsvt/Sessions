@@ -83,21 +83,13 @@ class UserUtility extends StorageUtility {
             });
 
             self.settingsDivRememberMe.on("click", function (e) {
-                if ($(this).prop("checked")) {
-                    this.rememberMe = this.current.id;
-                }
-                else {
-                    this.clearRememberMe();
-                }
+                self.current.rememberMe = $(this).prop("checked");
+                e.stopPropagation();
             });
 
             self.settingsDivHidden.on("click", function (e) {
-                if ($(this).prop("checked")) {
-                    this.rememberMe = this.current.id;
-                }
-                else {
-                    this.clearRememberMe();
-                }
+                self.current.hidden = $(this).prop("checked");
+                e.stopPropagation();
             });
 
             self.pushToStorageFrequency.on("change", function (e) {
@@ -143,7 +135,7 @@ class UserUtility extends StorageUtility {
                 console.log("newAccountButton");
                 self.utilities.closeAllUtilityMenus(self._newAccountButtonID);
                 self.group.new();
-                self._resetSettingsMenu();
+                self._reset();
                 self.settingsButton.trigger('click');
                 this.blur();
                 e.stopPropagation();
@@ -255,6 +247,7 @@ class UserUtility extends StorageUtility {
         this.settingsDivEmail.val(this.current.email);
         this.pushToStorageFrequency.val(String(this.current.pushToStorageFrequency));
         this.settingsDivHidden.prop("checked", this.current.hidden);
+        this.settingsDivRememberMe.prop("checked", this.current.rememberMe);
     }
 
     _buildLoginMenu() {
@@ -280,6 +273,7 @@ class UserUtility extends StorageUtility {
    
         this.loginDiv.css("left", String(this.settingsButton.position().left) + "px");
         this.loginDiv.css("top", String(this.settingsButton.position().top + 32) + "px");
+        this._resetLoginMenu();
 }
 
     _buildNewAccountMenu() {
@@ -326,6 +320,11 @@ class UserUtility extends StorageUtility {
         else { this._selectUserNameStep(); }
     }
 
+    _reset() {
+        this._resetSettingsMenu();
+        this._resetLoginMenu();
+    }
+
     _resetLoginMenu() {
         this._selectedUser = "";
         this._selectedUserContainer = "";
@@ -336,8 +335,9 @@ class UserUtility extends StorageUtility {
 
     _propagateUserNameButtons() {
         const self = this;
-        const browserUsers = this.group.browserUsers.filter(r => (r.id != this.current.id && !r.hidden));
+
         this.loginDivBrowserUsers.empty();
+        const browserUsers = this.group.browserUsers.filter(r => (r.id != this.current.id && !r.hidden));
         browserUsers.forEach(r => {
             this.loginDivBrowserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.userName + "</button>");
         });
@@ -360,8 +360,8 @@ class UserUtility extends StorageUtility {
             e.stopPropagation();
         });
 
-        const sessionUsers = this.group.sessionUsers.filter(r => (r.userName != this.current.userName));
         this.loginDivSessionUsers.empty();
+        const sessionUsers = this.group.sessionUsers.filter(r => (r.userName != this.current.userName));
         sessionUsers.forEach(r => {
             this.loginDivSessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.userName + "</button>");
         });
@@ -374,7 +374,6 @@ class UserUtility extends StorageUtility {
                 console.log("loggin in");
                 self.group.loadFrom(self._selectedUserContainer, parseInt($(this).val()));
                 self.utilities.manage("user");
-                self._resetLoginMenu();
                 self._resetSettingsMenu();
                 self._resetLoginMenu();
                 self._closeLoginMenu();
@@ -391,7 +390,6 @@ class UserUtility extends StorageUtility {
         this.loginDivSessionUsers.find("button").show();
         this.loginDivUsername.show();
         this.loginDivPassword.hide();
-        console.log(this.loginDivButton);
         this.loginDivButton.hide();
         this.loginDivMessages.empty();
     }
@@ -495,7 +493,11 @@ class UserUtility extends StorageUtility {
             }
             this.settingsDivStorage.prop("disabled", (uname == "Local duplicate"));
             this.settingsDivRememberMe.prop("disabled", !this.ableToSetRememberMe);
-            this.settingsDivRememberMe.prop("checked", this.rememberMe == this.current.id);
+            if (this.current.hidden && this.current.userName == this.group.defaultName) {
+                this.current.hidden = false;
+            }
+            this.settingsDivHidden.prop("checked", this.current.hidden);
+            this.settingsDivHidden.prop("disabled", this.current.userName == this.group.defaultName)
 
             //Messages
             if (uname == "Invalid")          { messages.push("Usernames must contain only alphanumeric characters and ., -, and _.")}
