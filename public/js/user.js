@@ -22,27 +22,43 @@ class User extends Sibling {
         }
     }
 
-    get email()              { return this._data.email; }
-    set email(email)         {
+    get email()      { return this._data.email; }
+    set email(email) {
         if (this._data.email != email) {
             this._data.email = email;
             this._update();
         }
     }
 
-    get passwordHash() { return this._data.passwordHash; }
+    get passwordHash()             { return this._data.passwordHash; }
     set passwordHash(passwordHash) {
         this._data.passwordHash = passwordHash;
         this._update();
     }
 
-    verifyPassword() { this._passwordVerified == true; }
+    verifyPassword()        { this._passwordVerified == true; }
     get passwordVerfified() { return this._passwordVerified; }
 
-    get rememberMe()         { return this._data.rememberMe; }
+    get rememberMe()    { return this._data.rememberMe; }
     set rememberMe(val) {
-        if (this._data.rememberMe != val) { 
-            this._data.rememberMe = val;
+        if (this._data.rememberMe != val) {
+            if (val && this.rememberMe == null) {
+                this._data.rememberMe = true;
+                this.rememberMe = this._data.id;
+                this._update();
+            }
+            else if (!val && this.rememberMe == this._data.id) {
+                this._data.rememberMe = false;
+                this.clearRememberMe();
+                this._update();
+            }
+        }
+    }
+
+    get hidden()    { return this._data.hidden; }
+    set hidden(val) {
+        if (this._data.hidden != val) { 
+            this._data.hidden = val;
             this._update();
         }
     }
@@ -121,7 +137,8 @@ class User extends Sibling {
             storagePermanence: false,
             pushToStorageFrequency: 60,
             useServerStorage: false,
-            pushToServerFrequency: false
+            pushToServerFrequency: false,
+            hidden: false
         }
     }
 

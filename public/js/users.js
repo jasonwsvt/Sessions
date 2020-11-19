@@ -21,31 +21,23 @@ class Users extends Siblings {
     get sortByName()             { return; }
 
     load() {
-        var containers = [sessionStorage, localStorage];
-        containers.forEach(container => {
-            if (Object.keys(container).includes(this._type)) {
-                console.log("looking for one user without password");
-                var userRecords = JSON.parse(container.getItem(this._type));
-                if (userRecords.length == 1 && userRecords[0].passwordHash == "") {
-                    console.log("one user without password found: ", userRecords[0].id);
-                    this.loadFrom(container, userRecords[0].id);
-                }
-                else { console.log("didn't find a user without a password"); }
-            }
-        });
-        if (!this.current) {
-            //console.log("looking for remember me user");
-            if (Object.keys(localStorage).includes("rememberMe")) {   //Remember Me set
-                if (Object.keys(localStorage).includes("users")) {
-                    if (JSON.parse(localStorage.getItem("users")).find(user => (user.id == localStorage.getItem("rememberMe")))) {
-                        //console.log("rememberMe user found:", this._current);
-                        this.loadFrom(localStorage, localStorage.getItem("rememberMe"));
-                    }
-                    else { console.log("didn't find a rememberMe user with that id"); }
-                }
-            }
+        var rememberMeUserId = this.rememberMe;
+        var sessionUsers = this.sessionUsers;
+        var browserUsers = this.browserUsers;
+        if (sessionUsers) {
+            var defaultSessionUser = sessionUsers.find(r => (r.userName = this._defaultName));
+            var noPasswordSessionUser = sessionUsers.find(r => (r.passwordHash == "" && r.hidden == false));
         }
-        if (!this.current) { this.new(); }
+        if (browserUsers) {
+            var defaultBrowserUser = browserUsers.find(r => (r.userName = this._defaultName));
+            var noPasswordBrowserUser = browserUsers.find(r => (r.passwordHash == "" && r.hidden == false));
+        }
+        if      (rememberMeUserId)      { this.loadFrom(localStorage, rememberMeUserId); }
+        else if (defaultSessionUser)    { this.loadFrom(sessionStorage, defaultSessionUser.id); }
+        else if (noPasswordSessionUser) { this.loadFrom(sessionStorage, noPasswordSessionUser.id); }
+        else if (defaultBrowserUser)    { this.loadFrom(localStorage, defaultBrowserUser.id); }
+        else if (noPasswordBrowserUser) { this.loadFrom(localStorage, noPasswordBrowserUser.id); }
+        else                            { this.new(); }
     }
 
     loadFrom(container, id) {
