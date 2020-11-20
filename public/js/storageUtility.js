@@ -90,10 +90,41 @@ class StorageUtility {
 
     migrate() {
         //console.log("migrate");
-        [this.updateTableName, this.storageTableName].forEach(table => {
-            this.container.setItem(table, JSON.stringify(this.otherContainer.getItem(table)));
-        });
-        if (this.canHaveChildren) { this.current.children.migrate(); }
+        //For each item in this.siblings.unsorted,
+        //    if the id is duplicated in the other container, change it.
+        //Then migrate without checking for duplicates.
+        var cUpdateRecords, cStorageRecords, oUpdateRecords, oStorageRecords;
+        if (this.type == "users") {
+            cUpdateRecords = [].push(this.findRecordByIdInUpdate(this.id));
+            cStorageRecords = [].push(this.findRecordByIdInStorage(this.id));
+        }
+        else {
+            cUpdateRecords = this.findRecordsByParentIdInUpdate(this.parentId);
+            cStorageRecords = this.findRecordsByParentIdInStorage(this.parentId);
+        }
+        if (cUpdateRecords && Object.keys(this.otherContainer).includes(this.updateTableName)) {
+            oUpdateRecords = this.otherContainer.getItem(this.updateTableName)
+            cUpdateRecords.forEach(cRecord => {
+                while (true) {
+                    if (oUpdateRecords.find(oRecord => (oRecord.id == cRecord.id))) {
+                        cRecord.id = this.newId;
+                    }
+                    else { break; }
+                }
+            });
+        }
+        if (cStorageRecords && Object.keys(this.otherContainer).includes(this.tableName)) {
+            oStorageRecords = this.otherContainer.getItem(this.tableName)
+            cStorageRecords.forEach(cRecord => {
+                while (true) {
+                    if (oStorageRecords.find(oRecord => (oRecord.id == cRecord.id))) {
+                        cRecord.id = this.newId;
+                    }
+                    else { break; }
+                }
+            });
+        }
+        if (this.canHaveChildren) { this.children.migrate(); }
     }
 
     get container()             { return (this.storagePermanence) ? localStorage : sessionStorage; }
@@ -107,6 +138,12 @@ class StorageUtility {
     removeRecordInUpdate(id)    { this.removeRecord(this.updateTableName, id); }
     setRecordInUpdate(newX)     { this.setRecord(this.updateTableName, newX); }
     findRecordByIdInUpdate(id)  { return this.findRecordById(this.updateTableName, id); }
+    findRecordsByParentIdInUpdate(parentId) {
+        var records = this.findRecordsByParentId(this.updateTableName, parentId);
+        //console.log(this.updateTableName, parentId, records);
+        return records;
+    }
+
 
     get storageTableName()      { return ""; }  //set this in extended class;
     removeStorageTable()        { this.container.removeItem(this.storageTableName); }

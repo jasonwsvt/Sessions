@@ -25,11 +25,11 @@ class Users extends Siblings {
         var sessionUsers = this.sessionUsers;
         var browserUsers = this.browserUsers;
         if (sessionUsers) {
-            var defaultSessionUser = sessionUsers.find(r => (r.userName = this._defaultName));
+            var defaultSessionUser = sessionUsers.find(r => (r.userName == this._defaultName));
             var noPasswordSessionUser = sessionUsers.find(r => (r.passwordHash == "" && r.hidden == false));
         }
         if (browserUsers) {
-            var defaultBrowserUser = browserUsers.find(r => (r.userName = this._defaultName));
+            var defaultBrowserUser = browserUsers.find(r => (r.userName == this._defaultName));
             var noPasswordBrowserUser = browserUsers.find(r => (r.passwordHash == "" && r.hidden == false));
         }
         if      (rememberMeUserId)      { this.loadFrom(localStorage, rememberMeUserId); }

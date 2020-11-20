@@ -92,6 +92,11 @@ class UserUtility extends StorageUtility {
                 e.stopPropagation();
             });
 
+            self.settingsDivStorage.on("change", function (e) {
+                self.current.storagePermanence = $(this).val();
+                self._manageSettingsMenu();
+            });
+
             self.pushToStorageFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
                 self.current.pushToStorageFrequency = (val == "false") ? false : parseInt(val);
