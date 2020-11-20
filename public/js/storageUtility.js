@@ -92,15 +92,17 @@ class StorageUtility {
         //console.log("migrate");
         //For each item in this.siblings.unsorted,
         //    if the id is duplicated in the other container, change it.
-        //Then migrate without checking for duplicates.
+        //Then migrate without any need to check for duplicates.
         var cUpdateRecords, cStorageRecords, oUpdateRecords, oStorageRecords;
         if (this.type == "users") {
             cUpdateRecords = [].push(this.findRecordByIdInUpdate(this.id));
             cStorageRecords = [].push(this.findRecordByIdInStorage(this.id));
         }
         else {
-            cUpdateRecords = this.findRecordsByParentIdInUpdate(this.parentId);
-            cStorageRecords = this.findRecordsByParentIdInStorage(this.parentId);
+//            cUpdateRecords = this.findRecordsByParentIdInUpdate(this.parentId);
+//            cStorageRecords = this.findRecordsByParentIdInStorage(this.parentId);
+            cUpdateRecords = this.findRecordsByParentIdInUpdate();
+            cStorageRecords = this.findRecordsByParentIdInStorage();
         }
         if (cUpdateRecords && Object.keys(this.otherContainer).includes(this.updateTableName)) {
             oUpdateRecords = this.otherContainer.getItem(this.updateTableName)
@@ -138,8 +140,10 @@ class StorageUtility {
     removeRecordInUpdate(id)    { this.removeRecord(this.updateTableName, id); }
     setRecordInUpdate(newX)     { this.setRecord(this.updateTableName, newX); }
     findRecordByIdInUpdate(id)  { return this.findRecordById(this.updateTableName, id); }
-    findRecordsByParentIdInUpdate(parentId) {
-        var records = this.findRecordsByParentId(this.updateTableName, parentId);
+    //findRecordsByParentIdInUpdate(parentId) {
+    findRecordsByParentIdInUpdate() {
+        //        var records = this.findRecordsByParentId(this.updateTableName, parentId);
+        var records = this.findRecordsByParentId(this.updateTableName);
         //console.log(this.updateTableName, parentId, records);
         return records;
     }
@@ -153,8 +157,10 @@ class StorageUtility {
     removeRecordInStorage(id)   { this.removeRecord(this.storageTableName, id); }
     setRecordInStorage(newX)    { this.setRecord(this.storageTableName, newX); }
     findRecordByIdInStorage(id) { return this.findRecordById(this.storageTableName, id); }
-    findRecordsByParentIdInStorage(parentId) {
-        var records = this.findRecordsByParentId(this.storageTableName, parentId);
+//    findRecordsByParentIdInStorage(parentId) {
+    findRecordsByParentIdInStorage() {
+            //        var records = this.findRecordsByParentId(this.storageTableName, parentId);
+        var records = this.findRecordsByParentId(this.storageTableName);
         //console.log(this.storageTableName, parentId, records);
         return records;
     }
@@ -167,12 +173,13 @@ class StorageUtility {
 
     getRecords(tableName) {
         const records = (this.tableExists(tableName)) ? JSON.parse(this.container.getItem(tableName)) : [];
-//        console.log("getRecords("+tableName+"):", val);
+        //console.log("getRecords("+tableName+"):", val);
         return records;
     }
 
     setRecords(tableName, value) {
 //        console.log(this.container,".setRecords(",tableName,", ",value,")");
+        if (isString(value)) { console.trace(); }
         this.container.setItem(tableName, JSON.stringify(value));
     }
 
@@ -189,13 +196,14 @@ class StorageUtility {
         return this.getRecords(tableName).find(record => (record.id == id));
     }
 
-    findRecordsByParentId(tableName, parentId) {
-        //console.log("findRecordsBy" + this.parentIdName + "(",tableName, ",", parentId, ")");
+    //findRecordsByParentId(tableName, parentId) {
+    findRecordsByParentId(tableName) {
+            //console.log("findRecordsBy" + this.parentIdName + "(",tableName, ",", parentId, ")");
         if (this.tableExists(tableName)) {
             //console.log("Records in " + tableName + ":", this.getRecords(tableName));
             this.getRecords(tableName).forEach(entry => {
                 //console.log(entry[this.parentIdName], "and", parentId, "are equal:", entry[this.parentIdName] == parentId);
-                if (entry[this.parentIdName] == parentId) {
+                if (entry[this.parentIdName] == this.parentId) {
                     //console.log(entry);
                     if (!this.findById(entry.id)) {
                         //console.log("entry not already loaded");
@@ -206,7 +214,7 @@ class StorageUtility {
                 }
             });
             var records = this.getRecords(tableName).filter(entry =>
-                (parentId == entry[this.parentIdName] &&
+                (this.parentId == entry[this.parentIdName] &&
                     (!this.findById(entry.id) ||
                      (this.findById(entry.id).lastEdited < entry.lastEdited))));
 

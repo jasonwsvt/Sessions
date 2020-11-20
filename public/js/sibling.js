@@ -80,7 +80,8 @@ class Sibling extends StorageUtility {
         this._updateData();
         this._postLoad();
         this._save();
-        if (this._children) { this._children.load(this._data.id); }
+        if (this._children) { this._children.load(); }
+//        if (this._children) { this._children.load(this._data.id); }
     }
 
     _postLoad() { return; }

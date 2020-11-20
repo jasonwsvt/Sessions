@@ -25,6 +25,7 @@ class Siblings extends StorageUtility {
     get pushToStorageFrequency() { return this.currentUser.pushToStorageFrequency; }
     get pushToServerFrequency()  { return this.currentUser.pushToServerFrequency; }
     get parent()                 { return (this._parent) ? this._parent : null; }
+    get parentId()               { return (this._parent) ? this._parent.id : null; }
     get type()                   { return this._type; }
     get storageTableName()       { return this._type; }
     get canHaveChildren()        { return this._canHaveChildren; }
@@ -76,21 +77,16 @@ class Siblings extends StorageUtility {
         this.currentUser.setSortMethod(this.type, method);
     }
 
-    load(parentId) {
-        //console.log("load(", parentId, ")");
+//    load(parentId) {
+    load() {
+//            console.log("load(", parentId, ")", this.parent.id);
+//        console.log("load(", this.parentId, ")");
+//        console.trace();
         var data = [], sibling;
-//        if (this.storageTableExists) {
-//            data = this.storageRecords.filter(entry =>
-//                ((parentId == entry[this.parent.type + "Id"]) &&
-//                    (!this.findById(entry.id)) ||
-//                     (this.findById(entry.id) &&
-//                      this.findById(entry.id)._data.lastEdited < entry.lastEdited)));
-        data = this.findRecordsByParentIdInStorage(parentId);
+//        data = this.findRecordsByParentIdInStorage(this.parentId);
+        data = this.findRecordsByParentIdInStorage();
         if (data) {
             data.forEach(entry => {
-//                sibling = new this._SiblingClass(this._app, this);
-//                sibling.load(entry);
-//                this._siblings.push(sibling);
             this._siblings.push(new this._SiblingClass(this._app, this));
             this._siblings[this._siblings.length - 1].load(entry);
             });

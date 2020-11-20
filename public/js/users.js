@@ -79,10 +79,12 @@ class Users extends Siblings {
                         storageRecords.push(updateRecord);
                         //console.log("StorageRecords after push:", storageRecords);
                     });
+                    if (isString(storageRecords)) { console.trace(); }
                     container.setItem(storageTable, JSON.stringify(storageRecords));
                 }
                 else {
                     //console.log(storageTable, "does not exist.  Creating with", updateRecords);
+                    if (isString(updateRecords)) { console.trace(); }
                     container.setItem(storageTable, JSON.stringify(updateRecords));
                 }
                 container.removeItem(updateTable);
