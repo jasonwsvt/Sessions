@@ -90,17 +90,40 @@ class StorageUtility {
 
     migrate() {
         //console.log("migrate");
+        //do a push to storage
         //For each item in this.siblings.unsorted,
         //    if the id is duplicated in the other container, change it.
         //Then migrate without any need to check for duplicates.
         var cUpdateRecords, cStorageRecords, oUpdateRecords, oStorageRecords;
+        oUpdateRecords = (Object.keys(this.otherContainer).includes(this.updateTableName))
+            ? JSON.parse(this.otherContainer.getItem(this.updateTableName)) : [];
+        oStorageRecords = Object.keys(this.otherContainer).includes(this.tableName)
+            ? JSON.parse(this.otherContainer.getItem(this.tableName)) : [];
+
+        if (oUpdateRecords != []) {
+            oUpdateRecords.forEach(oRecord => {
+                while (true) {
+                    cRecord = this.findRecordById(oRecord.id);
+                    if (cRecord) { cRecord.id = this.newId; }
+                    else         { break; }
+                }
+            });
+        }
+        if (oStorageRecords != []) {
+            oStorageRecords.forEach(oRecord => {
+                while (true) {
+                    cRecord = this.findRecordById(oRecord.id);
+                    if (cRecord) { cRecord.id = this.newId; }
+                    else         { break; }
+                }
+            });
+        }
+
         if (this.type == "users") {
             cUpdateRecords = [].push(this.findRecordByIdInUpdate(this.id));
             cStorageRecords = [].push(this.findRecordByIdInStorage(this.id));
         }
         else {
-//            cUpdateRecords = this.findRecordsByParentIdInUpdate(this.parentId);
-//            cStorageRecords = this.findRecordsByParentIdInStorage(this.parentId);
             cUpdateRecords = this.findRecordsByParentIdInUpdate();
             cStorageRecords = this.findRecordsByParentIdInStorage();
         }
@@ -279,4 +302,61 @@ class StorageUtility {
     clearRememberMe()           { localStorage.removeItem("rememberMe"); }
 
     get now() { return Math.floor(Date.now() / 1000); }
+
+    get newId() {
+        var id;
+        while (true) {
+            id = Math.round(Math.random()*1000000000000000);
+            if (!this.findById(id)) { break; }
+        }
+        return id;
+    }
+
+    //changeRecordId goes through update and storage and changes the id.
+    //It then calls changeParentId for each of the children.
+    changeRecordId() {
+        var newId = this.newId;
+        if (this.updateTableExists) {
+            records = this.getRecords(this.updateTableName);
+            record = records.find(r => (r.id == this.id));
+            if (record) {
+                records = records.filter(r => (r.id != this.id));
+                record.id = newId;
+                records.push(record);
+                this.setRecords(this.updateTableName, records);
+            }
+        }
+        if (this.storageTableExists) {
+            records = this.getRecords(this.storageTableName);
+            record = records.find(r => (r.id == this.id));
+            if (record) {
+                records = records.filter(r => (r.id != this.id));
+                record.id = newId;
+                records.push(record);
+                this.setRecords(this.storageTableName, records);
+            }
+        }
+        if (this.canHaveChildren) {
+            this.children.unsorted.forEach(child => { child.changeParentId(); });
+        }
+    }
+    changeParentId() {
+        if (this.updateTableExists) {
+            records = this.getRecords(this.updateTableName);
+            if (records) {
+                records.forEach(record => {
+                    if (record.parentId == this.parent.id) { record.parentId = newId; }
+                });
+                this.setRecords(this.updateTableName, records);
+            }
+        }
+        if (this.storageTableExists) {
+            records = this.getRecords(this.storageTableName);
+            if (records) {
+                records.forEach(record => {
+                    if (record.parentId == this.parent.id) { record.parentId = newId; }
+                });
+            }
+        }    
+    }
 }

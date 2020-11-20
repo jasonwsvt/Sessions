@@ -29,12 +29,12 @@ class Sibling extends StorageUtility {
     get data()                   { return this._data; } //get and set data are not used?
 
     get parentId()               { return (this._type && this._data[this._type + "Id"]) ? this._data[this._type + "Id"] : null; }
-    set parentId(parentId)       {
-        if (this._type && this._data[this.type + "Id"] != parentId) {
-            this._data[this.type + "Id"] = parentId;
-            this._update();
-        }
-    }
+//    set parentId(parentId)       {
+//        if (this._type && this._data[this.type + "Id"] != parentId) {
+//            this._data[this.type + "Id"] = parentId;
+//            this._update();
+//        }
+//    }
 
     get name()                   { return this._data.name; }
     set name(name)               {
@@ -45,15 +45,16 @@ class Sibling extends StorageUtility {
     }
 
     get id()                     { return this._data.id; }
-    set id(id) {
-        if (this._data.id != id) {
-            this._data.id = id;
-            this._update();
-            if (this._children) {
-                this._children.unsorted.forEach(child => (child._data.parentId = id));
-            }
-        }
-    }
+//    set id(id) {
+//        if (this._data.id != id) {
+//
+//            this._update();
+//            if (this._children) {
+//                this._children.unsorted.forEach(child => (child._data.parentId = id));
+//            }
+//        }
+//    }
+
     get lastEdited()      { return this._data.lastEdited; }
     get lastOpened()      { return this._data.lastOpened; }
 

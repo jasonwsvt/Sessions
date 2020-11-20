@@ -107,13 +107,13 @@ class Siblings extends StorageUtility {
         this._siblings[this._siblings.length-1].init(this._current);
         return this._current;
     }
-
-    get newId() {
-        var id;
-        while (true) {
-            id = Math.round(Math.random()*1000000000000000);
-            if (!this.findById(id)) { break; }
-        }
-        return id;
-    }
+//
+//    get newId() {
+//        var id;
+//        while (true) {
+//            id = Math.round(Math.random()*1000000000000000);
+//            if (!this.findById(id)) { break; }
+//        }
+//        return id;
+//    }
 }
