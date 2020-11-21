@@ -1,3 +1,5 @@
+const e = require("express");
+
 class StorageUtility {
     _lastPushToStorage = false;
     _lastPushToServer = false;
@@ -94,60 +96,86 @@ class StorageUtility {
         //For each item in this.siblings.unsorted,
         //    if the id is duplicated in the other container, change it.
         //Then migrate without any need to check for duplicates.
-        var cUpdateRecords, cStorageRecords, oUpdateRecords, oStorageRecords;
-        oUpdateRecords = (Object.keys(this.otherContainer).includes(this.updateTableName))
+        var cUpdateRecords, cStorageRecords, records, duplicate;
+
+        const oUpdateRecords = (Object.keys(this.otherContainer).includes(this.updateTableName))
             ? JSON.parse(this.otherContainer.getItem(this.updateTableName)) : [];
-        oStorageRecords = Object.keys(this.otherContainer).includes(this.tableName)
+        if (this.updateTableExists) {
+            if (oUpdateRecords && oUpdateRecords.length) {
+                while (true) {
+                    if (this.type == "users") {
+                        cUpdateRecords = [].push(this.findRecordByIdInUpdate(this.id));
+                    }
+                    else {
+                        cUpdateRecords = this.findRecordsByParentIdInUpdate();
+                    }
+
+                    duplicate = cUpdateRecords.find(cRecord => (oUpdateRecords.find(oRecord => (cRecord.id == oRecord.id))));
+                    if (!duplicate) { break; }
+                    else {
+                        this.findById(duplicate.id).changeId();
+                    }
+                }
+                //merge cUpdateRecords into oUpdateRecords
+                this.otherContainer.setItem(this.updateTableName, JSON.stringify(oUpdateRecords.concat(cUpdateRecords)));
+            }
+            else {
+                //set oUpdateRecords equal to cUpdateRecords
+                this.otherContainer.setItem(this.updateTableName, JSON.stringify(cUpdateRecords));
+            }
+            //delete the records from cUpdateRecords
+            if (this.type == users) {
+                records = this.getUpdateRecords.filter(record => (record.id != this.id));
+            }
+            else {
+                records = this.getUpdateRecords.filter(record => (record[this.parentIdName] != this.parentId));
+            }
+            if (records && records.length) {
+                this.updateRecords = records;
+            }
+            else {
+                this.removeUpdateTable();
+            }
+        }
+
+        const oStorageRecords = Object.keys(this.otherContainer).includes(this.tableName)
             ? JSON.parse(this.otherContainer.getItem(this.tableName)) : [];
-
-        if (oUpdateRecords != []) {
-            oUpdateRecords.forEach(oRecord => {
-                while (true) {
-                    cRecord = this.findRecordById(oRecord.id);
-                    if (cRecord) { cRecord.id = this.newId; }
-                    else         { break; }
-                }
-            });
-        }
-        if (oStorageRecords != []) {
-            oStorageRecords.forEach(oRecord => {
-                while (true) {
-                    cRecord = this.findRecordById(oRecord.id);
-                    if (cRecord) { cRecord.id = this.newId; }
-                    else         { break; }
-                }
-            });
-        }
-
-        if (this.type == "users") {
-            cUpdateRecords = [].push(this.findRecordByIdInUpdate(this.id));
-            cStorageRecords = [].push(this.findRecordByIdInStorage(this.id));
-        }
-        else {
-            cUpdateRecords = this.findRecordsByParentIdInUpdate();
-            cStorageRecords = this.findRecordsByParentIdInStorage();
-        }
-        if (cUpdateRecords && Object.keys(this.otherContainer).includes(this.updateTableName)) {
-            oUpdateRecords = this.otherContainer.getItem(this.updateTableName)
-            cUpdateRecords.forEach(cRecord => {
-                while (true) {
-                    if (oUpdateRecords.find(oRecord => (oRecord.id == cRecord.id))) {
-                        cRecord.id = this.newId;
+        if (this.storageTableExists) {
+            if (oStorageRecords && oStorageRecords.length) {
+                while (true) {    
+                    if (this.type == "users") {
+                        cStorageRecords = [].push(this.findRecordByIdInStorage(this.id));
                     }
-                    else { break; }
-                }
-            });
-        }
-        if (cStorageRecords && Object.keys(this.otherContainer).includes(this.tableName)) {
-            oStorageRecords = this.otherContainer.getItem(this.tableName)
-            cStorageRecords.forEach(cRecord => {
-                while (true) {
-                    if (oStorageRecords.find(oRecord => (oRecord.id == cRecord.id))) {
-                        cRecord.id = this.newId;
+                    else {
+                        cStorageRecords = this.findRecordsByParentIdInStorage();
                     }
-                    else { break; }
+
+                    duplicate = cStorageRecords.find(cRecord => (oStorageRecords.find(oRecord => (cRecord.id == oRecord.id))));
+                    if (!duplicate) { break; }
+                    else {
+                        this.findById(duplicate.id).changeId();
+                    }
                 }
-            });
+                //merge cStorageRecords into oStorageRecords
+                this.otherContainer.setItem(this.storageTableName, JSON.stringify(oStorageRecords.concat(cStorageRecords)));
+            }
+            else {
+                //set oStorageRecords equal to cStorageRecords
+                this.otherContainer.setItem(this.storageTableName, JSON.stringify(cStorageRecords));
+            }
+            //delete the records from cUpdateRecords
+            if (this.type == users) {
+                records = this.getUpdateRecords.filter(record => (record.id != this.id));
+            }
+            else {
+                records = this.getUpdateRecords.filter(record => (record[this.parentIdName] != this.parentId));
+            }
+            if (records && records.length) {
+                this.storageRecords = records;
+            }
+            else {
+                this.removeStorageTable();
+            }
         }
         if (this.canHaveChildren) { this.children.migrate(); }
     }
