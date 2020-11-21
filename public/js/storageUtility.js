@@ -328,26 +328,30 @@ class StorageUtility {
                 }
             }
         });
-        this._data.id = newId;
         if (this.canHaveChildren) {
-            this.children.changeParentId();
+            this.children.changeParentId(newId);
         }
+        this._data.id = newId;
     }
 
     //changeParentId is run in children only
     //               It goes through update and storage in container
     //               and changes the parentId
     //               must not be run outside of changeId
-    changeParentId() {
+    changeParentId(newParentId) {
         [this.updateTableName, this.storageTableName].forEach(table => {
             if (this.tableExists(table)) {
                 records = this.getRecords(table);
-                records.forEach(record => {
-                    if (record[this.parentIdName] == this.parent.id) {
-                        record[this.parentIdName] = newId;
-                    }
-                });
-                this.setRecords(table, records);
+                parentIdRecords = records.filter(record => (record.parentId == this.parent.id));
+                if (parentIdRecords) {
+                    records = records.filter(record => ( record.parentId != this.parent.id));
+                    parentIdRecords.forEach(record => {
+                        record[this.parentIdName] = newParentId;
+                        records.push(record);
+                        this.findById(record.id).parentId = newParentId;
+                    });
+                    this.setRecords(table, records);
+                }
             }
         });
     }
