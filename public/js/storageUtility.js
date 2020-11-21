@@ -329,16 +329,16 @@ class StorageUtility {
             }
         });
         if (this.canHaveChildren) {
-            this.children.changeParentId(newId);
+            this.children.changeParentIdOfAllChildren(newId);
         }
         this._data.id = newId;
     }
 
-    //changeParentId is run in children only
-    //               It goes through update and storage in container
-    //               and changes the parentId
-    //               must not be run outside of changeId
-    changeParentId(newParentId) {
+    //changeParentIdOfAllChildren is run in children only
+    //                            It goes through update and storage in container
+    //                            and changes the parentId
+    //                            must not be run outside of changeId
+    changeParentIdOfAllChildren(newParentId) {
         [this.updateTableName, this.storageTableName].forEach(table => {
             if (this.tableExists(table)) {
                 records = this.getRecords(table);
@@ -348,11 +348,15 @@ class StorageUtility {
                     parentIdRecords.forEach(record => {
                         record[this.parentIdName] = newParentId;
                         records.push(record);
-                        this.findById(record.id).parentId = newParentId;
+                        this.findById(record.id).changeParentId(newParentId);
                     });
                     this.setRecords(table, records);
                 }
             }
         });
+    }
+
+    changeParentId(newParentId) {
+        this._data[this.parentIdName] = newParentId;
     }
 }
