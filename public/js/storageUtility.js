@@ -312,9 +312,9 @@ class StorageUtility {
         return id;
     }
 
-    //changeRecordId goes through update and storage and changes the id.
-    //It then calls changeParentId for each of the children.
-    changeRecordId() {
+    //changeId goes through update and storage in container and changes the id.
+    //         It then calls changeParentId for the children if they exist.
+    changeId() {
         var newId = this.newId;
         if (this.updateTableExists) {
             records = this.getRecords(this.updateTableName);
@@ -337,26 +337,31 @@ class StorageUtility {
             }
         }
         if (this.canHaveChildren) {
-            this.children.unsorted.forEach(child => { child.changeParentId(); });
+            this.children.changeParentId();
         }
     }
+
+    //changeParentId is run in children only
+    //               It goes through update and storage in container
+    //               and changes the parentId
+    //               must not be run outside of changeId
     changeParentId() {
         if (this.updateTableExists) {
-            records = this.getRecords(this.updateTableName);
-            if (records) {
-                records.forEach(record => {
-                    if (record.parentId == this.parent.id) { record.parentId = newId; }
-                });
-                this.setRecords(this.updateTableName, records);
-            }
+            records = this.getUpdateRecords;
+            records.forEach(record => {
+                if (record[this.parentIdName] == this.parent.id) {
+                    record[this.parentIdName] = newId;
+                }
+            });
+            this.setRecords(this.updateTableName, records);
         }
         if (this.storageTableExists) {
-            records = this.getRecords(this.storageTableName);
-            if (records) {
-                records.forEach(record => {
-                    if (record.parentId == this.parent.id) { record.parentId = newId; }
-                });
-            }
+            records = this.getStorageRecords;
+            records.forEach(record => {
+                if (record[this.parentIdName] == this.parent.id) {
+                    record[this.parentIdName] = newId;
+                }
+            });
         }    
     }
 }
