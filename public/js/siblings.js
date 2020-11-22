@@ -77,43 +77,25 @@ class Siblings extends StorageUtility {
         this.currentUser.setSortMethod(this.type, method);
     }
 
-//    load(parentId) {
     load() {
-//            console.log("load(", parentId, ")", this.parent.id);
-//        console.log("load(", this.parentId, ")");
-//        console.trace();
         var data = [], sibling;
-//        data = this.findRecordsByParentIdInStorage(this.parentId);
         data = this.findRecordsByParentIdInStorage();
         if (data) {
             data.forEach(entry => {
-            this._siblings.push(new this._SiblingClass(this._app, this));
-            this._siblings[this._siblings.length - 1].load(entry);
+                this._siblings.push(new this._SiblingClass(this._app, this));
+                this._siblings[this._siblings.length - 1].load(entry);
             });
         }
 
-        if (this.entries == 0) { this.new(parentId); }
+        if (this.entries == 0) { this.new(); }
         this._current = this.unsorted.sort((a,b) => (Number(a._data.lastOpened) - Number(b._data.lastOpened))).slice(-1)[0].id;
     }
 
     new() {
-        //console.trace();
         console.log("new", this.type);
         this._current = this.newId;
-//        console.log(this._type, "new", id);
-//        console.log("Current:", this._current);
-//        console.log("Entries:", this.entries);
         this._siblings.push(new this._SiblingClass(this._app, this));
-        this._siblings[this._siblings.length-1].init(this._current);
+        this._siblings[this._siblings.length - 1].init(this._current);
         return this._current;
     }
-//
-//    get newId() {
-//        var id;
-//        while (true) {
-//            id = Math.round(Math.random()*1000000000000000);
-//            if (!this.findById(id)) { break; }
-//        }
-//        return id;
-//    }
 }

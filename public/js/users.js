@@ -4,7 +4,6 @@ class Users extends Siblings {
         this._type = "users";
         this._defaultName = "new_user";
         this.initialPushToStorage();
-        //if (Object.keys(sessionStorage).includes("users") && JSON.parse(sessionStorage.getItem("users")).length >= 1) { sessionStorage.clear(); }
         this.load();
     }
 
@@ -41,9 +40,9 @@ class Users extends Siblings {
     }
 
     loadFrom(container, id) {
+        this._current = id;
         var data = JSON.parse(container.getItem(this._type)).find(entry => (entry.id == id));
         this._siblings.push(new this._SiblingClass(this._app, this));
-        this._current = id;
         this._siblings[this._siblings.length - 1].load(data);
     }
 
