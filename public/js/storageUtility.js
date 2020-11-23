@@ -223,9 +223,8 @@ class StorageUtility {
     suSetRecord(newX) { this.setRecord(sessionStorage, this.updateTableName, newX); }
     ssSetRecord(newX) { this.setRecord(sessionStorage, this.storageTableName, newX); }
     setRecord(container, tableName, newX) {
-        //console.log("\nsetRecord");
-        //console.log("Table name:", tableName);
-        //console.log("newX:", newX);
+        console.log("\nsetRecord(",container, tableName, newX, ")");
+        console.trace();
         var records = this.getRecords(container, tableName);
         //console.log("Table records:", records);
         var filtered = records.filter(x => (x.id != newX.id));
@@ -311,56 +310,51 @@ class StorageUtility {
     }
 
     migrate() {
-        var csRecords, osRecords, csMigrate, csKeep, oRecords, tableName;
-
-        tableName = this.storageTableName;
         console.log("\n", this.type, this.storagePermanence);
 
         //Push to storage so all data is in storage table.
         this.pushToStorage();
 
         //all records in container
-        csRecords = this.csRecords;
-        console.log("container records", csRecords);
+        const csRecords = this.csRecords;
+        //console.log("container records", csRecords);
 
-        if (this.type == "user") {
-            //records in container to migrate
-            csMigrate = csRecords.filter(r => (r.id == this.id));
-            console.log("User record to migrate", csMigrate);
-            //records in container that aren't migrating
-            csKeep = csRecords.filter(r => (r.id != this.id));
-            console.log("User records to keep", csKeep);
-        }
-        else {
-            //records in container to migrate
-            csMigrate = csRecords.filter(r => (r[this.parentIdName] == this.parentId));
-            //records in container that aren't migrating
-            csKeep = csRecords.filter(r => (r[this.parentIdName] != this.parentId));
-            console.log(this.type, "records to migrate", csKeep);
-        }
+        const idName = (this.type == "user") ? "id" : this.parentIdName;
+        const id = (this.type == "user") ? this.id : this.parentId;
+        console.log(idName, id);
+        //records in container to migrate
+        const csMigrate = csRecords.filter(r => (r[idName] == id));
+        console.log("records to migrate:", csMigrate);
+        //records in container that aren't migrating
+        const csKeep = csRecords.filter(r => (r[idName] != id));
+        console.log(this.type, "records to keep:", csKeep);
 
         //records in other container
-        osRecords = this.osRecords;
+        var osRecords = this.osRecords;
         console.log("Records in the other container", osRecords);
         //records in other container, concatenated with records to migrate
         osRecords = osRecords.concat(csMigrate);
         console.log("Records to migrate concatenated with the other container records", osRecords);
 
-        //If cKeep is empty, remove it, otherwise save it.
-        if (csKeep == []) { this.csRemoveTable(); }
-        else { this.csRecords = csKeep; }
-        console.log("Container records after saving or deleting:", this.csRecords);
-        console.log("Should equal this:", csKeep);
+        //If csKeep is empty, remove it, otherwise save it.
+        if (!csKeep.length) { console.log("Removing container table."); this.csRemoveTable(); }
+        else { console.log("Keeping container table."); this.csRecords = csKeep; }
+        if (JSON.stringify(this.csRecords) != JSON.stringify(csKeep)) {
+            console.log("Container table not equal to records.");
+        }
 
         //Save the combined records to the other container.
         this.osRecords = osRecords;
-        console.log("Other container records after saving:", this.osRecords);
-        console.log("Should equal this:", osRecords);
+        if (JSON.stringify(this.osRecords) != JSON.stringify(osRecords)) {
+            console.log("Container table not equal to records.");
+        }
 
         if (this.canHaveChildren) {
             if (this.type == "user") { this.children.migrate(); }
             else { this.current.children.migrate(); }
         }
+
+        console.log(this.osRecords);
 
         if (this.type == "user") {
             this.removeTable(this.container, "currentUser");

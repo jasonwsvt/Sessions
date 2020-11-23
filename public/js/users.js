@@ -24,7 +24,7 @@ class Users extends Siblings {
         var sessionUsers = this.sUsers;
         var browserUsers = this.bUsers;
         if (sessionUsers) {
-            console.log(sessionUsers);
+//            console.log(sessionUsers);
             var noPasswordSessionUser = sessionUsers.find(r => (r.passwordHash == "" && r.hidden == false));
             var defaultSessionUser = sessionUsers.find(r => (r.userName == this._defaultName));
         }
