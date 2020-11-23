@@ -21,8 +21,8 @@ class Users extends Siblings {
 
     load() {
         var rememberMeUserId = this.rememberMe;
-        var sessionUsers = this.sessionUsers;
-        var browserUsers = this.browserUsers;
+        var sessionUsers = this.sUsers;
+        var browserUsers = this.bUsers;
         if (sessionUsers) {
             var defaultSessionUser = sessionUsers.find(r => (r.userName == this._defaultName));
             var noPasswordSessionUser = sessionUsers.find(r => (r.passwordHash == "" && r.hidden == false));

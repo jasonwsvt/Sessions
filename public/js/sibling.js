@@ -95,7 +95,7 @@ class Sibling extends StorageUtility {
 
     _save() {
         //console.log(this._type, this._data, "saving");
-        this.setRecordInUpdate(this._data);
+        this.cuSetRecord(this._data);
         this.siblings.schedulePushes();
     }
 

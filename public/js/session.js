@@ -10,8 +10,8 @@ class Session extends Sibling {
         var session;
         console.log("loading lines for", this._data.id);
         if (this._data.lines.length == 0) {
-            if (this.storageTableExists) {
-                session = this.findRecordByIdInStorage(this._data.id);
+            if (this.csTableExists) {
+                session = this.csFindRecordById(this._data.id);
                 if (session && Object.keys(session).includes("lines")) { this._data.lines = session.lines; }
             }
             else if (this.currentUser.useServerStorage) { //request from server

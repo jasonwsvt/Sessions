@@ -79,7 +79,7 @@ class Siblings extends StorageUtility {
 
     load() {
         var data = [], sibling;
-        data = this.findRecordsByParentIdInStorage();
+        data = this.csParentIdRecords();
         if (data) {
             data.forEach(entry => {
                 this._siblings.push(new this._SiblingClass(this._app, this));

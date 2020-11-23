@@ -342,7 +342,7 @@ class UserUtility extends StorageUtility {
         const self = this;
 
         this.loginDivBrowserUsers.empty();
-        const browserUsers = this.group.browserUsers.filter(r => (r.id != this.current.id && !r.hidden));
+        const browserUsers = this.group.bUsers.filter(r => (r.id != this.current.id && !r.hidden));
         browserUsers.forEach(r => {
             this.loginDivBrowserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.userName + "</button>");
         });
@@ -366,7 +366,7 @@ class UserUtility extends StorageUtility {
         });
 
         this.loginDivSessionUsers.empty();
-        const sessionUsers = this.group.sessionUsers.filter(r => (r.userName != this.current.userName));
+        const sessionUsers = this.group.sUsers.filter(r => (r.userName != this.current.userName));
         sessionUsers.forEach(r => {
             this.loginDivSessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.userName + "</button>");
         });
@@ -606,16 +606,16 @@ class UserUtility extends StorageUtility {
         const fieldVal = this.settingsDivUsername.val();
         const server = this.current.useServerStorage;
         const valid = /^[a-z0-9_\-.]{5,20}$/;
-        const storageDup = this.storageUserNameExists(fieldVal);
-        const localDup = this.otherContainerUsernameExists(fieldVal);
+        const containerDup = this.cUserNameExists(fieldVal);
+        const localDup = this.lUsernameExists(fieldVal);
         const serverDup = false;
 
         if (current == fieldVal)                        { return "Unchanged"; }
         if (!valid.test(fieldVal))                      { return "Invalid"; }
         if (current.length > 0 && fieldVal.length == 0) { return "Emptied"; }
-        if (storageDup && serverDup)                    { return "Storage and server duplicate"; }
+        if (containerDup && serverDup)                  { return "Storage and server duplicate"; }
         if (localDup && serverDup)                      { return "Local and server duplicate"; }
-        if (storageDup)                                 { return "Storage duplicate"; }
+        if (containerDup)                               { return "Storage duplicate"; }
         if (localDup)                                   { return "Local duplicate"; }
         if (serverDup)                                  { return "Server duplicate"; }
         return "Filled";
