@@ -376,7 +376,7 @@ class UserUtility extends StorageUtility {
             self._selectedUserContainer = sessionStorage;
             console.log(self.noPasswordAccount(), $(this).val());
             if (self.noPasswordAccount()) {
-                console.log("loggin in");
+                console.log("switching account");
                 self.group.loadFrom(self._selectedUserContainer, parseInt($(this).val()));
                 self.utilities.manage("user");
                 self._resetSettingsMenu();
