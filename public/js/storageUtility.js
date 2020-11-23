@@ -160,7 +160,7 @@ class StorageUtility {
             //console.log("findRecordsBy" + this.parentIdName + "(",tableName, ",", parentId, ")");
         if (this.tableExists(tableName)) {
             //console.log("Records in " + tableName + ":", this.getRecords(tableName));
-            this.getRecords(tableName).forEach(entry => {
+/*            this.getRecords(tableName).forEach(entry => {
                 //console.log(entry[this.parentIdName], "and", parentId, "are equal:", entry[this.parentIdName] == parentId);
                 if (entry[this.parentIdName] == this.parentId) {
                     //console.log(entry);
@@ -171,11 +171,11 @@ class StorageUtility {
                         //console.log("entry found and lastEdited newer");
                     }
                 }
-            });
+            }); */
             var records = this.getRecords(tableName).filter(entry =>
                 (this.parentId == entry[this.parentIdName] &&
                     (!this.findById(entry.id) ||
-                     (this.findById(entry.id).lastEdited < entry.lastEdited))));
+                     (this.findById(entry.id).lastEdited <= entry.lastEdited))));
 
             //console.log("Found records:", records);
             return records;
@@ -261,94 +261,82 @@ class StorageUtility {
     }
 
     migrate() {
-        //console.log("migrate");
         //do a push to storage
         //For each item in this.siblings.unsorted,
         //    if the id is duplicated in the other container, change it.
         //Then migrate without any need to check for duplicates.
-        var cUpdateRecords, cStorageRecords, records, duplicate;
+        var cRecords, records, duplicate;
 
-        const oUpdateRecords = (Object.keys(this.otherContainer).includes(this.updateTableName))
-            ? JSON.parse(this.otherContainer.getItem(this.updateTableName)) : [];
-        if (this.updateTableExists) {
-            if (oUpdateRecords && oUpdateRecords.length) {
-                while (true) {
-                    if (this.type == "user") {
-                        cUpdateRecords = [].push(this.findRecordByIdInUpdate(this.id));
+        [this.updateTableName, this.storageTableName].forEach(tableName => {
+            //get all the records in the table for the other container
+            const oRecords = (Object.keys(this.otherContainer).includes(tableName))
+                ? JSON.parse(this.otherContainer.getItem(tableName)) : [];
+            if (this.tableExists(tableName)) {
+                console.log(tableName, "exists");
+                if (oRecords && oRecords.length) {
+                    while (true) {
+                        if (this.type == "user") {
+                            //If it's the user, get the record for the user
+                            cRecords = [];
+                            cRecords.push(this.findRecordById(tableName, this.id));
+                        }
+                        else {
+                            //if it's not the user, get the records for the parentId
+                            cRecords = this.findRecordsByParentId(tableName);
+                        }
+                        console.log(tableName, this.id, cRecords);
+                        if (isArrayOfObjects(cRecords)) {
+                            duplicate = cRecords.find(cRecord => (oRecords.find(oRecord => (cRecord.id == oRecord.id))));
+                            if (!duplicate) { break; }
+                            else {
+                                this.findById(duplicate.id).changeId();
+                            }
+                        }
+                        else { break; }
                     }
-                    else {
-                        cUpdateRecords = this.findRecordsByParentIdInUpdate();
-                    }
-
-                    duplicate = cUpdateRecords.find(cRecord => (oUpdateRecords.find(oRecord => (cRecord.id == oRecord.id))));
-                    if (!duplicate) { break; }
-                    else {
-                        this.findById(duplicate.id).changeId();
-                    }
+                    //If there are records in oRecords, merge cRecords into oRecords
+                    this.otherContainer.setItem(tableName, JSON.stringify(oRecords.concat(cRecords)));
                 }
-                //merge cUpdateRecords into oUpdateRecords
-                this.otherContainer.setItem(this.updateTableName, JSON.stringify(oUpdateRecords.concat(cUpdateRecords)));
-            }
-            else {
-                //set oUpdateRecords equal to cUpdateRecords
-                this.otherContainer.setItem(this.updateTableName, JSON.stringify(cUpdateRecords));
-            }
-            //delete the records from cUpdateRecords
-            if (this.type == "user") {
-                records = this.getUpdateRecords.filter(record => (record.id != this.id));
-            }
-            else {
-                records = this.getUpdateRecords.filter(record => (record[this.parentIdName] != this.parentId));
-            }
-            if (records && records.length) {
-                this.updateRecords = records;
-            }
-            else {
-                this.removeUpdateTable();
-            }
-        }
-
-        const oStorageRecords = Object.keys(this.otherContainer).includes(this.tableName)
-            ? JSON.parse(this.otherContainer.getItem(this.tableName)) : [];
-        if (this.storageTableExists) {
-            if (oStorageRecords && oStorageRecords.length) {
-                while (true) {    
+                else {
+                    //If there are no records in oRecords, set oRecords equal to cRecords
                     if (this.type == "user") {
-                        cStorageRecords = [].push(this.findRecordByIdInStorage(this.id));
+                        //If it's the user, get the record for the user
+                        console.log("moving records for", this.id, "to the other container");
+                        cRecords = [];
+                        cRecords.push(this.findRecordById(tableName, this.id));
                     }
                     else {
-                        cStorageRecords = this.findRecordsByParentIdInStorage();
+                        //if it's not the user, get the records for the parentId
+                        console.log("moving records for", this.parentIdName, this.parentId, "to the other container");
+                        console.log("All records in", tableName, ":", this.getRecords(tableName));
+                        console.log("Records for", this.parentIdName, this.parentId, ":", this.findRecordsByParentId(tableName));
+                        cRecords = this.findRecordsByParentId(tableName);
                     }
-
-                    duplicate = cStorageRecords.find(cRecord => (oStorageRecords.find(oRecord => (cRecord.id == oRecord.id))));
-                    if (!duplicate) { break; }
-                    else {
-                        this.findById(duplicate.id).changeId();
-                    }
+                    console.log("moving", cRecords, "to other container");
+                    this.otherContainer.setItem(tableName, JSON.stringify(cRecords));
                 }
-                //merge cStorageRecords into oStorageRecords
-                this.otherContainer.setItem(this.storageTableName, JSON.stringify(oStorageRecords.concat(cStorageRecords)));
+                //delete the records from cRecords
+                if (this.type == "user") {
+                    records = this.getRecords(tableName).filter(record => (record.id != this.id));
+                }
+                else {
+                    records = this.getRecords(tableName).filter(record => (record[this.parentIdName] != this.parentId));
+                }
+                if (isArrayOfObjects(records)) {
+                    this.setRecords(tableName, records);
+                }
+                else {
+                    this.container.removeItem(tableName);
+                }
             }
-            else {
-                //set oStorageRecords equal to cStorageRecords
-                this.otherContainer.setItem(this.storageTableName, JSON.stringify(cStorageRecords));
-            }
-            //delete the records from cUpdateRecords
-            if (this.type == "user") {
-                records = this.getUpdateRecords.filter(record => (record.id != this.id));
-            }
-            else {
-                records = this.getUpdateRecords.filter(record => (record[this.parentIdName] != this.parentId));
-            }
-            if (records && records.length) {
-                this.storageRecords = records;
-            }
-            else {
-                this.removeStorageTable();
-            }
-        }
+            else { console.log (tableName, "does not exist.  Nothing to migrate."); }
+        });
         if (this.canHaveChildren) {
-            if (this.type == "user") { this._children.migrate(); }
+            if (this.type == "user") { this.children.migrate(); }
+            else { this.current.children.migrate(); }
+        }
+        this.container.removeItem("currentUser");
+        this.otherContainer.setItem("currentUser", this.currentUser.id);
     }
 
     //changeId goes through update and storage in container and changes the id.
@@ -371,6 +359,7 @@ class StorageUtility {
             this.children.changeParentIdOfAllChildren(newId);
         }
         this._data.id = newId;
+        this._update();
     }
 
     //changeParentIdOfAllChildren is run in children only
@@ -397,5 +386,6 @@ class StorageUtility {
 
     changeParentId(newParentId) {
         this._data[this.parentIdName] = newParentId;
+        this._update();
     }
 }
