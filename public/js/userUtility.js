@@ -366,7 +366,7 @@ class UserUtility extends StorageUtility {
         });
 
         this.loginDivSessionUsers.empty();
-        const sessionUsers = this.group.sUsers.filter(r => (r.userName != this.current.userName));
+        const sessionUsers = this.sUsers.filter(r => (r.userName != this.current.userName));
         sessionUsers.forEach(r => {
             this.loginDivSessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.userName + "</button>");
         });
@@ -607,7 +607,7 @@ class UserUtility extends StorageUtility {
         const server = this.current.useServerStorage;
         const valid = /^[a-z0-9_\-.]{5,20}$/;
         const containerDup = this.cUserNameExists(fieldVal);
-        const localDup = this.lUsernameExists(fieldVal);
+        const localDup = this.lUserNameExists(fieldVal);
         const serverDup = false;
 
         if (current == fieldVal)                        { return "Unchanged"; }

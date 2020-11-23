@@ -24,12 +24,13 @@ class Users extends Siblings {
         var sessionUsers = this.sUsers;
         var browserUsers = this.bUsers;
         if (sessionUsers) {
-            var defaultSessionUser = sessionUsers.find(r => (r.userName == this._defaultName));
+            console.log(sessionUsers);
             var noPasswordSessionUser = sessionUsers.find(r => (r.passwordHash == "" && r.hidden == false));
+            var defaultSessionUser = sessionUsers.find(r => (r.userName == this._defaultName));
         }
         if (browserUsers) {
-            var defaultBrowserUser = browserUsers.find(r => (r.userName == this._defaultName));
             var noPasswordBrowserUser = browserUsers.find(r => (r.passwordHash == "" && r.hidden == false));
+            var defaultBrowserUser = browserUsers.find(r => (r.userName == this._defaultName));
         }
         if      (rememberMeUserId)      { this.loadFrom(localStorage, rememberMeUserId); }
         else if (defaultSessionUser)    { this.loadFrom(sessionStorage, defaultSessionUser.id); }
@@ -41,7 +42,8 @@ class Users extends Siblings {
 
     loadFrom(container, id) {
         this._current = id;
-        var data = JSON.parse(container.getItem(this._type)).find(entry => (entry.id == id));
+        var data = this.findRecordById(container, this._type, id);
+//        console.log(data);
         this._siblings.push(new this._SiblingClass(this._app, this));
         this._siblings[this._siblings.length - 1].load(data);
     }
@@ -62,12 +64,12 @@ class Users extends Siblings {
             //console.log("updateTables:", updateTables);
             updateTables.forEach(updateTable => { 
                 //console.log(updateTable);
-                var updateRecords = JSON.parse(container.getItem(updateTable));
+                var updateRecords = this.getRecords(container, updateTable);
                 //console.log("updateTable:", updateTable);
                 //console.log("updateRecords:", updateRecords);
                 var storageTable = updateTable.split("_")[1]; //everything after update_
                 if (keys.includes(storageTable)) {
-                    var storageRecords = JSON.parse(container.getItem(storageTable));
+                    var storageRecords = this.getRecords(container, storageTable);
                     //console.log("storageTable:", storageTable);
                     //console.log("storageRecords:", storageRecords);
                     updateRecords.forEach(updateRecord => {
@@ -79,14 +81,14 @@ class Users extends Siblings {
                         //console.log("StorageRecords after push:", storageRecords);
                     });
                     if (isString(storageRecords)) { console.trace(); }
-                    container.setItem(storageTable, JSON.stringify(storageRecords));
+                    this.setRecords(container, storageTable, storageRecords);
                 }
                 else {
                     //console.log(storageTable, "does not exist.  Creating with", updateRecords);
                     if (isString(updateRecords)) { console.trace(); }
-                    container.setItem(storageTable, JSON.stringify(updateRecords));
+                    this.setRecords(container, storageTable, updateRecords);
                 }
-                container.removeItem(updateTable);
+                this.removeTable(container, updateTable);
             });
         });
     }

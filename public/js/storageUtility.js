@@ -218,10 +218,10 @@ class StorageUtility {
     csSetRecord(newX) { this.setRecord(this.container, this.storageTableName, newX); }
     ouSetRecord(newX) { this.setRecord(this.otherContainer, this.updateTableName, newX); }
     osSetRecord(newX) { this.setRecord(this.otherContainer, this.storageTableName, newX); }
-    cuSetRecord(newX) { this.setRecord(localStorage, this.updateTableName, newX); }
-    csSetRecord(newX) { this.setRecord(localStorage, this.storageTableName, newX); }
-    ouSetRecord(newX) { this.setRecord(sessionStorage, this.updateTableName, newX); }
-    osSetRecord(newX) { this.setRecord(sessionStorage, this.storageTableName, newX); }
+    buSetRecord(newX) { this.setRecord(localStorage, this.updateTableName, newX); }
+    bsSetRecord(newX) { this.setRecord(localStorage, this.storageTableName, newX); }
+    suSetRecord(newX) { this.setRecord(sessionStorage, this.updateTableName, newX); }
+    ssSetRecord(newX) { this.setRecord(sessionStorage, this.storageTableName, newX); }
     setRecord(container, tableName, newX) {
         //console.log("\nsetRecord");
         //console.log("Table name:", tableName);
@@ -235,7 +235,7 @@ class StorageUtility {
         //console.log(filtered, ".push(", newX, "):", afterPush);
         if (isArray(afterPush)) {
             //console.log("saving array to", tableName);
-            this.setRecords(tableName, afterPush);
+            this.setRecords(container, tableName, afterPush);
         }
     }
 
@@ -257,21 +257,19 @@ class StorageUtility {
 
 //    get browserUsers() { return this.userNames(localStorage); }
 //    get sessionUsers() { return this.userNames(sessionStorage); }
-    get users()        { return this.userNames(this.container); }
-    get oUsers()       { return this.userNames(this.otherContainer); }
-    get bUsers()       { return this.userNames(localStorage); }
-    get sUsers()       { return this.userNames(sessionStorage); }
-    get cUsers()       { return this.userNames(this.container); }
-    userNames(container) { //should find usernames from users and update_users
+//    get users()        { return this.userNames(this.container); }
+    get cUsers() { return this.users(this.container); }
+    get oUsers() { return this.users(this.otherContainer); }
+    get bUsers() { return this.users(localStorage); }
+    get sUsers() { return this.users(sessionStorage); }
+    users(container) { //should find usernames from users and update_users
         var users, userNames = [];
         users = this.getRecords(container, "update_users");
         users = users.concat(this.getRecords(container, "users"));
-        users.forEach(user => {
-            if (!userNames.find(r => (r.id == user.id))) {
-                userNames.push({ "id": user.id, "userName": user.userName, "hidden": user.hidden });
-            }
-        });
-        return userNames;
+//        console.trace();
+//        console.log(users);
+        if (users.length) { users.reduce((a,b) => (a.id == b.id)); }
+        return users;
     }
 
     get lastPushToStorage()     { return this._lastPushToStorage; }
@@ -294,15 +292,15 @@ class StorageUtility {
     get now() { return Math.floor(Date.now() / 1000); }
 
     get newId() {
-        var id, records, duplicate;
-        const cuRecords = this.cuRecords();
-        const csRecords = this.csRecords();
-        const ouRecords = this.ouRecords();
-        const osRecords = this.osRecords();
+        var id, duplicate;
+        const buRecords = this.buRecords;
+        const bsRecords = this.bsRecords;
+        const suRecords = this.suRecords;
+        const ssRecords = this.ssRecords;
         while (true) {
             id = Math.round(Math.random()*1000000000000000);
             duplicate = false;
-            [cuRecords, csRecords, ouRecords, osRecords].forEach(records => {
+            [buRecords, bsRecords, suRecords, ssRecords].forEach(records => {
                 if (duplicate == false) {
                     if (records.find(record => (record.id == id))) { duplicate = true; }
                 }
@@ -313,7 +311,7 @@ class StorageUtility {
     }
 
     migrate() {
-        var csRecords, csMigrate, csKeep, oRecords, tableName;
+        var csRecords, osRecords, csMigrate, csKeep, oRecords, tableName;
 
         tableName = this.storageTableName;
         console.log("\n", this.type, this.storagePermanence);
@@ -328,9 +326,9 @@ class StorageUtility {
         if (this.type == "user") {
             //records in container to migrate
             csMigrate = csRecords.filter(r => (r.id == this.id));
-            console.log("User record to migrate", cMigrate);
+            console.log("User record to migrate", csMigrate);
             //records in container that aren't migrating
-            csKeep = cRecords.filter(r => (r.id != this.id));
+            csKeep = csRecords.filter(r => (r.id != this.id));
             console.log("User records to keep", csKeep);
         }
         else {
@@ -342,7 +340,7 @@ class StorageUtility {
         }
 
         //records in other container
-        osRecords = this.osRecords();
+        osRecords = this.osRecords;
         console.log("Records in the other container", osRecords);
         //records in other container, concatenated with records to migrate
         osRecords = osRecords.concat(csMigrate);
@@ -350,7 +348,7 @@ class StorageUtility {
 
         //If cKeep is empty, remove it, otherwise save it.
         if (csKeep == []) { this.csRemoveTable(); }
-        else { this.csRecords(csKeep); }
+        else { this.csRecords = csKeep; }
         console.log("Container records after saving or deleting:", this.csRecords);
         console.log("Should equal this:", csKeep);
 
