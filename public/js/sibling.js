@@ -22,7 +22,7 @@ class Sibling extends StorageUtility {
     get type()                   { return this._type; }
     get siblings()               { return (this._siblings)        ? this._siblings          : null; }
     get children()               { return (this._children)        ? this._children          : null; }
-    get storageTableName()       { return this.siblings.type; }
+    get sTableName()             { return this.siblings.type; }
     get canHaveChildren()        { return this.siblings.canHaveChildren; }
 
     set data(data)               { this._data = data; }

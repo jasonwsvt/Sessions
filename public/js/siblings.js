@@ -27,7 +27,7 @@ class Siblings extends StorageUtility {
     get parent()                 { return (this._parent) ? this._parent : null; }
     get parentId()               { return (this._parent) ? this._parent.id : null; }
     get type()                   { return this._type; }
-    get storageTableName()       { return this._type; }
+    get sTableName()             { return this._type; }
     get canHaveChildren()        { return this._canHaveChildren; }
     get defaultName()            { return this._defaultName; }
     get defaultFirstName()       { return this._defaultFirstName; }
@@ -79,7 +79,7 @@ class Siblings extends StorageUtility {
 
     load() {
         var data = [], sibling;
-        data = this.csParentIdRecords();
+        data = this.csParentIdRecords;
         if (data) {
             data.forEach(entry => {
                 this._siblings.push(new this._SiblingClass(this._app, this));

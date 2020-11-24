@@ -42,7 +42,7 @@ class Users extends Siblings {
 
     loadFrom(container, id) {
         this._current = id;
-        var data = this.findRecordById(container, this._type, id);
+        var data = this.findRecord(container, this._type, id);
 //        console.log(data);
         this._siblings.push(new this._SiblingClass(this._app, this));
         this._siblings[this._siblings.length - 1].load(data);
