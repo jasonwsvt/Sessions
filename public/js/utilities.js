@@ -19,8 +19,8 @@ class Utilities {
         this._issueUtility = new Utility(this, this.currentClientIssues, "issue");
         this._sessionUtility = new Utility(this, this.currentIssueSessions, "session", false);
         this._sliderUtility = new SliderUtility(this);
-//        this._transferUtility = new TransferUtility(this);
-//        this._infoUtility = new InfoUtility(this);
+        this._transferUtility = new TransferUtility(this);
+        this._infoUtility = new InfoUtility(this);
 
         this.manage("user");  //switch to "user" once userItility is created
 
