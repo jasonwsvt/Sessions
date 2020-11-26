@@ -34,9 +34,11 @@ class TransferUtility {
 
     get div()                     { return $("#" + this._utilityID); }
     get app()                     { return this._app; }
+
     get _exportButton()           { return $("#" + this._exportButtonID); }
-    get _importButton()           { return $("#" + this._importButtonID); }
     get _exportDiv()              { return $("#" + this._exportDivID); }
+
+    get _importButton()           { return $("#" + this._importButtonID); }
     get _importDiv()              { return $("#" + this._importDivID); }
 
     _build() {

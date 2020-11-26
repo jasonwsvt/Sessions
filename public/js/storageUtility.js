@@ -1,3 +1,5 @@
+const e = require("express");
+
 class StorageUtility {
     _lastPushToStorage = false;
     _lastPushToServer = false;
@@ -335,5 +337,22 @@ class StorageUtility {
             this.osRemoveParentIdRecords();
             if (this.canHaveChildren) { this.unsorted.forEach(child => { child.children.migrate(); }); }
         }
+    }
+
+    //Initially called from user.
+    createJSON() {
+        this.pushToStorage();
+
+        var data = this.csThisRecord();
+
+        if (this.canHaveChildren) {
+            const type = this.children.type;
+            this.children.unsorted.forEach(child => {
+                data[type].push(child.createJSON());
+            });
+        }
+
+        if (this.type == "user") { data = JSON.stringify(data); }
+        return data;
     }
 }
