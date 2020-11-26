@@ -64,6 +64,58 @@ class TransferUtility {
     manage() {
     }
 
+    downloadJSON() {
+        json = this.currentUser.createJSON();
+        const blob1 = new Blob([json], { type: "text/plain;charset=utf-8" });
+        const name = this.currentUser.userName + ".json";
+ 
+        //Check the Browser.
+        const isIE = false || !!document.documentMode;
+        if (isIE) { window.navigator.msSaveBlob(blob1, name); }
+        else {
+            const url = window.URL || window.webkitURL;
+            const link = url.createObjectURL(blob1);
+            var a = $("<a />");
+            a.attr("download", name);
+            a.attr("href", link);
+            $("body").append(a);
+            a[0].click();
+            $("body").remove(a);
+        }
+    }
+
+    uploadJSON() {
+        const hiddenDiv = "<div id = 'hiddenDiv' class = 'hidden'></div>";
+        const fi = "<input id = 'upload' type = 'file'>";
+        var fi = $();
+        $("body").append(hiddenDiv);
+        $("hiddenDiv").append(fi);
+        $("upload").click( function () {
+            if (!window.FileReader) {
+                return alert( 'FileReader API is not supported by your browser.' );
+            }
+            var $i = $('#upload'), // Put file input ID here
+                input = $i[0]; // Getting the element from jQuery
+            if ( input.files && input.files[0] ) {
+                file = input.files[0]; // The file
+                fr = new FileReader(); // FileReader instance
+                fr.onload = function () {
+                    // Do stuff on onload, use fr.result for contents of file
+                    this.utilities.syncUtility(fr.result);
+                };
+                fr.readAsText(file);
+                //fr.readAsDataURL( file );
+            } else {
+                // Handle errors here
+                alert( "Either a file was not selected, or the browser is incompatible." )
+            }
+        } );
+
+        $("upload").click();
+        $("hiddenDiv").remove();
+
+    }
+
     closeMenus(except) {
         if (except != this._issuePickerButtonID)   {
             this._issuePickerDiv.addClass("hidden");
