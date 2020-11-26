@@ -23,17 +23,20 @@ class TransferUtility {
 
         $(document).ready(function() {
             self._exportButton.on("click", function() {
-
+                self._exportJSON();
+                $(this).blur();
             });
 
             self._importButton.on("click", function() {
-
+                self._importJSON();
+                $(this).blur();
             });
         }); 
     }
 
     get div()                     { return $("#" + this._utilityID); }
     get app()                     { return this._app; }
+    get currentUser()             { return this.app.users.currentUser; }
 
     get _exportButton()           { return $("#" + this._exportButtonID); }
     get _exportDiv()              { return $("#" + this._exportDivID); }
@@ -64,9 +67,8 @@ class TransferUtility {
     manage() {
     }
 
-    downloadJSON() {
-        json = this.currentUser.createJSON();
-        const blob1 = new Blob([json], { type: "text/plain;charset=utf-8" });
+    _exportJSON() {
+        const blob1 = new Blob(this.currentUser.createJSON(), { type: "text/plain;charset=utf-8" });
         const name = this.currentUser.userName + ".json";
  
         //Check the Browser.
@@ -84,7 +86,7 @@ class TransferUtility {
         }
     }
 
-    uploadJSON() {
+    _importJSON() {
         const hiddenDiv = "<div id = 'hiddenDiv' class = 'hidden'></div>";
         const fi = "<input id = 'upload' type = 'file'>";
         var fi = $();
@@ -101,10 +103,10 @@ class TransferUtility {
                 fr = new FileReader(); // FileReader instance
                 fr.onload = function () {
                     // Do stuff on onload, use fr.result for contents of file
-                    this.utilities.syncUtility(fr.result);
+                    this.currentUser.synchronize(fr.result);
                 };
                 fr.readAsText(file);
-                //fr.readAsDataURL( file );
+                //fr.readAsDataURL(file);
             } else {
                 // Handle errors here
                 alert( "Either a file was not selected, or the browser is incompatible." )
@@ -113,7 +115,6 @@ class TransferUtility {
 
         $("upload").click();
         $("hiddenDiv").remove();
-
     }
 
     closeMenus(except) {
