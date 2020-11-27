@@ -45,23 +45,25 @@ class TransferUtility {
     get _importDiv()              { return $("#" + this._importDivID); }
 
     _build() {
-        const exportIcon = this._exportIcon;
-        const importIcon = this._importIcon;
-
-        const importButton = "<button id = '" + this._importButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + importIcon + "</button>";
-        const importDiv = "<div id = '" + this._importDivID + "' class = 'popUpMenu'></div>";
-
-        const exportButton = "<button id = '" + this._exportButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + exportIcon + "</button>";
-        const exportDiv = "<div id = '" + this._exportDivID + "' class = 'popUpMenu'></div>";
+        const importButton = "<button id = '" + this._importButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._importIcon + "</button>";
+        const exportButton = "<button id = '" + this._exportButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._exportIcon + "</button>";
 
         this.div.addClass("btn-group");
         this.div.attr("role", "group");
 
-        this.div.append(importButton + importDiv);
-        this._importDiv.append();
+        this.div.append(importButton);
+        this._importButton.prop("data-toggle", "popover");
+        if (!window.FileReader) {
+            this._importButton.prop("data-content", "The FileReader API is not supported by your browser.");
+            this._importButton.prop("disabled", true);
+        }
+        else {
+            this._importButton.prop("data-content", "Import a Because Reasons JSON.");
+        }
 
-        this.div.append(exportButton + exportDiv);
-        this._exportDiv.append();
+        this.div.append(exportButton);
+        this._exportButton.prop("data-toggle", "popover");
+        this._exportButton.prop("data-content", "Export a Because Reasons JSON.");
     }
 
     manage() {
@@ -93,15 +95,12 @@ class TransferUtility {
         $("body").append(hiddenDiv);
         $("hiddenDiv").append(fi);
         $("upload").click( function () {
-            if (!window.FileReader) {
-                return alert( 'FileReader API is not supported by your browser.' );
-            }
             var $i = $('#upload'), // Put file input ID here
                 input = $i[0]; // Getting the element from jQuery
-            if ( input.files && input.files[0] ) {
+            if (input.files && input.files[0]) {
                 file = input.files[0]; // The file
                 fr = new FileReader(); // FileReader instance
-                fr.onload = function () {
+                fr.onload = () => {
                     // Do stuff on onload, use fr.result for contents of file
                     this.currentUser.synchronize(fr.result);
                 };
@@ -111,7 +110,7 @@ class TransferUtility {
                 // Handle errors here
                 alert( "Either a file was not selected, or the browser is incompatible." )
             }
-        } );
+        });
 
         $("upload").click();
         $("hiddenDiv").remove();
