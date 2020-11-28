@@ -2,7 +2,7 @@
 */
 
 class UserUtility extends StorageUtility {
-    _utilities = null;
+    _userUtilities = null;
     _utilityID = null;
     _type = null;
     _selectedUser = null;
@@ -16,26 +16,26 @@ class UserUtility extends StorageUtility {
     _loginIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-door-open' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M1 15.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM11.5 2H11V1h.5A1.5 1.5 0 0 1 13 2.5V15h-1V2.5a.5.5 0 0 0-.5-.5z'/><path fill-rule='evenodd' d='M10.828.122A.5.5 0 0 1 11 .5V15h-1V1.077l-6 .857V15H3V1.5a.5.5 0 0 1 .43-.495l7-1a.5.5 0 0 1 .398.117z'/><path d='M8 9c0 .552.224 1 .5 1s.5-.448.5-1-.224-1-.5-1-.5.448-.5 1z'/></svg>";
     _createNewAccountIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-plus-square' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path fill-rule='evenodd' d='M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z'/></svg>";
 
-    _settingsButtonID = "settingsButton";
-    _settingsDivID = "settingsDiv";
-    _settingsDivUsernameID = "settingsDivUsername";
-    _settingsDivCurrentPasswordID = "settingsDivCurrentPassword";
-    _settingsDivNewPassword1ID = "settingsDivNewPassword1";
-    _settingsDivNewPassword2ID = "settingsDivNewPassword2";
-    _settingsDivEmailID = "settingsDivEmail";
-    _settingsDivRememberMeID = "settingsDivRememberMe";
-    _settingsDivHiddenID = "settingsDivHidden";
-    _settingsDivStorageID = "settingsDivStorage";
-    _settingsDivMessagesID = "settingsDivMessages";
-    _settingsDivActionID = "settingsDivAction";
-    _settingsDivOptionsID = "settingsDivOptions";
+    _buttonID = "settingsButton";
+    _divID = "settingsDiv";
+    _usernameID = "settingsDivUsername";
+    _currentPasswordID = "settingsDivCurrentPassword";
+    _newPassword1ID = "settingsDivNewPassword1";
+    _newPassword2ID = "settingsDivNewPassword2";
+    _emailID = "settingsDivEmail";
+    _rememberMeID = "settingsDivRememberMe";
+    _hiddenID = "settingsDivHidden";
+    _storageID = "settingsDivStorage";
+    _messagesID = "settingsDivMessages";
+    _actionID = "settingsDivAction";
+    _optionsID = "settingsDivOptions";
     _pushToStorageFrequencyID = "pushToStorageFrequency";
     _pushToServerFrequencyID = "pushToServerFrequency";
 
-    constructor (utilities, group) {
+    constructor (userUtilities, group) {
         super();
         const self = this;
-        this._utilities = utilities;
+        this._userUtilities = userUtilities;
         this._group = group;
         this._type = "user";
         this._utilityID = "userSettingsUtility";
@@ -43,8 +43,8 @@ class UserUtility extends StorageUtility {
         this._build();
 
         $(document).ready(function() {
-            self.settingsButton.on("click", function (e) {
-                self.utilities.closeAllUtilityMenus(self._settingsButtonID);
+            self.button.on("click", function (e) {
+                self.utilities.closeAllUtilityMenus(self._buttonID);
                 if (self.settingsDiv.hasClass("hidden")) {
                     self.settingsDiv.removeClass("hidden");
                     this.blur();
@@ -98,97 +98,91 @@ class UserUtility extends StorageUtility {
         });
     }
 
-    get utilities()                     { return this._utilities; }
-    get app()                           { return this._utilities.app; }
+    get userUtilities()                 { return this._userUtilities; }
+    get utilities()                     { return this._userUtilities.utilities; }
+    get app()                           { return this._userUtilities.utilities.app; }
     get group()                         { return this._group(); }
     get current()                       { return this.group.current; }
     get lines()                         { return this.app.editor.lines; }
     get buttons()                       { return this.app.buttons; }
     get storagePermanence()             { return this.current.storagePermanence; }
-    get div()                           { return $("#" + this._utilityID); }
+    get userUtilitiesDiv()              { return this.userUtilities.div; }
 
-    get settingsButton()                { return $("#" + this._settingsButtonID); }
-    get settingsDiv()                   { return $("#" + this._settingsDivID); }
-    get settingsDivID()                 { return $("#" + this._settingsDivID); }
-    get settingsDivUsername()           { return $("#" + this._settingsDivUsernameID); }
-    get settingsDivEmail()              { return $("#" + this._settingsDivEmailID); }
-    get settingsDivPassword()           { return $("#" + this._settingsDivPasswordID); }
-    get settingsDivFirstName()          { return $("#" + this._settingsDivFirstNameID); }
-    get settingsDivUsername()           { return $("#" + this._settingsDivUsernameID); }
-    get settingsDivCurrentPassword()    { return $("#" + this._settingsDivCurrentPasswordID); }
-    get settingsDivNewPassword1()       { return $("#" + this._settingsDivNewPassword1ID); }
-    get settingsDivNewPassword2()       { return $("#" + this._settingsDivNewPassword2ID); }
-    get settingsDivEmail()              { return $("#" + this._settingsDivEmailID); }
-    get settingsDivRememberMe()         { return $("#" + this._settingsDivRememberMeID); }
-    get settingsDivHidden()             { return $("#" + this._settingsDivHiddenID); }
-    get settingsDivStorage()            { return $("#" + this._settingsDivStorageID); }
-    get settingsDivMessages()           { return $("#" + this._settingsDivMessagesID); }
-    get settingsDivAction()             { return $("#" + this._settingsDivActionID); }
-    get settingsDivOptions()            { return $("#" + this._settingsDivOptionsID); }
+    get button()                { return $("#" + this._buttonID); }
+    get div()                   { return $("#" + this._divID); }
+    get divUsername()           { return $("#" + this._divUsernameID); }
+    get divEmail()              { return $("#" + this._divEmailID); }
+    get divPassword()           { return $("#" + this._divPasswordID); }
+    get divFirstName()          { return $("#" + this._divFirstNameID); }
+    get divUsername()           { return $("#" + this._divUsernameID); }
+    get divCurrentPassword()    { return $("#" + this._divCurrentPasswordID); }
+    get divNewPassword1()       { return $("#" + this._divNewPassword1ID); }
+    get divNewPassword2()       { return $("#" + this._divNewPassword2ID); }
+    get divEmail()              { return $("#" + this._divEmailID); }
+    get divRememberMe()         { return $("#" + this._divRememberMeID); }
+    get divHidden()             { return $("#" + this._divHiddenID); }
+    get divStorage()            { return $("#" + this._divStorageID); }
+    get divMessages()           { return $("#" + this._divMessagesID); }
+    get divAction()             { return $("#" + this._divActionID); }
+    get divOptions()            { return $("#" + this._divOptionsID); }
     get pushToStorageFrequency()        { return $("#" + this._pushToStorageFrequencyID); }
     get pushToServerFrequency()         { return $("#" + this._pushToServerFrequencyID); }
 
     _build() {
-        this._buildSettingsMenu();
-    }
-
-    _buildSettingsMenu() {
         const prefix = "<div class = 'row'><div class = 'col-3'>";
         const infix = "</div><div class = 'col-3' style = 'text-align: center'>";
         const postfix = "</div>";
-        const settingsButton = "<button id = '" + this._settingsButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
-        const settingsDiv = "<div id = '" + this._settingsDivID + "' class = 'container userMenu hidden'></div>";
-        const username =  "<input id = '" + this._settingsDivUsernameID + "' type = 'text' placeholder = 'username' size = '30'>";
-        const currentPassword = "<input id = '" + this._settingsDivCurrentPasswordID + "' type = 'password' placeholder = 'enter current password for settings' size = '30'>";
-        const newPassword1 = "<input id = '" + this._settingsDivNewPassword1ID + "' type = 'password' placeholder = 'new password' size = '30'>";
-        const newPassword2 = "<input id = '" + this._settingsDivNewPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
-        const email = "<input id = '" + this._settingsDivEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
-        const hidden = "<input id = '" + this._settingsDivHiddenID + "' type = 'checkbox'> Hidden";
-        const rememberMe = "<input id = '" + this._settingsDivRememberMeID + "' type = 'checkbox'> Remember me";
-        const storage = "<select id = '" + this._settingsDivStorageID + "'></select>"; 
+        const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
+        const div = "<div id = '" + this._divID + "' class = 'container userMenu hidden'></div>";
+        const username =  "<input id = '" + this._divUsernameID + "' type = 'text' placeholder = 'username' size = '30'>";
+        const currentPassword = "<input id = '" + this._divCurrentPasswordID + "' type = 'password' placeholder = 'enter current password for settings' size = '30'>";
+        const newPassword1 = "<input id = '" + this._divNewPassword1ID + "' type = 'password' placeholder = 'new password' size = '30'>";
+        const newPassword2 = "<input id = '" + this._divNewPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
+        const email = "<input id = '" + this._divEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
+        const hidden = "<input id = '" + this._divHiddenID + "' type = 'checkbox'> Hidden";
+        const rememberMe = "<input id = '" + this._divRememberMeID + "' type = 'checkbox'> Remember me";
+        const storage = "<select id = '" + this._divStorageID + "'></select>"; 
         const storagePermanenceLabel = "<label style = 'text-align: right'>Storage permanence:</label>";
 
         const pushToStorageFrequencyLabel = "<label style = 'text-align: right'>Storage frequency:</label>";
         const pushToStorageFrequency = "<select id = '" + this._pushToStorageFrequencyID + "'></select>";
         const pushToServerFrequency = "<select id = '" + this._pushToServerFrequencyID + "'></select>";
 
-        const settingsDivMessages = "<div id = '" + this._settingsDivMessagesID + "'></div>";
-        const settingsDivAction = "<div id = '" + this._settingsDivActionID + "'></div>";
-        const settingsDivOptions = "<div id = '" + this._settingsDivOptionsID + "'></div>";
+        const messages = "<div id = '" + this._divMessagesID + "'></div>";
+        const action = "<div id = '" + this._divActionID + "'></div>";
+        const options = "<div id = '" + this._divOptionsID + "'></div>";
 
-        this.div.addClass("btn-group");
-        this.div.attr("role", "group");
-        this.div.append(settingsButton + settingsDiv);
-        this.settingsDiv.append(username);
-        this.settingsDiv.append(currentPassword);
-        this.settingsDiv.append(newPassword1);
-        this.settingsDiv.append(newPassword2);
-        this.settingsDiv.append(email);
-        this.settingsDiv.append(prefix + hidden     + infix + storagePermanenceLabel      + infix + storage                + infix + "Server"              + postfix);
-        this.settingsDiv.append(prefix + rememberMe + infix + pushToStorageFrequencyLabel + infix + pushToStorageFrequency + infix + pushToServerFrequency + postfix);
-        this.settingsDiv.append(settingsDivMessages);
-        this.settingsDiv.append(settingsDivAction);
-        this.settingsDiv.append(settingsDivOptions);
+        this.userUtilitiesDiv.append(button + div);
+        this.div.append(username);
+        this.div.append(currentPassword);
+        this.div.append(newPassword1);
+        this.div.append(newPassword2);
+        this.div.append(email);
+        this.div.append(prefix + hidden     + infix + storagePermanenceLabel      + infix + storage                + infix + "Server"              + postfix);
+        this.div.append(prefix + rememberMe + infix + pushToStorageFrequencyLabel + infix + pushToStorageFrequency + infix + pushToServerFrequency + postfix);
+        this.div.append(messages);
+        this.div.append(action);
+        this.div.append(options);
 
-        this.settingsDiv.css("left", String(this.settingsButton.position().left) + "px");
-        this.settingsDiv.css("top", String(this.settingsButton.position().top + 32) + "px");
-        this.settingsDivStorage.append("<option value = 'true'>Browser</option>");
-        this.settingsDivStorage.append("<option value = 'false'>Session</option>");
+        this.div.css("left", String(this.button.position().left) + "px");
+        this.div.css("top", String(this.button.position().top + 32) + "px");
+        this.storage.append("<option value = 'true'>Browser</option>");
+        this.storage.append("<option value = 'false'>Session</option>");
         this.pushToStorageFrequency.html([5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
         this._resetSettingsMenu();
     }
 
     _resetSettingsMenu() {
-        this.settingsButton.html(this.current.userName);
-        this.settingsDivUsername.val(this.current.userName);
-        this.settingsDivCurrentPassword.val("");
-        this.settingsDivNewPassword1.val("");
-        this.settingsDivNewPassword2.val("");
-        this.settingsDivEmail.val(this.current.email);
+        this.button.html(this.current.userName);
+        this.username.val(this.current.userName);
+        this.currentPassword.val("");
+        this.newPassword1.val("");
+        this.newPassword2.val("");
+        this.email.val(this.current.email);
         this.pushToStorageFrequency.val(String(this.current.pushToStorageFrequency));
-        this.settingsDivHidden.prop("checked", this.current.hidden);
-        this.settingsDivRememberMe.prop("checked", this.current.rememberMe);
+        this.hidden.prop("checked", this.current.hidden);
+        this.rememberMe.prop("checked", this.current.rememberMe);
     }
 
     manage() {
@@ -196,28 +190,28 @@ class UserUtility extends StorageUtility {
     }
 
     _manageSettingsMenu() {
-        var fields = [this.settingsDivUsername, this.settingsDivEmail, this.settingsDivCurrentPassword, this.settingsDivNewPassword1, this.settingsDivNewPassword2];
+        var fields = [this.divUsername, this.divEmail, this.divCurrentPassword, this.divNewPassword1, this.divNewPassword2];
 
         if (this.current.passwordHash == "" || this.current.passwordVerified) {
             fields.forEach(field => {
                 if (field.hasClass("hidden")) { field.removeClass("hidden"); }
             });
-            if (!this.settingsDivCurrentPassword.hasClass("hidden")) {
-                this.settingsDivCurrentPassword.addClass("hidden");
+            if (!this.currentPassword.hasClass("hidden")) {
+                this.currentPassword.addClass("hidden");
             }
-            this.manageSettingsDivForm();
+            this.manageForm();
         }
         else {
             fields.forEach(field => {
                 if (!field.hasClass("hidden")) { field.addClass("hidden"); }
             });
-            if (this.settingsDivCurrentPassword.hasClass("hidden")) {
-                this.settingsDivCurrentPassword.removeClass("hidden");
+            if (this.currentPassword.hasClass("hidden")) {
+                this.currentPassword.removeClass("hidden");
             }
         }
     }
 
-    manageSettingsDivForm() {
+    manageForm() {
         var messages = [], actions = [], options = [];
         const uname = this.unameState;
         const isDefault = (uname == this.group.defaultName);
@@ -227,7 +221,7 @@ class UserUtility extends StorageUtility {
         const server = this.current.useServerStorage;
         const storagePermanence = this.current.storagePermanence;
 
-        this.settingsDivStorage.val(String(storagePermanence));
+        this.storage.val(String(storagePermanence));
 
         if (curPW == "Invalid") { messages.push("Current password is invalid."); }
         else {
@@ -241,13 +235,13 @@ class UserUtility extends StorageUtility {
                     .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
                 this.pushToServerFrequency.val(String(this.current.pushToServerFrequency));
             }
-            this.settingsDivStorage.prop("disabled", (uname == "Local duplicate"));
-            this.settingsDivRememberMe.prop("disabled", !this.ableToSetRememberMe);
+            this.storage.prop("disabled", (uname == "Local duplicate"));
+            this.rememberMe.prop("disabled", !this.ableToSetRememberMe);
             if (this.current.hidden && this.current.userName == this.group.defaultName) {
                 this.current.hidden = false;
             }
-            this.settingsDivHidden.prop("checked", this.current.hidden);
-            this.settingsDivHidden.prop("disabled", this.current.userName == this.group.defaultName)
+            this.hidden.prop("checked", this.current.hidden);
+            this.hidden.prop("disabled", this.current.userName == this.group.defaultName)
 
             //Messages
             if (uname == "Invalid")          { messages.push("Usernames must contain only alphanumeric characters and ., -, and _.")}
@@ -335,7 +329,7 @@ class UserUtility extends StorageUtility {
             }
         }
 
-        this.settingsDivMessages.html(messages.join("<br>"));
+        this.messages.html(messages.join("<br>"));
         this.actions(actions);
         this.options(options);
     }
@@ -348,7 +342,7 @@ class UserUtility extends StorageUtility {
 
     get unameState() { //Unchanged, Emptied, Duplicate, Filled
         const current = this.current.userName;
-        const fieldVal = this.settingsDivUsername.val();
+        const fieldVal = this.userName.val();
         const server = this.current.useServerStorage;
         const valid = /^[a-z0-9_\-.]{5,20}$/;
         const containerDup = this.cUserNameExists(fieldVal);
@@ -367,7 +361,7 @@ class UserUtility extends StorageUtility {
     }
 
     get curPWState() { //Empty, Invalid, Insecure, Strong
-        const fieldVal = this.settingsDivCurrentPassword.val();
+        const fieldVal = this.currentPassword.val();
         const hashed = this.hashedPassword(fieldVal);
         const current = this.current.passwordHash;
         const strongComplexity = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#$%^&*()_+\-|~=`{}\[\]:\";\'<>?,.\/])(?=.{8,127})/;
@@ -380,8 +374,8 @@ class UserUtility extends StorageUtility {
     }
 
     get newPWState() { //Empty, Different, Insecure, Strong
-        const pw1 = this.settingsDivNewPassword1.val();
-        const pw2 = this.settingsDivNewPassword2.val();
+        const pw1 = this.newPassword1.val();
+        const pw2 = this.newPassword2.val();
         const strongComplexity = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#$%^&*()_+\-|~=`{}\[\]:\";\'<>?,.\/])(?=.{8,127})/;
         const strongLength = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{20,127})/;
 
@@ -392,15 +386,15 @@ class UserUtility extends StorageUtility {
     }
 
     get PWsEqual() {
-        const cur = this.settingsDivCurrentPassword.val();
-        const pw1 = this.settingsDivNewPassword1.val();
-        const pw2 = this.settingsDivNewPassword2.val();
+        const cur = this.currentPassword.val();
+        const pw1 = this.newPassword1.val();
+        const pw2 = this.newPassword2.val();
 
         return (cur == pw1 && cur == pw2);
     }
 
     get emailState() { //Unchanged, Invalid, Emptied, Filled, Changed
-        const fieldVal = this.settingsDivEmail.val();
+        const fieldVal = this.email.val();
         const current = this.current.email;
         const valid = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
 
@@ -415,7 +409,7 @@ class UserUtility extends StorageUtility {
         var funcs = [], actionText = "";
         const self = this;
 
-        this.settingsDivAction.text("");
+        this.actionDiv.text("");
 
         if (actions.length) {
             if (actions.length == 1) { actionText = actions[0]; }
@@ -430,8 +424,8 @@ class UserUtility extends StorageUtility {
                     case "set username":
                     case "change username":      
                         funcs.push(() => {
-                            this.current.userName = this.settingsDivUsername.val();
-                            this.settingsButton.html(this.current.userName);
+                            this.current.userName = this.username.val();
+                            this.button.html(this.current.userName);
                         });
                         break;
                     case "add password": 
@@ -442,7 +436,7 @@ class UserUtility extends StorageUtility {
                         break;
                     case "set email address":
                     case "change email address": 
-                        funcs.push(() => { this.current.email = this.settingsDivEmail.val(); });
+                        funcs.push(() => { this.current.email = this.divEmail.val(); });
                         break;
                     case "remove email address": 
                         funcs.push(() => { this.current.email = ""; });
@@ -451,10 +445,11 @@ class UserUtility extends StorageUtility {
                 }
             });
 
-            this.settingsDivAction.append("<button id = 'settingsDivActionButton' type = 'button' class = 'btn btn-primary'>" + actionText + "</button>");
+            this.action.append("<button id = 'divActionButton' type = 'button' class = 'btn btn-primary'>" + actionText + "</button>");
+            //this.divActionButton.on("click", function (e) {
             $("#settingsDivActionButton").on("click", function (e) {
                 funcs.forEach(func => { func(); });
-                self.manageSettingsDivForm();
+                self.manageDivForm();
             });
         }
     }
@@ -463,14 +458,14 @@ class UserUtility extends StorageUtility {
         var func, cl;
         const self = this;
 
-        this.settingsDivOptions.text("");
+        this.optionsDiv.text("");
 
         options.forEach((option, index) => {
             switch (option) {
                 case "Remove password":                                 
                     cl = "btn-warning";
                     func = () => {
-                        this.settingsDivCurrentPassword.val("");
+                        this.currentPassword.val("");
                         this.current.passwordHash = "";
                     };
                     break;
@@ -489,10 +484,10 @@ class UserUtility extends StorageUtility {
                 default: console.log(option + "is not supported.");
             }
 
-            this.settingsDivOptions.append("<button id = 'settingsDivOption" + index + "' type = 'button' class = 'btn " + cl + "'>" + option + "</button><br>");
+            this.divOptions.append("<button id = 'settingsDivOption" + index + "' type = 'button' class = 'btn " + cl + "'>" + option + "</button><br>");
             $("#settingsDivOption" + index).on("click", function (e) {
                 func();
-                self.manageSettingsDivForm();
+                self.manageForm();
             });
         });
     }
@@ -510,12 +505,10 @@ class UserUtility extends StorageUtility {
                                     `${seconds / 3600} hours`;
     }
 
-    closeMenus(except) {
-        if (except != this._settingsButtonID)   { this._closeSettingsMenu(); }
-    }
-
-    _closeSettingsMenu() {
-        this.settingsDiv.addClass("hidden");
-        this.settingsButton.blur();
+    closeMenu(except) {
+        if (except != this._buttonID)   {
+            this.div.addClass("hidden");
+            this.button.blur();
+        }
     }
 }

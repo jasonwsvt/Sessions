@@ -3,13 +3,14 @@
 
 class UserUtility {
     _utilities = null;
-    _utilityID = null;
+    _divID = null;
     _type = null;
 
     constructor (utilities, group, type) {
         this._utilities = utilities;
         this._group = group;
         this._type = type;
+        this._divID = "userUtilities";
 
         this._settings = new UserSettingsUtility(this);
         this._dataManager = new DataManagerUtility(this);
@@ -19,9 +20,12 @@ class UserUtility {
         this._build();
     }
 
-    get utilities()                     { return this._utilities; }
+    get div()       { return $("#" + this._divID); }
+    get utilities() { return this._utilities; }
 
     _build() {
+        this.div.addClass("btn-group");
+        this.div.attr("role", "group");
         this._settings.build();
         this._dataManager.build();
         this._login.build();
@@ -45,8 +49,9 @@ class UserUtility {
     }
 
     closeMenus(except) {
-        this._settings.closeMenu();
-        this._dataManager.closeMenu();
-        this._new.closeMenu();
+        this._settings.closeMenu(except);
+        this._dataManager.closeMenu(except);
+        this._login.closeMenu(except);
+        this._new.closeMenu(except);
     }
 }

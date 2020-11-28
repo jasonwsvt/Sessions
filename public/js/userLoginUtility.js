@@ -273,12 +273,10 @@ class UserUtility extends StorageUtility {
         return "hashed " + password;
     }
 
-    closeMenus(except) {
-        if (except != this._loginButtonID)      { this._closeLoginMenu(); }
-    }
-
-    _closeLoginMenu() {
-        this.loginDiv.addClass("hidden");
-        this.loginButton.focusout();
+    closeMenu(except) {
+        if (except != this._loginButtonID) {
+            this.loginDiv.addClass("hidden");
+            this.loginButton.focusout();
+        }
     }
 }

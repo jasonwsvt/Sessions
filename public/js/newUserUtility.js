@@ -68,12 +68,10 @@ class UserUtility extends StorageUtility {
         this._manageNewAccountMenu();
     }
 
-    closeMenus(except) {
-        if (except != this._newAccountButtonID) { this._closeNewAccountMenu(); }
-    }
-
-    _closeNewAccountMenu() {
-        this.newAccountDiv.addClass("hidden");
-        this.newAccountAddButton.focusout();
+    closeMenu(except) {
+        if (except != this._newAccountButtonID) {
+            this.newAccountDiv.addClass("hidden");
+            this.newAccountAddButton.focusout();
+        }
     }
 }
