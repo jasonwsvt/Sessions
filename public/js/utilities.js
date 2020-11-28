@@ -14,7 +14,7 @@ class Utilities {
         var self = this;
         this._app = app;
 
-        this._userUtility = new UserUtility(this, this.users);
+        this._userUtility = new UserUtility(this, this.users, "user");
         this._clientUtility = new Utility(this, this.currentUserClients, "client");
         this._issueUtility = new Utility(this, this.currentClientIssues, "issue");
         this._sessionUtility = new Utility(this, this.currentIssueSessions, "session", false);
