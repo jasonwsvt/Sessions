@@ -2,9 +2,9 @@
 */
 
 class UserUtility extends StorageUtility {
-    _utilities = null;
-    _utilityID = null;
-    _type = null;
+    _userUtilities = null;
+//    _utilityID = null;
+//    _type = null;
     _selectedUser = null;
 
     _dotIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-dot my-2' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'/></svg>";
@@ -16,111 +16,104 @@ class UserUtility extends StorageUtility {
     _loginIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-door-open' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M1 15.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM11.5 2H11V1h.5A1.5 1.5 0 0 1 13 2.5V15h-1V2.5a.5.5 0 0 0-.5-.5z'/><path fill-rule='evenodd' d='M10.828.122A.5.5 0 0 1 11 .5V15h-1V1.077l-6 .857V15H3V1.5a.5.5 0 0 1 .43-.495l7-1a.5.5 0 0 1 .398.117z'/><path d='M8 9c0 .552.224 1 .5 1s.5-.448.5-1-.224-1-.5-1-.5.448-.5 1z'/></svg>";
     _createNewAccountIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-plus-square' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path fill-rule='evenodd' d='M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z'/></svg>";
 
-    _loginButtonID = "loginButton";
-    _loginDivID = "loginDiv";
-    _loginDivBrowserUsersID = "loginDivBrowserUsers";
-    _loginDivSessionUsersID = "loginDivSessionUsers";
-    _loginDivUsernameID = "loginDivUsername";
-    _loginDivPasswordID = "loginDivPassword";
-    _loginDivMessagesID = "loginDivMessages";
-    _loginDivButtonID = "loginDivButton";
-    _loginDivForgotPasswordButtonID = "loginDivForgotPasswordButton";
+    _buttonID = "loginButton";
+    _divID = "loginDiv";
+    _browserUsersID = "loginDivBrowserUsers";
+    _sessionUsersID = "loginDivSessionUsers";
+    _usernameID = "loginDivUsername";
+    _passwordID = "loginDivPassword";
+    _messagesDivID = "loginDivMessages";
+    _loginButtonID = "loginDivButton";
+    _forgotPasswordButtonID = "loginDivForgotPasswordButton";
 
     constructor (utilities, group) {
         super();
         const self = this;
         this._utilities = utilities;
         this._group = group;
-        this._type = "user";
-        this._utilityID = "userUtility";
+//        this._type = "user";
+//        this._utilityID = "userUtility";
 
         this._build();
 
         $(document).ready(function() {
-            self.loginButton.on("click", function (e) {
+            self.button.on("click", function (e) {
                 self.utilities.closeAllUtilityMenus(self._loginButtonID);
-                if (self.loginDiv.hasClass("hidden")) {
-                    self.loginDiv.removeClass("hidden");
+                if (self.div.hasClass("hidden")) {
+                    self.div.removeClass("hidden");
                     this.blur();
-                    self._manageLoginMenu();
-                    self.loginDivUsername.focus();
+                    self._manage();
+                    self.username.focus();
                 }
                 else {
-                    self._closeLoginMenu();
+                    self._close();
                 }
                 e.stopPropagation();
             });
 
-            self.loginDiv.find("input").on("keypress", function (e) {
+            self.div.find("input").on("keypress", function (e) {
                 e.stopPropagation();
             });
 
-            self.loginDiv.find("input").on("keyup", function (e) {
-                self._manageLoginMenu();
+            self.div.find("input").on("keyup", function (e) {
+                self._manage();
                 e.stopPropagation();
             });
 
-            self.loginDiv.on("click", function (e) {
+            self.div.on("click", function (e) {
                 e.stopPropagation();
             });
         }); 
     }
 
-    get utilities()                     { return this._utilities; }
-    get app()                           { return this._utilities.app; }
-    get group()                         { return this._group(); }
-    get current()                       { return this.group.current; }
-    get lines()                         { return this.app.editor.lines; }
-    get buttons()                       { return this.app.buttons; }
-    get storagePermanence()             { return this.current.storagePermanence; }
-    get div()                           { return $("#" + this._utilityID); }
+    get userUtilities()         { return this._userUtilities; }
+    get userUtilitiesDiv()      { return this._userUtilities.div; }
+    get utilities()             { return this._userUtilities.utilities; }
+    get app()                   { return this._utilities.app; }
+    get group()                 { return this._group(); }
+    get current()               { return this.group.current; }
+    get lines()                 { return this.app.editor.lines; }
+    get buttons()               { return this.app.buttons; }
+    get storagePermanence()     { return this.current.storagePermanence; }
 
-    get loginButton()                   { return $("#" + this._loginButtonID); }
-    get loginDiv()                      { return $("#" + this._loginDivID); }
-    get loginDivBrowserUsers()          { return $("#" + this._loginDivBrowserUsersID); }
-    get loginDivSessionUsers()          { return $("#" + this._loginDivSessionUsersID); }
-    get loginDivUsername()              { return $("#" + this._loginDivUsernameID); }
-    get loginDivPassword()              { return $("#" + this._loginDivPasswordID); }
-    get loginDivMessages()              { return $("#" + this._loginDivMessagesID); }
-    get loginDivButton()                { return $("#" + this._loginDivButtonID); }
-    get loginDivForgotPasswordButton()  { return $("#" + this._loginDivForgotPasswordButtonID); }
+    get button()                { return $("#" + this._buttonID); }
+    get div()                   { return $("#" + this._divID); }
+    get browserUsers()          { return $("#" + this._browserUsersID); }
+    get sessionUsers()          { return $("#" + this._sessionUsersID); }
+    get username()              { return $("#" + this._usernameID); }
+    get password()              { return $("#" + this._passwordID); }
+    get messagesDiv()           { return $("#" + this._messagesDivID); }
+    get loginButton()           { return $("#" + this._loginButtonID); }
+    get forgotPasswordButton()  { return $("#" + this._forgotPasswordButtonID); }
 
     _build() {
-        this._buildLoginMenu();
-    }
-
-    _buildLoginMenu() {
         const loginIcon = this._loginIcon;
 
-        const loginButton = "<button id = '" + this._loginButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + loginIcon + "</button>";
-        const loginDiv = "<div id = '" + this._loginDivID + "' class = 'hidden userMenu'></div>";
-        const browserUsers = "<div id = '" + this._loginDivBrowserUsersID + "'></div>";
-        const sessionUsers = "<div id = '" + this._loginDivSessionUsersID + "'></div>";
-        const username = "<input id = '" + this._loginDivUsernameID + "' placeholder = 'username' size = '50'>";
-        const password = "<input id = '" + this._loginDivPasswordID + "' type = 'password' placeholder = 'password' size = '30'>";
-        const messages = "<div id = '" + this._loginDivMessagesID + "'></div>";
-        const action = "<button id = '" + this._loginDivButtonID + "' type = 'button'>Log in</button>";
+        const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + loginIcon + "</button>";
+        const div = "<div id = '" + this._divID + "' class = 'hidden userMenu'></div>";
+        const browserUsers = "<div id = '" + this._browserUsersID + "'></div>";
+        const sessionUsers = "<div id = '" + this._sessionUsersID + "'></div>";
+        const username = "<input id = '" + this._usernameID + "' placeholder = 'username' size = '50'>";
+        const password = "<input id = '" + this._passwordID + "' type = 'password' placeholder = 'password' size = '30'>";
+        const messages = "<div id = '" + this._messagesDivID + "'></div>";
+        const action = "<button id = '" + this._loginButtonID + "' type = 'button'>Log in</button>";
 
-        this.div.append(loginButton + loginDiv);
-        this.loginDiv.addClass("container");
-        this.loginDiv.append(browserUsers);
-        this.loginDiv.append(sessionUsers);
-        this.loginDiv.append(username);
-        this.loginDiv.append(password);
-        this.loginDiv.append(messages);
-        this.loginDiv.append(action);
+        this.userUtilitiesDiv.append(button + div);
+        this.div.addClass("container");
+        this.div.append(browserUsers);
+        this.div.append(sessionUsers);
+        this.div.append(username);
+        this.div.append(password);
+        this.div.append(messages);
+        this.div.append(action);
    
-        this.loginDiv.css("left", String(this.settingsButton.position().left) + "px");
-        this.loginDiv.css("top", String(this.settingsButton.position().top + 32) + "px");
-        this._resetLoginMenu();
+        this.div.css("left", String(this.userUtilities.div.position().left) + "px");
+        this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
+        this._reset();
     }
 
     manage() {
-        this._manageLoginMenu();
-    }
-
-    _manageLoginMenu() {
-        if (this._selectedUser || this.loginDivUsername.val()) {
+        if (this._selectedUser || this.username.val()) {
             if (this._selectedUser) { }
             this._enterPasswordStep();
         }
@@ -128,26 +121,22 @@ class UserUtility extends StorageUtility {
     }
 
     _reset() {
-        this._resetLoginMenu();
-    }
-
-    _resetLoginMenu() {
         this._selectedUser = "";
         this._selectedUserContainer = "";
-        this.loginDivUsername.val("");
-        this.loginDivPassword.val("");
+        this.username.val("");
+        this.password.val("");
         this._propagateUserNameButtons();
     }
 
     _propagateUserNameButtons() {
         const self = this;
 
-        this.loginDivBrowserUsers.empty();
+        this.browserUsers.empty();
         const browserUsers = this.group.bUsers.filter(r => (r.id != this.current.id && !r.hidden));
         browserUsers.forEach(r => {
-            this.loginDivBrowserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.userName + "</button>");
+            this.browserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.userName + "</button>");
         });
-        this.loginDivBrowserUsers.find("button").on("click", function (e) {
+        this.browserUsers.find("button").on("click", function (e) {
             this.blur();
             self._selectedUser = (self._selectedUser == $(this).text()) ? "" : $(this).text();
             self._selectedUserContainer = localStorage;
@@ -156,22 +145,21 @@ class UserUtility extends StorageUtility {
                 console.log("loggin in");
                 self.group.loadFrom(self._selectedUserContainer, parseInt($(this).val()));
                 self.utilities.manage("user");
-                self._resetLoginMenu();
-                self._resetSettingsMenu();
-                self._closeLoginMenu();
+                self.userUtilities.reset();
+                self._close();
             }
             else {
-                self._manageLoginMenu();
+                self._manage();
             }
             e.stopPropagation();
         });
 
-        this.loginDivSessionUsers.empty();
+        this.sessionUsers.empty();
         const sessionUsers = this.sUsers.filter(r => (r.userName != this.current.userName));
         sessionUsers.forEach(r => {
-            this.loginDivSessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.userName + "</button>");
+            this.sessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.userName + "</button>");
         });
-        this.loginDivSessionUsers.find("button").on("click", function (e) {
+        this.sessionUsers.find("button").on("click", function (e) {
             this.blur();
             self._selectedUser = (self._selectedUser == $(this).text()) ? "" : $(this).text();
             self._selectedUserContainer = sessionStorage;
@@ -180,59 +168,58 @@ class UserUtility extends StorageUtility {
                 console.log("switching account");
                 self.group.loadFrom(self._selectedUserContainer, parseInt($(this).val()));
                 self.utilities.manage("user");
-                self._resetSettingsMenu();
-                self._resetLoginMenu();
-                self._closeLoginMenu();
+                self.userUtilities.reset();
+                self._close();
             }
             else {
-                self._manageLoginMenu();
+                self._manage();
             }
             e.stopPropagation();
         });
     }
 
     _selectUserNameStep() {
-        this.loginDivBrowserUsers.find("button").show();
-        this.loginDivSessionUsers.find("button").show();
-        this.loginDivUsername.show();
-        this.loginDivPassword.hide();
-        this.loginDivButton.hide();
-        this.loginDivMessages.empty();
+        this.browserUsers.find("button").show();
+        this.sessionUsers.find("button").show();
+        this.username.show();
+        this.password.hide();
+        this.loginButton.hide();
+        this.messagesDiv.empty();
     }
 
     _enterPasswordStep() {
         var i, button, buttons;
 
-        buttons = this.loginDivBrowserUsers.find("button");
+        buttons = this.browserUsers.find("button");
         for (i = 0; i < buttons.length; i++) {
             button = buttons.eq(i);
             console.log(button);
             if (button.text() != this._selectedUser) { button.hide(); } else { button.show(); }
         }
 
-        buttons = this.loginDivSessionUsers.find("button");
+        buttons = this.sessionUsers.find("button");
         for (i = 0; i < buttons.length; i++) {
             button = buttons.eq(i);
             console.log(button);
             if (button.text() != this._selectedUser) { button.hide(); } else { button.show(); }
         }
 
-        if (this.loginDivUsername.val() == "") { this.loginDivUsername.hide(); }
-        else { this.loginDivUsername.show(); }
+        if (this.username.val() == "") { this.username.hide(); }
+        else { this.username.show(); }
 
-        this.loginDivPassword.show();
-        this.loginDivButton.show();
+        this.password.show();
+        this.loginButton.show();
     }
 
     noPasswordAccount() {
         var user = this.userExists(this._selectedUserContainer, this._selectedUser);
 
-        return (user && this.loginDivPassword.val() == "" && user.passwordHash == "");
+        return (user && this.password.val() == "" && user.passwordHash == "");
     }
 
     verifyCredentials() {
         var container, user;
-        if (this.loginDivUsername.val() != "") {
+        if (this.username.val() != "") {
             [localStorage, sessionStorage].forEach(c => {
                 if (!user && Object.keys(c).includes("users")) {
                     user = userExists(c, userName);
@@ -245,16 +232,16 @@ class UserUtility extends StorageUtility {
         }
 
         if (user) {
-            if ((this.loginDivPassword.val() == "" && user.passwordHash == "") ||
-                (this.hashedPassword(this.loginDivPassword.val()) == user.passwordHash)) {
+            if ((this.password.val() == "" && user.passwordHash == "") ||
+                (this.hashedPassword(this.password.val()) == user.passwordHash)) {
                 this.group.loadFrom(container, user);
             }
             else {
-                this.loginDivMessages.text("Password invalid.");
+                this.messagesDiv.text("Password invalid.");
             }
         }
         else {
-            this.loginDivMessages.text("Username invalid.");
+            this.messagesDiv.text("Username invalid.");
         }
 
         //Not found locally, so try logging in on the server.
@@ -273,10 +260,10 @@ class UserUtility extends StorageUtility {
         return "hashed " + password;
     }
 
-    closeMenu(except) {
-        if (except != this._loginButtonID) {
-            this.loginDiv.addClass("hidden");
-            this.loginButton.focusout();
+    close(except) {
+        if (except != this._buttonID) {
+            this.div.addClass("hidden");
+            this.button.focusout();
         }
     }
 }

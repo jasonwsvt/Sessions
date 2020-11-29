@@ -12,10 +12,10 @@ class UserUtility {
         this._type = type;
         this._divID = "userUtilities";
 
-        this._settings = new UserSettingsUtility(this);
-        this._dataManager = new DataManagerUtility(this);
-        this._login = new LogInUtility(this);
-        this._new = new NewUserUtility(this);
+        this._settings = new UserSettingsUtility(this, group, type);
+        this._dataManager = new DataManagerUtility(this, group, type);
+        this._login = new LogInUtility(this, group, type);
+        this._new = new NewUserUtility(this, group, type);
 
         this._build();
     }

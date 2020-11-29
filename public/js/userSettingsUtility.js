@@ -3,8 +3,8 @@
 
 class UserUtility extends StorageUtility {
     _userUtilities = null;
-    _utilityID = null;
-    _type = null;
+//    _utilityID = null;
+//    _type = null;
     _selectedUser = null;
 
     _dotIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-dot my-2' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'/></svg>";
@@ -26,9 +26,9 @@ class UserUtility extends StorageUtility {
     _rememberMeID = "settingsDivRememberMe";
     _hiddenID = "settingsDivHidden";
     _storageID = "settingsDivStorage";
-    _messagesID = "settingsDivMessages";
-    _actionID = "settingsDivAction";
-    _optionsID = "settingsDivOptions";
+    _messagesDivID = "settingsDivMessages";
+    _actionDivID = "settingsDivAction";
+    _optionsDivID = "settingsDivOptions";
     _pushToStorageFrequencyID = "pushToStorageFrequency";
     _pushToServerFrequencyID = "pushToServerFrequency";
 
@@ -37,68 +37,69 @@ class UserUtility extends StorageUtility {
         const self = this;
         this._userUtilities = userUtilities;
         this._group = group;
-        this._type = "user";
-        this._utilityID = "userSettingsUtility";
+//        this._type = "user";
+//        this._utilityID = "userSettingsUtility";
 
         this._build();
 
         $(document).ready(function() {
             self.button.on("click", function (e) {
                 self.utilities.closeAllUtilityMenus(self._buttonID);
-                if (self.settingsDiv.hasClass("hidden")) {
-                    self.settingsDiv.removeClass("hidden");
+                if (self.div.hasClass("hidden")) {
+                    self.div.removeClass("hidden");
                     this.blur();
-                    self._manageSettingsMenu();
+                    self._manage();
                 }
                 else {
-                    self._closeSettingsMenu();
+                    self._closeMenu();
                 }
                 e.stopPropagation();
             });
 
-            self.settingsDiv.find("input").on("keypress", function (e) {
+            self.div.find("input").on("keypress", function (e) {
                 e.stopPropagation();
             });
 
-            self.settingsDiv.find("input").on("keyup", function (e) {
-                self.manageSettingsDivForm();
+            self.div.find("input").on("keyup", function (e) {
+                self.manageForm();
                 e.stopPropagation();
             });
 
-            self.settingsDiv.on("click", function (e) {
+            self.div.on("click", function (e) {
                 e.stopPropagation();
             });
 
-            self.settingsDivRememberMe.on("click", function (e) {
+            self.rememberMe.on("click", function (e) {
                 self.current.rememberMe = $(this).prop("checked");
                 e.stopPropagation();
             });
 
-            self.settingsDivHidden.on("click", function (e) {
+            self.hidden.on("click", function (e) {
                 self.current.hidden = $(this).prop("checked");
                 e.stopPropagation();
             });
 
-            self.settingsDivStorage.on("change", function (e) {
+            self.storage.on("change", function (e) {
                 self.current.storagePermanence = $(this).val();
-                self._manageSettingsMenu();
+                self._manage();
             });
 
             self.pushToStorageFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
                 self.current.pushToStorageFrequency = (val == "false") ? false : parseInt(val);
-                self.manageSettingsDivForm();
+                self.manageForm();
             });
 
             self.pushToServerFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
                 self.current.pushToServerFrequency = (val == "false") ? false : parseInt(val);
-                self.manageSettingsDivForm();
+                self.manageForm();
             });
         });
     }
 
     get userUtilities()                 { return this._userUtilities; }
+    get userUtilitiesDiv()              { return this._userUtilities.div; }
     get utilities()                     { return this._userUtilities.utilities; }
     get app()                           { return this._userUtilities.utilities.app; }
     get group()                         { return this._group(); }
@@ -106,25 +107,20 @@ class UserUtility extends StorageUtility {
     get lines()                         { return this.app.editor.lines; }
     get buttons()                       { return this.app.buttons; }
     get storagePermanence()             { return this.current.storagePermanence; }
-    get userUtilitiesDiv()              { return this.userUtilities.div; }
 
-    get button()                { return $("#" + this._buttonID); }
-    get div()                   { return $("#" + this._divID); }
-    get divUsername()           { return $("#" + this._divUsernameID); }
-    get divEmail()              { return $("#" + this._divEmailID); }
-    get divPassword()           { return $("#" + this._divPasswordID); }
-    get divFirstName()          { return $("#" + this._divFirstNameID); }
-    get divUsername()           { return $("#" + this._divUsernameID); }
-    get divCurrentPassword()    { return $("#" + this._divCurrentPasswordID); }
-    get divNewPassword1()       { return $("#" + this._divNewPassword1ID); }
-    get divNewPassword2()       { return $("#" + this._divNewPassword2ID); }
-    get divEmail()              { return $("#" + this._divEmailID); }
-    get divRememberMe()         { return $("#" + this._divRememberMeID); }
-    get divHidden()             { return $("#" + this._divHiddenID); }
-    get divStorage()            { return $("#" + this._divStorageID); }
-    get divMessages()           { return $("#" + this._divMessagesID); }
-    get divAction()             { return $("#" + this._divActionID); }
-    get divOptions()            { return $("#" + this._divOptionsID); }
+    get button()                        { return $("#" + this._buttonID); }
+    get div()                           { return $("#" + this._divID); }
+    get username()                      { return $("#" + this._usernameID); }
+    get currentPassword()               { return $("#" + this._currentPasswordID); }
+    get newPassword1()                  { return $("#" + this._newPassword1ID); }
+    get newPassword2()                  { return $("#" + this._newPassword2ID); }
+    get email()                         { return $("#" + this._emailID); }
+    get rememberMe()                    { return $("#" + this._rememberMeID); }
+    get hidden()                        { return $("#" + this._hiddenID); }
+    get storage()                       { return $("#" + this._storageID); }
+    get messagesDiv()                   { return $("#" + this._nessagesID); }
+    get actionDiv()                     { return $("#" + this._actionDivID); }
+    get optionsDiv()                    { return $("#" + this._optionsDivID); }
     get pushToStorageFrequency()        { return $("#" + this._pushToStorageFrequencyID); }
     get pushToServerFrequency()         { return $("#" + this._pushToServerFrequencyID); }
 
@@ -134,23 +130,23 @@ class UserUtility extends StorageUtility {
         const postfix = "</div>";
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const div = "<div id = '" + this._divID + "' class = 'container userMenu hidden'></div>";
-        const username =  "<input id = '" + this._divUsernameID + "' type = 'text' placeholder = 'username' size = '30'>";
-        const currentPassword = "<input id = '" + this._divCurrentPasswordID + "' type = 'password' placeholder = 'enter current password for settings' size = '30'>";
-        const newPassword1 = "<input id = '" + this._divNewPassword1ID + "' type = 'password' placeholder = 'new password' size = '30'>";
-        const newPassword2 = "<input id = '" + this._divNewPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
-        const email = "<input id = '" + this._divEmailID + "' type = 'email' placeholder = 'email address' size = '30'>";
-        const hidden = "<input id = '" + this._divHiddenID + "' type = 'checkbox'> Hidden";
-        const rememberMe = "<input id = '" + this._divRememberMeID + "' type = 'checkbox'> Remember me";
-        const storage = "<select id = '" + this._divStorageID + "'></select>"; 
+        const username =  "<input id = '" + this._usernameID + "' type = 'text' placeholder = 'username' size = '30'>";
+        const currentPassword = "<input id = '" + this._currentPasswordID + "' type = 'password' placeholder = 'enter current password for settings' size = '30'>";
+        const newPassword1 = "<input id = '" + this._newPassword1ID + "' type = 'password' placeholder = 'new password' size = '30'>";
+        const newPassword2 = "<input id = '" + this._newPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
+        const email = "<input id = '" + this._emailID + "' type = 'email' placeholder = 'email address' size = '30'>";
+        const hidden = "<input id = '" + this._hiddenID + "' type = 'checkbox'> Hidden";
+        const rememberMe = "<input id = '" + this._rememberMeID + "' type = 'checkbox'> Remember me";
+        const storage = "<select id = '" + this._storageID + "'></select>"; 
         const storagePermanenceLabel = "<label style = 'text-align: right'>Storage permanence:</label>";
 
         const pushToStorageFrequencyLabel = "<label style = 'text-align: right'>Storage frequency:</label>";
         const pushToStorageFrequency = "<select id = '" + this._pushToStorageFrequencyID + "'></select>";
         const pushToServerFrequency = "<select id = '" + this._pushToServerFrequencyID + "'></select>";
 
-        const messages = "<div id = '" + this._divMessagesID + "'></div>";
-        const action = "<div id = '" + this._divActionID + "'></div>";
-        const options = "<div id = '" + this._divOptionsID + "'></div>";
+        const messages = "<div id = '" + this._messagesID + "'></div>";
+        const action = "<div id = '" + this._actionDivID + "'></div>";
+        const options = "<div id = '" + this._ptionsDivID + "'></div>";
 
         this.userUtilitiesDiv.append(button + div);
         this.div.append(username);
@@ -170,10 +166,10 @@ class UserUtility extends StorageUtility {
         this.storage.append("<option value = 'false'>Session</option>");
         this.pushToStorageFrequency.html([5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
-        this._resetSettingsMenu();
+        this._reset();
     }
 
-    _resetSettingsMenu() {
+    _reset() {
         this.button.html(this.current.userName);
         this.username.val(this.current.userName);
         this.currentPassword.val("");
@@ -186,11 +182,7 @@ class UserUtility extends StorageUtility {
     }
 
     manage() {
-        this._manageSettingsMenu();
-    }
-
-    _manageSettingsMenu() {
-        var fields = [this.divUsername, this.divEmail, this.divCurrentPassword, this.divNewPassword1, this.divNewPassword2];
+        var fields = [this.username, this.email, this.currentPassword, this.newPassword1, this.newPassword2];
 
         if (this.current.passwordHash == "" || this.current.passwordVerified) {
             fields.forEach(field => {
@@ -329,7 +321,7 @@ class UserUtility extends StorageUtility {
             }
         }
 
-        this.messages.html(messages.join("<br>"));
+        this.messagesDiv.html(messages.join("<br>"));
         this.actions(actions);
         this.options(options);
     }
@@ -446,7 +438,7 @@ class UserUtility extends StorageUtility {
             });
 
             this.action.append("<button id = 'divActionButton' type = 'button' class = 'btn btn-primary'>" + actionText + "</button>");
-            //this.divActionButton.on("click", function (e) {
+            //this.actionButton.on("click", function (e) {
             $("#settingsDivActionButton").on("click", function (e) {
                 funcs.forEach(func => { func(); });
                 self.manageDivForm();
@@ -484,7 +476,7 @@ class UserUtility extends StorageUtility {
                 default: console.log(option + "is not supported.");
             }
 
-            this.divOptions.append("<button id = 'settingsDivOption" + index + "' type = 'button' class = 'btn " + cl + "'>" + option + "</button><br>");
+            this.optionsDiv.append("<button id = 'settingsDivOption" + index + "' type = 'button' class = 'btn " + cl + "'>" + option + "</button><br>");
             $("#settingsDivOption" + index).on("click", function (e) {
                 func();
                 self.manageForm();
