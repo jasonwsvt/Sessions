@@ -3,7 +3,7 @@
 
 class UserSettingsUtility extends StorageUtility {
     _userUtilities = null;
-//    _utilityID = null;
+    _utilityID = null;
 //    _type = null;
     _selectedUser = null;
 
@@ -38,9 +38,9 @@ class UserSettingsUtility extends StorageUtility {
         this._userUtilities = userUtilities;
         this._group = group;
 //        this._type = "user";
-//        this._utilityID = "userSettingsUtility";
+        this._utilityID = "userSettingsUtility";
 
-        this._build();
+//        this._build();
 
         $(document).ready(function() {
             self.button.on("click", function (e) {
@@ -48,10 +48,10 @@ class UserSettingsUtility extends StorageUtility {
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     this.blur();
-                    self._manage();
+                    self.manage();
                 }
                 else {
-                    self._closeMenu();
+                    self.close();
                 }
                 e.stopPropagation();
             });
@@ -81,7 +81,7 @@ class UserSettingsUtility extends StorageUtility {
 
             self.storage.on("change", function (e) {
                 self.current.storagePermanence = $(this).val();
-                self._manage();
+                self.manage();
             });
 
             self.pushToStorageFrequency.on("change", function (e) {
@@ -100,7 +100,7 @@ class UserSettingsUtility extends StorageUtility {
 
     get userUtilities()                 { return this._userUtilities; }
     get utilities()                     { return this._userUtilities.utilities; }
-    get app()                           { return this._userUtilities.app; }
+    get app()                           { return this.utilities.app; }
     get group()                         { return this._group(); }
     get current()                       { return this.group.current; }
     get lines()                         { return this.app.editor.lines; }
@@ -109,7 +109,7 @@ class UserSettingsUtility extends StorageUtility {
 
     get button()                        { return $("#" + this._buttonID); }
     get div()                           { return $("#" + this._divID); }
-    get username()                      { return $("#" + this._usernameID); }
+    get userName()                      { return $("#" + this._usernameID); }
     get currentPassword()               { return $("#" + this._currentPasswordID); }
     get newPassword1()                  { return $("#" + this._newPassword1ID); }
     get newPassword2()                  { return $("#" + this._newPassword2ID); }
@@ -123,7 +123,7 @@ class UserSettingsUtility extends StorageUtility {
     get pushToStorageFrequency()        { return $("#" + this._pushToStorageFrequencyID); }
     get pushToServerFrequency()         { return $("#" + this._pushToServerFrequencyID); }
 
-    _build() {
+    build() {
         const prefix = "<div class = 'row'><div class = 'col-3'>";
         const infix = "</div><div class = 'col-3' style = 'text-align: center'>";
         const postfix = "</div>";
@@ -169,7 +169,7 @@ class UserSettingsUtility extends StorageUtility {
 
     _reset() {
         this.button.html(this.current.userName);
-        this.username.val(this.current.userName);
+        this.userName.val(this.current.userName);
         this.currentPassword.val("");
         this.newPassword1.val("");
         this.newPassword2.val("");
@@ -180,7 +180,7 @@ class UserSettingsUtility extends StorageUtility {
     }
 
     manage() {
-        var fields = [this.username, this.email, this.currentPassword, this.newPassword1, this.newPassword2];
+        var fields = [this.userName, this.email, this.currentPassword, this.newPassword1, this.newPassword2];
 
         if (this.current.passwordHash == "" || this.current.passwordVerified) {
             fields.forEach(field => {
@@ -414,7 +414,7 @@ class UserSettingsUtility extends StorageUtility {
                     case "set username":
                     case "change username":      
                         funcs.push(() => {
-                            this.current.userName = this.username.val();
+                            this.current.userName = this.userName.val();
                             this.button.html(this.current.userName);
                         });
                         break;
@@ -495,7 +495,7 @@ class UserSettingsUtility extends StorageUtility {
                                     `${seconds / 3600} hours`;
     }
 
-    closeMenu(except) {
+    close(except) {
         if (except != this._buttonID)   {
             this.div.addClass("hidden");
             this.button.blur();

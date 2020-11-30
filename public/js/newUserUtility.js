@@ -17,7 +17,7 @@ class NewUserUtility extends StorageUtility {
         this._group = group;
 //        this._type = "user";
 
-        this._build();
+//        this._build();
 
         $(document).ready(function() {
             self.button.on("click", function (e) {
@@ -44,7 +44,7 @@ class NewUserUtility extends StorageUtility {
     get div()               { return $("#" + this._divID); }
     get button()            { return $("#" + this._buttonID); }
 
-    _build() {
+    build() {
         const plusIcon = this._plusIcon;
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
@@ -52,7 +52,7 @@ class NewUserUtility extends StorageUtility {
         this.userUtilities.div.append(button);
     }
 
-    closeMenu(except) {
+    close(except) {
         if (except != this._buttonID) {
             this.div.addClass("hidden");
             this.button.focusout();

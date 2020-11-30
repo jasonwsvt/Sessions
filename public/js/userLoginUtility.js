@@ -34,7 +34,7 @@ class UserLoginUtility extends StorageUtility {
 //        this._type = "user";
 //        this._utilityID = "userUtility";
 
-        this._build();
+//        this._build();
 
         $(document).ready(function() {
             self.button.on("click", function (e) {
@@ -85,7 +85,7 @@ class UserLoginUtility extends StorageUtility {
     get loginButton()           { return $("#" + this._loginButtonID); }
     get forgotPasswordButton()  { return $("#" + this._forgotPasswordButtonID); }
 
-    _build() {
+    build() {
         const loginIcon = this._loginIcon;
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + loginIcon + "</button>";

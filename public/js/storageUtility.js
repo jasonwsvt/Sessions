@@ -99,8 +99,8 @@ class StorageUtility {
     suSetRecord(record) { this.setRecord(sessionStorage, this.uTableName, record); }
     ssSetRecord(record) { this.setRecord(sessionStorage, this.sTableName, record); }
     setRecord(container, tableName, record) {
-        console.log("\nsetRecord(",container, tableName, record, ")", this.storagePermanence);
-        console.trace();
+//        console.log("\nsetRecord(",container, tableName, record, ")", this.storagePermanence);
+//        console.trace();
         var records = this.getRecords(container, tableName);
         //console.log("Table records:", records);
         var filtered = records.filter(x => (x.id != record.id));
