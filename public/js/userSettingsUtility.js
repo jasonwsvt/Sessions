@@ -1,7 +1,7 @@
 /* utilities class links to sessions class
 */
 
-class UserUtility extends StorageUtility {
+class UserSettingsUtility extends StorageUtility {
     _userUtilities = null;
 //    _utilityID = null;
 //    _type = null;
@@ -99,9 +99,8 @@ class UserUtility extends StorageUtility {
     }
 
     get userUtilities()                 { return this._userUtilities; }
-    get userUtilitiesDiv()              { return this._userUtilities.div; }
     get utilities()                     { return this._userUtilities.utilities; }
-    get app()                           { return this._userUtilities.utilities.app; }
+    get app()                           { return this._userUtilities.app; }
     get group()                         { return this._group(); }
     get current()                       { return this.group.current; }
     get lines()                         { return this.app.editor.lines; }
@@ -148,7 +147,7 @@ class UserUtility extends StorageUtility {
         const action = "<div id = '" + this._actionDivID + "'></div>";
         const options = "<div id = '" + this._ptionsDivID + "'></div>";
 
-        this.userUtilitiesDiv.append(button + div);
+        this.userUtilities.div.append(button + div);
         this.div.append(username);
         this.div.append(currentPassword);
         this.div.append(newPassword1);
@@ -166,7 +165,6 @@ class UserUtility extends StorageUtility {
         this.storage.append("<option value = 'false'>Session</option>");
         this.pushToStorageFrequency.html([5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
-        this._reset();
     }
 
     _reset() {

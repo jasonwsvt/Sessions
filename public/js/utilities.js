@@ -1,6 +1,6 @@
 class Utilities {
     _app = null;
-    _userUtility = null;
+    _userUtilities = null;
     _clientUtility = null;
     _issueUtility = null;
     _sessionUtility = null;
@@ -14,15 +14,14 @@ class Utilities {
         var self = this;
         this._app = app;
 
-        this._userUtility = new UserUtility(this, this.users, "user");
+        this._userUtilities = new UserUtilities(this, this.users, "user");
         this._clientUtility = new Utility(this, this.currentUserClients, "client");
         this._issueUtility = new Utility(this, this.currentClientIssues, "issue");
         this._sessionUtility = new Utility(this, this.currentIssueSessions, "session", false);
         this._sliderUtility = new SliderUtility(this);
-        this._transferUtility = new TransferUtility(this);
         this._infoUtility = new InfoUtility(this);
 
-        this.manage("user");  //switch to "user" once userItility is created
+        this.manage("user");  //switch to "user" once userUtility is created
 
         $(document).ready(function() {
             $("html").on("click", function(e) {
@@ -31,36 +30,24 @@ class Utilities {
         });
     }
 
-    get app() { return this._app; }
-    get utilities() { return this; }
+    get utilities()        { return this; }
+    get app()              { return this._app; }
+    users()                { return this.app.users; }
+    currentUserClients()   { return this.users.current.children; }
+    currentClientIssues()  { return this.currentUserClients.current.children; }
+    currentIssueSessions() { return this.currentClientIssues.current.children; }
 
     manage(type) {
         switch (type) {
-            case "user":    this._userUtility.manage();
+            case "user":    this._userUtilities.manage();
             case "client":  this._clientUtility.manage();
             case "issue":   this._issueUtility.manage();
             case "session": this._sessionUtility.manage();
         }
     }
-
-    users() {
-        return this.app.users;
-    }
-
-    currentUserClients()   {
-        return this.app.users.current.children;
-    }
-
-    currentClientIssues()  {
-        return this.app.users.current.children.current.children;
-    }
-
-    currentIssueSessions() {
-        return this.app.users.current.children.current.children.current.children;
-    }
         
     closeAllUtilityMenus(except) {
-        this._userUtility.closeMenus(except);
+        this._userUtilities.closeMenus(except);
         this._clientUtility.closeMenus(except);
         this._issueUtility.closeMenus(except);
         this._sessionUtility.closeMenus(except);

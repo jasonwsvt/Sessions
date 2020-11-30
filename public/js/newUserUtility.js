@@ -1,7 +1,7 @@
 /* utilities class links to sessions class
 */
 
-class UserUtility extends StorageUtility {
+class NewUserUtility extends StorageUtility {
     _userUtilities = null;
 //    _type = null;
     _selectedUser = null;
@@ -32,15 +32,14 @@ class UserUtility extends StorageUtility {
         }); 
     }
 
-    get userUtilities()     { return this._userUtilities; }
-    get utilities()         { return this.userUtilities.utilities; }
-    get app()               { return this.utilities.app; }
+    get utilities()         { return this._utilities; }
+    get app()               { return this._utilities.app; }
     get group()             { return this._group(); }
     get current()           { return this.group.current; }
     get lines()             { return this.app.editor.lines; }
     get buttons()           { return this.app.buttons; }
     get storagePermanence() { return this.current.storagePermanence; }
-    get userUtilitiesDiv()  { return this.userUtilities.div; }
+    get userUtilities()     { return this._userUtilities; }
 
     get div()               { return $("#" + this._divID); }
     get button()            { return $("#" + this._buttonID); }
@@ -50,7 +49,7 @@ class UserUtility extends StorageUtility {
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
 
-        this.userUtilitiesDiv.append(button);
+        this.userUtilities.div.append(button);
     }
 
     closeMenu(except) {

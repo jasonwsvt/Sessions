@@ -1,5 +1,3 @@
-const e = require("express");
-
 class StorageUtility {
     _lastPushToStorage = false;
     _lastPushToServer = false;

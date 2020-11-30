@@ -1,7 +1,7 @@
 /* utilities class links to sessions class
 */
 
-class UserUtility extends StorageUtility {
+class UserLoginUtility extends StorageUtility {
     _userUtilities = null;
 //    _utilityID = null;
 //    _type = null;
@@ -26,10 +26,10 @@ class UserUtility extends StorageUtility {
     _loginButtonID = "loginDivButton";
     _forgotPasswordButtonID = "loginDivForgotPasswordButton";
 
-    constructor (utilities, group) {
+    constructor (userUtilities, group) {
         super();
         const self = this;
-        this._utilities = utilities;
+        this._userUtilities = userUtilities;
         this._group = group;
 //        this._type = "user";
 //        this._utilityID = "userUtility";
@@ -67,8 +67,7 @@ class UserUtility extends StorageUtility {
     }
 
     get userUtilities()         { return this._userUtilities; }
-    get userUtilitiesDiv()      { return this._userUtilities.div; }
-    get utilities()             { return this._userUtilities.utilities; }
+    get utilities()             { return this._utilities; }
     get app()                   { return this._utilities.app; }
     get group()                 { return this._group(); }
     get current()               { return this.group.current; }
@@ -98,7 +97,7 @@ class UserUtility extends StorageUtility {
         const messages = "<div id = '" + this._messagesDivID + "'></div>";
         const action = "<button id = '" + this._loginButtonID + "' type = 'button'>Log in</button>";
 
-        this.userUtilitiesDiv.append(button + div);
+        this.userUtilities.div.append(button + div);
         this.div.addClass("container");
         this.div.append(browserUsers);
         this.div.append(sessionUsers);
@@ -109,7 +108,6 @@ class UserUtility extends StorageUtility {
    
         this.div.css("left", String(this.userUtilities.div.position().left) + "px");
         this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
-        this._reset();
     }
 
     manage() {
@@ -142,10 +140,10 @@ class UserUtility extends StorageUtility {
             self._selectedUserContainer = localStorage;
             console.log(self.noPasswordAccount(), $(this).val());
             if (self.noPasswordAccount()) {
-                console.log("loggin in");
+                console.log("logging in");
                 self.group.loadFrom(self._selectedUserContainer, parseInt($(this).val()));
                 self.utilities.manage("user");
-                self.userUtilities.reset();
+                self.utilities.reset();
                 self._close();
             }
             else {

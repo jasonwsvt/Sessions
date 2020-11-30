@@ -1,7 +1,7 @@
 /* utilities class links to sessions class
 */
 
-class DataManagerUtility {
+class UserDataUtility {
     _userUtilities = null;
 //    _utilityID = "syncUtility";
     _group = null;
@@ -31,7 +31,8 @@ class DataManagerUtility {
         this._group = group;
 
         this._build();
-        this.manage();
+        this.reset();
+        //this.manage();
 
         $(document).ready(function() {
             self._exportButton.on("click", function() {
@@ -47,12 +48,12 @@ class DataManagerUtility {
     }
 
     get userUtilities()    { return this._userUtilities; }
-    get userUtilitiesDiv() { return this.userUtilities.div; }
-    get utilities()        { return this.userUtilities.utilities; }
-    get app()              { return this.utilities.app; }
+    get utilities()        { return this._utilities; }
+    get app()              { return this._utilities.app; }
     get currentUser()      { return this.app.users.currentUser; }
     get lines()            { return this.app.editor.lines; }
     get buttons()          { return this.app.buttons; }
+
     get button()           { return $("#" + this._buttonID); }
     get div()              { return $("#" + this._divID); }
     get exportButton()     { return $("#" + this._exportButtonID); }
@@ -65,7 +66,7 @@ class DataManagerUtility {
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._buttonIcon + "</button>";
         const div = "<div id = '" + this._divID + "' class = 'popUpMenu'></div>";
 
-        this.userUtilitiesDiv.append(button + div);
+        this.userUtilities.div.append(button + div);
         this.div.append(importButton);
         this.importButton.prop("data-toggle", "popover");
         if (!window.FileReader) {
@@ -82,6 +83,9 @@ class DataManagerUtility {
     }
 
     manage() {
+    }
+
+    reset() {
     }
 
     _exportJSON() {
@@ -105,10 +109,10 @@ class DataManagerUtility {
 
     _importJSON() {
         const hiddenDiv = "<div id = 'hiddenDiv' class = 'hidden'></div>";
-        const fi = "<input id = 'upload' type = 'file'>";
+        const fileInput = "<input id = 'upload' type = 'file'>";
         var fi = $();
         $("body").append(hiddenDiv);
-        $("hiddenDiv").append(fi);
+        $("hiddenDiv").append(fileInput);
         $("upload").click( function () {
             var $i = $('#upload'), // Put file input ID here
                 input = $i[0]; // Getting the element from jQuery

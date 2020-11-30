@@ -1,7 +1,7 @@
 /* utilities class links to sessions class
 */
 
-class UserUtility {
+class UserUtilities {
     _utilities = null;
     _divID = null;
     _type = null;
@@ -13,26 +13,13 @@ class UserUtility {
         this._divID = "userUtilities";
 
         this._settings = new UserSettingsUtility(this, group, type);
-        this._dataManager = new DataManagerUtility(this, group, type);
-        this._login = new LogInUtility(this, group, type);
+        this._dataManager = new UserDataUtility(this, group, type);
+        this._login = new UserLoginUtility(this, group, type);
         this._new = new NewUserUtility(this, group, type);
-
-        this._build();
     }
 
     get div()       { return $("#" + this._divID); }
     get utilities() { return this._utilities; }
-
-    _build() {
-        this.div.addClass("btn-group");
-        this.div.attr("role", "group");
-        this._settings.build();
-        this._dataManager.build();
-        this._login.build();
-        this._new.build();
-
-        this._reset();
-    }
 
     manage() {
         this._settings.manage();
