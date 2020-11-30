@@ -48,8 +48,8 @@ class UserDataUtility {
     }
 
     get userUtilities()    { return this._userUtilities; }
-    get utilities()        { return this._utilities; }
-    get app()              { return this._utilities.app; }
+    get utilities()        { return this.userUtilities.utilities; }
+    get app()              { return this.utilities.app; }
     get currentUser()      { return this.app.users.currentUser; }
     get lines()            { return this.app.editor.lines; }
     get buttons()          { return this.app.buttons; }

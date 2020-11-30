@@ -34,16 +34,15 @@ class UserUtilities {
 
     manage() {
         this._settings.manage();
-//        this._data.manage();
+        this._data.manage();
         this._login.manage();
-//        this._new.manage();
+        this._new.manage();
     }
 
     reset() {
         this._settings.reset();
         this._data.reset();
         this._login.reset();
-        this._new.reset();
     }
 
     closeMenus(except) {

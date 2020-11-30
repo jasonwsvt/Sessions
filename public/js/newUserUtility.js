@@ -17,14 +17,12 @@ class NewUserUtility extends StorageUtility {
         this._group = group;
 //        this._type = "user";
 
-//        this._build();
-
         $(document).ready(function() {
             self.button.on("click", function (e) {
                 console.log("new account button");
                 self.utilities.closeAllUtilityMenus(self._buttonID);
                 self.group.new();
-                self._reset();
+                self.manage();
                 self.userUtilities.settings.button.trigger('click');
                 this.blur();
                 e.stopPropagation();
@@ -32,14 +30,14 @@ class NewUserUtility extends StorageUtility {
         }); 
     }
 
-    get utilities()         { return this._utilities; }
-    get app()               { return this._utilities.app; }
+    get userUtilities()     { return this._userUtilities; }
+    get utilities()         { return this._userUtilities.utilities; }
+    get app()               { return this._userUtilities.utilities.app; }
     get group()             { return this._group(); }
     get current()           { return this.group.current; }
     get lines()             { return this.app.editor.lines; }
     get buttons()           { return this.app.buttons; }
     get storagePermanence() { return this.current.storagePermanence; }
-    get userUtilities()     { return this._userUtilities; }
 
     get div()               { return $("#" + this._divID); }
     get button()            { return $("#" + this._buttonID); }
@@ -50,6 +48,12 @@ class NewUserUtility extends StorageUtility {
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
 
         this.userUtilities.div.append(button);
+    }
+
+    manage() {
+        this.button.prop("disabled", 
+            (this.bUsers.find(u => u.userName == this.group.defaultName) ||
+             this.sUsers.find(u => u.userName == this.group.defaultName)));
     }
 
     close(except) {

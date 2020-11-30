@@ -117,7 +117,7 @@ class UserSettingsUtility extends StorageUtility {
     get rememberMe()                    { return $("#" + this._rememberMeID); }
     get hidden()                        { return $("#" + this._hiddenID); }
     get storage()                       { return $("#" + this._storageID); }
-    get messagesDiv()                   { return $("#" + this._nessagesID); }
+    get messagesDiv()                   { return $("#" + this._messagesDivID); }
     get actionDiv()                     { return $("#" + this._actionDivID); }
     get optionsDiv()                    { return $("#" + this._optionsDivID); }
     get pushToStorageFrequency()        { return $("#" + this._pushToStorageFrequencyID); }
@@ -143,9 +143,9 @@ class UserSettingsUtility extends StorageUtility {
         const pushToStorageFrequency = "<select id = '" + this._pushToStorageFrequencyID + "'></select>";
         const pushToServerFrequency = "<select id = '" + this._pushToServerFrequencyID + "'></select>";
 
-        const messages = "<div id = '" + this._messagesID + "'></div>";
+        const messages = "<div id = '" + this._messagesDivID + "'></div>";
         const action = "<div id = '" + this._actionDivID + "'></div>";
-        const options = "<div id = '" + this._ptionsDivID + "'></div>";
+        const options = "<div id = '" + this._optionsDivID + "'></div>";
 
         this.userUtilities.div.append(button + div);
         this.div.append(username);
@@ -167,7 +167,7 @@ class UserSettingsUtility extends StorageUtility {
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
     }
 
-    _reset() {
+    reset() {
         this.button.html(this.current.userName);
         this.userName.val(this.current.userName);
         this.currentPassword.val("");
@@ -426,7 +426,7 @@ class UserSettingsUtility extends StorageUtility {
                         break;
                     case "set email address":
                     case "change email address": 
-                        funcs.push(() => { this.current.email = this.divEmail.val(); });
+                        funcs.push(() => { this.current.email = this.email.val(); });
                         break;
                     case "remove email address": 
                         funcs.push(() => { this.current.email = ""; });
@@ -435,11 +435,11 @@ class UserSettingsUtility extends StorageUtility {
                 }
             });
 
-            this.action.append("<button id = 'divActionButton' type = 'button' class = 'btn btn-primary'>" + actionText + "</button>");
+            this.actionDiv.append("<button id = 'settingsDivActionButton' type = 'button' class = 'btn btn-primary'>" + actionText + "</button>");
             //this.actionButton.on("click", function (e) {
             $("#settingsDivActionButton").on("click", function (e) {
                 funcs.forEach(func => { func(); });
-                self.manageDivForm();
+                self.manageForm();
             });
         }
     }

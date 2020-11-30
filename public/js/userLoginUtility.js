@@ -42,11 +42,11 @@ class UserLoginUtility extends StorageUtility {
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     this.blur();
-                    self._manage();
+                    self.manage();
                     self.username.focus();
                 }
                 else {
-                    self._close();
+                    self.close();
                 }
                 e.stopPropagation();
             });
@@ -56,7 +56,7 @@ class UserLoginUtility extends StorageUtility {
             });
 
             self.div.find("input").on("keyup", function (e) {
-                self._manage();
+                self.manage();
                 e.stopPropagation();
             });
 
@@ -67,8 +67,8 @@ class UserLoginUtility extends StorageUtility {
     }
 
     get userUtilities()         { return this._userUtilities; }
-    get utilities()             { return this._utilities; }
-    get app()                   { return this._utilities.app; }
+    get utilities()             { return this._userUtilities.utilities; }
+    get app()                   { return this._userUtilities.utilities.app; }
     get group()                 { return this._group(); }
     get current()               { return this.group.current; }
     get lines()                 { return this.app.editor.lines; }
@@ -118,7 +118,7 @@ class UserLoginUtility extends StorageUtility {
         else { this._selectUserNameStep(); }
     }
 
-    _reset() {
+    reset() {
         this._selectedUser = "";
         this._selectedUserContainer = "";
         this.username.val("");
@@ -143,11 +143,10 @@ class UserLoginUtility extends StorageUtility {
                 console.log("logging in");
                 self.group.loadFrom(self._selectedUserContainer, parseInt($(this).val()));
                 self.utilities.manage("user");
-                self.utilities.reset();
-                self._close();
+                self.close();
             }
             else {
-                self._manage();
+                self.manage();
             }
             e.stopPropagation();
         });
@@ -167,10 +166,10 @@ class UserLoginUtility extends StorageUtility {
                 self.group.loadFrom(self._selectedUserContainer, parseInt($(this).val()));
                 self.utilities.manage("user");
                 self.userUtilities.reset();
-                self._close();
+                self.close();
             }
             else {
-                self._manage();
+                self.manage();
             }
             e.stopPropagation();
         });
