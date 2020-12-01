@@ -15,7 +15,7 @@ class UserSettingsUtility extends StorageUtility {
 
     _buttonID = "settingsButton";
     _divID = "settingsDiv";
-    _userNameID = "settingsDivUsername";
+    _usernameID = "settingsDivUsername";
     _currentPasswordID = "settingsDivCurrentPassword";
     _newPassword1ID = "settingsDivNewPassword1";
     _newPassword2ID = "settingsDivNewPassword2";
@@ -105,11 +105,11 @@ class UserSettingsUtility extends StorageUtility {
 
     get button()                 { return $("#" + this._buttonID); }
     get div()                    { return $("#" + this._divID); }
-    get userName()               { return $("#" + this._userNameID); }
+    get username()               { return $("#" + this._usernameID); }
     get email()                  { return $("#" + this._emailID); }
     get divPassword()            { return $("#" + this._divPasswordID); }
     get divFirstName()           { return $("#" + this._divFirstNameID); }
-    get userName()               { return $("#" + this._userNameID); }
+    get username()               { return $("#" + this._usernameID); }
     get currentPassword()        { return $("#" + this._currentPasswordID); }
     get newPassword1()           { return $("#" + this._newPassword1ID); }
     get newPassword2()           { return $("#" + this._newPassword2ID); }
@@ -129,7 +129,7 @@ class UserSettingsUtility extends StorageUtility {
         const postfix = "</div>";
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const div = "<div id = '" + this._divID + "' class = 'container userMenu hidden'></div>";
-        const userName =  "<input id = '" + this._userNameID + "' type = 'text' placeholder = 'userName' size = '30'>";
+        const username =  "<input id = '" + this._usernameID + "' type = 'text' placeholder = 'username' size = '30'>";
         const currentPassword = "<input id = '" + this._currentPasswordID + "' type = 'password' placeholder = 'enter current password for settings' size = '30'>";
         const newPassword1 = "<input id = '" + this._newPassword1ID + "' type = 'password' placeholder = 'new password' size = '30'>";
         const newPassword2 = "<input id = '" + this._newPassword2ID + "' type = 'password' placeholder = 'retype new password' size = '30'>";
@@ -148,7 +148,7 @@ class UserSettingsUtility extends StorageUtility {
         const optionsDiv = "<div id = '" + this._optionsDivID + "'></div>";
 
         this.userUtilities.div.append(button + div);
-        this.div.append(userName);
+        this.div.append(username);
         this.div.append(currentPassword);
         this.div.append(newPassword1);
         this.div.append(newPassword2);
@@ -169,8 +169,8 @@ class UserSettingsUtility extends StorageUtility {
     }
 
     reset() {
-        this.button.html(this.current.userName);
-        this.userName.val(this.current.userName);
+        this.button.html(this.current.username);
+        this.username.val(this.current.username);
         this.currentPassword.val("");
         this.newPassword1.val("");
         this.newPassword2.val("");
@@ -181,7 +181,7 @@ class UserSettingsUtility extends StorageUtility {
     }
 
     manage() {
-        var fields = [this.userName, this.email, this.currentPassword, this.newPassword1, this.newPassword2];
+        var fields = [this.username, this.email, this.currentPassword, this.newPassword1, this.newPassword2];
 
         if (this.current.passwordHash == "" || this.current.passwordVerified) {
             fields.forEach(field => {
@@ -228,11 +228,11 @@ class UserSettingsUtility extends StorageUtility {
             }
             this.storage.prop("disabled", (uname == "Local duplicate"));
             this.rememberMe.prop("disabled", !this.ableToSetRememberMe);
-            if (this.current.hidden && this.current.userName == this.group.defaultName) {
+            if (this.current.hidden && this.current.username == this.group.defaultName) {
                 this.current.hidden = false;
             }
             this.hidden.prop("checked", this.current.hidden);
-            this.hidden.prop("disabled", this.current.userName == this.group.defaultName)
+            this.hidden.prop("disabled", this.current.username == this.group.defaultName)
 
             //Messages
             if (uname == "Invalid")          { messages.push("Usernames must contain only alphanumeric characters and ., -, and _.")}
@@ -245,7 +245,7 @@ class UserSettingsUtility extends StorageUtility {
 
             if (!server) {
                 if (uname == "Default") {
-                    messages.push("Server storage requires a userName that's not the default.");
+                    messages.push("Server storage requires a username that's not the default.");
                 }
                 if (uname == "Storage and server duplicate") {
                     messages.push("Username is unavailable in local storage and on the server.");
@@ -257,7 +257,7 @@ class UserSettingsUtility extends StorageUtility {
                     messages.push("Username is unavailable on the server.");
                 }
                 if (uname == "Server duplicate") {
-                    messages.push("userName is unavailable on the server.");
+                    messages.push("username is unavailable on the server.");
                 }
                 if ((curPW == "Weak" && newPW == "Empty") || newPW == "Weak") {
                     messages.push("Server storage requires a stronger password.");
@@ -267,7 +267,7 @@ class UserSettingsUtility extends StorageUtility {
                 }
             }
             else {
-                if (uname == "Default") { messages.push("The userName must not be the default."); }
+                if (uname == "Default") { messages.push("The username must not be the default."); }
                 if (uname == "Storage and server duplicate") {
                     messages.push("Username is duplicated in local storage and on the server.");
                 }
@@ -288,7 +288,7 @@ class UserSettingsUtility extends StorageUtility {
             //Actions
             if (!server) {
                 if (["Filled", "Local and server duplicate", "Local duplicate", "Server duplicate"].includes(uname)) {
-                    actions.push("change userName");
+                    actions.push("change username");
                 }
                 if (curPW == "Empty" && ["Weak", "Strong"].includes(newPW)) {
                     actions.push("add password");
@@ -299,7 +299,7 @@ class UserSettingsUtility extends StorageUtility {
             }
             else {
                 if (["Filled", "Local duplicate"].includes(uname) && !isDefault) {
-                    actions.push("change userName");
+                    actions.push("change username");
                 }
                 if (newPW == "Strong") { actions.push("change password"); }
             }
@@ -326,14 +326,14 @@ class UserSettingsUtility extends StorageUtility {
     }
 
     get ableToSetRememberMe() {
-        return (this.current.userName != this.group.defaultName &&
+        return (this.current.username != this.group.defaultName &&
                 this.storagePermanence &&
                 (!this.rememberMeExists || this.rememberMe == this.current.id));
     }
 
     get unameState() { //Unchanged, Emptied, Duplicate, Filled
-        const current = this.current.userName;
-        const fieldVal = this.userName.val();
+        const current = this.current.username;
+        const fieldVal = this.username.val();
         const server = this.current.useServerStorage;
         const valid = /^[a-z0-9_\-.]{5,20}$/;
         const containerDup = this.cUserNameExists(fieldVal);
@@ -412,11 +412,11 @@ class UserSettingsUtility extends StorageUtility {
 
             actions.forEach(action => {
                 switch (action) {
-                    case "set userName":
-                    case "change userName":      
+                    case "set username":
+                    case "change username":      
                         funcs.push(() => {
-                            this.current.userName = this.userName.val();
-                            this.button.html(this.current.userName);
+                            this.current.username = this.username.val();
+                            this.button.html(this.current.username);
                         });
                         break;
                     case "add password": 

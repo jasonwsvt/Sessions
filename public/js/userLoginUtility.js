@@ -13,7 +13,7 @@ class UserLoginUtility extends StorageUtility {
     _divID = "loginDiv";
     _browserUsersID = "loginDivBrowserUsers";
     _sessionUsersID = "loginDivSessionUsers";
-    _userNameID = "loginDivUsername";
+    _usernameID = "loginDivUsername";
     _passwordID = "loginDivPassword";
     _messagesDivID = "loginDivMessages";
     _loginID = "loginDivButton";
@@ -34,7 +34,7 @@ class UserLoginUtility extends StorageUtility {
                     self.div.removeClass("hidden");
                     this.blur();
                     self.manage();
-                    self.userName.focus();
+                    self.username.focus();
                 }
                 else {
                     self.close();
@@ -71,7 +71,7 @@ class UserLoginUtility extends StorageUtility {
     get div()               { return $("#" + this._divID); }
     get browserUsers()      { return $("#" + this._browserUsersID); }
     get sessionUsers()      { return $("#" + this._sessionUsersID); }
-    get userName()          { return $("#" + this._userNameID); }
+    get username()          { return $("#" + this._usernameID); }
     get password()          { return $("#" + this._passwordID); }
     get messagesDiv()       { return $("#" + this._messagesDivID); }
     get login()             { return $("#" + this._loginID); }
@@ -85,7 +85,7 @@ class UserLoginUtility extends StorageUtility {
         const div = "<div id = '" + this._divID + "' class = 'hidden userMenu'></div>";
         const browserUsers = "<div id = '" + this._browserUsersID + "'></div>";
         const sessionUsers = "<div id = '" + this._sessionUsersID + "'></div>";
-        const username = "<input id = '" + this._userNameID + "' placeholder = 'username' size = '50'>";
+        const username = "<input id = '" + this._usernameID + "' placeholder = 'username' size = '50'>";
         const password = "<input id = '" + this._passwordID + "' type = 'password' placeholder = 'password' size = '30'>";
         const messages = "<div id = '" + this._messagesDivID + "'></div>";
         const action = "<button id = '" + this._loginID + "' type = 'button'>Log in</button>";
@@ -105,7 +105,7 @@ class UserLoginUtility extends StorageUtility {
     }
 
     manage() {
-        if (this._selectedUser || this.userName.val()) {
+        if (this._selectedUser || this.username.val()) {
             if (this._selectedUser) { }
             this._enterPasswordStep();
         }
@@ -115,7 +115,7 @@ class UserLoginUtility extends StorageUtility {
     reset() {
         this._selectedUser = "";
         this._selectedUserContainer = "";
-        this.userName.val("");
+        this.username.val("");
         this.password.val("");
         this._propagateUserNameButtons();
     }
@@ -124,9 +124,9 @@ class UserLoginUtility extends StorageUtility {
         const self = this;
 
         this.browserUsers.empty();
-        const browserUsers = this.group.bUsers.filter(r => (r.id != this.current.id && !r.hidden));
+        const browserUsers = this.bUsers.filter(r => (r.id != this.current.id && !r.hidden));
         browserUsers.forEach(r => {
-            this.browserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.userName + "</button>");
+            this.browserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.username + "</button>");
         });
         this.browserUsers.find("button").on("click", function (e) {
             this.blur();
@@ -137,8 +137,7 @@ class UserLoginUtility extends StorageUtility {
                 console.log("loggin in");
                 self.group.loadFrom(self._selectedUserContainer, parseInt($(this).val()));
                 self.utilities.manage("user");
-                self.reset();
-                self.resetSettingsMenu();
+                self.userUtilities.reset();
                 self.close();
             }
             else {
@@ -148,9 +147,9 @@ class UserLoginUtility extends StorageUtility {
         });
 
         this.sessionUsers.empty();
-        const sessionUsers = this.sUsers.filter(r => (r.userName != this.current.userName));
+        const sessionUsers = this.sUsers.filter(r => (r.username != this.current.username));
         sessionUsers.forEach(r => {
-            this.sessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.userName + "</button>");
+            this.sessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.username + "</button>");
         });
         this.sessionUsers.find("button").on("click", function (e) {
             this.blur();
@@ -175,7 +174,7 @@ class UserLoginUtility extends StorageUtility {
     _selectUserNameStep() {
         this.browserUsers.find("button").show();
         this.sessionUsers.find("button").show();
-        this.userName.show();
+        this.username.show();
         this.password.hide();
         this.login.hide();
         this.messagesDiv.empty();
@@ -198,8 +197,8 @@ class UserLoginUtility extends StorageUtility {
             if (button.text() != this._selectedUser) { button.hide(); } else { button.show(); }
         }
 
-        if (this.userName.val() == "") { this.userName.hide(); }
-        else { this.userName.show(); }
+        if (this.username.val() == "") { this.username.hide(); }
+        else { this.username.show(); }
 
         this.password.show();
         this.login.show();
@@ -213,10 +212,10 @@ class UserLoginUtility extends StorageUtility {
 
     verifyCredentials() {
         var container, user;
-        if (this.userName.val() != "") {
+        if (this.username.val() != "") {
             [localStorage, sessionStorage].forEach(c => {
                 if (!user && Object.keys(c).includes("users")) {
-                    user = userExists(c, userName);
+                    user = userExists(c, username);
                     if (user) { container = c; }
                 }
             });
@@ -241,10 +240,10 @@ class UserLoginUtility extends StorageUtility {
         //Not found locally, so try logging in on the server.
     }
 
-    userExists(container, userName) {
+    userExists(container, username) {
         if (Object.keys(container).includes("users")) {
             const users = JSON.parse(container.getItem("users"));
-            const user = users.find(user => (user.userName = userName));
+            const user = users.find(user => (user.username = username));
             return (user) ? user : undefined;
         }
         return undefined;

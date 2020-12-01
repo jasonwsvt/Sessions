@@ -244,8 +244,8 @@ class UserUtility extends StorageUtility {
     }
 
     _resetSettingsMenu() {
-        this.settingsButton.html(this.current.userName);
-        this.settingsDivUsername.val(this.current.userName);
+        this.settingsButton.html(this.current.username);
+        this.settingsDivUsername.val(this.current.username);
         this.settingsDivCurrentPassword.val("");
         this.settingsDivNewPassword1.val("");
         this.settingsDivNewPassword2.val("");
@@ -344,7 +344,7 @@ class UserUtility extends StorageUtility {
         this.loginDivBrowserUsers.empty();
         const browserUsers = this.group.bUsers.filter(r => (r.id != this.current.id && !r.hidden));
         browserUsers.forEach(r => {
-            this.loginDivBrowserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.userName + "</button>");
+            this.loginDivBrowserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.username + "</button>");
         });
         this.loginDivBrowserUsers.find("button").on("click", function (e) {
             this.blur();
@@ -366,9 +366,9 @@ class UserUtility extends StorageUtility {
         });
 
         this.loginDivSessionUsers.empty();
-        const sessionUsers = this.sUsers.filter(r => (r.userName != this.current.userName));
+        const sessionUsers = this.sUsers.filter(r => (r.username != this.current.username));
         sessionUsers.forEach(r => {
-            this.loginDivSessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.userName + "</button>");
+            this.loginDivSessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.username + "</button>");
         });
         this.loginDivSessionUsers.find("button").on("click", function (e) {
             this.blur();
@@ -434,7 +434,7 @@ class UserUtility extends StorageUtility {
         if (this.loginDivUsername.val() != "") {
             [localStorage, sessionStorage].forEach(c => {
                 if (!user && Object.keys(c).includes("users")) {
-                    user = userExists(c, userName);
+                    user = userExists(c, username);
                     if (user) { container = c; }
                 }
             });
@@ -459,17 +459,17 @@ class UserUtility extends StorageUtility {
         //Not found locally, so try logging in on the server.
     }
 
-    userExists(container, userName) {
+    userExists(container, username) {
         if (Object.keys(container).includes("users")) {
             const users = JSON.parse(container.getItem("users"));
-            const user = users.find(user => (user.userName = userName));
+            const user = users.find(user => (user.username = username));
             return (user) ? user : undefined;
         }
         return undefined;
     }
 
     _manageNewAccountMenu() {
-        this.newAccountButton.prop("disabled", (this.current.userName == this.group.defaultName));
+        this.newAccountButton.prop("disabled", (this.current.username == this.group.defaultName));
     }
 
     manageSettingsDivForm() {
@@ -498,11 +498,11 @@ class UserUtility extends StorageUtility {
             }
             this.settingsDivStorage.prop("disabled", (uname == "Local duplicate"));
             this.settingsDivRememberMe.prop("disabled", !this.ableToSetRememberMe);
-            if (this.current.hidden && this.current.userName == this.group.defaultName) {
+            if (this.current.hidden && this.current.username == this.group.defaultName) {
                 this.current.hidden = false;
             }
             this.settingsDivHidden.prop("checked", this.current.hidden);
-            this.settingsDivHidden.prop("disabled", this.current.userName == this.group.defaultName)
+            this.settingsDivHidden.prop("disabled", this.current.username == this.group.defaultName)
 
             //Messages
             if (uname == "Invalid")          { messages.push("Usernames must contain only alphanumeric characters and ., -, and _.")}
@@ -596,13 +596,13 @@ class UserUtility extends StorageUtility {
     }
 
     get ableToSetRememberMe() {
-        return (this.current.userName != this.group.defaultName &&
+        return (this.current.username != this.group.defaultName &&
                 this.storagePermanence &&
                 (!this.rememberMeExists || this.rememberMe == this.current.id));
     }
 
     get unameState() { //Unchanged, Emptied, Duplicate, Filled
-        const current = this.current.userName;
+        const current = this.current.username;
         const fieldVal = this.settingsDivUsername.val();
         const server = this.current.useServerStorage;
         const valid = /^[a-z0-9_\-.]{5,20}$/;
@@ -685,8 +685,8 @@ class UserUtility extends StorageUtility {
                     case "set username":
                     case "change username":      
                         funcs.push(() => {
-                            this.current.userName = this.settingsDivUsername.val();
-                            this.settingsButton.html(this.current.userName);
+                            this.current.username = this.settingsDivUsername.val();
+                            this.settingsButton.html(this.current.username);
                         });
                         break;
                     case "add password": 

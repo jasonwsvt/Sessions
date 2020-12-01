@@ -177,14 +177,14 @@ class StorageUtility {
         }
     }
     
-    lUserNameExists(userName) { return (this.bUserNameExists(userName) && this.sUserNameExists(userName)); }
-    cUserNameExists(userName) { return this.userNameExists(this.container, userName); }
-    oUserNameExists(userName) { return this.userNameExists(this.otherContainer, userName); }
-    bUserNameExists(userName) { return this.userNameExists(localStorage, userName); }
-    sUserNameExists(userName) { return this.userNameExists(sessionStorage, userName); }
-    userNameExists(container, userName) {// needs to be fixed to include update_users
+    lUserNameExists(username) { return (this.bUserNameExists(username) && this.sUserNameExists(username)); }
+    cUserNameExists(username) { return this.usernameExists(this.container, username); }
+    oUserNameExists(username) { return this.usernameExists(this.otherContainer, username); }
+    bUserNameExists(username) { return this.usernameExists(localStorage, username); }
+    sUserNameExists(username) { return this.usernameExists(sessionStorage, username); }
+    usernameExists(container, username) {// needs to be fixed to include update_users
         if (Object.keys(container).includes("users") &&
-            JSON.parse(container.getItem("users")).find(record => (record.userName == userName))) {
+            JSON.parse(container.getItem("users")).find(record => (record.username == username))) {
                 return true;
         }
         return false;

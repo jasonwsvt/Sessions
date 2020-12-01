@@ -90,7 +90,7 @@ class UserDataUtility {
 
     _exportJSON() {
         const blob1 = new Blob(this.currentUser.createJSON(), { type: "text/plain;charset=utf-8" });
-        const name = this.currentUser.userName + ".json";
+        const name = this.currentUser.username + ".json";
  
         //Check the Browser.
         const isIE = false || !!document.documentMode;

@@ -54,7 +54,7 @@ class NewUserUtility extends StorageUtility {
     }
 
     manage() {
-        this.button.prop("disabled", (this.current.userName == this.group.defaultName));
+        this.button.prop("disabled", (this.current.username == this.group.defaultName));
     }
 
     reset() {

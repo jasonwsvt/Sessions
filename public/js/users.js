@@ -26,11 +26,11 @@ class Users extends Siblings {
         if (sessionUsers) {
 //            console.log(sessionUsers);
             var noPasswordSessionUser = sessionUsers.find(r => (r.passwordHash == "" && r.hidden == false));
-            var defaultSessionUser = sessionUsers.find(r => (r.userName == this._defaultName));
+            var defaultSessionUser = sessionUsers.find(r => (r.username == this._defaultName));
         }
         if (browserUsers) {
             var noPasswordBrowserUser = browserUsers.find(r => (r.passwordHash == "" && r.hidden == false));
-            var defaultBrowserUser = browserUsers.find(r => (r.userName == this._defaultName));
+            var defaultBrowserUser = browserUsers.find(r => (r.username == this._defaultName));
         }
         if      (rememberMeUserId)      { this.loadFrom(localStorage, rememberMeUserId); }
         else if (defaultSessionUser)    { this.loadFrom(sessionStorage, defaultSessionUser.id); }
@@ -49,7 +49,7 @@ class Users extends Siblings {
     }
 
 
-    logIn(userName, password) {
+    logIn(username, password) {
         return false;
     }
 

@@ -14,10 +14,10 @@ class User extends Sibling {
 
     get isPractitioner()     { return this._data.practitioner; }
 
-    get userName()           { return this._data.userName }
-    set userName(userName)   {
-        if (this._data.userName != userName) {
-            this._data.userName = userName;
+    get username()           { return this._data.username }
+    set username(username)   {
+        if (this._data.username != username) {
+            this._data.username = username;
             this._update();
         }
     }
@@ -127,7 +127,7 @@ class User extends Sibling {
         const name = this.siblings.defaultName;
         return {
             id: id,
-            userName: name,
+            username: name,
             email: "",
             passwordHash: "",
             rememberMe: false,
