@@ -21,6 +21,10 @@ class UserUtilities {
 
     get div()       { return $("#" + this._divID); }
     get utilities() { return this._utilities; }
+    get settings()  { return this._settings; }
+    get data()      { return this._data; }
+    get login()     { return this._login; }
+    get new()       { return this._new; }
 
     _build() {
         this.div.addClass("btn-group");
