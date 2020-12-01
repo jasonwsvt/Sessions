@@ -33,23 +33,19 @@ class NewUserUtility extends StorageUtility {
         }); 
     }
 
-    get userUtilities()                 { return this._userUtilities; }
-    get utilities()                     { return this._userUtilities.utilities; }
-    get app()                           { return this.utilities.app; }
-    get group()                         { return this._group(); }
-    get current()                       { return this.group.current; }
-    get lines()                         { return this.app.editor.lines; }
-    get buttons()                       { return this.app.buttons; }
-    get storagePermanence()             { return this.current.storagePermanence; }
-    get div()                           { return $("#" + this._utilityID); }
+    get userUtilities()     { return this._userUtilities; }
+    get utilities()         { return this._userUtilities.utilities; }
+    get app()               { return this.utilities.app; }
+    get group()             { return this._group(); }
+    get current()           { return this.group.current; }
+    get lines()             { return this.app.editor.lines; }
+    get buttons()           { return this.app.buttons; }
+    get storagePermanence() { return this.current.storagePermanence; }
+    get div()               { return $("#" + this._utilityID); }
 
-    get button()              { return $("#" + this._buttonID); }
+    get button()            { return $("#" + this._buttonID); }
 
     build() {
-        this.buildNewAccountMenu();
-    }
-
-    buildNewAccountMenu() {
         const plusIcon = this._plusIcon;
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + plusIcon + "</button>";
@@ -58,22 +54,16 @@ class NewUserUtility extends StorageUtility {
     }
 
     manage() {
-        this._manageNewAccountMenu();
+        this.button.prop("disabled", (this.current.userName == this.group.defaultName));
     }
 
     reset() {
     }
 
-    _manageNewAccountMenu() {
-        this.button.prop("disabled", (this.current.userName == this.group.defaultName));
-    }
-
     close(except) {
-        if (except != this._buttonID) { this._closeNewAccountMenu(); }
-    }
-
-    _closeNewAccountMenu() {
-        this.div.addClass("hidden");
-        this.button.focusout();
+        if (except != this._buttonID) { 
+            this.div.addClass("hidden");
+            this.button.blur();
+        }
     }
 }

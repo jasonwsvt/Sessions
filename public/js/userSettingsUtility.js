@@ -43,10 +43,10 @@ class UserSettingsUtility extends StorageUtility {
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     this.blur();
-                    self._manageSettingsMenu();
+                    self.manage();
                 }
                 else {
-                    self._closeSettingsMenu();
+                    self.close();
                 }
                 e.stopPropagation();
             });
@@ -56,7 +56,7 @@ class UserSettingsUtility extends StorageUtility {
             });
 
             self.div.find("input").on("keyup", function (e) {
-                self.manageSettingsDivForm();
+                self.manageForm();
                 e.stopPropagation();
             });
 
@@ -76,59 +76,54 @@ class UserSettingsUtility extends StorageUtility {
 
             self.storage.on("change", function (e) {
                 self.current.storagePermanence = $(this).val();
-                self._manageSettingsMenu();
+                self.manage();
             });
 
             self.pushToStorageFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
                 self.current.pushToStorageFrequency = (val == "false") ? false : parseInt(val);
-                self.manageSettingsDivForm();
+                self.manageForm();
             });
 
             self.pushToServerFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
                 self.current.pushToServerFrequency = (val == "false") ? false : parseInt(val);
-                self.manageSettingsDivForm();
+                self.manageForm();
             });
         }); 
     }
 
-    get userUtilities()                 { return this._userUtilities; }
-    get utilities()                     { return this._userUtilities.utilities; }
-    get app()                           { return this.utilities.app; }
-    get group()                         { return this._group(); }
-    get current()                       { return this.group.current; }
-    get lines()                         { return this.app.editor.lines; }
-    get buttons()                       { return this.app.buttons; }
-    get storagePermanence()             { return this.current.storagePermanence; }
-    get div()                           { return $("#" + this._utilityID); }
+    get userUtilities()          { return this._userUtilities; }
+    get utilities()              { return this._userUtilities.utilities; }
+    get app()                    { return this.utilities.app; }
+    get group()                  { return this._group(); }
+    get current()                { return this.group.current; }
+    get lines()                  { return this.app.editor.lines; }
+    get buttons()                { return this.app.buttons; }
+    get storagePermanence()      { return this.current.storagePermanence; }
+    get div()                    { return $("#" + this._utilityID); }
 
-    get button()                { return $("#" + this._buttonID); }
-    get div()                   { return $("#" + this._divID); }
-    get settingsDivID()                 { return $("#" + this._settingsDivID); }
-    get userName()           { return $("#" + this._userNameID); }
-    get email()              { return $("#" + this._emailID); }
-    get divPassword()           { return $("#" + this._divPasswordID); }
-    get divFirstName()          { return $("#" + this._divFirstNameID); }
-    get userName()           { return $("#" + this._userNameID); }
-    get currentPassword()    { return $("#" + this._currentPasswordID); }
-    get newPassword1()       { return $("#" + this._newPassword1ID); }
-    get newPassword2()       { return $("#" + this._newPassword2ID); }
-    get email()              { return $("#" + this._emailID); }
-    get rememberMe()         { return $("#" + this._rememberMeID); }
-    get hidden()             { return $("#" + this._hiddenID); }
-    get storage()            { return $("#" + this._storageID); }
-    get messagesDiv()           { return $("#" + this._messagesDivID); }
-    get actionDiv()             { return $("#" + this._actionDivID); }
-    get optionsDiv()            { return $("#" + this._optionsDivID); }
-    get pushToStorageFrequency()        { return $("#" + this._pushToStorageFrequencyID); }
-    get pushToServerFrequency()         { return $("#" + this._pushToServerFrequencyID); }
+    get button()                 { return $("#" + this._buttonID); }
+    get div()                    { return $("#" + this._divID); }
+    get userName()               { return $("#" + this._userNameID); }
+    get email()                  { return $("#" + this._emailID); }
+    get divPassword()            { return $("#" + this._divPasswordID); }
+    get divFirstName()           { return $("#" + this._divFirstNameID); }
+    get userName()               { return $("#" + this._userNameID); }
+    get currentPassword()        { return $("#" + this._currentPasswordID); }
+    get newPassword1()           { return $("#" + this._newPassword1ID); }
+    get newPassword2()           { return $("#" + this._newPassword2ID); }
+    get email()                  { return $("#" + this._emailID); }
+    get rememberMe()             { return $("#" + this._rememberMeID); }
+    get hidden()                 { return $("#" + this._hiddenID); }
+    get storage()                { return $("#" + this._storageID); }
+    get messagesDiv()            { return $("#" + this._messagesDivID); }
+    get actionDiv()              { return $("#" + this._actionDivID); }
+    get optionsDiv()             { return $("#" + this._optionsDivID); }
+    get pushToStorageFrequency() { return $("#" + this._pushToStorageFrequencyID); }
+    get pushToServerFrequency()  { return $("#" + this._pushToServerFrequencyID); }
 
     build() {
-        this.buildSettingsMenu();
-    }
-
-    buildSettingsMenu() {
         const prefix = "<div class = 'row'><div class = 'col-3'>";
         const infix = "</div><div class = 'col-3' style = 'text-align: center'>";
         const postfix = "</div>";
@@ -170,10 +165,10 @@ class UserSettingsUtility extends StorageUtility {
         this.storage.append("<option value = 'false'>Session</option>");
         this.pushToStorageFrequency.html([5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
-        this.resetSettingsMenu();
+        this.reset();
     }
 
-    resetSettingsMenu() {
+    reset() {
         this.button.html(this.current.userName);
         this.userName.val(this.current.userName);
         this.currentPassword.val("");
@@ -186,10 +181,6 @@ class UserSettingsUtility extends StorageUtility {
     }
 
     manage() {
-        this._manageSettingsMenu();
-    }
-
-    _manageSettingsMenu() {
         var fields = [this.userName, this.email, this.currentPassword, this.newPassword1, this.newPassword2];
 
         if (this.current.passwordHash == "" || this.current.passwordVerified) {
@@ -199,7 +190,7 @@ class UserSettingsUtility extends StorageUtility {
             if (!this.currentPassword.hasClass("hidden")) {
                 this.currentPassword.addClass("hidden");
             }
-            this.manageSettingsDivForm();
+            this.manageForm();
         }
         else {
             fields.forEach(field => {
@@ -211,11 +202,7 @@ class UserSettingsUtility extends StorageUtility {
         }
     }
 
-    reset() {
-        this.resetSettingsMenu();
-    }
-
-    manageSettingsDivForm() {
+    manageForm() {
         var messages = [], actions = [], options = [];
         const uname = this.unameState;
         const isDefault = (uname == this.group.defaultName);
@@ -452,7 +439,7 @@ class UserSettingsUtility extends StorageUtility {
             this.actionDiv.append("<button id = 'settingsDivActionButton' type = 'button' class = 'btn btn-primary'>" + actionText + "</button>");
             $("#settingsDivActionButton").on("click", function (e) {
                 funcs.forEach(func => { func(); });
-                self.manageSettingsDivForm();
+                self.manageForm();
             });
         }
     }
@@ -490,7 +477,7 @@ class UserSettingsUtility extends StorageUtility {
             this.optionsDiv.append("<button id = 'settingsDivOption" + index + "' type = 'button' class = 'btn " + cl + "'>" + option + "</button><br>");
             $("#settingsDivOption" + index).on("click", function (e) {
                 func();
-                self.manageSettingsDivForm();
+                self.manageForm();
             });
         });
     }
@@ -509,11 +496,9 @@ class UserSettingsUtility extends StorageUtility {
     }
 
     close(except) {
-        if (except != this._buttonID)   { this._closeSettingsMenu(); }
-    }
-
-    _closeSettingsMenu() {
-        this.div.addClass("hidden");
-        this.button.blur();
+        if (except != this._buttonID) {
+            this.div.addClass("hidden");
+            this.button.blur();
+        }
     }
 }

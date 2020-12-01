@@ -33,11 +33,11 @@ class UserLoginUtility extends StorageUtility {
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     this.blur();
-                    self._manageLoginMenu();
+                    self.manage();
                     self.userName.focus();
                 }
                 else {
-                    self._closeLoginMenu();
+                    self.close();
                 }
                 e.stopPropagation();
             });
@@ -47,7 +47,7 @@ class UserLoginUtility extends StorageUtility {
             });
 
             self.div.find("input").on("keyup", function (e) {
-                self._manageLoginMenu();
+                self.manage();
                 e.stopPropagation();
             });
 
@@ -57,31 +57,27 @@ class UserLoginUtility extends StorageUtility {
         }); 
     }
 
-    get userUtilities()                 { return this._userUtilities; }
-    get utilities()                     { return this._userUtilities.utilities; }
-    get app()                           { return this.utilities.app; }
-    get group()                         { return this._group(); }
-    get current()                       { return this.group.current; }
-    get lines()                         { return this.app.editor.lines; }
-    get buttons()                       { return this.app.buttons; }
-    get storagePermanence()             { return this.current.storagePermanence; }
-//    get userUtilitiesDiv()                           { return $("#" + this._utilityID); }
+    get userUtilities()     { return this._userUtilities; }
+    get utilities()         { return this._userUtilities.utilities; }
+    get app()               { return this.utilities.app; }
+    get group()             { return this._group(); }
+    get current()           { return this.group.current; }
+    get lines()             { return this.app.editor.lines; }
+    get buttons()           { return this.app.buttons; }
+    get storagePermanence() { return this.current.storagePermanence; }
+//    get userUtilitiesDiv()  { return $("#" + this._utilityID); }
 
-    get button()                   { return $("#" + this._buttonID); }
-    get div()                      { return $("#" + this._divID); }
-    get browserUsers()          { return $("#" + this._browserUsersID); }
-    get sessionUsers()          { return $("#" + this._sessionUsersID); }
-    get userName()              { return $("#" + this._userNameID); }
-    get password()              { return $("#" + this._passwordID); }
-    get messagesDiv()              { return $("#" + this._messagesDivID); }
-    get login()                { return $("#" + this._loginID); }
-    get forgot()  { return $("#" + this._forgotID); }
+    get button()            { return $("#" + this._buttonID); }
+    get div()               { return $("#" + this._divID); }
+    get browserUsers()      { return $("#" + this._browserUsersID); }
+    get sessionUsers()      { return $("#" + this._sessionUsersID); }
+    get userName()          { return $("#" + this._userNameID); }
+    get password()          { return $("#" + this._passwordID); }
+    get messagesDiv()       { return $("#" + this._messagesDivID); }
+    get login()             { return $("#" + this._loginID); }
+    get forgot()            { return $("#" + this._forgotID); }
 
     build() {
-        this.buildLoginMenu();
-    }
-
-    buildLoginMenu() {
         const loginIcon = this._loginIcon;
 //console.log("build login menu");
 //console.trace();
@@ -105,14 +101,10 @@ class UserLoginUtility extends StorageUtility {
    
         this.div.css("left", String(this.userUtilities.div.position().left) + "px");
         this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
-        this.resetLoginMenu();
+        this.reset();
     }
 
     manage() {
-        this._manageLoginMenu();
-    }
-
-    _manageLoginMenu() {
         if (this._selectedUser || this.userName.val()) {
             if (this._selectedUser) { }
             this._enterPasswordStep();
@@ -121,10 +113,6 @@ class UserLoginUtility extends StorageUtility {
     }
 
     reset() {
-        this.resetLoginMenu();
-    }
-
-    resetLoginMenu() {
         this._selectedUser = "";
         this._selectedUserContainer = "";
         this.userName.val("");
@@ -149,12 +137,12 @@ class UserLoginUtility extends StorageUtility {
                 console.log("loggin in");
                 self.group.loadFrom(self._selectedUserContainer, parseInt($(this).val()));
                 self.utilities.manage("user");
-                self.resetLoginMenu();
+                self.reset();
                 self.resetSettingsMenu();
-                self._closeLoginMenu();
+                self.close();
             }
             else {
-                self._manageLoginMenu();
+                self.manage();
             }
             e.stopPropagation();
         });
@@ -174,11 +162,11 @@ class UserLoginUtility extends StorageUtility {
                 self.group.loadFrom(self._selectedUserContainer, parseInt($(this).val()));
                 self.utilities.manage("user");
                 self.resetSettingsMenu();
-                self.resetLoginMenu();
-                self._closeLoginMenu();
+                self.reset();
+                self.close();
             }
             else {
-                self._manageLoginMenu();
+                self.manage();
             }
             e.stopPropagation();
         });
@@ -267,11 +255,9 @@ class UserLoginUtility extends StorageUtility {
     }
 
     close(except) {
-        if (except != this._buttonID)      { this._closeLoginMenu(); }
-    }
-
-    _closeLoginMenu() {
-        this.div.addClass("hidden");
-        this.button.blur();
+        if (except != this._buttonID) {
+            this.div.addClass("hidden");
+            this.button.blur();
+        }
     }
 }
