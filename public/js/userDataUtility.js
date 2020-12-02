@@ -3,7 +3,6 @@
 
 class UserDataUtility {
     _userUtilities = null;
-//    _utilityID = "syncUtility";
     _group = null;
 
     _buttonIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-person-lines-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm2 9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z'/></svg>";
@@ -22,19 +21,54 @@ class UserDataUtility {
 
     _divID = "userDataDiv";
     _buttonID = "userDataButton";
-    _importButtonID = "importButton";
-    _exportButtonID = "exportButton";
+    _importButtonID = "userDataImportButton";
+    _exportButtonID = "userDataExportButton";
+    _sort = "userDataUtilitySort";
+    _showHide = "userDataUtilityShowHide";
+    _minMax = "userDataUtilityMinMax";
+    _select = "userDataUtilitySelect";
+    _options = "userDataUtilityOptions";
+    _confirm = "userDataUtilityConfirm";
+    _scrollAreaDiv = "userDataUtilityScrollAreaDiv";
+    _messagesDiv = "userDataUtilityMessagesDiv";
 
     constructor (userUtilities, group) {
         const self = this;
         this._userUtilities = userUtilities;
         this._group = group;
 
-//        this._build();
-//        this.reset();
-        //this.manage();
-
         $(document).ready(function() {
+            self.button.on("click", function(e) {
+                self.utilities.closeAllUtilityMenus(self._buttonID);
+                if (self.div.hasClass("hidden")) {
+                    self.div.removeClass("hidden");
+                    this.blur();
+                    self.manage();
+                }
+                else {
+                    self.close();
+                }
+                e.stopPropagation();
+            });
+
+            self.div.find("input").on("keypress", function (e) {
+                e.stopPropagation();
+            });
+
+            self.div.find("input").on("keyup", function (e) {
+                self.manage();
+                e.stopPropagation();
+            });
+
+            self.div.find("input").on("click", function (e) {
+                self.manage();
+                e.stopPropagation();
+            });
+
+            self.div.on("click", function (e) {
+                e.stopPropagation();
+            });
+
             self.exportButton.on("click", function() {
                 self._exportJSON();
                 $(this).blur();
@@ -58,16 +92,71 @@ class UserDataUtility {
     get div()              { return $("#" + this._divID); }
     get exportButton()     { return $("#" + this._exportButtonID); }
     get importButton()     { return $("#" + this._importButtonID); }
+    get sort()             { return $("#" + this._sortID); }
+    get showHide()         { return $("#" + this._showHideID); }
+    get minMax()           { return $("#" + this._minMaxID); }
+    get select()           { return $("#" + this._selectID); }
+    get options()          { return $("#" + this._optionsID); }
+    get confirm()          { return $("#" + this._confirmID); }
+    get scrollAreaDiv()    { return $("#" + this._scrollAreaDiv); }
+    get messagesDiv()      { return $("#" + this._messagesDiv); }
 
     build() {
         const importButton = "<button id = '" + this._importButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._importIcon + "</button>";
         const exportButton = "<button id = '" + this._exportButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._exportIcon + "</button>";
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._buttonIcon + "</button>";
-        const div = "<div id = '" + this._divID + "' class = 'hidden popUpMenu'></div>";
+        const div = "<div id = '" + this._divID + "' class = 'container userMenu hidden'></div>";
+
+        const sort = "<div id = '" + this._sortID + "' class='btn-group btn-group-sm' role='group'></div>";
+        const sort1 = "<button type = 'button' class = 'btn btn-secondary' value = 'name'>A-Z</button>";
+        const sort2 = "<button type = 'button' class = 'btn btn-secondary' value = 'creation'>Creation</button>";
+        const sort3 = "<button type = 'button' class = 'btn btn-secondary' value = 'edited'>Edited</button>";
+        const sort4 = "<button type = 'button' class = 'btn btn-secondary' value = 'opened'>Opened</button>";
+
+        const showHide = "<div id = '" + this._showHideID + "' class='btn-group btn-group-sm' role='group'></div>";
+        const showHide1 = "<button type = 'button' class = 'btn btn-secondary' value = 'all'>All</button>";
+        const showHide2 = "<button type = 'button' class = 'btn btn-secondary' value = 'selected'>Selected</button>";
+        const showHide3 = "<button type = 'button' class = 'btn btn-secondary' value = 'unselected'>Unselected</button>";
+        const showHide4 = "<button type = 'button' class = 'btn btn-secondary' value = 'clients'>Clients</button>";
+        const showHide5 = "<button type = 'button' class = 'btn btn-secondary' value = 'issues'>Issues</button>";
+        const showHide6 = "<button type = 'button' class = 'btn btn-secondary' value = 'sessions'>Sessions</button>";
+
+        const minMax = "<div id = '" + this._minMaxID + "' class='btn-group btn-group-sm' role='group'></div>";
+        const minMax1 = "<button type = 'button' class = 'btn btn-secondary' value = 'all'>All</button>";
+        const minMax2 = "<button type = 'button' class = 'btn btn-secondary' value = 'selected'>Selected</button>";
+        const minMax3 = "<button type = 'button' class = 'btn btn-secondary' value = 'unselected'>Unselected</button>";
+        const minMax4 = "<button type = 'button' class = 'btn btn-secondary' value = 'clients'>Clients</button>";
+        const minMax5 = "<button type = 'button' class = 'btn btn-secondary' value = 'issues'>Issues</button>";
+        const minMax6 = "<button type = 'button' class = 'btn btn-secondary' value = 'sessions'>Sessions</button>";
+
+        const select = "<div id = '" + this._selectID + "' class='btn-group btn-group-sm' role='group'></div>";
+        const select1 = "<button type = 'button' class = 'btn btn-secondary' value = 'all'>All</button>";
+        const select2 = "<button type = 'button' class = 'btn btn-secondary' value = 'clients'>Clients</button>";
+        const select3 = "<button type = 'button' class = 'btn btn-secondary' value = 'issues'>Issues</button>";
+        const select4 = "<button type = 'button' class = 'btn btn-secondary' value = 'sessions'>Sessions</button>";
+
+        const options = "<div id = '" + this._optionsID + "' class='btn-group btn-group-sm' role='group'></div>";
+        const option1 = "<button type = 'button' class = 'btn btn-secondary' value = 'import'>Import</button>";
+        const option2 = "<button type = 'button' class = 'btn btn-secondary' value = 'export'>Export</button>";
+        const option3 = "<button type = 'button' class = 'btn btn-secondary' value = 'delete'>Delete</button>";
+
+        const action = "<button id = '" + this._confirmID + "' type = 'button' class = 'btn btn-secondary'></button>";
+
+        const top = "<div>" + sort + showHide + minMax + select + importButton + "</div>";
+        const scrollArea = "<div id = '" + this._scrollAreaDiv + "'></div>";
+        const messagesDiv = "<div id = '" + this._messagesDiv + "'></div>";
+        const actionDiv = "<div>" + options + action + "</div>";
 
         this.userUtilities.div.append(button + div);
-        this.div.append(importButton);
+        this.div.append(top + scrollArea + messagesDiv + actionDiv);
+        this.sort.append(sort1 + sort2 + sort3 + sort4);
+        this.showHide.append(showHide1 + showHide2 + showHide3 + showHide4 + showHide5 + showHide6);
+        this.minMax.append(minMax1 + minMax2 + minMax3 + minMax4 + minMax5 + minMax6);
+        this.select.append(select1 + select2 + select3 + select4);
+        this.options.append(option1 + option2 + option3);
+
+
         this.importButton.prop("data-toggle", "popover");
         if (!window.FileReader) {
             this.importButton.prop("data-content", "The FileReader API is not supported by your browser.");
@@ -80,12 +169,16 @@ class UserDataUtility {
         this.div.append(exportButton);
         this.exportButton.prop("data-toggle", "popover");
         this.exportButton.prop("data-content", "Export data.");
-    }
 
-    manage() {
+        this.div.css("left", String(this.userUtilities.div.position().left) + "px");
+        this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
+
     }
 
     reset() {
+    }
+
+    manage() {
     }
 
     _exportJSON() {

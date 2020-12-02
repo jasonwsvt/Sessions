@@ -106,7 +106,7 @@ class UserLoginUtility extends StorageUtility {
 
     manage() {
         if (this._selectedUser || this.username.val()) {
-            if (this._selectedUser) { }
+            if (this._selectedUser) { }  // what would I want to do if selectedUser and not username.val?
             this._enterPasswordStep();
         }
         else { this._selectUserNameStep(); }
