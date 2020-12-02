@@ -108,6 +108,70 @@ class UserDataUtility {
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._buttonIcon + "</button>";
         const div = "<div id = '" + this._divID + "' class = 'container userMenu hidden'></div>";
 
+        const adjust = "<div id = '" + this._adjustID + "' class='btn-group btn-group-sm' role='group'></div>";
+        const adjust1 = "<button type = 'button' class = 'btn btn-secondary' value = 'sort'>Sort</button>";
+        const adjust2 = "<button type = 'button' class = 'btn btn-secondary' value = 'hide'>Hide</button>";
+        const adjust3 = "<button type = 'button' class = 'btn btn-secondary' value = 'minimize'Minimize</button>";
+
+        const options = "<div id = '" + this._optionsID + "' class='btn-group btn-group-sm' role='group'></div>";
+
+        const actions = "<div id = '" + this._actionsID + "' class='btn-group btn-group-sm' role='group'></div>";
+        const action1 = "<button type = 'button' class = 'btn btn-secondary' value = 'import'>Import</button>";
+        const action2 = "<button type = 'button' class = 'btn btn-secondary' value = 'export'>Export</button>";
+        const action3 = "<button type = 'button' class = 'btn btn-secondary' value = 'delete'>Delete</button>";
+
+        const confirm = "<button id = '" + this._confirmID + "' type = 'button' class = 'btn btn-secondary'></button>";
+
+        const top = "<div>" + adjust + options + importButton + "</div>";
+        const scrollDiv = "<div id = '" + this._scrollAreaDiv + "'></div>";
+        const messagesDiv = "<div id = '" + this._messagesDiv + "'></div>";
+        const actionDiv = "<div>" + actions + confirm + "</div>";
+
+        this.userUtilities.div.append(button + div);
+        this.div.append(top + scrollDiv + messagesDiv + actionDiv);
+        this.adjust.append(adjust1 + adjust2 + adjust3 + adjust4);
+        this.actions.append(action1 + action2 + action3);
+
+
+        this.importButton.prop("data-toggle", "popover");
+        if (!window.FileReader) {
+            this.importButton.prop("data-content", "The FileReader API is not supported by your browser.");
+            this.importButton.prop("disabled", true);
+        }
+        else {
+            this.importButton.prop("data-content", "Import data.");
+        }
+
+        this.div.append(exportButton);
+        this.exportButton.prop("data-toggle", "popover");
+        this.exportButton.prop("data-content", "Export data.");
+
+        this.div.css("left", String(this.userUtilities.div.position().left) + "px");
+        this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
+
+    }
+
+    reset() {
+        //set adjust default to sort
+        this._propagateScrollDiv();
+        this._resetActions();
+
+    }
+
+    _propagateScrollDiv() {
+
+    }
+
+    _resetActions() {
+        
+    }
+
+    manage() {
+        this.manageAdjustSection();
+        this.manageActions();
+    }
+
+    manageAdjustSection() {
         const sort = "<div id = '" + this._sortID + "' class='btn-group btn-group-sm' role='group'></div>";
         const sort1 = "<button type = 'button' class = 'btn btn-secondary' value = 'name'>A-Z</button>";
         const sort2 = "<button type = 'button' class = 'btn btn-secondary' value = 'creation'>Creation</button>";
@@ -135,50 +199,6 @@ class UserDataUtility {
         const select2 = "<button type = 'button' class = 'btn btn-secondary' value = 'clients'>Clients</button>";
         const select3 = "<button type = 'button' class = 'btn btn-secondary' value = 'issues'>Issues</button>";
         const select4 = "<button type = 'button' class = 'btn btn-secondary' value = 'sessions'>Sessions</button>";
-
-        const options = "<div id = '" + this._optionsID + "' class='btn-group btn-group-sm' role='group'></div>";
-        const option1 = "<button type = 'button' class = 'btn btn-secondary' value = 'import'>Import</button>";
-        const option2 = "<button type = 'button' class = 'btn btn-secondary' value = 'export'>Export</button>";
-        const option3 = "<button type = 'button' class = 'btn btn-secondary' value = 'delete'>Delete</button>";
-
-        const action = "<button id = '" + this._confirmID + "' type = 'button' class = 'btn btn-secondary'></button>";
-
-        const top = "<div>" + sort + showHide + minMax + select + importButton + "</div>";
-        const scrollArea = "<div id = '" + this._scrollAreaDiv + "'></div>";
-        const messagesDiv = "<div id = '" + this._messagesDiv + "'></div>";
-        const actionDiv = "<div>" + options + action + "</div>";
-
-        this.userUtilities.div.append(button + div);
-        this.div.append(top + scrollArea + messagesDiv + actionDiv);
-        this.sort.append(sort1 + sort2 + sort3 + sort4);
-        this.showHide.append(showHide1 + showHide2 + showHide3 + showHide4 + showHide5 + showHide6);
-        this.minMax.append(minMax1 + minMax2 + minMax3 + minMax4 + minMax5 + minMax6);
-        this.select.append(select1 + select2 + select3 + select4);
-        this.options.append(option1 + option2 + option3);
-
-
-        this.importButton.prop("data-toggle", "popover");
-        if (!window.FileReader) {
-            this.importButton.prop("data-content", "The FileReader API is not supported by your browser.");
-            this.importButton.prop("disabled", true);
-        }
-        else {
-            this.importButton.prop("data-content", "Import data.");
-        }
-
-        this.div.append(exportButton);
-        this.exportButton.prop("data-toggle", "popover");
-        this.exportButton.prop("data-content", "Export data.");
-
-        this.div.css("left", String(this.userUtilities.div.position().left) + "px");
-        this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
-
-    }
-
-    reset() {
-    }
-
-    manage() {
     }
 
     _exportJSON() {
@@ -226,6 +246,10 @@ class UserDataUtility {
 
         $("upload").click();
         $("hiddenDiv").remove();
+    }
+
+    delete() {
+
     }
 
     close(except) {
