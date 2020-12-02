@@ -17,6 +17,7 @@ class UserUtilities {
         this._new = new NewUserUtility(this, group);
 
         this._build();
+        this.reset();
     }
 
     get div()       { return $("#" + this._divID); }
@@ -33,20 +34,19 @@ class UserUtilities {
         this._data.build();
         this._login.build();
         this._new.build();
-
     }    
+
+    reset() {
+        this._settings.reset();
+        this._data.reset();
+        this._login.reset();
+    }
 
     manage() {
         this._settings.manage();
         this._data.manage();
         this._login.manage();
         this._new.manage();
-    }
-
-    reset() {
-        this._settings.reset();
-        this._data.reset();
-        this._login.reset();
     }
 
     closeMenus(except) {

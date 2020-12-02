@@ -23,14 +23,12 @@ class UserDataUtility {
     _buttonID = "userDataButton";
     _importButtonID = "userDataImportButton";
     _exportButtonID = "userDataExportButton";
-    _sort = "userDataUtilitySort";
-    _showHide = "userDataUtilityShowHide";
-    _minMax = "userDataUtilityMinMax";
-    _select = "userDataUtilitySelect";
-    _options = "userDataUtilityOptions";
-    _confirm = "userDataUtilityConfirm";
-    _scrollAreaDiv = "userDataUtilityScrollAreaDiv";
-    _messagesDiv = "userDataUtilityMessagesDiv";
+    _adjustID = "userDataUtilityAdjust";
+    _optionsID = "userDataUtilityOptions";
+    _actionsID = "userDataUtilityActions";
+    _confirmID = "userDataUtilityConfirm";
+    _scrollAreaDivID = "userDataUtilityScrollAreaDiv";
+    _messagesDivID = "userDataUtilityMessagesDiv";
 
     constructor (userUtilities, group) {
         const self = this;
@@ -69,6 +67,30 @@ class UserDataUtility {
                 e.stopPropagation();
             });
 
+            self.adjust.find("button").on("click", function (e) {
+                switch (this.val()) {
+                    case "sort":     break;
+                    case "hide":     if (self.adjust.data("value") == "hide") {
+                                        this.text("Show"); this.val("show");
+                                     }
+                                     break;
+                    case "show":     if (self.adjust.data("value") == "show") {
+                                         this.text("Hide"); this.val("hide");
+                                     }
+                                     break;
+                    case "minimize": if (self.adjust.data("value") == "minimize") {
+                                         this.text("Maximize"); this.val("maximize");
+                                     }
+                                     break;
+                    case "maximize": if (self.adjust.data("value") == "maximize") {
+                                         this.text("Minimize"); this.val("minimize");
+                                     }
+                                     break;
+                }
+                self.adjust.data("value", this.val());
+                self._manageAdjustSection();
+            });
+
             self.exportButton.on("click", function() {
                 self._exportJSON();
                 $(this).blur();
@@ -92,10 +114,8 @@ class UserDataUtility {
     get div()              { return $("#" + this._divID); }
     get exportButton()     { return $("#" + this._exportButtonID); }
     get importButton()     { return $("#" + this._importButtonID); }
-    get sort()             { return $("#" + this._sortID); }
-    get showHide()         { return $("#" + this._showHideID); }
-    get minMax()           { return $("#" + this._minMaxID); }
-    get select()           { return $("#" + this._selectID); }
+    get adjust()           { return $("#" + this._adjustID); }
+    get actions()          { return $("#" + this._actionsID); }
     get options()          { return $("#" + this._optionsID); }
     get confirm()          { return $("#" + this._confirmID); }
     get scrollAreaDiv()    { return $("#" + this._scrollAreaDiv); }
@@ -109,9 +129,6 @@ class UserDataUtility {
         const div = "<div id = '" + this._divID + "' class = 'container userMenu hidden'></div>";
 
         const adjust = "<div id = '" + this._adjustID + "' class='btn-group btn-group-sm' role='group'></div>";
-        const adjust1 = "<button type = 'button' class = 'btn btn-secondary' value = 'sort'>Sort</button>";
-        const adjust2 = "<button type = 'button' class = 'btn btn-secondary' value = 'hide'>Hide</button>";
-        const adjust3 = "<button type = 'button' class = 'btn btn-secondary' value = 'minimize'Minimize</button>";
 
         const options = "<div id = '" + this._optionsID + "' class='btn-group btn-group-sm' role='group'></div>";
 
@@ -123,13 +140,12 @@ class UserDataUtility {
         const confirm = "<button id = '" + this._confirmID + "' type = 'button' class = 'btn btn-secondary'></button>";
 
         const top = "<div>" + adjust + options + importButton + "</div>";
-        const scrollDiv = "<div id = '" + this._scrollAreaDiv + "'></div>";
-        const messagesDiv = "<div id = '" + this._messagesDiv + "'></div>";
+        const scrollDiv = "<div id = '" + this._scrollAreaDivID + "'></div>";
+        const messagesDiv = "<div id = '" + this._messagesDivID + "'></div>";
         const actionDiv = "<div>" + actions + confirm + "</div>";
 
         this.userUtilities.div.append(button + div);
         this.div.append(top + scrollDiv + messagesDiv + actionDiv);
-        this.adjust.append(adjust1 + adjust2 + adjust3 + adjust4);
         this.actions.append(action1 + action2 + action3);
 
 
@@ -152,7 +168,16 @@ class UserDataUtility {
     }
 
     reset() {
+        const adjust1 = "<button type = 'button' class = 'btn btn-secondary' value = 'sort'>Sort</button>";
+        const adjust2 = "<button type = 'button' class = 'btn btn-secondary' value = 'hide'>Hide</button>";
+        const adjust3 = "<button type = 'button' class = 'btn btn-secondary' value = 'minimize'>Minimize</button>";
+        this.adjust.empty();
+        this.adjust.append(adjust1 + adjust2 + adjust3);
+
         //set adjust default to sort
+        this.adjust.data("value", "sort");
+
+        this._manageAdjustSection();
         this._propagateScrollDiv();
         this._resetActions();
 
@@ -163,42 +188,32 @@ class UserDataUtility {
     }
 
     _resetActions() {
-        
+
     }
 
     manage() {
-        this.manageAdjustSection();
-        this.manageActions();
+        this._manageAdjustSection();
+        this._manageActions();
     }
 
-    manageAdjustSection() {
-        const sort = "<div id = '" + this._sortID + "' class='btn-group btn-group-sm' role='group'></div>";
-        const sort1 = "<button type = 'button' class = 'btn btn-secondary' value = 'name'>A-Z</button>";
-        const sort2 = "<button type = 'button' class = 'btn btn-secondary' value = 'creation'>Creation</button>";
-        const sort3 = "<button type = 'button' class = 'btn btn-secondary' value = 'edited'>Edited</button>";
-        const sort4 = "<button type = 'button' class = 'btn btn-secondary' value = 'opened'>Opened</button>";
+    _manageAdjustSection() {
+        var options;
+        
+        switch (this.adjust.data("value")) {
+            case "sort":     options = ["A-Z", "Creation", "Edited", "Opened"]; break;
+            case "hide":     
+            case "show":     options = ["All", "Selected", "Unselected", "Clients", "Issues", "Sessions"]; break;
+            case "minimize": 
+            case "maximize": options = ["All", "Selected", "Unselected", "Clients", "Issues", "Sessions"]; break;
+        }
+        this.options.empty();
+        options.forEach(option => {
+            this.options.append("<button type = 'button' class = 'btn btn-secondary' value = '" + option.toLowerCase() + "'>" + option + "</button>");
+        })
+    }
 
-        const showHide = "<div id = '" + this._showHideID + "' class='btn-group btn-group-sm' role='group'></div>";
-        const showHide1 = "<button type = 'button' class = 'btn btn-secondary' value = 'all'>All</button>";
-        const showHide2 = "<button type = 'button' class = 'btn btn-secondary' value = 'selected'>Selected</button>";
-        const showHide3 = "<button type = 'button' class = 'btn btn-secondary' value = 'unselected'>Unselected</button>";
-        const showHide4 = "<button type = 'button' class = 'btn btn-secondary' value = 'clients'>Clients</button>";
-        const showHide5 = "<button type = 'button' class = 'btn btn-secondary' value = 'issues'>Issues</button>";
-        const showHide6 = "<button type = 'button' class = 'btn btn-secondary' value = 'sessions'>Sessions</button>";
+    _manageActions() {
 
-        const minMax = "<div id = '" + this._minMaxID + "' class='btn-group btn-group-sm' role='group'></div>";
-        const minMax1 = "<button type = 'button' class = 'btn btn-secondary' value = 'all'>All</button>";
-        const minMax2 = "<button type = 'button' class = 'btn btn-secondary' value = 'selected'>Selected</button>";
-        const minMax3 = "<button type = 'button' class = 'btn btn-secondary' value = 'unselected'>Unselected</button>";
-        const minMax4 = "<button type = 'button' class = 'btn btn-secondary' value = 'clients'>Clients</button>";
-        const minMax5 = "<button type = 'button' class = 'btn btn-secondary' value = 'issues'>Issues</button>";
-        const minMax6 = "<button type = 'button' class = 'btn btn-secondary' value = 'sessions'>Sessions</button>";
-
-        const select = "<div id = '" + this._selectID + "' class='btn-group btn-group-sm' role='group'></div>";
-        const select1 = "<button type = 'button' class = 'btn btn-secondary' value = 'all'>All</button>";
-        const select2 = "<button type = 'button' class = 'btn btn-secondary' value = 'clients'>Clients</button>";
-        const select3 = "<button type = 'button' class = 'btn btn-secondary' value = 'issues'>Issues</button>";
-        const select4 = "<button type = 'button' class = 'btn btn-secondary' value = 'sessions'>Sessions</button>";
     }
 
     _exportJSON() {
