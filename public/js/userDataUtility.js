@@ -139,15 +139,26 @@ class UserDataUtility {
 
         const confirm = "<button id = '" + this._confirmID + "' type = 'button' class = 'btn btn-secondary'></button>";
 
-        const top = "<div>" + adjust + options + importButton + "</div>";
+        const topLeft = "<div class = 'd-flex flex-row'>" + adjust + ":" + options + "</div>";
+        const topRight = "<div>" + importButton + "</div>";
+        const top = "<div class = 'd-flex flex-row justify-content-between'>" + topLeft + topRight + "</div>";
         const scrollDiv = "<div id = '" + this._scrollAreaDivID + "'></div>";
         const messagesDiv = "<div id = '" + this._messagesDivID + "'></div>";
-        const actionDiv = "<div>" + actions + confirm + "</div>";
+        const actionDiv = "<div class = 'd-flex justify-content-start'>" + actions + confirm + "</div>";
 
         this.userUtilities.div.append(button + div);
         this.div.append(top + scrollDiv + messagesDiv + actionDiv);
         this.actions.append(action1 + action2 + action3);
 
+        this.adjust.data("unselectedClass", "btn-secondary");
+        this.adjust.data("selectedClass", "btn-primary");
+        this.adjust.data("value", "sort");
+
+        this.options.data("unselectedClass", "btn-secondary");
+        this.options.data("selectedClass", "btn-primary");
+
+        this.actions.data("unselectedClass", "btn-secondary");
+        this.actions.data("selectedClass", "btn-primary");
 
         this.importButton.prop("data-toggle", "popover");
         if (!window.FileReader) {
@@ -158,9 +169,9 @@ class UserDataUtility {
             this.importButton.prop("data-content", "Import data.");
         }
 
-        this.div.append(exportButton);
-        this.exportButton.prop("data-toggle", "popover");
-        this.exportButton.prop("data-content", "Export data.");
+//        this.div.append(exportButton);
+//        this.exportButton.prop("data-toggle", "popover");
+//        this.exportButton.prop("data-content", "Export data.");
 
         this.div.css("left", String(this.userUtilities.div.position().left) + "px");
         this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
@@ -176,6 +187,13 @@ class UserDataUtility {
 
         //set adjust default to sort
         this.adjust.data("value", "sort");
+
+        //set options defaults for each adjust value
+        this.adjust.data("sort", "A-Z");
+        this.adjust.data("hide", "Selected");
+        this.adjust.data("show", "Selected");
+        this.adjust.data("minimize", "Selected");
+        this.adjust.data("maximize", "Selected");
 
         this._manageAdjustSection();
         this._propagateScrollDiv();
@@ -206,10 +224,45 @@ class UserDataUtility {
             case "minimize": 
             case "maximize": options = ["All", "Selected", "Unselected", "Clients", "Issues", "Sessions"]; break;
         }
+        this._manageGroup(this.adjust);
+
         this.options.empty();
         options.forEach(option => {
             this.options.append("<button type = 'button' class = 'btn btn-secondary' value = '" + option.toLowerCase() + "'>" + option + "</button>");
-        })
+        });
+        //this.adjust.data("value") is the current adjust selection (sort, hide, minimize, etc)
+        //this.adjust.data(this.adjust.data("value"))
+        //    is the last selected value for options when that adjust value was selected
+        //    e.g. adjust.data("value") == sort -> adjust.data("sort") == A-Z
+        this.options.data("value", this.adjust.data(this.adjust.data("value")));
+    }
+
+    _manageOptions() {
+
+    }
+
+    _manageActions() {
+        
+    }
+
+    _manageGroup(group) {
+        var i, button;
+        for (i = 0; i < group.find("button").length; i++) {
+            button = group.find("button").eq(i);
+//            console.log(button, button.val(), group.data("value"));
+            if (group.data("value") == button.val()) {
+//                console.log("setting button", i, "to selected");
+                if (button.hasClass(group.data("unselectedClass"))) {
+                    button.removeClass(group.data("unselectedClass"));
+                    button.addClass(group.data("selectedClass"));
+                }
+            }
+            else {
+//                console.log("setting button", i, "to unselected");
+                button.removeClass(group.data("selectedClass"));
+                button.addClass(group.data("unselectedClass"));
+            }
+        }
     }
 
     _manageActions() {

@@ -17,7 +17,6 @@ class UserUtilities {
         this._new = new NewUserUtility(this, group);
 
         this._build();
-        this.reset();
     }
 
     get div()       { return $("#" + this._divID); }
