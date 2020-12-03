@@ -18,8 +18,8 @@ class Utilities {
         this._sliderUtility = new SliderUtility(this);
         this._infoUtility = new InfoUtility(this);
 
-        this.manage("user");  //switch to "user" once userItility is created
         this._userUtilities.reset();
+        this.manage("user");  //switch to "user" once userItility is created
 
         $(document).ready(function() {
             $("html").on("click", function(e) {

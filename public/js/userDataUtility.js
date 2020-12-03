@@ -88,6 +88,7 @@ class UserDataUtility {
                                      break;
                 }
                 self.adjust.data("value", $(this).val());
+                self.options.data("value", self.adjust.data(self.adjust.data("value")));
                 $(this).blur();
                 self._manageAdjustSection();
             });
@@ -196,6 +197,7 @@ class UserDataUtility {
         this.adjust.data("minimize", "Selected");
         this.adjust.data("maximize", "Selected");
 
+        console.log(this.adjust.data("value"), this.adjust.data(this.adjust.data("value")));
         this.options.data("value", this.adjust.data(this.adjust.data("value")));
 
         this._manageAdjustSection();
