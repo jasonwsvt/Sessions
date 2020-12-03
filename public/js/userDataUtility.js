@@ -68,26 +68,27 @@ class UserDataUtility {
             });
 
             self.adjust.find("button").on("click", function (e) {
-                switch (this.val()) {
+                switch ($(this).val()) {
                     case "sort":     break;
                     case "hide":     if (self.adjust.data("value") == "hide") {
-                                        this.text("Show"); this.val("show");
+                                     $(this).text("Show"); $(this).val("show");
                                      }
                                      break;
                     case "show":     if (self.adjust.data("value") == "show") {
-                                         this.text("Hide"); this.val("hide");
+                                     $(this).text("Hide"); $(this).val("hide");
                                      }
                                      break;
                     case "minimize": if (self.adjust.data("value") == "minimize") {
-                                         this.text("Maximize"); this.val("maximize");
+                                     $(this).text("Maximize"); $(this).val("maximize");
                                      }
                                      break;
                     case "maximize": if (self.adjust.data("value") == "maximize") {
-                                         this.text("Minimize"); this.val("minimize");
+                                     $(this).text("Minimize"); $(this).val("minimize");
                                      }
                                      break;
                 }
-                self.adjust.data("value", this.val());
+                self.adjust.data("value", $(this).val());
+                $(this).blur();
                 self._manageAdjustSection();
             });
 
@@ -195,6 +196,8 @@ class UserDataUtility {
         this.adjust.data("minimize", "Selected");
         this.adjust.data("maximize", "Selected");
 
+        this.options.data("value", this.adjust.data(this.adjust.data("value")));
+
         this._manageAdjustSection();
         this._propagateScrollDiv();
         this._resetActions();
@@ -215,7 +218,7 @@ class UserDataUtility {
     }
 
     _manageAdjustSection() {
-        var options;
+        var options, self = this;
         
         switch (this.adjust.data("value")) {
             case "sort":     options = ["A-Z", "Creation", "Edited", "Opened"]; break;
@@ -230,6 +233,16 @@ class UserDataUtility {
         options.forEach(option => {
             this.options.append("<button type = 'button' class = 'btn btn-secondary' value = '" + option.toLowerCase() + "'>" + option + "</button>");
         });
+        this._manageGroup(this.options);
+
+        this.options.find("button").on("click", function (e) {
+            self.options.data("value", $(this).val());
+            self.adjust.data(self.adjust.data("value"), $(this).val());
+            $(this).blur();
+            self._manageAdjustSection();
+            self._doAdjustOption();
+        });
+
         //this.adjust.data("value") is the current adjust selection (sort, hide, minimize, etc)
         //this.adjust.data(this.adjust.data("value"))
         //    is the last selected value for options when that adjust value was selected
@@ -247,10 +260,13 @@ class UserDataUtility {
 
     _manageGroup(group) {
         var i, button;
+        if (group.find("button").length == 0) { console.trace(); return; }
+        console.log(group);
         for (i = 0; i < group.find("button").length; i++) {
             button = group.find("button").eq(i);
-//            console.log(button, button.val(), group.data("value"));
-            if (group.data("value") == button.val()) {
+            console.log(group.data("value"));
+            console.log(button.val());
+            if (group.data("value").toLowerCase() == button.val().toLowerCase()) {
 //                console.log("setting button", i, "to selected");
                 if (button.hasClass(group.data("unselectedClass"))) {
                     button.removeClass(group.data("unselectedClass"));
@@ -267,6 +283,10 @@ class UserDataUtility {
 
     _manageActions() {
 
+    }
+
+    _doAdjustOption() {
+        console.log(this.adjust.data("value"), this.options.data("value"));
     }
 
     _exportJSON() {
