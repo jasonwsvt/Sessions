@@ -68,27 +68,10 @@ class UserDataUtility {
             });
 
             self.adjust.find("button").on("click", function (e) {
-                switch ($(this).val()) {
-                    case "sort":     break;
-                    case "hide":     if (self.adjust.data("value") == "hide") {
-                                     $(this).text("Show"); $(this).val("show");
-                                     }
-                                     break;
-                    case "show":     if (self.adjust.data("value") == "show") {
-                                     $(this).text("Hide"); $(this).val("hide");
-                                     }
-                                     break;
-                    case "minimize": if (self.adjust.data("value") == "minimize") {
-                                     $(this).text("Maximize"); $(this).val("maximize");
-                                     }
-                                     break;
-                    case "maximize": if (self.adjust.data("value") == "maximize") {
-                                     $(this).text("Minimize"); $(this).val("minimize");
-                                     }
-                                     break;
-                }
                 self.adjust.data("value", $(this).val());
-                self.options.data("value", self.adjust.data(self.adjust.data("value")));
+                if ($(this).val() == "sort") {
+                    self.options.data("value", self.adjust.data(self.adjust.data("value")));
+                }
                 $(this).blur();
                 self._manageAdjustSection();
             });
@@ -120,8 +103,8 @@ class UserDataUtility {
     get actions()          { return $("#" + this._actionsID); }
     get options()          { return $("#" + this._optionsID); }
     get confirm()          { return $("#" + this._confirmID); }
-    get scrollAreaDiv()    { return $("#" + this._scrollAreaDiv); }
-    get messagesDiv()      { return $("#" + this._messagesDiv); }
+    get scrollAreaDiv()    { return $("#" + this._scrollAreaDivID); }
+    get messagesDiv()      { return $("#" + this._messagesDivID); }
 
     build() {
         const importButton = "<button id = '" + this._importButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._importIcon + "</button>";
@@ -145,13 +128,18 @@ class UserDataUtility {
         const topRight = "<div>" + importButton + "</div>";
         const top = "<div class = 'd-flex flex-row justify-content-between'>" + topLeft + topRight + "</div>";
         const scrollDiv = "<div id = '" + this._scrollAreaDivID + "'></div>";
-        const messagesDiv = "<div id = '" + this._messagesDivID + "'></div>";
+        const messagesDiv = "<div id = '" + this._messagesDivID + "' style = 'text-align: center'></div>";
         const actionDiv = "<div class = 'd-flex justify-content-start'>" + actions + confirm + "</div>";
 
         this.userUtilities.div.append(button + div);
         this.div.append(top + scrollDiv + messagesDiv + actionDiv);
         this.actions.append(action1 + action2 + action3);
 
+        const adjust1 = "<button type = 'button' class = 'btn btn-secondary' value = 'sort'>Sort</button>";
+        const adjust2 = "<button type = 'button' class = 'btn btn-secondary' value = 'maximize'>Maximize</button>";
+        const adjust3 = "<button type = 'button' class = 'btn btn-secondary' value = 'minimize'>Minimize</button>";
+        const adjust4 = "<button type = 'button' class = 'btn btn-secondary' value = 'hide'>Hide</button>";
+        this.adjust.append(adjust1 + adjust2 + adjust3 + adjust4);
         this.adjust.data("unselectedClass", "btn-secondary");
         this.adjust.data("selectedClass", "btn-primary");
         this.adjust.data("value", "sort");
@@ -181,29 +169,25 @@ class UserDataUtility {
     }
 
     reset() {
-        const adjust1 = "<button type = 'button' class = 'btn btn-secondary' value = 'sort'>Sort</button>";
-        const adjust2 = "<button type = 'button' class = 'btn btn-secondary' value = 'hide'>Hide</button>";
-        const adjust3 = "<button type = 'button' class = 'btn btn-secondary' value = 'minimize'>Minimize</button>";
-        this.adjust.empty();
-        this.adjust.append(adjust1 + adjust2 + adjust3);
-
         //set adjust default to sort
         this.adjust.data("value", "sort");
 
-        //set options defaults for each adjust value
-        this.adjust.data("sort", "A-Z");
-        this.adjust.data("hide", "Selected");
-        this.adjust.data("show", "Selected");
-        this.adjust.data("minimize", "Selected");
-        this.adjust.data("maximize", "Selected");
+        //set default sort type
+        this.adjust.data("sort", "creation");
 
-        console.log(this.adjust.data("value"), this.adjust.data(this.adjust.data("value")));
-        this.options.data("value", this.adjust.data(this.adjust.data("value")));
+        //console.log(this.adjust.data("value"), this.adjust.data(this.adjust.data("value")));
+        if (this.adjust.data("value") == "sort") {
+            this.options.data("value", this.adjust.data(this.adjust.data("value")));
+        }
 
         this._manageAdjustSection();
+
         this._propagateScrollDiv();
         this._resetActions();
-
+        
+        console.log(this.messagesDiv);
+        this.messagesDiv.text("Please select records to perform an action.");
+        if (!this.confirm.hasClass("hidden")) { this.confirm.addClass("hidden"); }
     }
 
     _propagateScrollDiv() {
@@ -224,10 +208,9 @@ class UserDataUtility {
         
         switch (this.adjust.data("value")) {
             case "sort":     options = ["A-Z", "Creation", "Edited", "Opened"]; break;
-            case "hide":     
-            case "show":     options = ["All", "Selected", "Unselected", "Clients", "Issues", "Sessions"]; break;
-            case "minimize": 
-            case "maximize": options = ["All", "Selected", "Unselected", "Clients", "Issues", "Sessions"]; break;
+            case "maximize": 
+            case "minimize": options = ["All", "Selected", "Unselected"]; break;
+            case "hide":     options = ["All", "Selected", "Unselected"]; break;
         }
         this._manageGroup(this.adjust);
 
