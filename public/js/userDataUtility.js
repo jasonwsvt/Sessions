@@ -26,9 +26,11 @@ class UserDataUtility {
     _adjustID = "userDataUtilityAdjust";
     _optionsID = "userDataUtilityOptions";
     _actionsID = "userDataUtilityActions";
-    _confirmID = "userDataUtilityConfirm";
+    _acknowledgeID = "userDataUtilityAcknowledge";
+    _executeID = "userDataUtilityexecute";
     _scrollAreaDivID = "userDataUtilityScrollAreaDiv";
     _messagesDivID = "userDataUtilityMessagesDiv";
+    _actionDivID = "userDataUtilityActionDiv";
 
     constructor (userUtilities, group) {
         const self = this;
@@ -102,9 +104,11 @@ class UserDataUtility {
     get adjust()           { return $("#" + this._adjustID); }
     get actions()          { return $("#" + this._actionsID); }
     get options()          { return $("#" + this._optionsID); }
-    get confirm()          { return $("#" + this._confirmID); }
+    get acknowledge()      { return $("#" + this._acknowledgeID); }
+    get execute()          { return $("#" + this._executeID); }
     get scrollAreaDiv()    { return $("#" + this._scrollAreaDivID); }
     get messagesDiv()      { return $("#" + this._messagesDivID); }
+    get actionDiv()      { return $("#" + this._actionDivID); }
 
     build() {
         const importButton = "<button id = '" + this._importButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._importIcon + "</button>";
@@ -122,14 +126,16 @@ class UserDataUtility {
         const action2 = "<button type = 'button' class = 'btn btn-secondary' value = 'export'>Export</button>";
         const action3 = "<button type = 'button' class = 'btn btn-secondary' value = 'delete'>Delete</button>";
 
-        const confirm = "<button id = '" + this._confirmID + "' type = 'button' class = 'btn btn-secondary'></button>";
+        const acknowledge = "<button id = '" + this._acknowledgeID + "' type = 'button' class = 'btn btn-secondary'>Acknowledge</button>";
 
-        const topLeft = "<div class = 'd-flex flex-row'>" + adjust + ":" + options + "</div>";
-        const topRight = "<div>" + importButton + "</div>";
+        const execute = "<button id = '" + this._executeID + "' type = 'button' class = 'btn btn-secondary'></button>";
+
+        const topLeft = "<div class = 'd-flex flex-row'>" + adjust + "</div>";
+        const topRight = "<div>" + options + "</div>";
         const top = "<div class = 'd-flex flex-row justify-content-between'>" + topLeft + topRight + "</div>";
         const scrollDiv = "<div id = '" + this._scrollAreaDivID + "'></div>";
         const messagesDiv = "<div id = '" + this._messagesDivID + "' style = 'text-align: center'></div>";
-        const actionDiv = "<div class = 'd-flex justify-content-start'>" + actions + confirm + "</div>";
+        const actionDiv = "<div id = '" + this._actionDivID + "' class = 'd-flex justify-content-start'>" + actions + acknowledge + execute + "</div>";
 
         this.userUtilities.div.append(button + div);
         this.div.append(top + scrollDiv + messagesDiv + actionDiv);
@@ -139,7 +145,8 @@ class UserDataUtility {
         const adjust2 = "<button type = 'button' class = 'btn btn-secondary' value = 'maximize'>Maximize</button>";
         const adjust3 = "<button type = 'button' class = 'btn btn-secondary' value = 'minimize'>Minimize</button>";
         const adjust4 = "<button type = 'button' class = 'btn btn-secondary' value = 'hide'>Hide</button>";
-        this.adjust.append(adjust1 + adjust2 + adjust3 + adjust4);
+        const adjust5 = "<button type = 'button' class = 'btn btn-secondary' value = 'select'>Select</button>";
+        this.adjust.append(adjust1 + adjust2 + adjust3 + adjust4 + adjust5);
         this.adjust.data("unselectedClass", "btn-secondary");
         this.adjust.data("selectedClass", "btn-primary");
         this.adjust.data("value", "sort");
@@ -182,19 +189,16 @@ class UserDataUtility {
 
         this._manageAdjustSection();
 
-        this._propagateScrollDiv();
-        this._resetActions();
-        
         console.log(this.messagesDiv);
-        this.messagesDiv.text("Please select records to perform an action.");
-        if (!this.confirm.hasClass("hidden")) { this.confirm.addClass("hidden"); }
+        this.messagesDiv.text("Please select one or more records to perform an action.");
+
+        this._propagateScrollDiv();
+
+        if (!this.actionDiv.hasClass("hidden")) { this.actionDiv.addClass("hidden"); }
+        this.actions.data("value", "");
     }
 
     _propagateScrollDiv() {
-
-    }
-
-    _resetActions() {
 
     }
 
@@ -211,6 +215,7 @@ class UserDataUtility {
             case "maximize": 
             case "minimize": options = ["All", "Selected", "Unselected"]; break;
             case "hide":     options = ["All", "Selected", "Unselected"]; break;
+            case "select":   options = ["All", "None", "Same", "Different"]; break;
         }
         this._manageGroup(this.adjust);
 
@@ -274,8 +279,13 @@ class UserDataUtility {
         console.log(this.adjust.data("value"), this.options.data("value"));
     }
 
+    _pullUserData() {
+        this.currentUser.pushToStorage();
+        const data = this.currentUser.createJSON();
+    }
+
     _exportJSON() {
-        const blob1 = new Blob(this.currentUser.createJSON(), { type: "text/plain;charset=utf-8" });
+        const blob1 = new Blob(this.dataToExport(), { type: "text/plain;charset=utf-8" });
         const name = this.currentUser.username + ".json";
  
         //Check the Browser.
