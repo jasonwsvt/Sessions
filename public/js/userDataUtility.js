@@ -18,6 +18,8 @@ class UserDataUtility {
     _trashIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-trash' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z'/><path fill-rule='evenodd' d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z'/></svg>";
     _exportIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-download' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z'/><path fill-rule='evenodd' d='M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z'/></svg>";
     _importIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-upload' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z'/><path fill-rule='evenodd' d='M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z'/></svg>";
+    _downArrow = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-arrow-down' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z'/></svg>";
+    _upArrow = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-arrow-up' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z'/></svg>";
 
     _divID = "userDataDiv";
     _buttonID = "userDataButton";
@@ -151,8 +153,35 @@ class UserDataUtility {
         this.adjust.data("selectedClass", "btn-primary");
         this.adjust.data("value", "sort");
 
-        this.options.data("unselectedClass", "btn-secondary");
-        this.options.data("selectedClass", "btn-primary");
+        this.options.data("sort", "A-Z, Creation, Edited, Opened");
+        this.options.data("maximize", "All, Selected, Unselected");
+        this.options.data("minimize", "All, Selected, Unselected");
+        this.options.data("hide", "All, Selected, Unselected");
+        this.options.data("select", "All, None, Newest");
+        this.options.data("default_unselectedClass", "btn-info");
+        this.options.data("default_selectedClass", "btn-info");
+        this.options.data("sort_unselectedClass", "btn-dark");
+        this.options.data("sort_selectedClass", "btn-light");
+        this.options.data("sort_0_selected_0", downArrow + "A-Z");
+        this.options.data("sort_0_selected_1", upArrow + "A-Z");
+        this.options.data("sort_1_selected_0", downArrow + "Creation");
+        this.options.data("sort_1_selected_1", upArrow + "Creation");
+        this.options.data("sort_2_selected_0", downArrow + "Edited");
+        this.options.data("sort_2_selected_1", upArrow + "Edited");
+        this.options.data("sort_3_selected_0", downArrow + "Opened");
+        this.options.data("sort_3_selected_1", upArrow + "Opened");
+        this.options.data("maximize_0", "All");
+        this.options.data("maximize_1", "Selected");
+        this.options.data("maximize_2", "Unselected");
+        this.options.data("minimize_0", "All");
+        this.options.data("minimize_1", "Selected");
+        this.options.data("minimize_2", "Unselected");
+        this.options.data("hide_0", "All");
+        this.options.data("hide_1", "Selected");
+        this.options.data("hide_2", "Unselected");
+        this.options.data("select_0", "All");
+        this.options.data("select_1", "None");
+        this.options.data("select_2", "Newest");
 
         this.actions.data("unselectedClass", "btn-secondary");
         this.actions.data("selectedClass", "btn-primary");
@@ -208,17 +237,19 @@ class UserDataUtility {
     }
 
     _manageAdjustSection() {
-        var options, self = this;
-        
-        switch (this.adjust.data("value")) {
-            case "sort":     options = ["A-Z", "Creation", "Edited", "Opened"]; break;
-            case "maximize": 
-            case "minimize": options = ["All", "Selected", "Unselected"]; break;
-            case "hide":     options = ["All", "Selected", "Unselected"]; break;
-            case "select":   options = ["All", "None", "Same", "Different"]; break;
-        }
-        this._manageGroup(this.adjust);
+        const self = this;
 
+        this._manageGroup(this.adjust);
+        if (this.options.data(this.adjust.data("value") + "_selectedClass")) {
+            this.options.data("unselectedClass", this.options.data(this.adjust.data("value") + "_unselectedClass"));
+            this.options.data("selectedClass", this.options.data(this.adjust.data("value") + "_selectedClass"));
+        }
+        else {
+            this.options.data("unselectedClass", this.options.data("default_unselectedClass"));
+            this.options.data("selectedClass", this.options.data("default_selectedClass"));
+        }
+        
+        const options = this.options.data(this.adjust.data("value")).split(", ");
         this.options.empty();
         options.forEach(option => {
             this.options.append("<button type = 'button' class = 'btn btn-secondary' value = '" + option.toLowerCase() + "'>" + option + "</button>");
@@ -257,14 +288,12 @@ class UserDataUtility {
             console.log(group.data("value"));
             console.log(button.val());
             if (group.data("value").toLowerCase() == button.val().toLowerCase()) {
-//                console.log("setting button", i, "to selected");
-                if (button.hasClass(group.data("unselectedClass"))) {
-                    button.removeClass(group.data("unselectedClass"));
-                    button.addClass(group.data("selectedClass"));
-                }
+                console.log("setting button", i, "to", group.data("unselectedClass"));
+                button.removeClass(group.data("unselectedClass"));
+                button.addClass(group.data("selectedClass"));
             }
             else {
-//                console.log("setting button", i, "to unselected");
+                console.log("setting button", i, "to", group.data("selectedClass"));
                 button.removeClass(group.data("selectedClass"));
                 button.addClass(group.data("unselectedClass"));
             }
