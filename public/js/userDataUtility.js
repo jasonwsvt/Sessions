@@ -73,11 +73,31 @@ class UserDataUtility {
 
             self.adjust.find("button").on("click", function (e) {
                 self.adjust.data("value", $(this).val());
+                self.adjust.data("index", self.adjust.find("button").index(this));
                 if ($(this).val() == "sort") {
                     self.options.data("value", self.adjust.data(self.adjust.data("value")));
                 }
+                else {
+                    self.options.data("value", "");
+                }
                 $(this).blur();
                 self._manageAdjustSection();
+            });
+
+            self.options.find("button").on("click", function (e) {
+                const adjust = self.adjust.data("value");
+                const last = self.options.data("value");
+                const cur = $(this).val();
+                self.options.data("value", cur);
+                const options = this.getOptionValues();
+                if (cur == last && options.length > 1) {
+                    const index = options.indexOf(cur);
+                    const length = options.length;
+                    if (index < length - 1) { index++; }
+                    else { index = 0; }
+                    $(this).html(options[index]);
+                    $(this).val(options[index]);
+                }
             });
 
             self.exportButton.on("click", function() {
@@ -149,39 +169,63 @@ class UserDataUtility {
         const adjust4 = "<button type = 'button' class = 'btn btn-secondary' value = 'hide'>Hide</button>";
         const adjust5 = "<button type = 'button' class = 'btn btn-secondary' value = 'select'>Select</button>";
         this.adjust.append(adjust1 + adjust2 + adjust3 + adjust4 + adjust5);
+
         this.adjust.data("unselectedClass", "btn-secondary");
         this.adjust.data("selectedClass", "btn-primary");
         this.adjust.data("value", "sort");
 
-        this.options.data("sort", "A-Z, Creation, Edited, Opened");
-        this.options.data("maximize", "All, Selected, Unselected");
-        this.options.data("minimize", "All, Selected, Unselected");
-        this.options.data("hide", "All, Selected, Unselected");
-        this.options.data("select", "All, None, Newest");
         this.options.data("default_unselectedClass", "btn-info");
         this.options.data("default_selectedClass", "btn-info");
         this.options.data("sort_unselectedClass", "btn-dark");
         this.options.data("sort_selectedClass", "btn-light");
-        this.options.data("sort_0_selected_0", downArrow + "A-Z");
-        this.options.data("sort_0_selected_1", upArrow + "A-Z");
-        this.options.data("sort_1_selected_0", downArrow + "Creation");
-        this.options.data("sort_1_selected_1", upArrow + "Creation");
-        this.options.data("sort_2_selected_0", downArrow + "Edited");
-        this.options.data("sort_2_selected_1", upArrow + "Edited");
-        this.options.data("sort_3_selected_0", downArrow + "Opened");
-        this.options.data("sort_3_selected_1", upArrow + "Opened");
-        this.options.data("maximize_0", "All");
-        this.options.data("maximize_1", "Selected");
-        this.options.data("maximize_2", "Unselected");
-        this.options.data("minimize_0", "All");
-        this.options.data("minimize_1", "Selected");
-        this.options.data("minimize_2", "Unselected");
-        this.options.data("hide_0", "All");
-        this.options.data("hide_1", "Selected");
-        this.options.data("hide_2", "Unselected");
-        this.options.data("select_0", "All");
-        this.options.data("select_1", "None");
-        this.options.data("select_2", "Newest");
+        this.options.data("sort_0_0_selected_html", downArrow + "A-Z");
+        this.options.data("sort_0_0_unselected_html", "A-Z");
+        this.options.data("sort_0_0_value", "sort alphabetic descending");
+        this.options.data("sort_0_1_selected_html", upArrow + "A-Z");
+        this.options.data("sort_0_1_unselected_html", "A-Z");
+        this.options.data("sort_0_1_value", "sort alphabetic ascending");
+        this.options.data("sort_1_0_selected_html", downArrow + "Creation");
+        this.options.data("sort_1_0_unselected_html", "Creation");
+        this.options.data("sort_1_0_value", "sort creation descending");
+        this.options.data("sort_1_1_selected_html", upArrow + "Creation");
+        this.options.data("sort_1_1_unselected_html", "Creation");
+        this.options.data("sort_1_1_value", "sort creation ascending");
+        this.options.data("sort_2_0_selected_html", downArrow + "Edited");
+        this.options.data("sort_2_0_unselected_html", "Edited");
+        this.options.data("sort_2_0_value", "sort edited descending");
+        this.options.data("sort_2_1_selected_html", upArrow + "Edited");
+        this.options.data("sort_2_1_unselected_html", "Edited");
+        this.options.data("sort_2_1_value", "sort edited ascending");
+        this.options.data("sort_3_0_selected_html", downArrow + "Opened");
+        this.options.data("sort_3_0_unselected_html", "Opened");
+        this.options.data("sort_3_0_value", "sort opened descending");
+        this.options.data("sort_3_1_selected_html", upArrow + "Opened");
+        this.options.data("sort_3_1_unselected_html", "Opened");
+        this.options.data("sort_3_1_value", "sort opened ascending");
+        this.options.data("maximize_0_html", "All");
+        this.options.data("maximize_0_value", "maximize all");
+        this.options.data("maximize_1_html", "Selected");
+        this.options.data("maximize_1_value", "maximize selected");
+        this.options.data("maximize_2_html", "Unselected");
+        this.options.data("maximize_2_value", "maximize unselected");
+        this.options.data("minimize_0_html", "All");
+        this.options.data("minimize_0_value", "minimize all");
+        this.options.data("minimize_1_html", "Selected");
+        this.options.data("minimize_1_value", "minimize selected");
+        this.options.data("minimize_2_html", "Unselected");
+        this.options.data("minimize_2_value", "minimize unselected");
+        this.options.data("hide_0_html", "Sessions");
+        this.options.data("hide_0_value", "hide sessions");
+        this.options.data("hide_1_html", "Selected");
+        this.options.data("hide_1_value", "hide selected");
+        this.options.data("hide_2_html", "Unselected");
+        this.options.data("hide_2_value", "hide unselected");
+        this.options.data("select_0_html", "All");
+        this.options.data("select_0_value", "select all");
+        this.options.data("select_1_html", "None");
+        this.options.data("select_1_value", "select none");
+        this.options.data("select_2_html", "Newest");
+        this.options.data("select_2_value", "select newest");
 
         this.actions.data("unselectedClass", "btn-secondary");
         this.actions.data("selectedClass", "btn-primary");
@@ -214,6 +258,9 @@ class UserDataUtility {
         //console.log(this.adjust.data("value"), this.adjust.data(this.adjust.data("value")));
         if (this.adjust.data("value") == "sort") {
             this.options.data("value", this.adjust.data(this.adjust.data("value")));
+        }
+        else {
+            this.options.data("value", "");
         }
 
         this._manageAdjustSection();
@@ -362,6 +409,32 @@ class UserDataUtility {
 
     delete() {
 
+    }
+
+    getOptionValues() {
+        const adjust = this.adjust.data("value");
+        const index = this.options.data("index");
+        const values = [];
+        var i = 0, value;
+
+        value = this.options.data(adjust + "_" + index);
+
+        if (value) {
+            return [value];
+        }
+        else {
+            while (true) {
+                value = this.options.data(adjust + "_" + index + "_" + i);
+                if (value) {
+                    values.push(value);
+                    i++;
+                }
+                else {
+                    break;
+                }
+            }
+            return values;
+        }
     }
 
     close(except) {
