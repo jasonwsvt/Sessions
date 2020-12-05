@@ -45,7 +45,7 @@ class UserDataUtility {
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     this.blur();
-                    self.manage();
+                    //self.manage();
                 }
                 else {
                     self.close();
@@ -154,7 +154,7 @@ class UserDataUtility {
         this.options.data("default_unselectedClass", "btn-info");
         this.options.data("default_selectedClass", "btn-info");
 
-        this.options.data("default", "sort_1_0_selected");
+        this.options.data("sort_default", "sort_1_0_selected");
         this.options.data("sort_indices", 4);
         this.options.data("sort_default", "sort_0_0_selected");
         this.options.data("sort_unselectedClass", "btn-dark");
@@ -299,12 +299,10 @@ class UserDataUtility {
             this.options.data("selectedClass", this.options.data("default_selectedClass"));
         }
 
-        if (this.options.data(adjust + "_lastValue")) {
-            this.options.data("value", this.options.data(adjust + "_lastValue"));
-        } else if (this.options.data(adjust + "_default")) {
-            this.options.data("value", this.options.data(adjust + "_default"));
-        }
-
+        this.options.data("value",
+            (this.options.data(adjust + "_lastValue")) ? this.options.data(adjust + "_lastValue") :
+            (this.options.data(adjust + "_default")) ? this.options.data(adjust + "_default") : "");
+        console.log(adjust, indices, this.options.data("value"));
         this.options.empty();
         for (var i = 0; i < indices; i++) {
             this.options.append("<button type = 'button' class = 'btn'></button>");
@@ -324,18 +322,23 @@ class UserDataUtility {
         var value, params, adjust, index, indices, state, states, name, i, button, lastIndex;
         value = this.options.data("value");
 
-        params = value.split("_");
-        adjust = params[0];
-        index = params[1];
-        if (params.length = 4) {
-            state = params[2];
-            this.options.data(adjust + "_" + index + "_state", state);
-            this.options.data(adjust + "_lastIndex", this.options.data(adjust + "_index"));
-            lastIndex = this.options.data(adjust + "_lastIndex");
+        if (value) {
+            params = value.split("_");
+            adjust = params[0];
+            index = params[1];
+            if (params.length = 4) {
+                state = params[2];
+                this.options.data(adjust + "_" + index + "_state", state);
+                this.options.data(adjust + "_lastIndex", this.options.data(adjust + "_index"));
+                lastIndex = this.options.data(adjust + "_lastIndex");
             }
-        this.options.data(adjust + "_index", index);
-
+            this.options.data(adjust + "_index", index);
+        }
+        else {
+            adjust = this.adjust.data("value");
+        }
         indices = this.options.data(adjust + "_indices");
+        console.log(this.options.data(), value, adjust, index, state, lastIndex, indices);
         for (i = 0; i < indices; i++) {
             value = adjust + "_" + i + "_";
             states = this.options.data(value + "states");
