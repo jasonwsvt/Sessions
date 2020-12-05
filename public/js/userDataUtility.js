@@ -81,23 +81,7 @@ class UserDataUtility {
                     self.options.data("value", "");
                 }
                 $(this).blur();
-                self._manageAdjustSection();
-            });
-
-            self.options.find("button").on("click", function (e) {
-                const adjust = self.adjust.data("value");
-                const last = self.options.data("value");
-                const cur = $(this).val();
-                self.options.data("value", cur);
-                const options = this.getOptionValues();
-                if (cur == last && options.length > 1) {
-                    const index = options.indexOf(cur);
-                    const length = options.length;
-                    if (index < length - 1) { index++; }
-                    else { index = 0; }
-                    $(this).html(options[index]);
-                    $(this).val(options[index]);
-                }
+                self._manageAdjustButtons();
             });
 
             self.exportButton.on("click", function() {
@@ -179,37 +163,37 @@ class UserDataUtility {
 
         this.options.data("default", "sort_1_0_selected");
         this.options.data("sort_indices", "4");
-        this.options.data("sort_default", "0_0");
+        this.options.data("sort_default", "sort_0_0_selected");
         this.options.data("sort_unselectedClass", "btn-dark");
-        this.options.data("sort_selectedClass", "btn-light");
+        this.options.data("sort_selectedClass", "btn-info");
         this.options.data("sort_0_state", "0");
         this.options.data("sort_0_states", "2");
-        this.options.data("sort_0_0_selected", downArrow + "A-Z");
+        this.options.data("sort_0_0_selected", this._downArrow + "A-Z");
         this.options.data("sort_0_0_unselected", "A-Z");
         this.options.data("sort_0_0_value", "sort alphabetic descending");
-        this.options.data("sort_0_1_selected", upArrow + "A-Z");
+        this.options.data("sort_0_1_selected", this._upArrow + "A-Z");
         this.options.data("sort_0_1_unselected", "A-Z");
         this.options.data("sort_0_1_value", "sort alphabetic ascending");
-        this.options.data("sort_1_0_selected", downArrow + "Creation");
+        this.options.data("sort_1_0_selected", this._downArrow + "Creation");
         this.options.data("sort_1_0_unselected", "Creation");
         this.options.data("sort_1_0_value", "sort creation descending");
-        this.options.data("sort_1_1_selected", upArrow + "Creation");
+        this.options.data("sort_1_1_selected", this._upArrow + "Creation");
         this.options.data("sort_1_1_unselected", "Creation");
         this.options.data("sort_1_1_value", "sort creation ascending");
         this.options.data("sort_1_state", "0");
         this.options.data("sort_1_states", "2");
-        this.options.data("sort_2_0_selected", downArrow + "Edited");
+        this.options.data("sort_2_0_selected", this._downArrow + "Edited");
         this.options.data("sort_2_0_unselected", "Edited");
         this.options.data("sort_2_0_value", "sort edited descending");
-        this.options.data("sort_2_1_selected", upArrow + "Edited");
+        this.options.data("sort_2_1_selected", this._upArrow + "Edited");
         this.options.data("sort_2_1_unselected", "Edited");
         this.options.data("sort_2_1_value", "sort edited ascending");
         this.options.data("sort_2_state", "0");
         this.options.data("sort_2_states", "2");
-        this.options.data("sort_3_0_selected", downArrow + "Opened");
+        this.options.data("sort_3_0_selected", this._downArrow + "Opened");
         this.options.data("sort_3_0_unselected", "Opened");
         this.options.data("sort_3_0_value", "sort opened descending");
-        this.options.data("sort_3_1_selected", upArrow + "Opened");
+        this.options.data("sort_3_1_selected", this._upArrow + "Opened");
         this.options.data("sort_3_1_unselected", "Opened");
         this.options.data("sort_3_1_value", "sort opened ascending");
         this.options.data("sort_3_state", "0");
@@ -271,7 +255,7 @@ class UserDataUtility {
         this.adjust.data("value", this.adjust.data("default"));
 
         //set default sort type
-        this.options.data("value", this.options.data("default"));
+        this.options.data("value", this.options.data(this.adjust.data("value") + "_default"));
 
         //console.log(this.adjust.data("value"), this.adjust.data(this.adjust.data("value")));
         if (this.adjust.data("value") == "sort") {
@@ -281,7 +265,7 @@ class UserDataUtility {
             this.options.data("value", "");
         }
 
-        this._manageAdjustSection();
+        this._manageAdjustButtons();
 
         console.log(this.messagesDiv);
         this.messagesDiv.text("Please select one or more records to perform an action.");
@@ -297,13 +281,11 @@ class UserDataUtility {
     }
 
     manage() {
-        this._manageAdjustSection();
-        this._manageActions();
+        this._manageAdjustButtons();
+        this._manageActionButtons();
     }
 
-    _manageAdjustSection() {
-        const self = this;
-
+    _manageAdjustButtons() {
         this._manageGroup(this.adjust);
         if (this.options.data(this.adjust.data("value") + "_selectedClass")) {
             this.options.data("unselectedClass", this.options.data(this.adjust.data("value") + "_unselectedClass"));
@@ -314,18 +296,24 @@ class UserDataUtility {
             this.options.data("selectedClass", this.options.data("default_selectedClass"));
         }
         
-        const options = this.options.data(this.adjust.data("value")).split(", ");
+        this._buildOptionButtons();
+    }
+
+    _buildOptionButtons() {
+        const self = this;
         this.options.empty();
-        options.forEach(option => {
-            this.options.append("<button type = 'button' class = 'btn btn-secondary' value = '" + option.toLowerCase() + "'>" + option + "</button>");
-        });
-        this._manageGroup(this.options);
+        const adjust = this.adjust.data("value");
+        const indices = parseInt(this.options.data(adjust + "_indices"));
+
+        for (var i = 0; i < indices; i++) {
+            this.options.append("<button type = 'button' class = 'btn'></button>");
+        }
+        this._manageOptionButtons();
 
         this.options.find("button").on("click", function (e) {
             self.options.data("value", $(this).val());
-            self.adjust.data(self.adjust.data("value"), $(this).val());
             $(this).blur();
-            self._manageAdjustSection();
+            self._manageOptionButtons();
             self._doAdjustOption();
         });
 
@@ -336,42 +324,58 @@ class UserDataUtility {
         this.options.data("value", this.adjust.data(this.adjust.data("value")));
     }
 
-    _manageOptions() {
-        const value = this.options.data("value");               //Sort, Maximize, Minimize, Hide, Select
-        const adjust = this.adjust.data("value");
-        const deflt = this.options.data(adjust + "_default");
-        if (deflt && !value) { value = deflt; }                 //Set value to default if pre-click
-        const index = value.split("_")[1];
-        const indices = this.options.data(adjust + "_indices"); //Number of buttons
-        const lastValue = this.options.data(adjust + "last");
-        var states, state, prefix, suffix, name, i;
-
+    _manageOptionButtons() {
+        var value, params, adjust, index, indices, state, states, name, i, button, lastIndex;
+        value = this.options.data("value");
+        params = value.split("_");
+        adjust = params[0];
+        index = params[1];
+        if (params.length = 4) {
+            state = params[2];
+            this.options.data(adjust + "_" + index + "_state", state);
+            this.options.data(adjust + "_lastIndex", this.options.data(adjust + "_index"));
+            lastIndex = this.options.data(adjust + "_lastIndex");
+            }
+        this.options.data(adjust + "_index", index);
+console.log("value:", value, "adjust:", adjust, "index:", index, "state:", state, "lastIndex:", lastIndex);
+        indices = this.options.data(adjust + "_indices");
         for (i = 0; i < indices; i++) {
-            prefix = adjust + "_" + i + "_";
-            states = this.options.data(prefix + "states");
+            value = adjust + "_" + i + "_";
+            states = this.options.data(value + "states");
             if (states > 1) {
-                state = this.options.data(prefix + "state");
-                prefix += state + "_";
-            }
-            if (i == index) {                               // If it's the selected button,
-                if (i == lastValue && states > 1) {         // if button pressed again,
-                    state++;                                // progress the state
+                state = this.options.data(value + "state");
+                if (i == lastIndex && index == lastIndex) {
+                    state++;
                     if (state == states) { state = 0; }
-                }                                           // if more than one state
-                if (states > 1) { suffix = "selected"; }    // add selected to the end of the name
-                else { suffix = "html"; }                   // else add html
-            }                                               // if not the selected button
-            else {                                          // if more than one state,
-                if (states > 1) { suffix = "unselected"; }  // add unselected to the end of the name
-                else { suffix = "html"; }                   // else add html
+                    this.options.data(value + "state", state);
+                }
+                value += state + "_";
             }
-            name = this.options.data(prefix + suffix);      // name is prefix plus suffix  
-            this.options.find("button").eq(i).html(name);   // set the name.
-            this.options.find("button").eq(i).val(prefix + suffix);
+            if (i == index) {
+                if (states > 1) { value += "selected"; }
+                else { value += "html"; }
+            }
+            else {
+                if (states > 1) { value += "unselected"; }
+                else { value += "html"; }
+            }
+            name = this.options.data(value);
+            this.options.find("button").eq(i).html(name);
+            this.options.find("button").eq(i).val(value);
+
+            button = this.options.find("button").eq(i);
+            if (i == index) {
+                button.removeClass(this.options.data("unselectedClass"));
+                button.addClass(this.options.data("selectedClass"));
+            }
+            else {
+                button.removeClass(this.options.data("selectedClass"));
+                button.addClass(this.options.data("unselectedClass"));
+            }
         }
     }
 
-    _manageActions() {
+    _manageActionButtons() {
         
     }
 
@@ -394,10 +398,6 @@ class UserDataUtility {
                 button.addClass(group.data("unselectedClass"));
             }
         }
-    }
-
-    _manageActions() {
-
     }
 
     _doAdjustOption() {
