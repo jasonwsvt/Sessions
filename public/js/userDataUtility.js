@@ -73,13 +73,6 @@ class UserDataUtility {
 
             self.adjust.find("button").on("click", function (e) {
                 self.adjust.data("value", $(this).val());
-                self.adjust.data("index", self.adjust.find("button").index(this));
-                if ($(this).val() == "sort") {
-                    self.options.data("value", self.adjust.data(self.adjust.data("value")));
-                }
-                else {
-                    self.options.data("value", "");
-                }
                 $(this).blur();
                 self._manageAdjustButtons();
             });
@@ -162,12 +155,12 @@ class UserDataUtility {
         this.options.data("default_selectedClass", "btn-info");
 
         this.options.data("default", "sort_1_0_selected");
-        this.options.data("sort_indices", "4");
+        this.options.data("sort_indices", 4);
         this.options.data("sort_default", "sort_0_0_selected");
         this.options.data("sort_unselectedClass", "btn-dark");
         this.options.data("sort_selectedClass", "btn-info");
-        this.options.data("sort_0_state", "0");
-        this.options.data("sort_0_states", "2");
+        this.options.data("sort_0_state", 0);
+        this.options.data("sort_0_states", 2);
         this.options.data("sort_0_0_selected", this._downArrow + "A-Z");
         this.options.data("sort_0_0_unselected", "A-Z");
         this.options.data("sort_0_0_value", "sort alphabetic descending");
@@ -180,32 +173,34 @@ class UserDataUtility {
         this.options.data("sort_1_1_selected", this._upArrow + "Creation");
         this.options.data("sort_1_1_unselected", "Creation");
         this.options.data("sort_1_1_value", "sort creation ascending");
-        this.options.data("sort_1_state", "0");
-        this.options.data("sort_1_states", "2");
+        this.options.data("sort_1_state", 0);
+        this.options.data("sort_1_states", 2);
         this.options.data("sort_2_0_selected", this._downArrow + "Edited");
         this.options.data("sort_2_0_unselected", "Edited");
         this.options.data("sort_2_0_value", "sort edited descending");
         this.options.data("sort_2_1_selected", this._upArrow + "Edited");
         this.options.data("sort_2_1_unselected", "Edited");
         this.options.data("sort_2_1_value", "sort edited ascending");
-        this.options.data("sort_2_state", "0");
-        this.options.data("sort_2_states", "2");
+        this.options.data("sort_2_state", 0);
+        this.options.data("sort_2_states", 2);
         this.options.data("sort_3_0_selected", this._downArrow + "Opened");
         this.options.data("sort_3_0_unselected", "Opened");
         this.options.data("sort_3_0_value", "sort opened descending");
         this.options.data("sort_3_1_selected", this._upArrow + "Opened");
         this.options.data("sort_3_1_unselected", "Opened");
         this.options.data("sort_3_1_value", "sort opened ascending");
-        this.options.data("sort_3_state", "0");
-        this.options.data("sort_3_states", "2");
+        this.options.data("sort_3_state", 0);
+        this.options.data("sort_3_states", 2);
         
-        this.options.data("maximize_indices", "3");
+        this.options.data("maximize_indices", 3);
         this.options.data("maximize_0_html", "All");
         this.options.data("maximize_0_value", "maximize all");
         this.options.data("maximize_1_html", "Selected");
         this.options.data("maximize_1_value", "maximize selected");
         this.options.data("maximize_2_html", "Unselected");
         this.options.data("maximize_2_value", "maximize unselected");
+
+        this.options.data("minimize_indices", 3);
         this.options.data("minimize_0_html", "All");
         this.options.data("minimize_0_value", "minimize all");
         this.options.data("minimize_1_html", "Selected");
@@ -213,7 +208,7 @@ class UserDataUtility {
         this.options.data("minimize_2_html", "Unselected");
         this.options.data("minimize_2_value", "minimize unselected");
 
-        this.options.data("hide_indices", "3");
+        this.options.data("hide_indices", 3);
         this.options.data("hide_0_html", "Sessions");
         this.options.data("hide_0_value", "hide sessions");
         this.options.data("hide_1_html", "Selected");
@@ -221,7 +216,7 @@ class UserDataUtility {
         this.options.data("hide_2_html", "Unselected");
         this.options.data("hide_2_value", "hide unselected");
 
-        this.options.data("select_indices", "3");
+        this.options.data("select_indices", 3);
         this.options.data("select_0_html", "All");
         this.options.data("select_0_value", "select all");
         this.options.data("select_1_html", "None");
@@ -267,7 +262,6 @@ class UserDataUtility {
 
         this._manageAdjustButtons();
 
-        console.log(this.messagesDiv);
         this.messagesDiv.text("Please select one or more records to perform an action.");
 
         this._propagateScrollDiv();
@@ -286,29 +280,35 @@ class UserDataUtility {
     }
 
     _manageAdjustButtons() {
+        this.adjust.data("index", this.adjust.find("button").index(this));
         this._manageGroup(this.adjust);
-        if (this.options.data(this.adjust.data("value") + "_selectedClass")) {
-            this.options.data("unselectedClass", this.options.data(this.adjust.data("value") + "_unselectedClass"));
-            this.options.data("selectedClass", this.options.data(this.adjust.data("value") + "_selectedClass"));
-        }
-        else {
-            this.options.data("unselectedClass", this.options.data("default_unselectedClass"));
-            this.options.data("selectedClass", this.options.data("default_selectedClass"));
-        }
-        
         this._buildOptionButtons();
     }
 
     _buildOptionButtons() {
         const self = this;
-        this.options.empty();
         const adjust = this.adjust.data("value");
-        const indices = parseInt(this.options.data(adjust + "_indices"));
+        const indices = this.options.data(adjust + "_indices");
 
+        if (this.options.data(adjust + "_selectedClass")) {
+            this.options.data("unselectedClass", this.options.data(adjust + "_unselectedClass"));
+            this.options.data("selectedClass", this.options.data(adjust + "_selectedClass"));
+        }
+        else {
+            this.options.data("unselectedClass", this.options.data("default_unselectedClass"));
+            this.options.data("selectedClass", this.options.data("default_selectedClass"));
+        }
+
+        if (this.options.data(adjust + "_lastValue")) {
+            this.options.data("value", this.options.data(adjust + "_lastValue"));
+        } else if (this.options.data(adjust + "_default")) {
+            this.options.data("value", this.options.data(adjust + "_default"));
+        }
+
+        this.options.empty();
         for (var i = 0; i < indices; i++) {
             this.options.append("<button type = 'button' class = 'btn'></button>");
         }
-        this._manageOptionButtons();
 
         this.options.find("button").on("click", function (e) {
             self.options.data("value", $(this).val());
@@ -317,16 +317,13 @@ class UserDataUtility {
             self._doAdjustOption();
         });
 
-        //this.adjust.data("value") is the current adjust selection (sort, hide, minimize, etc)
-        //this.adjust.data(this.adjust.data("value"))
-        //    is the last selected value for options when that adjust value was selected
-        //    e.g. adjust.data("value") == sort -> adjust.data("sort") == A-Z
-        this.options.data("value", this.adjust.data(this.adjust.data("value")));
+        this._manageOptionButtons();
     }
 
     _manageOptionButtons() {
         var value, params, adjust, index, indices, state, states, name, i, button, lastIndex;
         value = this.options.data("value");
+
         params = value.split("_");
         adjust = params[0];
         index = params[1];
@@ -337,7 +334,7 @@ class UserDataUtility {
             lastIndex = this.options.data(adjust + "_lastIndex");
             }
         this.options.data(adjust + "_index", index);
-console.log("value:", value, "adjust:", adjust, "index:", index, "state:", state, "lastIndex:", lastIndex);
+
         indices = this.options.data(adjust + "_indices");
         for (i = 0; i < indices; i++) {
             value = adjust + "_" + i + "_";
@@ -359,12 +356,13 @@ console.log("value:", value, "adjust:", adjust, "index:", index, "state:", state
                 if (states > 1) { value += "unselected"; }
                 else { value += "html"; }
             }
-            name = this.options.data(value);
-            this.options.find("button").eq(i).html(name);
-            this.options.find("button").eq(i).val(value);
 
             button = this.options.find("button").eq(i);
+            name = this.options.data(value);
+            button.html(name);
+            button.val(value);
             if (i == index) {
+                this.options.data("value", button.val());
                 button.removeClass(this.options.data("unselectedClass"));
                 button.addClass(this.options.data("selectedClass"));
             }
@@ -372,6 +370,7 @@ console.log("value:", value, "adjust:", adjust, "index:", index, "state:", state
                 button.removeClass(this.options.data("selectedClass"));
                 button.addClass(this.options.data("unselectedClass"));
             }
+            //console.log(button.html(), button.val());
         }
     }
 
@@ -382,18 +381,18 @@ console.log("value:", value, "adjust:", adjust, "index:", index, "state:", state
     _manageGroup(group) {
         var i, button;
         if (group.find("button").length == 0) { console.trace(); return; }
-        console.log(group);
+        //console.log(group);
         for (i = 0; i < group.find("button").length; i++) {
             button = group.find("button").eq(i);
-            console.log(group.data("value"));
-            console.log(button.val());
+            //console.log(group.data("value"));
+            //console.log(button.val());
             if (group.data("value").toLowerCase() == button.val().toLowerCase()) {
-                console.log("setting button", i, "to", group.data("unselectedClass"));
+                //console.log("setting button", i, "to", group.data("unselectedClass"));
                 button.removeClass(group.data("unselectedClass"));
                 button.addClass(group.data("selectedClass"));
             }
             else {
-                console.log("setting button", i, "to", group.data("selectedClass"));
+                //console.log("setting button", i, "to", group.data("selectedClass"));
                 button.removeClass(group.data("selectedClass"));
                 button.addClass(group.data("unselectedClass"));
             }
