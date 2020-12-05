@@ -172,36 +172,50 @@ class UserDataUtility {
 
         this.adjust.data("unselectedClass", "btn-secondary");
         this.adjust.data("selectedClass", "btn-primary");
-        this.adjust.data("value", "sort");
+        this.adjust.data("default", "sort");
 
         this.options.data("default_unselectedClass", "btn-info");
         this.options.data("default_selectedClass", "btn-info");
+
+        this.options.data("default", "sort_1_0_selected");
+        this.options.data("sort_indices", "4");
+        this.options.data("sort_default", "0_0");
         this.options.data("sort_unselectedClass", "btn-dark");
         this.options.data("sort_selectedClass", "btn-light");
-        this.options.data("sort_0_0_selected_html", downArrow + "A-Z");
-        this.options.data("sort_0_0_unselected_html", "A-Z");
+        this.options.data("sort_0_state", "0");
+        this.options.data("sort_0_states", "2");
+        this.options.data("sort_0_0_selected", downArrow + "A-Z");
+        this.options.data("sort_0_0_unselected", "A-Z");
         this.options.data("sort_0_0_value", "sort alphabetic descending");
-        this.options.data("sort_0_1_selected_html", upArrow + "A-Z");
-        this.options.data("sort_0_1_unselected_html", "A-Z");
+        this.options.data("sort_0_1_selected", upArrow + "A-Z");
+        this.options.data("sort_0_1_unselected", "A-Z");
         this.options.data("sort_0_1_value", "sort alphabetic ascending");
-        this.options.data("sort_1_0_selected_html", downArrow + "Creation");
-        this.options.data("sort_1_0_unselected_html", "Creation");
+        this.options.data("sort_1_0_selected", downArrow + "Creation");
+        this.options.data("sort_1_0_unselected", "Creation");
         this.options.data("sort_1_0_value", "sort creation descending");
-        this.options.data("sort_1_1_selected_html", upArrow + "Creation");
-        this.options.data("sort_1_1_unselected_html", "Creation");
+        this.options.data("sort_1_1_selected", upArrow + "Creation");
+        this.options.data("sort_1_1_unselected", "Creation");
         this.options.data("sort_1_1_value", "sort creation ascending");
-        this.options.data("sort_2_0_selected_html", downArrow + "Edited");
-        this.options.data("sort_2_0_unselected_html", "Edited");
+        this.options.data("sort_1_state", "0");
+        this.options.data("sort_1_states", "2");
+        this.options.data("sort_2_0_selected", downArrow + "Edited");
+        this.options.data("sort_2_0_unselected", "Edited");
         this.options.data("sort_2_0_value", "sort edited descending");
-        this.options.data("sort_2_1_selected_html", upArrow + "Edited");
-        this.options.data("sort_2_1_unselected_html", "Edited");
+        this.options.data("sort_2_1_selected", upArrow + "Edited");
+        this.options.data("sort_2_1_unselected", "Edited");
         this.options.data("sort_2_1_value", "sort edited ascending");
-        this.options.data("sort_3_0_selected_html", downArrow + "Opened");
-        this.options.data("sort_3_0_unselected_html", "Opened");
+        this.options.data("sort_2_state", "0");
+        this.options.data("sort_2_states", "2");
+        this.options.data("sort_3_0_selected", downArrow + "Opened");
+        this.options.data("sort_3_0_unselected", "Opened");
         this.options.data("sort_3_0_value", "sort opened descending");
-        this.options.data("sort_3_1_selected_html", upArrow + "Opened");
-        this.options.data("sort_3_1_unselected_html", "Opened");
+        this.options.data("sort_3_1_selected", upArrow + "Opened");
+        this.options.data("sort_3_1_unselected", "Opened");
         this.options.data("sort_3_1_value", "sort opened ascending");
+        this.options.data("sort_3_state", "0");
+        this.options.data("sort_3_states", "2");
+        
+        this.options.data("maximize_indices", "3");
         this.options.data("maximize_0_html", "All");
         this.options.data("maximize_0_value", "maximize all");
         this.options.data("maximize_1_html", "Selected");
@@ -214,12 +228,16 @@ class UserDataUtility {
         this.options.data("minimize_1_value", "minimize selected");
         this.options.data("minimize_2_html", "Unselected");
         this.options.data("minimize_2_value", "minimize unselected");
+
+        this.options.data("hide_indices", "3");
         this.options.data("hide_0_html", "Sessions");
         this.options.data("hide_0_value", "hide sessions");
         this.options.data("hide_1_html", "Selected");
         this.options.data("hide_1_value", "hide selected");
         this.options.data("hide_2_html", "Unselected");
         this.options.data("hide_2_value", "hide unselected");
+
+        this.options.data("select_indices", "3");
         this.options.data("select_0_html", "All");
         this.options.data("select_0_value", "select all");
         this.options.data("select_1_html", "None");
@@ -250,10 +268,10 @@ class UserDataUtility {
 
     reset() {
         //set adjust default to sort
-        this.adjust.data("value", "sort");
+        this.adjust.data("value", this.adjust.data("default"));
 
         //set default sort type
-        this.adjust.data("sort", "creation");
+        this.options.data("value", this.options.data("default"));
 
         //console.log(this.adjust.data("value"), this.adjust.data(this.adjust.data("value")));
         if (this.adjust.data("value") == "sort") {
@@ -319,7 +337,38 @@ class UserDataUtility {
     }
 
     _manageOptions() {
+        const value = this.options.data("value");               //Sort, Maximize, Minimize, Hide, Select
+        const adjust = this.adjust.data("value");
+        const deflt = this.options.data(adjust + "_default");
+        if (deflt && !value) { value = deflt; }                 //Set value to default if pre-click
+        const index = value.split("_")[1];
+        const indices = this.options.data(adjust + "_indices"); //Number of buttons
+        const lastValue = this.options.data(adjust + "last");
+        var states, state, prefix, suffix, name, i;
 
+        for (i = 0; i < indices; i++) {
+            prefix = adjust + "_" + i + "_";
+            states = this.options.data(prefix + "states");
+            if (states > 1) {
+                state = this.options.data(prefix + "state");
+                prefix += state + "_";
+            }
+            if (i == index) {                               // If it's the selected button,
+                if (i == lastValue && states > 1) {         // if button pressed again,
+                    state++;                                // progress the state
+                    if (state == states) { state = 0; }
+                }                                           // if more than one state
+                if (states > 1) { suffix = "selected"; }    // add selected to the end of the name
+                else { suffix = "html"; }                   // else add html
+            }                                               // if not the selected button
+            else {                                          // if more than one state,
+                if (states > 1) { suffix = "unselected"; }  // add unselected to the end of the name
+                else { suffix = "html"; }                   // else add html
+            }
+            name = this.options.data(prefix + suffix);      // name is prefix plus suffix  
+            this.options.find("button").eq(i).html(name);   // set the name.
+            this.options.find("button").eq(i).val(prefix + suffix);
+        }
     }
 
     _manageActions() {
