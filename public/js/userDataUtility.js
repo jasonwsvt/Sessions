@@ -100,6 +100,7 @@ class UserDataUtility {
     get div()              { return $("#" + this._divID); }
     get exportButton()     { return $("#" + this._exportButtonID); }
     get importButton()     { return $("#" + this._importButtonID); }
+    get importDiv()        { return $("#" + this._importDivID); }
     get adjust()           { return $("#" + this._adjustID); }
     get actions()          { return $("#" + this._actionsID); }
     get options()          { return $("#" + this._optionsID); }
@@ -107,9 +108,10 @@ class UserDataUtility {
     get execute()          { return $("#" + this._executeID); }
     get scrollAreaDiv()    { return $("#" + this._scrollAreaDivID); }
     get messagesDiv()      { return $("#" + this._messagesDivID); }
-    get actionDiv()      { return $("#" + this._actionDivID); }
+    get actionDiv()        { return $("#" + this._actionDivID); }
 
     build() {
+        const importDiv = "<div id = '" + this._importDivID + "'></div>";
         const importButton = "<button id = '" + this._importButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._importIcon + "</button>";
         const exportButton = "<button id = '" + this._exportButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._exportIcon + "</button>";
 
@@ -137,7 +139,7 @@ class UserDataUtility {
         const actionDiv = "<div id = '" + this._actionDivID + "' class = 'd-flex justify-content-start'>" + actions + acknowledge + execute + "</div>";
 
         this.userUtilities.div.append(button + div);
-        this.div.append(top + scrollDiv + messagesDiv + actionDiv);
+        this.div.append(top + scrollDiv + messagesDiv + actionDiv + importDiv);
         this.actions.append(action1 + action2 + action3);
 
         const adjust1 = "<button type = 'button' class = 'btn btn-secondary' value = 'sort'>Sort</button>";
@@ -227,6 +229,7 @@ class UserDataUtility {
         this.actions.data("unselectedClass", "btn-secondary");
         this.actions.data("selectedClass", "btn-primary");
 
+        this.importDiv.append(importButton);
         this.importButton.prop("data-toggle", "popover");
         if (!window.FileReader) {
             this.importButton.prop("data-content", "The FileReader API is not supported by your browser.");
@@ -235,6 +238,9 @@ class UserDataUtility {
         else {
             this.importButton.prop("data-content", "Import data.");
         }
+console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importButton.width())
+        this.importDiv.css("left", String(this.scrollAreaDiv.position().left + this.div.width() - this.importDiv.width()) + "px");
+        this.importDiv.css("top", String(this.scrollAreaDiv.position().top) + "px");
 
 //        this.div.append(exportButton);
 //        this.exportButton.prop("data-toggle", "popover");
