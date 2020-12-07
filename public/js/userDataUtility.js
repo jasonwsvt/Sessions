@@ -169,62 +169,96 @@ class UserDataUtility {
         this.options.data("sort_0_1_selected", this._upArrow + "A-Z");
         this.options.data("sort_0_1_unselected", "A-Z");
         this.options.data("sort_0_1_value", "sort alphabetic ascending");
+        this.options.data("sort_1_state", 0);
+        this.options.data("sort_1_states", 2);
         this.options.data("sort_1_0_selected", this._downArrow + "Creation");
         this.options.data("sort_1_0_unselected", "Creation");
         this.options.data("sort_1_0_value", "sort creation descending");
         this.options.data("sort_1_1_selected", this._upArrow + "Creation");
         this.options.data("sort_1_1_unselected", "Creation");
         this.options.data("sort_1_1_value", "sort creation ascending");
-        this.options.data("sort_1_state", 0);
-        this.options.data("sort_1_states", 2);
+        this.options.data("sort_2_state", 0);
+        this.options.data("sort_2_states", 2);
         this.options.data("sort_2_0_selected", this._downArrow + "Edited");
         this.options.data("sort_2_0_unselected", "Edited");
         this.options.data("sort_2_0_value", "sort edited descending");
         this.options.data("sort_2_1_selected", this._upArrow + "Edited");
         this.options.data("sort_2_1_unselected", "Edited");
         this.options.data("sort_2_1_value", "sort edited ascending");
-        this.options.data("sort_2_state", 0);
-        this.options.data("sort_2_states", 2);
+        this.options.data("sort_3_state", 0);
+        this.options.data("sort_3_states", 2);
         this.options.data("sort_3_0_selected", this._downArrow + "Opened");
         this.options.data("sort_3_0_unselected", "Opened");
         this.options.data("sort_3_0_value", "sort opened descending");
         this.options.data("sort_3_1_selected", this._upArrow + "Opened");
         this.options.data("sort_3_1_unselected", "Opened");
         this.options.data("sort_3_1_value", "sort opened ascending");
-        this.options.data("sort_3_state", 0);
-        this.options.data("sort_3_states", 2);
         
         this.options.data("maximize_indices", 3);
         this.options.data("maximize_0_html", "All");
         this.options.data("maximize_0_value", "maximize all");
-        this.options.data("maximize_1_html", "Selected");
-        this.options.data("maximize_1_value", "maximize selected");
-        this.options.data("maximize_2_html", "Unselected");
-        this.options.data("maximize_2_value", "maximize unselected");
+        this.options.data("maximize_1_state", 0);
+        this.options.data("maximize_1_states", 2);
+        this.options.data("maximize_1_0_html", "Selected");
+        this.options.data("maximize_1_0_value", "minimize selected");
+        this.options.data("maximize_1_1_html", "Unselected");
+        this.options.data("maximize_1_1_value", "minimize unselected");
+        this.options.data("maximize_2_html", "Identical");
+        this.options.data("maximize_2_value", "maximize identical");
 
         this.options.data("minimize_indices", 3);
         this.options.data("minimize_0_html", "All");
         this.options.data("minimize_0_value", "minimize all");
-        this.options.data("minimize_1_html", "Selected");
-        this.options.data("minimize_1_value", "minimize selected");
-        this.options.data("minimize_2_html", "Unselected");
-        this.options.data("minimize_2_value", "minimize unselected");
+        this.options.data("minimize_1_state", 0);
+        this.options.data("minimize_1_states", 2);
+        this.options.data("minimize_1_0_html", "Selected");
+        this.options.data("minimize_1_0_value", "minimize selected");
+        this.options.data("minimize_1_1_html", "Unselected");
+        this.options.data("minimize_1_1_value", "minimize unselected");
+        this.options.data("minimize_2_html", "Identical");
+        this.options.data("minimize_2_value", "minimize identical");
 
         this.options.data("hide_indices", 3);
-        this.options.data("hide_0_html", "Sessions");
-        this.options.data("hide_0_value", "hide sessions");
-        this.options.data("hide_1_html", "Selected");
-        this.options.data("hide_1_value", "hide selected");
-        this.options.data("hide_2_html", "Unselected");
-        this.options.data("hide_2_value", "hide unselected");
+        this.options.data("hide_0_html", "Identical");
+        this.options.data("hide_0_value", "hide identical");
+        this.options.data("hide_1_state", 0);
+        this.options.data("hide_1_states", 2);
+        this.options.data("hide_1_0_html", "Selected");
+        this.options.data("hide_1_0_value", "hide selected");
+        this.options.data("hide_1_1_html", "Unselected");
+        this.options.data("hide_1_1_value", "hide unselected");
+        this.options.data("hide_2_state", 0);
+        this.options.data("hide_2_states", 2);
+        this.options.data("hide_2_0_html", "Left");
+        this.options.data("hide_2_0_value", "hide left");
+        this.options.data("hide_2_1_html", "Right");
+        this.options.data("hide_2_1_value", "hide right");
 
-        this.options.data("select_indices", 3);
-        this.options.data("select_0_html", "All");
-        this.options.data("select_0_value", "select all");
-        this.options.data("select_1_html", "None");
-        this.options.data("select_1_value", "select none");
-        this.options.data("select_2_html", "Newest");
-        this.options.data("select_2_value", "select newest");
+        this.options.data("select_indices", 4);
+        this.options.data("select_0_state", 0);
+        this.options.data("select_0_states", 2);
+        this.options.data("select_0_0_html", "All");
+        this.options.data("select_0_0_value", "select all");
+        this.options.data("select_0_1_html", "None");
+        this.options.data("select_0_1_value", "select none");
+        this.options.data("select_1_state", 0);
+        this.options.data("select_1_states", 2);
+        this.options.data("select_1_0_html", "Opposite");
+        this.options.data("select_1_0_value", "select opposite");
+        this.options.data("select_1_1_html", "Duplicate");
+        this.options.data("select_1_1_value", "select duplicates");
+        this.options.data("select_2_state", 0);
+        this.options.data("select_2_states", 2);
+        this.options.data("select_2_0_html", "Newer");
+        this.options.data("select_2_0_value", "select newer");
+        this.options.data("select_2_1_html", "Older");
+        this.options.data("select_2_1_value", "select older");
+        this.options.data("select_3_state", 0);
+        this.options.data("select_3_states", 2);
+        this.options.data("select_3_0_html", "User");
+        this.options.data("select_3_0_value", "select left");
+        this.options.data("select_3_1_html", "Imported");
+        this.options.data("select_3_1_value", "select imported");
 
         this.actions.data("unselectedClass", "btn-secondary");
         this.actions.data("selectedClass", "btn-primary");
@@ -308,7 +342,7 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         this.options.data("value",
             (this.options.data(adjust + "_lastValue")) ? this.options.data(adjust + "_lastValue") :
             (this.options.data(adjust + "_default")) ? this.options.data(adjust + "_default") : "");
-        console.log(adjust, indices, this.options.data("value"));
+        //console.log(adjust, indices, this.options.data("value"));
         this.options.empty();
         for (var i = 0; i < indices; i++) {
             this.options.append("<button type = 'button' class = 'btn'></button>");
@@ -325,7 +359,7 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
     }
 
     _manageOptionButtons() {
-        var value, params, adjust, index, indices, state, states, name, i, button, lastIndex;
+        var value, params, adjust, index, indices, state, states, name, i, button, lastIndex, selected;
         value = this.options.data("value");
 
         if (value) {
@@ -344,30 +378,33 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
             adjust = this.adjust.data("value");
         }
         indices = this.options.data(adjust + "_indices");
-        console.log(this.options.data(), value, adjust, index, state, lastIndex, indices);
+        //console.log(name, adjust, index, state, lastIndex, indices);
         for (i = 0; i < indices; i++) {
-            value = adjust + "_" + i + "_";
-            states = this.options.data(value + "states");
+            name = adjust + "_" + i + "_";
+            states = this.options.data(name + "states");
             if (states > 1) {
-                state = this.options.data(value + "state");
+                state = this.options.data(name + "state");
                 if (i == lastIndex && index == lastIndex) {
                     state++;
                     if (state == states) { state = 0; }
-                    this.options.data(value + "state", state);
+                    this.options.data(name + "state", state);
                 }
-                value += state + "_";
+                name += state + "_";
             }
+            value = name + "value";
+
+            selected = (Object.keys(this.options.data()).filter(r => (r == name + "selected"))).length;
             if (i == index) {
-                if (states > 1) { value += "selected"; }
-                else { value += "html"; }
+                if (states > 1 && selected) { name += "selected"; }
+                else { name += "html"; }
             }
             else {
-                if (states > 1) { value += "unselected"; }
-                else { value += "html"; }
+                if (states > 1 && selected) { name += "unselected"; }
+                else { name += "html"; }
             }
 
             button = this.options.find("button").eq(i);
-            name = this.options.data(value);
+            name = this.options.data(name);
             button.html(name);
             button.val(value);
             if (i == index) {
@@ -379,7 +416,7 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
                 button.removeClass(this.options.data("selectedClass"));
                 button.addClass(this.options.data("unselectedClass"));
             }
-            //console.log(button.html(), button.val());
+
         }
     }
 
@@ -409,7 +446,7 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
     }
 
     _doAdjustOption() {
-        console.log(this.adjust.data("value"), this.options.data("value"));
+        console.log(this.options.data("value"), this.options.data(this.options.data("value")));
     }
 
     _pullUserData() {
