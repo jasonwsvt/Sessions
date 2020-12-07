@@ -33,6 +33,11 @@ class UserDataUtility {
     _scrollAreaDivID = "userDataUtilityScrollAreaDiv";
     _messagesDivID = "userDataUtilityMessagesDiv";
     _actionDivID = "userDataUtilityActionDiv";
+    _rowButtonClass = "rowButton";
+    _recordSelectClass = "selectRecord";
+    _childrenButtonClass = "childrenButton";
+    _childrenSelectClass = "selectChildren";
+
 
     constructor (userUtilities, group) {
         const self = this;
@@ -109,6 +114,10 @@ class UserDataUtility {
     get scrollAreaDiv()    { return $("#" + this._scrollAreaDivID); }
     get messagesDiv()      { return $("#" + this._messagesDivID); }
     get actionDiv()        { return $("#" + this._actionDivID); }
+    get rowButtons()       { return $("." + this._rowButtonClass); }
+    get recordSelects()    { return $("." + this._recordSelectClass); }
+    get childrenButtons()  { return $("." + this._childrenButtonClass); }
+    get childrenSelects()  { return $("." + this._childrenSelectClass); }
 
     build() {
         const importDiv = "<div id = '" + this._importDivID + "'></div>";
@@ -450,12 +459,65 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
     }
 
     _pullUserData() {
-        this.currentUser.pushToStorage();
+        ;
         const data = this.currentUser.createJSON();
     }
 
-    _exportJSON() {
-        const blob1 = new Blob(this.dataToExport(), { type: "text/plain;charset=utf-8" });
+    _buildRecords() {
+        //clear scrollAreaDiv
+        this.scrollAreaDiv.empty();
+        //call buildRecord with data
+        this._buildRecord(this.currentUser.pushToStorage());
+
+        //click event for rowButtons (id + "_row")
+        this.rowButtons.on("click", function (e) {
+            const id = parseInt(this.id.split("_")[1]);  //$(this).attr("id")
+        });
+        //click event for selectRecord buttons ("select_" + id)
+        this.recordSelects.on("click", function (e) {
+            const id = parseInt(this.id.split("_")[1]);  //$(this).attr("id")
+        });
+        //click event for childrenButton buttons (id + "_children")
+        this.childrenButtons.on("click", function (e) {
+            const id = parseInt(this.id.split("_")[1]);  //$(this).attr("id")
+        });
+        //click event for selectChildren buttons ("select_" + id + "_children")
+        this.childrenSelects.on("click", function (e) {
+            const id = parseInt(this.id.split("_")[1]);  //$(this).attr("id")
+        });
+    }
+
+    _buildRecord(recordData) {
+        var data, record;
+        const keys = Object.keys(recordData);
+        const id = keys.splice(keys.indexOf("id"), 1);
+        const creation = keys.splice(keys.indexOf("creation"), 1);
+        const lastEdited = keys.splice(keys.indexOf("lastEdited"), 1);
+        const lastUpdated = keys.splice(keys.indexOf("lastUpdated"), 1);
+        const lastOpened = keys.splice(keys.indexOf("lastOpened"), 1);
+        keys.forEach(key => {
+            if (isArray(recordData[key])) { const children = key; }
+            else if (key.toLowerCase().includes("name")) { const name = key; }
+            else { data.push(key); }
+        });
+
+        const rowButton = "<button id = 'row_" + id + "_button' type = 'button' class = 'btn btn-secondary rowButton'></button>";
+        const selectRecord = "<button id = 'select_" + id + "_button' type = 'button' class = 'btn btn-secondary selectRecord'></button>";
+        if (children && children.length) {
+            const childrenButton = "<button id = 'children_" + id + "_button' type = 'button' class = 'btn btn-secondary childrenButton'></button>";
+            const selectChildren = "<button id = 'select_" + id + "_children' type = 'button' class = 'btn btn-secondary selectChildren'></button>";
+        }
+
+        if (this.row(id).data("size") == "maximized") {
+
+        }
+        else if (this.row(id).data("size") == "minimized") {
+            
+        }
+    }
+
+    _exportJSON(data) {
+        const blob1 = new Blob(data, { type: "text/plain;charset=utf-8" });
         const name = this.currentUser.username + ".json";
  
         //Check the Browser.

@@ -345,6 +345,7 @@ class StorageUtility {
 
         if (this.canHaveChildren) {
             const type = this.children.type;
+            data[type] = [];
             this.children.unsorted.forEach(child => {
                 data[type].push(child.createJSON());
             });
