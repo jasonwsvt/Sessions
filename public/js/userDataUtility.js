@@ -118,6 +118,11 @@ class UserDataUtility {
     get recordSelects()    { return $("." + this._recordSelectClass); }
     get childrenButtons()  { return $("." + this._childrenButtonClass); }
     get childrenSelects()  { return $("." + this._childrenSelectClass); }
+    row(id)                { return $("#row_" + id); }
+    rowButton(id)          { return this.row(id).find("." + this._rowButtonClass); }
+    recordSelect(id)       { return this.row(id).find("." + this._recordSelectClass); }
+    childrenButton(id)     { return this.row(id).find("." + this._childrenButtonClass); }
+    childrenSelect(id)     { return this.row(id).find("." + this._childrenSelectClass); }
 
     build() {
         const importDiv = "<div id = '" + this._importDivID + "'></div>";
@@ -467,52 +472,60 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         //clear scrollAreaDiv
         this.scrollAreaDiv.empty();
         //call buildRecord with data
-        this._buildRecord(this.currentUser.pushToStorage());
+        this._buildRecord(this.currentUser.pushToStorage(), "local");
 
         //click event for rowButtons (id + "_row")
         this.rowButtons.on("click", function (e) {
-            const id = parseInt(this.id.split("_")[1]);  //$(this).attr("id")
+            const id = $(this).parent.parent.attr("id");
         });
         //click event for selectRecord buttons ("select_" + id)
         this.recordSelects.on("click", function (e) {
-            const id = parseInt(this.id.split("_")[1]);  //$(this).attr("id")
+            const id = $(this).parent.parent.attr("id");
         });
         //click event for childrenButton buttons (id + "_children")
         this.childrenButtons.on("click", function (e) {
-            const id = parseInt(this.id.split("_")[1]);  //$(this).attr("id")
+            const id = $(this).parent.parent.attr("id");
         });
         //click event for selectChildren buttons ("select_" + id + "_children")
         this.childrenSelects.on("click", function (e) {
-            const id = parseInt(this.id.split("_")[1]);  //$(this).attr("id")
+            const id = $(this).parent.parent.attr("id");
         });
     }
 
     _buildRecord(recordData) {
-        var data, record;
+        var data = [], row, children;
         const keys = Object.keys(recordData);
         const id = keys.splice(keys.indexOf("id"), 1);
-        const creation = keys.splice(keys.indexOf("creation"), 1);
-        const lastEdited = keys.splice(keys.indexOf("lastEdited"), 1);
-        const lastUpdated = keys.splice(keys.indexOf("lastUpdated"), 1);
-        const lastOpened = keys.splice(keys.indexOf("lastOpened"), 1);
-        keys.forEach(key => {
-            if (isArray(recordData[key])) { const children = key; }
-            else if (key.toLowerCase().includes("name")) { const name = key; }
-            else { data.push(key); }
-        });
+        children = keys.findIndex(key => (isArray(recordData[key])));
+        children = (isInteger(children)) ? keys.splice(children, 1) : null;
+        data.push(keys.splice(keys.findIndex(key => (key.includes("name")))), 1);
+        data.push(keys.splice(keys.indexOf("creation"), 1));
+        data.push(keys.splice(keys.indexOf("lastEdited"), 1));
+        data.push(keys.splice(keys.indexOf("lastOpened"), 1));
+        keys.forEach(key => { data.push(key); });
 
-        const rowButton = "<button id = 'row_" + id + "_button' type = 'button' class = 'btn btn-secondary rowButton'></button>";
-        const selectRecord = "<button id = 'select_" + id + "_button' type = 'button' class = 'btn btn-secondary selectRecord'></button>";
-        if (children && children.length) {
-            const childrenButton = "<button id = 'children_" + id + "_button' type = 'button' class = 'btn btn-secondary childrenButton'></button>";
-            const selectChildren = "<button id = 'select_" + id + "_children' type = 'button' class = 'btn btn-secondary selectChildren'></button>";
+
+        if (!this.row(id)) {
+            this.scrollAreaDiv.append("<div id = 'row_" + id + "'></div>");
+            const rowButton = "<button type = 'button' class = 'btn btn-secondary rowButton'></button>";
         }
 
-        if (this.row(id).data("size") == "maximized") {
+        const selectRecord = "<button type = 'button' class = 'btn btn-secondary selectRecord'></button>";
+        const childrenButton = (children && children.length) ? "<button type = 'button' class = 'btn btn-secondary childrenButton'></button>" : "";
+        if (!this.selectChildren(id) && children && children.length) {
+            const selectChildren = "<button type = 'button' class = 'btn btn-secondary selectChildren'></button>";
+        }
 
+        row = this.row(id);
+        if (row.data("size") == "maximized") {
+            buttons = "<div><div>" + rowButton + selectRecord + "</div><div>" + childrenButton + selectChildren + "</div></div>";
+            data.forEach(datum => { record += "<div>" + datum + "</div><div>" + recordData[datum] + "</div>"; });
+            if (children) { record += "<div>" + children + "</div><div>(" + recordData[datum].length + ")</div>"; }
+            imported = "<div class = 'imported'></div>";
+            row.append(buttons + data + imported);
         }
         else if (this.row(id).data("size") == "minimized") {
-            
+            this.row(id).append("<div><div>" + rowButton + selectRecord + childrenButton + selectChildren + "</div><div>" + name + " " + lastUpdated);
         }
     }
 
