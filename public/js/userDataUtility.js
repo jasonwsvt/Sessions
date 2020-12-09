@@ -490,20 +490,30 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
     }
 
     _buildRecord(tier, local, imported = []) {
-        var id = local.id;
-        var keys = Object.keys(local);
-        keys.forEach(key => { console.log(key); });
-        keys.splice(keys.indexOf("id"), 1)[0];
+        var id = local.id, keys = [], localRecord, importedRecord;
+        var unsortedKeys = Object.keys(local);
         if (imported.length) {
-            keys = keys.concat(Object.keys(imported)).filter(key, index => (keys.indexOf(key) === index));
+            unsortedKeys = unsortedKeys.concat(Object.keys(imported));
+            unsortedKeys = unsortedKeys.filter(key, index => (unsortedKeys.indexOf(key) === index));
         }
-        var children = Object.keys(local).find(key => (isArray(local[key])));
-        keys.splice(keys.indexOf(children), 1)[0];
-        keys.unshift(keys.splice(keys.indexOf("lastOpened")[0], 1));
-        keys.unshift(keys.splice(keys.indexOf("lastEdited")[0], 1));
-        keys.unshift(keys.splice(keys.indexOf("creation")[0], 1));
-        keys.unshift(keys.splice(keys.findIndex(key => { console.log(key);})));
-        keys.unshift(keys.splice(keys.findIndex(key => (key.toLowerCase().includes("name")))), 1)[0];
+        if (unsortedKeys.find(key => (isArray(local[key])))) {
+            var children = unsortedKeys.find(key => (isArray(local[key])));
+            unsortedKeys.splice(unsortedKeys.indexOf(children), 1);
+        }
+        if (unsortedKeys.find(key => (key.toLowerCase().includes("name")))) {
+            keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("name"))));
+            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
+        }
+        ["id", "passwordHash"].forEach(param => {
+            unsortedKeys.splice(unsortedKeys.indexOf(param), 1);
+        });
+        ["creation", "lastEdited", "lastOpened"].forEach(key => {
+            if (unsortedKeys.includes(key)) {
+                keys.push(key);
+                unsortedKeys.splice(unsortedKeys.indexOf(key), 1);
+            }
+        });
+        keys = keys.concat(unsortedKeys);
         keys.forEach(key => { console.log(key); });
         
         const rowButton = "<button type = 'button' class = 'btn btn-secondary rowButton'></button>";
@@ -531,7 +541,10 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         if (children) {
             line = "<div>" + childrenButton + " " + children + "</div>";
             [local, imported].forEach(record => {
-                line += "<div>(" + record[children].length + ")" + selectChildren + "</div>";
+                if (isArray(record[children]) && record[children].length) {
+                    line += "<div>(" + record[children].length + ")" + selectChildren + "</div>";
+                }
+                else { line += "<div></div>"; }
             });
             record += "<div>" + line + "</div>";
         }
