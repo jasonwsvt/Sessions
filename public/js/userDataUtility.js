@@ -472,7 +472,7 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         //clear scrollAreaDiv
         this.scrollAreaDiv.empty();
         //call buildRecord with data
-        this._buildRecord(this.currentUser.pushToStorage(), "local");
+        this._buildRecord(0, this.currentUser.pushToStorage(), false);  //change false to imported
 
         //click event for rowButtons (id + "_row")
         this.rowButtons.on("click", function (e) {
@@ -492,40 +492,57 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         });
     }
 
-    _buildRecord(recordData) {
-        var data = [], row, children;
-        const keys = Object.keys(recordData);
+    _buildRecord(tier, local, imported = false) {
+        var data = [], children;
+        const keys = Object.keys(local);
+        if (imported) { keys = keys.concat(Object.keys(imported)).filter(key, index => (keys.indexOf(key) === index)); }
         const id = keys.splice(keys.indexOf("id"), 1);
-        children = keys.findIndex(key => (isArray(recordData[key])));
-        children = (isInteger(children)) ? keys.splice(children, 1) : null;
-        data.push(keys.splice(keys.findIndex(key => (key.includes("name")))), 1);
-        data.push(keys.splice(keys.indexOf("creation"), 1));
-        data.push(keys.splice(keys.indexOf("lastEdited"), 1));
-        data.push(keys.splice(keys.indexOf("lastOpened"), 1));
-        keys.forEach(key => { data.push(key); });
-
-
-        if (!this.row(id)) {
-            this.scrollAreaDiv.append("<div id = 'row_" + id + "'></div>");
-            const rowButton = "<button type = 'button' class = 'btn btn-secondary rowButton'></button>";
-        }
-
+        children = keys.find(key => (isArray(local[key])));
+        keys.splice(keys.indexOf(children), 1);
+        keys.unshift(keys.splice(keys.indexOf("lastOpened"), 1));
+        keys.unshift(keys.splice(keys.indexOf("lastEdited"), 1));
+        keys.unshift(keys.splice(keys.indexOf("creation"), 1));
+        keys.unshift(keys.splice(keys.findIndex(key => (key.includes("name")))), 1);
+        
+        const rowButton = "<button type = 'button' class = 'btn btn-secondary rowButton'></button>";
         const selectRecord = "<button type = 'button' class = 'btn btn-secondary selectRecord'></button>";
-        const childrenButton = (children && children.length) ? "<button type = 'button' class = 'btn btn-secondary childrenButton'></button>" : "";
-        if (!this.selectChildren(id) && children && children.length) {
-            const selectChildren = "<button type = 'button' class = 'btn btn-secondary selectChildren'></button>";
-        }
+        const childrenButton = "<button type = 'button' class = 'btn btn-secondary childrenButton'></button>";
+        const selectChildren = "<button type = 'button' class = 'btn btn-secondary selectChildren'></button>";
 
-        row = this.row(id);
-        if (row.data("size") == "maximized") {
-            buttons = "<div><div>" + rowButton + selectRecord + "</div><div>" + childrenButton + selectChildren + "</div></div>";
-            data.forEach(datum => { record += "<div>" + datum + "</div><div>" + recordData[datum] + "</div>"; });
-            if (children) { record += "<div>" + children + "</div><div>(" + recordData[datum].length + ")</div>"; }
-            imported = "<div class = 'imported'></div>";
-            row.append(buttons + data + imported);
+        record = "";
+        keys.forEach(key, index => {
+            line = "<div>";
+            if (index == 0) { line += rowButton + " "; }
+            line += key + "</div>";
+            [local, imported].forEach(record => {
+                if (record[key]) {
+                    line += "<div>" + record[key];
+                    if (index == 0) { line += " " + selectRecord; }
+                    line += "</div>";
+                }
+                else { line += "<div></div>"; }
+            });
+            record+= "<div>" + line + "</div>";
+        });
+        if (children) {
+            line = "<div>" + childrenButton + " " + children + "</div>"
+            [local, imported].forEach(record => {
+                line += "<div>(" + record[children].length + ")" + selectChildren + "</div>";
+            });
+            record += "<div>" + line + "</div>";
         }
-        else if (this.row(id).data("size") == "minimized") {
-            this.row(id).append("<div><div>" + rowButton + selectRecord + childrenButton + selectChildren + "</div><div>" + name + " " + lastUpdated);
+        this.scrollAreaDiv.append("<div id = 'row_" + id + "'>" + record + "</div>");
+
+        if (children) {
+            keys = Object.keys(local[children]);
+            if (imported && Object.keys(imported).includes(children)) {
+                keys = keys.concat(imported[children]).filter(key, index => (keys.indexOf(key) === index));
+            }
+            keys.forEach(key => {
+                localRecord = (local && local[key]) ? local[key] : false;
+                importedRecord = (imported && imported[key]) ? imported[key] : false;
+                this._buildRecord(tier + 1, localRecord, importedRecord);
+            });
         }
     }
 
