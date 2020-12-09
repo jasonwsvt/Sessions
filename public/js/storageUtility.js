@@ -338,20 +338,18 @@ class StorageUtility {
     }
 
     //Initially called from user.
-    createJSON() {
+    pullRecords() {
         this.pushToStorage();
 
-        var data = this.csThisRecord();
+        var data = this.csThisRecord;
 
         if (this.canHaveChildren) {
             const type = this.children.type;
             data[type] = [];
             this.children.unsorted.forEach(child => {
-                data[type].push(child.createJSON());
+                data[type].push(child.pullRecords());
             });
         }
-
-        if (this.type == "user") { data = JSON.stringify(data); }
         return data;
     }
 }

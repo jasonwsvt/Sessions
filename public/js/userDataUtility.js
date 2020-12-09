@@ -48,6 +48,7 @@ class UserDataUtility {
             self.button.on("click", function(e) {
                 self.utilities.closeAllUtilityMenus(self._buttonID);
                 if (self.div.hasClass("hidden")) {
+                    self._buildRecords();
                     self.div.removeClass("hidden");
                     this.blur();
                     //self.manage();
@@ -463,16 +464,12 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         console.log(this.options.data("value"), this.options.data(this.options.data("value")));
     }
 
-    _pullUserData() {
-        ;
-        const data = this.currentUser.createJSON();
-    }
-
     _buildRecords() {
         //clear scrollAreaDiv
+        this.currentUser.pushToStorage();
         this.scrollAreaDiv.empty();
         //call buildRecord with data
-        this._buildRecord(0, this.currentUser.pushToStorage(), false);  //change false to imported
+        this._buildRecord(0, this.currentUser.pullRecords(), false);  //change false to imported
 
         //click event for rowButtons (id + "_row")
         this.rowButtons.on("click", function (e) {
@@ -492,25 +489,32 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         });
     }
 
-    _buildRecord(tier, local, imported = false) {
-        var data = [], children;
-        const keys = Object.keys(local);
-        if (imported) { keys = keys.concat(Object.keys(imported)).filter(key, index => (keys.indexOf(key) === index)); }
-        const id = keys.splice(keys.indexOf("id"), 1);
-        children = keys.find(key => (isArray(local[key])));
-        keys.splice(keys.indexOf(children), 1);
-        keys.unshift(keys.splice(keys.indexOf("lastOpened"), 1));
-        keys.unshift(keys.splice(keys.indexOf("lastEdited"), 1));
-        keys.unshift(keys.splice(keys.indexOf("creation"), 1));
-        keys.unshift(keys.splice(keys.findIndex(key => (key.includes("name")))), 1);
+    _buildRecord(tier, local, imported = []) {
+        var id = local.id;
+        var keys = Object.keys(local);
+        keys.forEach(key => { console.log(key); });
+        keys.splice(keys.indexOf("id"), 1)[0];
+        if (imported.length) {
+            keys = keys.concat(Object.keys(imported)).filter(key, index => (keys.indexOf(key) === index));
+        }
+        var children = Object.keys(local).find(key => (isArray(local[key])));
+        keys.splice(keys.indexOf(children), 1)[0];
+        keys.unshift(keys.splice(keys.indexOf("lastOpened")[0], 1));
+        keys.unshift(keys.splice(keys.indexOf("lastEdited")[0], 1));
+        keys.unshift(keys.splice(keys.indexOf("creation")[0], 1));
+        keys.unshift(keys.splice(keys.findIndex(key => { console.log(key);})));
+        keys.unshift(keys.splice(keys.findIndex(key => (key.toLowerCase().includes("name")))), 1)[0];
+        keys.forEach(key => { console.log(key); });
         
         const rowButton = "<button type = 'button' class = 'btn btn-secondary rowButton'></button>";
         const selectRecord = "<button type = 'button' class = 'btn btn-secondary selectRecord'></button>";
         const childrenButton = "<button type = 'button' class = 'btn btn-secondary childrenButton'></button>";
         const selectChildren = "<button type = 'button' class = 'btn btn-secondary selectChildren'></button>";
 
-        record = "";
-        keys.forEach(key, index => {
+        var record = "", line;
+        console.log(local, imported, children, keys);
+
+        keys.forEach((key, index) => {
             line = "<div>";
             if (index == 0) { line += rowButton + " "; }
             line += key + "</div>";
@@ -525,7 +529,7 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
             record+= "<div>" + line + "</div>";
         });
         if (children) {
-            line = "<div>" + childrenButton + " " + children + "</div>"
+            line = "<div>" + childrenButton + " " + children + "</div>";
             [local, imported].forEach(record => {
                 line += "<div>(" + record[children].length + ")" + selectChildren + "</div>";
             });
