@@ -34,6 +34,56 @@
     width: 570px;
 }
 
+#userDataUtilityScrollAreaDiv { /* scroll div container */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#userDataUtilityScrollAreaDiv div { /* record */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#userDataUtilityScrollAreaDiv div div { /* line of record */
+    display: flex;
+    flex-direction: row !important;
+    width: 100%;
+}
+
+#userDataUtilityScrollAreaDiv div > div div { /* every div in record line */
+    border: 1px;
+}
+
+#userDataUtilityScrollAreaDiv div > div:nth-child(1) { /* Button column */
+    text-align: left;
+}
+
+#userDataUtilityScrollAreaDiv div > div:nth-child(2) { /* Label column */
+    text-align: right;
+}
+
+#userDataUtilityScrollAreaDiv div > div:nth-child(3) { /* User value */
+    text-align: left;
+    width: 500px;
+}
+
+#userDataUtilityScrollAreaDiv div > div:nth-child(4) { /* Select column */
+    text-align: center;
+    width: 500px;
+}
+
+#userDataUtilityScrollAreaDiv div > div:nth-child(5) { /* Imported value */
+    text-align: left;
+    width: 500px;
+}
+
+#userDataUtilityScrollAreaDiv div > div:nth-child(6) { /* Select column */
+    text-align: center;
+    width: 250px;
+}
+
 #importDiv {
     z-index: 3;
     position: absolute;

@@ -525,21 +525,20 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         console.log(local, imported, children, keys);
 
         keys.forEach((key, index) => {
-            line = "<div>";
-            if (index == 0) { line += rowButton + " "; }
-            line += key + "</div>";
+            line = (index == 0) ? "<div style = 'width: " + (30 + tier*50) + "'>" + rowButton + "</div>" : "<div></div>";
+            line += "<div style = 'width: " + (500 - (30 + tier*50)) + "'>" + key + "</div>";
             [local, imported].forEach(record => {
                 if (record[key]) {
-                    line += "<div>" + record[key];
-                    if (index == 0) { line += " " + selectRecord; }
-                    line += "</div>";
+                    line += "<div>" + record[key] + "</div>";
+                    line += (index == 0) ? "<div>" + selectRecord + "</div>" : "<div></div>";
                 }
-                else { line += "<div></div>"; }
+                else { line += "<div></div><div></div>"; }
             });
             record+= "<div>" + line + "</div>";
         });
         if (children) {
-            line = "<div>" + childrenButton + " " + children + "</div>";
+            line = "<div style = 'width: " + (30 + tier*50) + "'>" + childrenButton + "</div>";
+            line += "<div style = 'width: " + (500 - (30 + tier*50)) + "'>" + children + "</div>";
             [local, imported].forEach(record => {
                 if (isArray(record[children]) && record[children].length) {
                     line += "<div>(" + record[children].length + ")" + selectChildren + "</div>";
@@ -548,7 +547,7 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
             });
             record += "<div>" + line + "</div>";
         }
-        this.scrollAreaDiv.append("<div id = 'row_" + id + "'>" + record + "</div>");
+        this.scrollAreaDiv.append("<div id = 'row_" + id + "' class = 'flex-container'>" + record + "</div>");
 
         if (children) {
             keys = Object.keys(local[children]);
