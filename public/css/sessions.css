@@ -36,6 +36,7 @@
 
 #userDataUtilityScrollAreaDiv { /* scroll div container */
     display: flex;
+    position: relative;
     flex-direction: column;
     width: 100%;
 }
@@ -53,35 +54,42 @@
 }
 
 #userDataUtilityScrollAreaDiv div > div div { /* every div in record line */
+    display: flex;
     border: 1px;
 }
 
-#userDataUtilityScrollAreaDiv div > div:nth-child(1) { /* Button column */
+#userDataUtilityScrollAreaDiv div > div:nth-child(1) { /* Record button column */
+    display: flex;
     text-align: left;
 }
 
 #userDataUtilityScrollAreaDiv div > div:nth-child(2) { /* Label column */
+    display: flex;
     text-align: right;
 }
 
-#userDataUtilityScrollAreaDiv div > div:nth-child(3) { /* User value */
+#userDataUtilityScrollAreaDiv div > div:nth-child(3) { /* User value column */
+    display: flex;
     text-align: left;
-    width: 500px;
+    width: 150px;
 }
 
-#userDataUtilityScrollAreaDiv div > div:nth-child(4) { /* Select column */
+#userDataUtilityScrollAreaDiv div > div:nth-child(4) { /* User Select column */
+    display: flex;
     text-align: center;
-    width: 500px;
+    width: 30px;
 }
 
-#userDataUtilityScrollAreaDiv div > div:nth-child(5) { /* Imported value */
+#userDataUtilityScrollAreaDiv div > div:nth-child(5) { /* Imported value column */
+    display: flex;
     text-align: left;
-    width: 500px;
+    width: 150px;
 }
 
-#userDataUtilityScrollAreaDiv div > div:nth-child(6) { /* Select column */
+#userDataUtilityScrollAreaDiv div > div:nth-child(6) { /* Imported select column */
+    display: flex;
     text-align: center;
-    width: 250px;
+    width: 30px;
 }
 
 #importDiv {

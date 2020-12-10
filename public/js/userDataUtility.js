@@ -525,8 +525,10 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         console.log(local, imported, children, keys);
 
         keys.forEach((key, index) => {
-            line = (index == 0) ? "<div style = 'width: " + (30 + tier*50) + "'>" + rowButton + "</div>" : "<div></div>";
-            line += "<div style = 'width: " + (500 - (30 + tier*50)) + "'>" + key + "</div>";
+            line = "<div style = 'width: " + (30 + tier*50) + "px'>";
+            if (index == 0) { line += rowButton; }
+            line += "</div>";
+            line += "<div style = 'width: " + (200 - (30 + tier*50)) + "px'>" + key + "</div>";
             [local, imported].forEach(record => {
                 if (record[key]) {
                     line += "<div>" + record[key] + "</div>";
@@ -537,8 +539,8 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
             record+= "<div>" + line + "</div>";
         });
         if (children) {
-            line = "<div style = 'width: " + (30 + tier*50) + "'>" + childrenButton + "</div>";
-            line += "<div style = 'width: " + (500 - (30 + tier*50)) + "'>" + children + "</div>";
+            line = "<div style = 'width: " + (30 + tier*50) + "px'>" + childrenButton + "</div>";
+            line += "<div style = 'width: " + (500 - (30 + tier*50)) + "px'>" + children + "</div>";
             [local, imported].forEach(record => {
                 if (isArray(record[children]) && record[children].length) {
                     line += "<div>(" + record[children].length + ")" + selectChildren + "</div>";
