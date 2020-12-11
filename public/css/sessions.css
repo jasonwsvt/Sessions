@@ -51,9 +51,17 @@
 .inside3 { width: 130px; }
 
 #userDataUtilityScrollAreaDiv table { /* record */
-    padding: 0px;
+    padding: 5px;
     font-size: 14px;
     width: 100%;
+}
+
+#userDataUtilityScrollAreaDiv table tr:first-of-type td:not(:first-of-type) {
+    border-top: 1px solid black;
+}
+
+#userDataUtilityScrollAreaDiv table tr:last-of-type td:not(:first-of-type) {
+    border-bottom: 1px solid black;
 }
 
 #userDataUtilityScrollAreaDiv tr > td { /* Record button column, width assigned by .outside# */
@@ -61,6 +69,7 @@
 }
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(2) { /* Label column, width assigned by .inside# */
+    border-left: 1px solid black;
     text-align: right;
 }
 
@@ -81,6 +90,7 @@
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(6) { /* Imported select column */
     text-align: center;
+    border-right: 1px solid black;
     width: 26px;
 }
 
