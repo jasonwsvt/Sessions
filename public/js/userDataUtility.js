@@ -525,6 +525,32 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         console.log(local, imported, children, keys);
 
         keys.forEach((key, index) => {
+            line = (index == 0) ? "<td class = 'outside" + tier + "'>" + rowButton + "</td>" : "<td></td>";
+            line += "<td class = 'inside" + tier + "'>" + key + ":</td>";
+            [local, imported].forEach(record => {
+                if (record) {
+                    line += "<td>" + record[key] + "</td>";
+                    line += (index == 0) ? "<td>" + selectRecord + "</td>" : "<td></td>";
+                }
+                else { line += "<td></td><td></td>"; }
+            });
+            record+= "<tr>" + line + "</tr>";
+        });
+        if (children) {
+            line = "<td class = 'outside" + tier + "'>" + childrenButton + "</td>";
+            line += "<td class = 'inside" + tier + "'>" + children + "</td>";
+            [local, imported].forEach(record => {
+                if (isArray(record[children]) && record[children].length) {
+                    line += "<td>(" + record[children].length + ")</td>";
+                    line += "<td>" + selectChildren + "</td>";
+                }
+                else { line += "<td></td>"; }
+            });
+            record += "<tr>" + line + "</tr>";
+        }
+        this.scrollAreaDiv.append("<table id = 'row_" + id + "' class = 'flex-container'>" + record + "</table>");
+
+        /* keys.forEach((key, index) => {
             line = "<div style = 'width: " + (30 + tier*50) + "px'>";
             if (index == 0) { line += rowButton; }
             line += "</div>";
@@ -550,7 +576,7 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
             record += "<div>" + line + "</div>";
         }
         this.scrollAreaDiv.append("<div id = 'row_" + id + "' class = 'flex-container'>" + record + "</div>");
-
+*/
         if (children) {
             keys = Object.keys(local[children]);
             if (imported && Object.keys(imported).includes(children)) {
