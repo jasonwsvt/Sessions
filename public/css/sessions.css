@@ -31,6 +31,7 @@
     transition-duration: .4s;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     opacity: 1;
+    background-color: rgba(238, 238, 238, 1);
     width: 570px;
 }
 
@@ -39,16 +40,18 @@
     position: relative;
     flex-direction: column;
     width: 100%;
+    overflow-y: auto;
+    height: 500px;
 }
 
 .outside0 { width: 26px; }
-.inside0 { width: 150px; }
+.inside0 { width: 170px; }
 .outside1 { width: 46px; }
-.inside1 { width: 170px; }
+.inside1 { width: 150px; }
 .outside2 { width: 66px; }
-.inside2 { width: 150px; }
+.inside2 { width: 130px; }
 .outside3 { width: 86px; }
-.inside3 { width: 130px; }
+.inside3 { width: 110px; }
 
 #userDataUtilityScrollAreaDiv table { /* record */
     padding: 5px;
@@ -65,7 +68,7 @@
 }
 
 #userDataUtilityScrollAreaDiv tr > td { /* Record button column, width assigned by .outside# */
-    text-align: left;
+    text-align: right;
 }
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(2) { /* Label column, width assigned by .inside# */
@@ -75,7 +78,7 @@
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(3) { /* User value column */
     text-align: left;
-    width: 140px;
+    width: 146px;
 }
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(4) { /* User Select column */
@@ -85,7 +88,7 @@
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(5) { /* Imported value column */
     text-align: left;
-    width: 140px;
+    width: 146px;
 }
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(6) { /* Imported select column */

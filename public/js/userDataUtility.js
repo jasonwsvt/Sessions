@@ -496,23 +496,26 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
             unsortedKeys = unsortedKeys.concat(Object.keys(imported));
             unsortedKeys = unsortedKeys.filter(key, index => (unsortedKeys.indexOf(key) === index));
         }
-        if (unsortedKeys.find(key => (isArray(local[key])))) {
-            var children = unsortedKeys.find(key => (isArray(local[key])));
-            unsortedKeys.splice(unsortedKeys.indexOf(children), 1);
-        }
         if (unsortedKeys.find(key => (key.toLowerCase().includes("name")))) {
             keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("name"))));
             unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
         }
-        ["id", "passwordHash"].forEach(param => {
-            unsortedKeys.splice(unsortedKeys.indexOf(param), 1);
-        });
-        ["creation", "lastEdited", "lastOpened"].forEach(key => {
+        console.log(unsortedKeys, keys);
+        if (unsortedKeys.find(key => (key.toLowerCase().includes("id")))) {
+            keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("id"))));
+            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
+        }
+        unsortedKeys.splice(unsortedKeys.indexOf("passwordHash"), 1);
+        ["creation", "lastEdited", "lastOpened", "lines"].forEach(key => {
             if (unsortedKeys.includes(key)) {
                 keys.push(key);
                 unsortedKeys.splice(unsortedKeys.indexOf(key), 1);
             }
         });
+        if (unsortedKeys.find(key => (isArray(local[key])))) {
+            var children = unsortedKeys.find(key => (isArray(local[key])));
+            unsortedKeys.splice(unsortedKeys.indexOf(children), 1);
+        }
         keys = keys.concat(unsortedKeys);
 //        keys.forEach(key => { console.log(key); });
         
@@ -522,14 +525,18 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         const selectChildren = "<span class = 'selectChildren'>" + this._squareIcon + "</span>";
 
         var record = "", line;
-//        console.log(local, imported, children, keys);
+        console.log(local, imported, children, keys);
 
         keys.forEach((key, index) => {
             line = (index == 0) ? "<td class = 'outside" + tier + "'>" + rowButton + "</td>" : "<td></td>";
             line += "<td class = 'inside" + tier + "'>" + key + ":</td>";
             [local, imported].forEach(record => {
                 if (record) {
-                    line += "<td>" + record[key] + "</td>";
+                    line += "<td>";
+                    line += (isArray(record[key]))
+                        ? record[key].join("<br>")
+                        : record[key];
+                    line += "</td>";
                     line += (index == 0) ? "<td>" + selectRecord + "</td>" : "<td></td>";
                 }
                 else { line += "<td></td><td></td>"; }
