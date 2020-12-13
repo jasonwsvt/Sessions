@@ -53,7 +53,7 @@
 .outside3 { width: 86px; }
 .inside3 { width: 114px; }
 
-/* .collapsed table tr:{ } */
+.collapsed tr:not(:first-of-type):not(:last-of-type) { display: none; }
 
 #userDataUtilityScrollAreaDiv table { /* record */
     padding: 5px;

@@ -557,30 +557,36 @@ class UserDataUtility {
             const row = $(this).parent().parent().parent().parent(); 
             const id = row.attr("id");
             const value = $(this).html();
-            if ($(this).data("value") == "checked") { $(this).data("value", "square");  $(this).html(self._squareIcon); }
-            else                                    { $(this).data("value", "checked"); $(this).html(self._checkedIcon); }
+            if ($(this).data("value") == "checked") {
+                $(this).data("value", "square");
+                $(this).html(self._squareIcon);
+            }
+            else {
+                $(this).data("value", "checked");
+                $(this).html(self._checkedIcon);
+            }
         });
 
         //click event for selectChildren buttons ("select_" + id + "_children")
         this.childrenSelects.on("click", function (e) {
             const row = $(this).parent().parent().parent().parent(); 
             const id = row.attr("id");
-            if ($(this).data("value") == "checked") { $(this).data("value", "square");  $(this).html(self._squareIcon); }
-            else                                    { $(this).data("value", "checked"); $(this).html(self._checkedIcon); }
+            if ($(this).data("value") == "checked") {
+                $(this).data("value", "square");
+                $(this).html(self._squareIcon);
+            }
+            else {
+                $(this).data("value", "checked");
+                $(this).html(self._checkedIcon);
+            }
         });
 
-        if (true) {                                                     //change true to imported
-            console.trace();
-            console.log(this.scrollAreaDiv);
-            console.log(this.importDiv);
-            console.log(this.importButton.val());
-            console.log("left:", this.scrollAreaDiv.position().left);
-            console.log("width:", this.scrollAreaDiv.width());
-            console.log("import div width:", this.importDiv.width());
-            console.log("left:", this.scrollAreaDiv[0].clientLeft + this.scrollAreaDiv[0].clientWidth - this.importDiv[0].clientWidth);
-            console.log("top:", this.scrollAreaDiv[0].clientTop);
+        if (true) {                                                     //change true to !imported
             this.importDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.importDiv.width() - 5) + "px");
             this.importDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
+        }
+        else {
+            this.importDiv.addClass("hidden");
         }
     }
 
@@ -652,9 +658,9 @@ class UserDataUtility {
             [local, imported].forEach(record => {
                 if (record) {
                     line += "<td>";
-                    line += (isArray(record[key]))
-                        ? this._escapeHTML(record[key]).join("<br>")
-                        : record[key];
+                    line += (isArray(record[key])) ? this._escapeHTML(record[key]).join("<br>")
+                          : (parseInt(record[key]) < 3155760000 && parseInt(record[key]) > 1577880000)
+                          ? this.parseDate(record[key]) : record[key];
                     line += "</td>";
                     line += (index == 0) ? "<td>" + selectRecord + "</td>" : "<td></td>";
                 }
@@ -689,6 +695,19 @@ class UserDataUtility {
                 this._buildRecord(tier + 1, localRecord, importedRecord);
             });
         }
+    }
+
+    parseDate(ts) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const d = new Date(ts * 1000);
+        const year = String(d.getFullYear()).slice(2);
+        const month = String((d.getMonth() > 12) ? d.getMonth() - 12 : d.getMonth()).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const hour = String((d.getHours() > 12) ? d.getHours() - 12 : d.getHours()).padStart(2, '0');
+        const minute = String(d.getMinutes()).padStart(2, '0');
+        const second = String(d.getSeconds()).padStart(2, '0');
+        const ampm = String((d.getHours() > 12) ? "PM" : "AM");
+        return `${month}/${day}/${year} ${hour}:${minute}:${second}${ampm}`;
     }
 
     _escapeHTML(html) {
