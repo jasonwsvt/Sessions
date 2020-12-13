@@ -45,13 +45,15 @@
 }
 
 .outside0 { width: 26px; }
-.inside0 { width: 170px; }
+.inside0 { width: 174px; }
 .outside1 { width: 46px; }
-.inside1 { width: 150px; }
+.inside1 { width: 154px; }
 .outside2 { width: 66px; }
-.inside2 { width: 130px; }
+.inside2 { width: 134px; }
 .outside3 { width: 86px; }
-.inside3 { width: 110px; }
+.inside3 { width: 114px; }
+
+/* .collapsed table tr:{ } */
 
 #userDataUtilityScrollAreaDiv table { /* record */
     padding: 5px;
@@ -78,7 +80,7 @@
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(3) { /* User value column */
     text-align: left;
-    width: 146px;
+    width: 142px;
 }
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(4) { /* User Select column */
@@ -89,7 +91,7 @@
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(5) { /* Imported value column */
     text-align: left;
-    width: 146px;
+    width: 142px;
 }
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(6) { /* Imported select column */

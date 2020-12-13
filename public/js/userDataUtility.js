@@ -471,30 +471,102 @@ class UserDataUtility {
 
         //click event for rowButtons (id + "_row")
         this.rowButtons.on("click", function (e) {
-            const id = $(this).parent().parent().parent().parent().attr("id");
-            if      ($(this).data("value") == "collapse") { $(this).data("value", "hide");     $(this).html(self._hideIcon); }
-            else if ($(this).data("value") == "hide")     { $(this).data("value", "expand");   $(this).html(self._expandIcon); }
-            else                                          { $(this).data("value", "collapse"); $(this).html(self._collapseIcon); }
+            //add shift-click to back-step
+            const row = $(this).parent().parent().parent().parent(); 
+            const id = row.attr("id");
+            if (e.shiftKey) {
+                if (row.hasClass("collapsed")) {
+                    row.removeClass("collapsed");
+                    row.addClass("expanded");
+                    $(this).html(self._expandIcon);
+                }
+                else if (row.hasClass("hidden")) {
+                    row.removeClass("hidden");
+                    row.addClass("collapsed");
+                    $(this).html(self._collapseIcon);
+                }
+                else {
+                    row.removeClass("expanded");
+                    row.addClass("hidden");
+                    $(this).html(self._hideIcon);
+                }
+            }
+            else {
+                if (row.hasClass("collapsed")) {
+                    row.removeClass("collapsed");
+                    row.addClass("hidden");
+                    $(this).html(self._hideIcon);
+                }
+                else if (row.hasClass("hidden")) {
+                    row.removeClass("hidden");
+                    row.addClass("expanded");
+                    $(this).html(self._expandIcon);
+                }
+                else {
+                    row.removeClass("expanded");
+                    row.addClass("collapsed");
+                    $(this).html(self._collapseIcon);
+                }
+            }
         });
-        //click event for selectRecord buttons ("select_" + id)
-        this.recordSelects.on("click", function (e) {
-            const id = $(this).parent().parent().parent().parent().attr("id");
-            const value = $(this).html();
-            if      ($(this).data("value") == "checked") { $(this).data("value", "square");  $(this).html(self._squareIcon); }
-            else                                         { $(this).data("value", "checked"); $(this).html(self._checkedIcon); }
-        });
+
         //click event for childrenButton buttons (id + "_children")
         this.childrenButtons.on("click", function (e) {
-            const id = $(this).parent().parent().parent().parent().attr("id");
-            if      ($(this).data("value") == "collapse") { $(this).data("value", "hide");     $(this).html(self._hideIcon); }
-            else if ($(this).data("value") == "hide")     { $(this).data("value", "expand");   $(this).html(self._expandIcon); }
-            else                                          { $(this).data("value", "collapse"); $(this).html(self._collapseIcon); }
+            //Add shift-click to back-step
+            const row = $(this).parent().parent().parent().parent(); 
+            const id = row.attr("id");
+            if (e.shiftKey) {
+                if (row.hasClass("collapsed")) {
+                    row.removeClass("collapsed");
+                    row.addClass("expanded");
+                    $(this).html(self._expandIcon);
+                }
+                else if (row.hasClass("hidden")) {
+                    row.removeClass("hidden");
+                    row.addClass("collapsed");
+                    $(this).html(self._collapseIcon);
+                }
+                else {
+                    row.removeClass("expanded");
+                    row.addClass("hidden");
+                    $(this).html(self._hideIcon);
+                }
+            }
+            else {
+                if (row.hasClass("collapsed")) {
+                    row.removeClass("collapsed");
+                    row.addClass("hidden");
+                    $(this).html(self._hideIcon);
+                }
+                else if (row.hasClass("hidden")) {
+                    row.removeClass("hidden");
+                    row.addClass("expanded");
+                    $(this).html(self._expandIcon);
+                }
+                else {
+                    row.removeClass("expanded");
+                    row.addClass("collapsed");
+                    $(this).html(self._collapseIcon);
+                }
+            }
+            self.setChildrenStates(id);
         });
+        
+        //click event for selectRecord buttons ("select_" + id)
+        this.recordSelects.on("click", function (e) {
+            const row = $(this).parent().parent().parent().parent(); 
+            const id = row.attr("id");
+            const value = $(this).html();
+            if ($(this).data("value") == "checked") { $(this).data("value", "square");  $(this).html(self._squareIcon); }
+            else                                    { $(this).data("value", "checked"); $(this).html(self._checkedIcon); }
+        });
+
         //click event for selectChildren buttons ("select_" + id + "_children")
         this.childrenSelects.on("click", function (e) {
-            const id = $(this).parent().parent().parent().parent().attr("id");
-            if      ($(this).data("value") == "checked") { $(this).data("value", "square");  $(this).html(self._squareIcon); }
-            else                                         { $(this).data("value", "checked"); $(this).html(self._checkedIcon); }
+            const row = $(this).parent().parent().parent().parent(); 
+            const id = row.attr("id");
+            if ($(this).data("value") == "checked") { $(this).data("value", "square");  $(this).html(self._squareIcon); }
+            else                                    { $(this).data("value", "checked"); $(this).html(self._checkedIcon); }
         });
 
         if (true) {                                                     //change true to imported
@@ -521,8 +593,8 @@ class UserDataUtility {
         }
         //console.log(unsortedKeys, keys);
 
-        if (unsortedKeys.find(key => (key.toLowerCase().includes("id")))) {
-            keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("id"))));
+        if (unsortedKeys.find(key => (key == "id"))) {
+            keys.push(unsortedKeys.find(key => (key == "id")));
             unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
         }
         //console.log("After id", unsortedKeys, keys);
@@ -538,12 +610,24 @@ class UserDataUtility {
         }
         //console.log("After passwordHash", unsortedKeys, keys);
 
-        ["creation", "lastEdited", "lastOpened", "lines"].forEach(key => {
+        ["creation", "lastEdited", "lastOpened"].forEach(key => {
             if (unsortedKeys.includes(key)) {
                 keys.push(key);
                 unsortedKeys.splice(unsortedKeys.indexOf(key), 1);
             }
         });
+        //console.log("After creation, lastEdited, lastOpened, lines", unsortedKeys, keys);
+
+        if (unsortedKeys.find(key => (key.toLowerCase().includes("id")))) {
+            keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("id"))));
+            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
+        }
+        //console.log("After id", unsortedKeys, keys);
+
+        if (unsortedKeys.includes("lines")) {
+            keys.push("lines");
+            unsortedKeys.splice(unsortedKeys.indexOf("lines"), 1);
+        }
         //console.log("After creation, lastEdited, lastOpened, lines", unsortedKeys, keys);
 
         if (unsortedKeys.find(key => (isArray(local[key])))) {
