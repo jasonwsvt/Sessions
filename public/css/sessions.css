@@ -83,6 +83,7 @@
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(4) { /* User Select column */
     text-align: center;
+    border-right: 1px dotted black;
     width: 26px;
 }
 
@@ -97,7 +98,7 @@
     width: 26px;
 }
 
-#importDiv {
+#userDataImportDiv {
     z-index: 3;
     position: absolute;
     display: flex;

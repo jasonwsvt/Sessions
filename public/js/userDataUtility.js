@@ -14,8 +14,8 @@ class UserDataUtility {
     _hideIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-eye-slash' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z'/><path d='M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299l.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z'/><path d='M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709z'/><path fill-rule='evenodd' d='M13.646 14.354l-12-12 .708-.708 12 12-.708.708z'/></svg>";
     _expandIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-fullscreen' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z'/></svg>";
     _collapseIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-fullscreen-exit' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5zm5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5zM0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zm10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4z'/></svg>";
-    _exportIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-download' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z'/><path fill-rule='evenodd' d='M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z'/></svg>";
-    _importIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-upload' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z'/><path fill-rule='evenodd' d='M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z'/></svg>";
+    _importIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-download' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z'/><path fill-rule='evenodd' d='M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z'/></svg>";
+    _exportIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-upload' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z'/><path fill-rule='evenodd' d='M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z'/></svg>";
     _downArrowIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-arrow-down' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z'/></svg>";
     _upArrowIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-arrow-up' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z'/></svg>";
     _squareIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-square' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/></svg>";
@@ -23,6 +23,7 @@ class UserDataUtility {
 
     _divID = "userDataDiv";
     _buttonID = "userDataButton";
+    _importDivID = "userDataImportDiv";
     _importButtonID = "userDataImportButton";
     _exportButtonID = "userDataExportButton";
     _adjustID = "userDataUtilityAdjust";
@@ -48,10 +49,9 @@ class UserDataUtility {
             self.button.on("click", function(e) {
                 self.utilities.closeAllUtilityMenus(self._buttonID);
                 if (self.div.hasClass("hidden")) {
-                    self._buildRecords();
                     self.div.removeClass("hidden");
                     this.blur();
-                    //self.manage();
+                    self._buildRecords();
                 }
                 else {
                     self.close();
@@ -270,8 +270,8 @@ class UserDataUtility {
         this.options.data("select_2_1_value", "select older");
         this.options.data("select_3_state", 0);
         this.options.data("select_3_states", 2);
-        this.options.data("select_3_0_html", "User");
-        this.options.data("select_3_0_value", "select left");
+        this.options.data("select_3_0_html", "Local");
+        this.options.data("select_3_0_value", "select local");
         this.options.data("select_3_1_html", "Imported");
         this.options.data("select_3_1_value", "select imported");
 
@@ -287,9 +287,6 @@ class UserDataUtility {
         else {
             this.importButton.prop("data-content", "Import data.");
         }
-console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importButton.width())
-        this.importDiv.css("left", String(this.scrollAreaDiv.position().left + this.div.width() - this.importDiv.width()) + "px");
-        this.importDiv.css("top", String(this.scrollAreaDiv.position().top) + "px");
 
 //        this.div.append(exportButton);
 //        this.exportButton.prop("data-toggle", "popover");
@@ -487,6 +484,20 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         this.childrenSelects.on("click", function (e) {
             const id = $(this).parent.parent.attr("id");
         });
+
+        if (true) {                                                     //change true to imported
+            console.trace();
+            console.log(this.scrollAreaDiv);
+            console.log(this.importDiv);
+            console.log(this.importButton.val());
+            console.log("left:", this.scrollAreaDiv.position().left);
+            console.log("width:", this.scrollAreaDiv.width());
+            console.log("import div width:", this.importDiv.width());
+            console.log("left:", this.scrollAreaDiv[0].clientLeft + this.scrollAreaDiv[0].clientWidth - this.importDiv[0].clientWidth);
+            console.log("top:", this.scrollAreaDiv[0].clientTop);
+            this.importDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.importDiv.width() - 5) + "px");
+            this.importDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
+        }
     }
 
     _buildRecord(tier, local, imported = []) {
@@ -496,28 +507,40 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
             unsortedKeys = unsortedKeys.concat(Object.keys(imported));
             unsortedKeys = unsortedKeys.filter(key, index => (unsortedKeys.indexOf(key) === index));
         }
-        if (unsortedKeys.find(key => (key.toLowerCase().includes("name")))) {
-            keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("name"))));
-            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
-        }
-        console.log(unsortedKeys, keys);
+        //console.log(unsortedKeys, keys);
+
         if (unsortedKeys.find(key => (key.toLowerCase().includes("id")))) {
             keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("id"))));
             unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
         }
-        unsortedKeys.splice(unsortedKeys.indexOf("passwordHash"), 1);
+        //console.log("After id", unsortedKeys, keys);
+
+        if (unsortedKeys.find(key => (key.toLowerCase().includes("name")))) {
+            keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("name"))));
+            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
+        }
+        //console.log("After name", unsortedKeys, keys);
+
+        if (unsortedKeys.includes("passwordHash")) {
+            unsortedKeys.splice(unsortedKeys.indexOf("passwordHash"), 1);
+        }
+        //console.log("After passwordHash", unsortedKeys, keys);
+
         ["creation", "lastEdited", "lastOpened", "lines"].forEach(key => {
             if (unsortedKeys.includes(key)) {
                 keys.push(key);
                 unsortedKeys.splice(unsortedKeys.indexOf(key), 1);
             }
         });
+        //console.log("After creation, lastEdited, lastOpened, lines", unsortedKeys, keys);
+
         if (unsortedKeys.find(key => (isArray(local[key])))) {
             var children = unsortedKeys.find(key => (isArray(local[key])));
             unsortedKeys.splice(unsortedKeys.indexOf(children), 1);
         }
+        //console.log("after children", unsortedKeys, keys);
+
         keys = keys.concat(unsortedKeys);
-//        keys.forEach(key => { console.log(key); });
         
         const rowButton = "<span class = 'rowButton'>" + this._expandIcon + "</span>";
         const selectRecord = "<span class = 'selectRecord'>" + this._squareIcon + "</span>";
@@ -525,7 +548,7 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
         const selectChildren = "<span class = 'selectChildren'>" + this._squareIcon + "</span>";
 
         var record = "", line;
-        console.log(local, imported, children, keys);
+        //console.log(local, imported, children, keys);
 
         keys.forEach((key, index) => {
             line = (index == 0) ? "<td class = 'outside" + tier + "'>" + rowButton + "</td>" : "<td></td>";
@@ -534,7 +557,7 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
                 if (record) {
                     line += "<td>";
                     line += (isArray(record[key]))
-                        ? record[key].join("<br>")
+                        ? this._escapeHTML(record[key]).join("<br>")
                         : record[key];
                     line += "</td>";
                     line += (index == 0) ? "<td>" + selectRecord + "</td>" : "<td></td>";
@@ -566,11 +589,16 @@ console.log(this.scrollAreaDiv.position().left, this.div.width(), this.importBut
             keys.forEach(key => {
                 localRecord = (local[children][key]) ? local[children][key] : false;
                 importedRecord = (imported && imported[children] && imported[children][key]) ? imported[children][key] : false;
-                console.log(key, tier + 1, localRecord, importedRecord);
+                //console.log(key, tier + 1, localRecord, importedRecord);
                 this._buildRecord(tier + 1, localRecord, importedRecord);
             });
         }
     }
+
+    _escapeHTML(html) {
+//        return html.map(line => (line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')));
+        return html.map(line => (jQuery(line).text()));
+}
 
     _exportJSON(data) {
         const blob1 = new Blob(data, { type: "text/plain;charset=utf-8" });
