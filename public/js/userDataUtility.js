@@ -11,9 +11,9 @@ class UserDataUtility {
     _emptyIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/></svg>';
     _plusIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>';
     _minusIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-dash-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/></svg>';
-    _hideIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye-slash" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/><path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299l.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/><path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709z"/><path fill-rule="evenodd" d="M13.646 14.354l-12-12 .708-.708 12 12-.708.708z"/></svg>';
-    _expandIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-fullscreen" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/></svg>';
-    _collapseIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-fullscreen-exit" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5zm5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5zM0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zm10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4z"/></svg>';
+    _hiddenIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye-slash" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/><path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299l.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/><path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709z"/><path fill-rule="evenodd" d="M13.646 14.354l-12-12 .708-.708 12 12-.708.708z"/></svg>';
+    _expandedIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-fullscreen" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/></svg>';
+    _collapsedIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-fullscreen-exit" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5zm5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5zM0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zm10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4z"/></svg>';
     _importIcon = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>';
     _exportIcon = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-upload" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path fill-rule="evenodd" d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>';
     _downArrowIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/></svg>';
@@ -504,34 +504,34 @@ class UserDataUtility {
                 if (row.hasClass("collapsed")) {
                     row.removeClass("collapsed");
                     row.addClass("expanded");
-                    $(this).html(self._expandIcon);
+                    $(this).html(self._expandedIcon);
                 }
                 else if (row.hasClass("hidden")) {
                     row.removeClass("hidden");
                     row.addClass("collapsed");
-                    $(this).html(self._collapseIcon);
+                    $(this).html(self._collapsedIcon);
                 }
                 else {
                     row.removeClass("expanded");
                     row.addClass("hidden");
-                    $(this).html(self._hideIcon);
+                    $(this).html(self._hiddenIcon);
                 }
             }
             else {
                 if (row.hasClass("collapsed")) {
                     row.removeClass("collapsed");
                     row.addClass("hidden");
-                    $(this).html(self._hideIcon);
+                    $(this).html(self._hiddenIcon);
                 }
                 else if (row.hasClass("hidden")) {
                     row.removeClass("hidden");
                     row.addClass("expanded");
-                    $(this).html(self._expandIcon);
+                    $(this).html(self._expandedIcon);
                 }
                 else {
                     row.removeClass("expanded");
                     row.addClass("collapsed");
-                    $(this).html(self._collapseIcon);
+                    $(this).html(self._collapsedIcon);
                 }
             }
         });
@@ -541,54 +541,62 @@ class UserDataUtility {
             //Add shift-click to back-step
             const row = $(this).parent().parent().parent().parent(); 
             const id = row.attr("id");
-            if (e.shiftKey) {
+
+            // If Control+Click, only affect children
+            if (e.ctrlKey) {
                 if (row.hasClass("collapsed")) {
                     row.removeClass("collapsed");
                     row.addClass("expanded");
-                    $(this).html(self._expandIcon);
+                    $(this).html(self._expandedIcon);
+                    self.expand(self.childrenOf(id));
                 }
                 else if (row.hasClass("hidden")) {
                     row.removeClass("hidden");
                     row.addClass("collapsed");
-                    $(this).html(self._collapseIcon);
+                    $(this).html(self._collapsedIcon);
+                    self.collapse(self.childrenOf(id));
                 }
                 else {
                     row.removeClass("expanded");
                     row.addClass("hidden");
-                    $(this).html(self._hideIcon);
+                    $(this).html(self._hiddenIcon);
+                    self.hide(childrenOf(id));
                 }
             }
+            //If Click, affect all offspring
             else {
                 if (row.hasClass("collapsed")) {
                     row.removeClass("collapsed");
                     row.addClass("hidden");
-                    $(this).html(self._hideIcon);
+                    $(this).html(self._hiddenIcon);
+                    self.hide(descendantsOf(id));
                 }
                 else if (row.hasClass("hidden")) {
                     row.removeClass("hidden");
                     row.addClass("expanded");
-                    $(this).html(self._expandIcon);
+                    $(this).html(self._expandedIcon);
+                    self.expand(self.descendantsOf(id));
                 }
                 else {
                     row.removeClass("expanded");
                     row.addClass("collapsed");
-                    $(this).html(self._collapseIcon);
+                    $(this).html(self._collapsedIcon);
+                    self.collapse(self.descendantsOf(id));
                 }
             }
-            self.setChildrenStates(id);
         });
         
         //click event for selectRecord buttons ("select_" + id)
         this.recordSelects.on("click", function (e) {
             const row = $(this).parent().parent().parent().parent(); 
-            const id = row.attr("id");
+            const id = row.attr("id"); //.split("_")[1] if needed
             const value = $(this).html();
-            if ($(this).data("value") == "checked") {
-                $(this).data("value", "square");
+            if (row.hasClass("selected")) {
+                row.removeClass("selected");
                 $(this).html(self._squareIcon);
             }
             else {
-                $(this).data("value", "checked");
+                row.addClass("selected");
                 $(this).html(self._checkedIcon);
             }
         });
@@ -597,12 +605,12 @@ class UserDataUtility {
         this.childrenSelects.on("click", function (e) {
             const row = $(this).parent().parent().parent().parent(); 
             const id = row.attr("id");
-            if ($(this).data("value") == "checked") {
-                $(this).data("value", "square");
+            if ($(this).hasClass("selected")) {
+                $(this).removeClass("selected");
                 $(this).html(self._squareIcon);
             }
             else {
-                $(this).data("value", "checked");
+                $(this).addClass("selected");
                 $(this).html(self._checkedIcon);
             }
         });
@@ -670,9 +678,9 @@ class UserDataUtility {
 
         keys = keys.concat(unsortedKeys);
         
-        const rowButton = "<span class = 'rowButton'>" + this._expandIcon + "</span>";
+        const rowButton = "<span class = 'rowButton'>" + this._expandedIcon + "</span>";
         const selectRecord = "<span class = 'selectRecord'>" + this._squareIcon + "</span>";
-        const childrenButton = "<span class = 'childrenButton'>" + this._expandIcon + "</span>";
+        const childrenButton = "<span class = 'childrenButton'>" + this._expandedIcon + "</span>";
         const selectChildren = "<span class = 'selectChildren'>" + this._squareIcon + "</span>";
 
         var record = "", line;
@@ -723,6 +731,55 @@ class UserDataUtility {
         }
     }
 
+    isSelected(ids) {
+        if (isInteger(ids)) { ids = [ids]; }
+        return ids.every(id => (this.row(id).hasClass("selected")));
+    }
+    get selected() {
+        return $(".selected");
+    }
+    get idsOfSelected() {
+        return this.selected.map(row => (row.attr("id")));
+    }
+    select(ids) {
+        if (isInteger(ids)) { ids = [ids]; }
+        this.rows.forEach(row => {
+            if (ids.contains(row.attr("id"))) {
+                row.addClass("selected");
+            }
+            else { row.removeClass("selected"); }
+        });
+    }
+
+    isHidden(ids) {
+        if (isInteger(ids)) { ids = [ids]; }
+        return ids.every(id => (this.row(id).hasClass("hidden")));
+    }
+    get hidden() {}
+    get idsOfHidden() {}
+    hide(ids) {
+        if (isInteger(ids)) { ids = [ids]; }
+    }
+
+    isCollapsed(ids) {
+        if (isInteger(ids)) { ids = [ids]; }
+    }
+    get idsOfCollapsed() {}
+    collapse(ids) {
+        if (isInteger(ids)) { ids = [ids]; }
+    }
+
+    isExpanded(ids) {
+        if (isInteger(ids)) { ids = [ids]; }
+    }
+    get idsOfExpanded() {}
+    expand(ids) {
+        if (isInteger(ids)) { ids = [ids]; }
+    }
+    
+    childrenOfId(parentId) {
+    }
+    
     parseDate(ts) {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const d = new Date(ts * 1000);
