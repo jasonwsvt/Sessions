@@ -736,7 +736,7 @@ class UserDataUtility {
         return ids.every(id => (this.row(id).hasClass("selected")));
     }
     get selected() {
-        return $(".selected");
+        return this.rows.find(".selected");
     }
     get idsOfSelected() {
         return this.selected.map(row => (row.attr("id")));
@@ -755,29 +755,83 @@ class UserDataUtility {
         if (isInteger(ids)) { ids = [ids]; }
         return ids.every(id => (this.row(id).hasClass("hidden")));
     }
-    get hidden() {}
-    get idsOfHidden() {}
+    get hidden() {
+        return this.rows.find(".hidden");
+    }
+    get idsOfHidden() {
+        return this.hidden.map(row => (row.attr("id")));
+    }
     hide(ids) {
         if (isInteger(ids)) { ids = [ids]; }
+        this.rows.forEach(row => {
+            if (ids.contains(row.attr("id"))) {
+                row.addClass("hidden");
+                row.removeClass("collapsed");
+            }
+            else { row.removeClass("hidden"); }
+        });
     }
 
     isCollapsed(ids) {
         if (isInteger(ids)) { ids = [ids]; }
+        return ids.every(id => (this.row(id).hasClass("collapsed")));
     }
-    get idsOfCollapsed() {}
+    get collapsed() {
+        return this.rows.find(".collapsed");
+    }
+    get idsOfCollapsed() {
+        return this.collapsed.map(row => (row.attr("id")));
+    }
     collapse(ids) {
         if (isInteger(ids)) { ids = [ids]; }
+        this.rows.forEach(row => {
+            if (ids.contains(row.attr("id"))) {
+                row.addClass("collapsed");
+                row.removeClass("hidden");
+            }
+            else { row.removeClass("collapsed"); }
+        });
     }
 
     isExpanded(ids) {
         if (isInteger(ids)) { ids = [ids]; }
+        return ids.every(id => (!this.row(id).hasClass("collapsed") && !this.row(id).hasClass("hidden")));
     }
-    get idsOfExpanded() {}
+    get expanded() {
+        return this.rows.not(".collapsed", ".hidden");
+    }
+    get idsOfExpanded() {
+        return this.expanded.map(row => (row.attr("id")));
+    }
     expand(ids) {
         if (isInteger(ids)) { ids = [ids]; }
+        this.rows.forEach(row => {
+            if (ids.contains(row.attr("id"))) {
+                row.removeClass("collapsed");
+                row.removeClass("hidden");
+            }
+        });
     }
     
-    childrenOfId(parentId) {
+    childrenOf(parentId) {
+        return this.row(parentId).nextAll().filter(row => (row.find(parentId.split("_")[1])));
+    }
+
+    childrenIdsOf(parentId) {
+        return this.childrenOf(parentId).map(row => (row.attr("id").split("_")[1]));
+    }
+
+    descendantsOf(parentId) {
+        var rows = [];
+        this.childrenOf(parentId).forEach(row => {
+            rows.push(row);
+            if (row.hasChildren()) { rows.concat(this.descendantsOf(row.attr("id"))); }
+        });
+        return rows;
+    }
+
+    descendantIdsOf(parentId) {
+        return this.descendantsOf(parentId).map(row => (row.attr("id").split("_")[1]));
     }
     
     parseDate(ts) {
