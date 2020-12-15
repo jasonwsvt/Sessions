@@ -679,9 +679,11 @@ class UserDataUtility {
         keys = keys.concat(unsortedKeys);
         
         const rowButton = "<span class = 'rowButton'>" + this._expandedIcon + "</span>";
-        const selectRecord = "<span class = 'selectRecord'>" + this._squareIcon + "</span>";
+        const selectLocalRecord = "<span id = 'local_" + id + "' class = 'selectRecord local'>" + this._squareIcon + "</span>";
+        const selectImportedRecord = "<span id = 'imported_" + id + "' class = 'selectRecord imported'>" + this._squareIcon + "</span>";
         const childrenButton = "<span class = 'childrenButton'>" + this._expandedIcon + "</span>";
-        const selectChildren = "<span class = 'selectChildren'>" + this._squareIcon + "</span>";
+        const selectLocalChildren = "<span class = 'selectChildren local'>" + this._squareIcon + "</span>";
+        const selectImportedChildren = "<span class = 'selectChildren imported'>" + this._squareIcon + "</span>";
 
         var record = "", line;
         //console.log(local, imported, children, keys);
@@ -689,36 +691,46 @@ class UserDataUtility {
         keys.forEach((key, index) => {
             line = (index == 0) ? "<td class = 'outside" + tier + "'>" + rowButton + "</td>" : "<td></td>";
             line += "<td class = 'inside" + tier + "'>" + key + ":</td>";
-            [local, imported].forEach(record => {
-                if (record) {
-                    line += "<td>";
-                    line += (isArray(record[key])) ? this._escapeHTML(record[key]).join("<br>")
-                          : (parseInt(record[key]) < 3155760000 && parseInt(record[key]) > 1577880000)
-                          ? this.parseDate(record[key]) : record[key];
-                    line += "</td>";
-                    line += (index == 0) ? "<td>" + selectRecord + "</td>" : "<td></td>";
-                }
-                else { line += "<td></td><td></td>"; }
-            });
+            if (local) {
+                line += "<td>";
+                line += (isArray(local[key])) ? this._escapeHTML(local[key]).join("<br>")
+                        : (parseInt(local[key]) < 3155760000 && parseInt(local[key]) > 1577880000)
+                        ? this.parseDate(local[key]) : local[key];
+                line += "</td>";
+                line += (index == 0) ? "<td>" + selectLocalRecord + "</td>" : "<td></td>";
+            }
+            else { line += "<td></td><td></td>"; }
+            if (imported) {
+                line += "<td>";
+                line += (isArray(imported[key])) ? this._escapeHTML(imported[key]).join("<br>")
+                        : (parseInt(imported[key]) < 3155760000 && parseInt(imported[key]) > 1577880000)
+                        ? this.parseDate(imported[key]) : imported[key];
+                line += "</td>";
+                line += (index == 0) ? "<td>" + selectImportedRecord + "</td>" : "<td></td>";
+            }
+            else { line += "<td></td><td></td>"; }
             record+= "<tr>" + line + "</tr>";
         });
         if (children) {
             line = "<td class = 'outside" + tier + "'>" + childrenButton + "</td>";
             line += "<td class = 'inside" + tier + "'>" + children + ":</td>";
-            [local, imported].forEach(record => {
-                if (isArray(record[children]) && record[children].length) {
-                    line += "<td>(" + record[children].length + ")</td>";
-                    line += "<td>" + selectChildren + "</td>";
-                }
-                else { line += "<td></td><td></td>"; }
-            });
+            if (isArray(local[children]) && local[children].length) {
+                line += "<td>(" + local[children].length + ")</td>";
+                line += "<td>" + selectLocalChildren + "</td>";
+            }
+            else { line += "<td></td><td></td>"; }
+            if (isArray(imported[children]) && imported[children].length) {
+                line += "<td>(" + imported[children].length + ")</td>";
+                line += "<td>" + selectImportedChildren + "</td>";
+            }
+            else { line += "<td></td><td></td>"; }
             record += "<tr>" + line + "</tr>";
         }
         this.scrollAreaDiv.append("<table id = 'row_" + id + "' class = 'flex-container'>" + record + "</table>");
 //console.log(local[children]);
         if (children) {
             keys = Object.keys(local[children]);
-//            console.log(keys);
+//console.log(keys);
             if (imported && Object.keys(imported).includes(children)) {
                 keys = keys.concat(imported[children]).filter(key, index => (keys.indexOf(key) === index));
             }
@@ -731,35 +743,69 @@ class UserDataUtility {
         }
     }
 
-    get all() {
-        return this.rows.map(row => (row.attr("id").split("_")[1]));
+    get allLocal() { return this.rowIds.reduce(id => (localRecordExists(id))); }
+    localRecordExists(id) { return this.localRecord(id).length; }
+    localRecord(id) {
+        var record = [];
+        this.row("row_" + id).find("<tr>").forEach(line => {
+            const name = line.find("<td>").eq(2).text;
+            const value = line.find("<td>").eq(3).text;
+            if (value) { record[name] = value; }
+        });
+        return record;
     }
-    get none() {
-        return [];
+
+    get allImported() { return this.rowIds.reduce(id => (importedRecordExists(id))); }
+    importedRecordExists(id) { return this.importedRecord(id).length; }
+    importedRecord(id) {
+        var record = [];
+        this.row("row_" + id).find("<tr>").forEach(line => {
+            const name = line.find("<td>").eq(2).text;
+            const value = line.find("<td>").eq(5).text;
+            if (value) { record[name] = value; }
+        });
+        return record;
     }
-    get identical() {}
-    get different() {}
-    get newer() {}
-    get older() {}
-    get local() {}
-    get imported() {}
+
+    get allIds() { return this.rows.map(row => (row.attr("id").split("_")[1])); }
+    get none() { return []; }
+
+    get allDifferent() { return this.allIds.reduce(id => (!isIdentical(id))); }
+    get allIdentical() { return this.allIds.reduce(id => (isIdentical(id))); }
+    isIdentical(id) {
+        const local = this.localRecord(id);
+        const imported = this.importedRecord(id);
+        if (local === imported) { return true; }
+        if (local == null || imported == null) { return false; }
+        if (local.length !== imported.length) { return false; }
+        const localKeys = Object.keys(local);
+        const importedKeys = Object.keys(imported);
+        localKeys.forEach(key => {
+            if (!importedKeys.contains(key)) { return false; }
+            if (local[key] != imported[key]) { return false; }
+        });
+        return true;
+    }
+
+    get allNewer() {
+        return this.rowIds.map(id => (
+            (this.localRecord(id).lastEdited > this.importedRecord(id).lastEdited)
+            ? "local_" + id : "imported_" + id));
+    }
+    get allOlder() {
+        return this.rowIds.map(id => (
+            (this.localRecord(id).lastEdited < this.importedRecord(id).lastEdited)
+            ? "local_" + id : "imported_" + id));
+    }
 
     isSelected(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         return ids.every(id => (this.row(id).hasClass("selected")));
     }
-    get selected() {
-        return this.rows.find(".selected");
-    }
-    get unselected() {
-        return this.rows.not(".selected");
-    }
-    get idsOfSelected() {
-        return this.selected.map(row => (row.attr("id")));
-    }
-    get idsOfUnselected() {
-        return this.unselected.map(row => (row.attr("id")));
-    }
+    get selected() { return this.rows.find(".selected"); }
+    get unselected() { return this.rows.not(".selected"); }
+    get selectedIds() { return this.selected.map(row => (row.attr("id"))); }
+    get unselectedIds() { return this.unselected.map(row => (row.attr("id"))); }
     select(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         this.rows.forEach(row => {
@@ -770,15 +816,11 @@ class UserDataUtility {
         });
     }
 
+    get hidden() { return this.rows.find(".hidden"); }
+    get hiddenIds() { return this.hidden.map(row => (row.attr("id"))); }
     isHidden(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         return ids.every(id => (this.row(id).hasClass("hidden")));
-    }
-    get hidden() {
-        return this.rows.find(".hidden");
-    }
-    get idsOfHidden() {
-        return this.hidden.map(row => (row.attr("id")));
     }
     hide(ids) {
         if (isInteger(ids)) { ids = [ids]; }
@@ -791,15 +833,11 @@ class UserDataUtility {
         });
     }
 
+    get collapsed() { return this.rows.find(".collapsed"); }
+    get collapsedIds() { return this.collapsed.map(row => (row.attr("id"))); }
     isCollapsed(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         return ids.every(id => (this.row(id).hasClass("collapsed")));
-    }
-    get collapsed() {
-        return this.rows.find(".collapsed");
-    }
-    get idsOfCollapsed() {
-        return this.collapsed.map(row => (row.attr("id")));
     }
     collapse(ids) {
         if (isInteger(ids)) { ids = [ids]; }
@@ -812,15 +850,11 @@ class UserDataUtility {
         });
     }
 
+    get expanded() { return this.rows.not(".collapsed", ".hidden"); }
+    get expandedIds() { return this.expanded.map(row => (row.attr("id"))); }
     isExpanded(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         return ids.every(id => (!this.row(id).hasClass("collapsed") && !this.row(id).hasClass("hidden")));
-    }
-    get expanded() {
-        return this.rows.not(".collapsed", ".hidden");
-    }
-    get idsOfExpanded() {
-        return this.expanded.map(row => (row.attr("id")));
     }
     expand(ids) {
         if (isInteger(ids)) { ids = [ids]; }
