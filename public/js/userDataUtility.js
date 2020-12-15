@@ -731,6 +731,19 @@ class UserDataUtility {
         }
     }
 
+    get all() {
+        return this.rows.map(row => (row.attr("id").split("_")[1]));
+    }
+    get none() {
+        return [];
+    }
+    get identical() {}
+    get different() {}
+    get newer() {}
+    get older() {}
+    get local() {}
+    get imported() {}
+
     isSelected(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         return ids.every(id => (this.row(id).hasClass("selected")));
@@ -738,8 +751,14 @@ class UserDataUtility {
     get selected() {
         return this.rows.find(".selected");
     }
+    get unselected() {
+        return this.rows.not(".selected");
+    }
     get idsOfSelected() {
         return this.selected.map(row => (row.attr("id")));
+    }
+    get idsOfUnselected() {
+        return this.unselected.map(row => (row.attr("id")));
     }
     select(ids) {
         if (isInteger(ids)) { ids = [ids]; }
@@ -812,7 +831,7 @@ class UserDataUtility {
             }
         });
     }
-    
+
     childrenOf(parentId) {
         return this.row(parentId).nextAll().filter(row => (row.find(parentId.split("_")[1])));
     }
