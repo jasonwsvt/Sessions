@@ -35,6 +35,20 @@
     width: 570px;
 }
 
+.userDataUtilityMenu {
+    z-index: 2;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    visibility: visible;
+    transition-property: display, visibility;
+    transition-duration: .4s;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    opacity: 1;
+    background-color: rgba(238, 238, 238, 1);
+    width: 600px;
+}
+
 #userDataUtilityScrollAreaDiv { /* scroll div container */
     display: flex;
     position: relative;
@@ -42,6 +56,24 @@
     width: 100%;
     overflow-y: auto;
     height: 500px;
+}
+
+#userDataUtilityAdjustMenuButton {
+    width: 92.63px !important;
+}
+
+#userDataUtilityAdjustMenu {
+    z-index: 3;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    visibility: visible;
+    transition-property: display, visibility;
+    transition-duration: .4s;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    opacity: 1;
+    width: 92.63px;
+    background-color: rgba(238, 238, 238, 1);
 }
 
 .outside0 { width: 15px; }
@@ -59,7 +91,7 @@
     padding: 5px;
     font-size: 14px;
     text-align: left;
-    width: 523px;
+    width: 553px;
 }
 
 #userDataUtilityScrollAreaDiv table tr:first-of-type td:not(:first-of-type) {
@@ -81,7 +113,7 @@
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(3) { /* User value column */
     text-align: left;
-    width: 145px;
+    width: 160px;
 }
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(4) { /* User Select column */
@@ -92,7 +124,7 @@
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(5) { /* Imported value column */
     text-align: left;
-    width: 145px;
+    width: 160px;
 }
 
 #userDataUtilityScrollAreaDiv tr td:nth-child(6) { /* Imported select column */

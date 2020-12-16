@@ -20,13 +20,16 @@ class UserDataUtility {
     _upArrowIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/></svg>';
     _squareIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/></svg>';
     _checkedIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/></svg>';
+    _caretDownIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>';
+    _caretUpIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16"><path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/></svg>';
 
     _divID = "userDataDiv";
     _buttonID = "userDataButton";
     _importDivID = "userDataImportDiv";
     _importButtonID = "userDataImportButton";
     _exportButtonID = "userDataExportButton";
-    _adjustID = "userDataUtilityAdjust";
+    _adjustMenuButtonID = "userDataUtilityAdjustMenuButton";
+    _adjustID = "userDataUtilityAdjustMenu";
     _optionsID = "userDataUtilityOptions";
     _actionsID = "userDataUtilityActions";
     _acknowledgeID = "userDataUtilityAcknowledge";
@@ -77,11 +80,20 @@ class UserDataUtility {
                 e.stopPropagation();
             });
 
+            self.adjustMenuButton.on("click", function (e) {
+                console.log("button clicked");
+                self.adjust.toggleClass("hidden");
+                $(this).blur();
+            }); 
+
             self.adjust.find("button").on("click", function (e) {
+                console.log("button clicked");
                 self.adjust.data("value", $(this).val());
                 $(this).blur();
+                self.adjustMenuButton.html($(this).html() + self._caretDownIcon);
+                self.adjust.addClass("hidden");
                 self._manageAdjustButtons();
-            });
+            }); 
 
             self.exportButton.on("click", function() {
                 self._exportJSON();
@@ -107,7 +119,8 @@ class UserDataUtility {
     get exportButton()     { return $("#" + this._exportButtonID); }
     get importButton()     { return $("#" + this._importButtonID); }
     get importDiv()        { return $("#" + this._importDivID); }
-    get adjust()           { return $("#" + this._adjustID); }
+    get adjustMenuButton() { return $("#" + this._adjustMenuButtonID); }
+    get adjust()    { return $("#" + this._adjustID); }
     get actions()          { return $("#" + this._actionsID); }
     get options()          { return $("#" + this._optionsID); }
     get acknowledge()      { return $("#" + this._acknowledgeID); }
@@ -119,6 +132,7 @@ class UserDataUtility {
     get recordSelects()    { return $("." + this._recordSelectClass); }
     get childrenButtons()  { return $("." + this._childrenButtonClass); }
     get childrenSelects()  { return $("." + this._childrenSelectClass); }
+    get rows()             { return this.scrollAreaDiv.children(); }
     row(id)                { return $("#row_" + id); }
     rowButton(id)          { return this.row(id).find("." + this._rowButtonClass); }
     recordSelect(id)       { return this.row(id).find("." + this._recordSelectClass); }
@@ -131,9 +145,10 @@ class UserDataUtility {
         const exportButton = "<button id = '" + this._exportButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._exportIcon + "</button>";
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._buttonIcon + "</button>";
-        const div = "<div id = '" + this._divID + "' class = 'container userMenu hidden'></div>";
+        const div = "<div id = '" + this._divID + "' class = 'container userDataUtilityMenu hidden'></div>";
 
-        const adjust = "<div id = '" + this._adjustID + "' class='btn-group btn-group-sm' role='group'></div>";
+        var adjust = "<button class='btn btn-sm btn-secondary' type='button' id = '" + this._adjustMenuButtonID + "'>Sort " + this._caretDownIcon + "</button>";
+        adjust += "<div id = '" + this._adjustID + "' class = 'hidden'></div>";
 
         const options = "<div id = '" + this._optionsID + "' class='btn-group btn-group-sm' role='group'></div>";
 
@@ -157,12 +172,12 @@ class UserDataUtility {
         this.div.append(top + scrollDiv + messagesDiv + actionDiv + importDiv);
         this.actions.append(action1 + action2 + action3);
 
-        const adjust1 = "<button type = 'button' class = 'btn btn-secondary' value = 'sort'>Sort</button>";
-        const adjust2 = "<button type = 'button' class = 'btn btn-secondary' value = 'maximize'>Maximize</button>";
-        const adjust3 = "<button type = 'button' class = 'btn btn-secondary' value = 'minimize'>Minimize</button>";
-        const adjust4 = "<button type = 'button' class = 'btn btn-secondary' value = 'hide'>Hide</button>";
-        const adjust5 = "<button type = 'button' class = 'btn btn-secondary' value = 'select'>Select</button>";
-        this.adjust.append(adjust1 + adjust2 + adjust3 + adjust4 + adjust5);
+        const adjust1 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'sort'>Sort</button>";
+        const adjust2 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'maximize'>Maximize</button>";
+        const adjust3 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'minimize'>Minimize</button>";
+        const adjust4 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'hide'>Hide</button>";
+        const adjust5 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'select'>Select</button>";
+        this.adjust.append(adjust1, adjust2, adjust3, adjust4, adjust5);
 
         this.adjust.data("unselectedClass", "btn-secondary");
         this.adjust.data("selectedClass", "btn-primary");
@@ -209,97 +224,71 @@ class UserDataUtility {
         this.options.data("sort_3_1_unselected", "Opened");
         this.options.data("sort_3_1_value", "sort opened ascending");
         
-        this.options.data("maximize_indices", 3);
-        this.options.data("maximize_0_state", 0);
-        this.options.data("maximize_0_states", 3);
-        this.options.data("maximize_0_0_html", "Sessions");
-        this.options.data("maximize_0_0_value", "minimize sessions");
-        this.options.data("maximize_0_1_html", "Issues");
-        this.options.data("maximize_0_1_value", "minimize issues");
-        this.options.data("maximize_0_2_html", "Clients");
-        this.options.data("maximize_0_2_value", "minimize clients");
-        this.options.data("maximize_1_state", 0);
-        this.options.data("maximize_1_states", 2);
-        this.options.data("maximize_1_0_html", "Selected");
-        this.options.data("maximize_1_0_value", "maximize selected");
-        this.options.data("maximize_1_1_html", "Unselected");
-        this.options.data("maximize_1_1_value", "maximize unselected");
-        this.options.data("maximize_2_state", 0);
-        this.options.data("maximize_2_states", 2);
-        this.options.data("maximize_2_0_html", "Identical");
-        this.options.data("maximize_2_0_value", "maximize identical");
-        this.options.data("maximize_2_1_html", "Different");
-        this.options.data("maximize_2_1_value", "maximize different");
+        this.options.data("maximize_indices", 7);
+        this.options.data("maximize_0_html", "Sessions");
+        this.options.data("maximize_0_value", "minimize sessions");
+        this.options.data("maximize_1_html", "Issues");
+        this.options.data("maximize_1_value", "minimize issues");
+        this.options.data("maximize_2_html", "Clients");
+        this.options.data("maximize_2_value", "minimize clients");
+        this.options.data("maximize_3_html", "Selected");
+        this.options.data("maximize_3_value", "maximize selected");
+        this.options.data("maximize_4_html", "Unselected");
+        this.options.data("maximize_4_value", "maximize unselected");
+        this.options.data("maximize_5_html", "Identical");
+        this.options.data("maximize_5_value", "maximize identical");
+        this.options.data("maximize_6_html", "Different");
+        this.options.data("maximize_6_value", "maximize different");
 
-        this.options.data("minimize_indices", 3);
-        this.options.data("minimize_0_state", 0);
-        this.options.data("minimize_0_states", 3);
-        this.options.data("minimize_0_0_html", "Sessions");
-        this.options.data("minimize_0_0_value", "minimize sessions");
-        this.options.data("minimize_0_1_html", "Issues");
-        this.options.data("minimize_0_1_value", "minimize issues");
-        this.options.data("minimize_0_2_html", "Clients");
-        this.options.data("minimize_0_2_value", "minimize clients");
-        this.options.data("minimize_1_state", 0);
-        this.options.data("minimize_1_states", 2);
-        this.options.data("minimize_1_0_html", "Selected");
-        this.options.data("minimize_1_0_value", "minimize selected");
-        this.options.data("minimize_1_1_html", "Unselected");
-        this.options.data("minimize_1_1_value", "minimize unselected");
-        this.options.data("minimize_2_state", 0);
-        this.options.data("minimize_2_states", 2);
-        this.options.data("minimize_2_0_html", "Identical");
-        this.options.data("minimize_2_0_value", "minimize identical");
-        this.options.data("minimize_2_1_html", "Different");
-        this.options.data("minimize_2_1_value", "minimize different");
+        this.options.data("minimize_indices", 7);
+        this.options.data("minimize_0_html", "Sessions");
+        this.options.data("minimize_0_value", "minimize sessions");
+        this.options.data("minimize_1_html", "Issues");
+        this.options.data("minimize_1_value", "minimize issues");
+        this.options.data("minimize_2_html", "Clients");
+        this.options.data("minimize_2_value", "minimize clients");
+        this.options.data("minimize_3_html", "Selected");
+        this.options.data("minimize_3_value", "minimize selected");
+        this.options.data("minimize_4_html", "Unselected");
+        this.options.data("minimize_4_value", "minimize unselected");
+        this.options.data("minimize_5_html", "Identical");
+        this.options.data("minimize_5_value", "minimize identical");
+        this.options.data("minimize_6_html", "Different");
+        this.options.data("minimize_6_value", "minimize different");
 
-        this.options.data("hide_indices", 3);
-        this.options.data("hide_0_states", 3);
-        this.options.data("hide_0_state", 0);
-        this.options.data("hide_0_0_html", "Sessions");
-        this.options.data("hide_0_0_value", "minimize sessions");
-        this.options.data("hide_0_1_html", "Issues");
-        this.options.data("hide_0_1_value", "minimize issues");
-        this.options.data("hide_0_2_html", "Clients");
-        this.options.data("hide_0_2_value", "minimize clients");
-        this.options.data("hide_1_state", 0);
-        this.options.data("hide_1_states", 2);
-        this.options.data("hide_1_0_html", "Selected");
-        this.options.data("hide_1_0_value", "hide selected");
-        this.options.data("hide_1_1_html", "Unselected");
-        this.options.data("hide_1_1_value", "hide unselected");
-        this.options.data("hide_2_state", 0);
-        this.options.data("hide_2_states", 2);
-        this.options.data("hide_2_0_html", "Identical");
-        this.options.data("hide_2_0_value", "hide identical");
-        this.options.data("hide_2_1_html", "Different");
-        this.options.data("hide_2_1_value", "hide different");
+        this.options.data("hide_indices", 7);
+        this.options.data("hide_0_html", "Sessions");
+        this.options.data("hide_0_value", "minimize sessions");
+        this.options.data("hide_1_html", "Issues");
+        this.options.data("hide_1_value", "minimize issues");
+        this.options.data("hide_2_html", "Clients");
+        this.options.data("hide_2_value", "minimize clients");
+        this.options.data("hide_3_html", "Selected");
+        this.options.data("hide_3_value", "hide selected");
+        this.options.data("hide_4_html", "Unselected");
+        this.options.data("hide_4_value", "hide unselected");
+        this.options.data("hide_5_html", "Identical");
+        this.options.data("hide_5_value", "hide identical");
+        this.options.data("hide_6_html", "Different");
+        this.options.data("hide_6_value", "hide different");
 
-        this.options.data("select_indices", 4);
-        this.options.data("select_0_state", 0);
-        this.options.data("select_0_states", 2);
-        this.options.data("select_0_0_html", "All");
-        this.options.data("select_0_0_value", "select all");
-        this.options.data("select_0_1_html", "None");
-        this.options.data("select_0_1_value", "select none");
-        this.options.data("select_1_state", 0);
-        this.options.data("select_1_states", 2);
-        this.options.data("select_1_0_html", "Different");
-        this.options.data("select_1_0_value", "select different");
-        this.options.data("select_1_1_html", "Identical");
-        this.options.data("select_1_1_value", "select identical");
-        this.options.data("select_2_state", 0);
-        this.options.data("select_2_states", 2);
-        this.options.data("select_2_0_html", "Newer");
-        this.options.data("select_2_0_value", "select newer");
-        this.options.data("select_2_1_html", "Older");
-        this.options.data("select_2_1_value", "select older");
-        this.options.data("select_3_state", 0);
-        this.options.data("select_3_states", 2);
-        this.options.data("select_3_0_html", "Local");
-        this.options.data("select_3_0_value", "select local");
-        this.options.data("select_3_1_html", "Imported");
-        this.options.data("select_3_1_value", "select imported");
+        this.options.data("select_indices", 8);
+        this.options.data("select_0_html", "All");
+        this.options.data("select_0_value", "select all");
+        this.options.data("select_1_html", "None");
+        this.options.data("select_1_value", "select none");
+        this.options.data("select_2_html", "Different");
+        this.options.data("select_2_value", "select different");
+        this.options.data("select_3_html", "Identical");
+        this.options.data("select_3_value", "select identical");
+        this.options.data("select_4_html", "Newer");
+        this.options.data("select_4_value", "select newer");
+        this.options.data("select_5_html", "Older");
+        this.options.data("select_5_value", "select older");
+        this.options.data("select_6_html", "Local");
+        this.options.data("select_6_value", "select local");
+        this.options.data("select_7_html", "Imported");
+        this.options.data("select_7_value", "select imported");
 
         this.actions.data("unselectedClass", "btn-secondary");
         this.actions.data("selectedClass", "btn-primary");
@@ -481,10 +470,6 @@ class UserDataUtility {
                 button.addClass(group.data("unselectedClass"));
             }
         }
-    }
-
-    _doAdjustOption() {
-        console.log(this.options.data("value"), this.options.data(this.options.data("value")));
     }
 
     _buildRecords() {
@@ -788,12 +773,12 @@ class UserDataUtility {
     }
 
     get allNewer() {
-        return this.rowIds.map(id => (
+        return this.allIds.map(id => (
             (this.localRecord(id).lastEdited > this.importedRecord(id).lastEdited)
             ? "local_" + id : "imported_" + id));
     }
     get allOlder() {
-        return this.rowIds.map(id => (
+        return this.allIds.map(id => (
             (this.localRecord(id).lastEdited < this.importedRecord(id).lastEdited)
             ? "local_" + id : "imported_" + id));
     }
@@ -809,10 +794,7 @@ class UserDataUtility {
     select(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         this.rows.forEach(row => {
-            if (ids.contains(row.attr("id"))) {
-                row.addClass("selected");
-            }
-            else { row.removeClass("selected"); }
+            if (ids.contains(row.attr("id"))) { row.addClass("selected"); }
         });
     }
 
@@ -825,11 +807,7 @@ class UserDataUtility {
     hide(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         this.rows.forEach(row => {
-            if (ids.contains(row.attr("id"))) {
-                row.addClass("hidden");
-                row.removeClass("collapsed");
-            }
-            else { row.removeClass("hidden"); }
+            if (ids.contains(row.attr("id"))) { row.addClass("hidden"); }
         });
     }
 
@@ -842,11 +820,7 @@ class UserDataUtility {
     collapse(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         this.rows.forEach(row => {
-            if (ids.contains(row.attr("id"))) {
-                row.addClass("collapsed");
-                row.removeClass("hidden");
-            }
-            else { row.removeClass("collapsed"); }
+            if (ids.contains(row.attr("id"))) { row.addClass("collapsed"); }
         });
     }
 
@@ -859,10 +833,7 @@ class UserDataUtility {
     expand(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         this.rows.forEach(row => {
-            if (ids.contains(row.attr("id"))) {
-                row.removeClass("collapsed");
-                row.removeClass("hidden");
-            }
+            if (ids.contains(row.attr("id"))) { row.removeClass("collapsed"); }
         });
     }
 
@@ -887,6 +858,10 @@ class UserDataUtility {
         return this.descendantsOf(parentId).map(row => (row.attr("id").split("_")[1]));
     }
     
+    _doAdjustOption() {
+        console.log(this.options.data("value"), this.options.data(this.options.data("value")));
+    }
+
     parseDate(ts) {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const d = new Date(ts * 1000);
