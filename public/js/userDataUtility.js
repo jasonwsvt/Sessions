@@ -258,11 +258,11 @@ class UserDataUtility {
 
         this.options.data("hide_indices", 7);
         this.options.data("hide_0_html", "Sessions");
-        this.options.data("hide_0_value", "minimize sessions");
+        this.options.data("hide_0_value", "hide sessions");
         this.options.data("hide_1_html", "Issues");
-        this.options.data("hide_1_value", "minimize issues");
+        this.options.data("hide_1_value", "hide issues");
         this.options.data("hide_2_html", "Clients");
-        this.options.data("hide_2_value", "minimize clients");
+        this.options.data("hide_2_value", "hide clients");
         this.options.data("hide_3_html", "Selected");
         this.options.data("hide_3_value", "hide selected");
         this.options.data("hide_4_html", "Unselected");
@@ -859,7 +859,29 @@ class UserDataUtility {
     }
     
     _doAdjustOption() {
-        console.log(this.options.data("value"), this.options.data(this.options.data("value")));
+        const adjust = this.adjust.data("value");
+        const option = this.options.data(this.options.data("value")).substr(adjust.length + 1, this.options.data(this.options.data("value")).length - 1)
+        console.log("'" + adjust + "'", "'" + option + "'");
+
+        const ids = (option == "all")        ? this.allIds
+                  : (option == "clients")    ? this.allClientIds
+                  : (option == "issues")     ? this.allIssueIds
+                  : (option == "sessions")   ? this.allSessionIds
+                  : (option == "selected")   ? this.allSelectedIds
+                  : (option == "unselected") ? this.allUnselectedIds
+                  : (option == "identical")  ? this.allIdenticalIds
+                  : (option == "different")  ? this.allDifferentIds
+                  : (option == "local")      ? this.allLocalRecordIds
+                  : (option == "imported")   ? this.allImportedRecordIds
+                  : (option == "none")       ? [] : "";
+
+        switch (adjust) {
+            case "sort":     /* this.sort(option); */  break;
+            case "maximize": /* this.maximize(ids); */ break;
+            case "minimize": /* this.minimize(ids); */ break;
+            case "hide":     /* this.hide(ids); */     break;
+            case "select":   /* this.select(ids); */   break;
+        }
     }
 
     parseDate(ts) {
