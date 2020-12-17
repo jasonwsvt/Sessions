@@ -728,109 +728,50 @@ class UserDataUtility {
         }
     }
 
-    get allLocal() { return this.rowIds.reduce(id => (localRecordExists(id))); }
-    localRecordExists(id) { return this.localRecord(id).length; }
-    localRecord(id) {
-        var record = [];
-        this.row("row_" + id).find("<tr>").forEach(line => {
-            const name = line.find("<td>").eq(2).text;
-            const value = line.find("<td>").eq(3).text;
-            if (value) { record[name] = value; }
-        });
-        return record;
-    }
 
-    get allImported() { return this.rowIds.reduce(id => (importedRecordExists(id))); }
-    importedRecordExists(id) { return this.importedRecord(id).length; }
-    importedRecord(id) {
-        var record = [];
-        this.row("row_" + id).find("<tr>").forEach(line => {
-            const name = line.find("<td>").eq(2).text;
-            const value = line.find("<td>").eq(5).text;
-            if (value) { record[name] = value; }
-        });
-        return record;
-    }
+    get allDifferentRows() { return this.allRowIds.reduce(id => (!isIdentical(id))); }
+    get allIdenticalRows() { return this.allRowIds.reduce(id => (isIdentical(id))); }
 
-    get allIds() { return this.rows.map(row => (row.attr("id").split("_")[1])); }
-    get none() { return []; }
-
-    get allDifferent() { return this.allIds.reduce(id => (!isIdentical(id))); }
-    get allIdentical() { return this.allIds.reduce(id => (isIdentical(id))); }
-    isIdentical(id) {
-        const local = this.localRecord(id);
-        const imported = this.importedRecord(id);
-        if (local === imported) { return true; }
-        if (local == null || imported == null) { return false; }
-        if (local.length !== imported.length) { return false; }
-        const localKeys = Object.keys(local);
-        const importedKeys = Object.keys(imported);
-        localKeys.forEach(key => {
-            if (!importedKeys.contains(key)) { return false; }
-            if (local[key] != imported[key]) { return false; }
-        });
-        return true;
-    }
-
-    get allNewer() {
-        return this.allIds.map(id => (
-            (this.localRecord(id).lastEdited > this.importedRecord(id).lastEdited)
-            ? "local_" + id : "imported_" + id));
-    }
-    get allOlder() {
-        return this.allIds.map(id => (
-            (this.localRecord(id).lastEdited < this.importedRecord(id).lastEdited)
-            ? "local_" + id : "imported_" + id));
-    }
-
-    isSelected(ids) {
-        if (isInteger(ids)) { ids = [ids]; }
-        return ids.every(id => (this.row(id).hasClass("selected")));
-    }
-    get selected() { return this.rows.find(".selected"); }
-    get unselected() { return this.rows.not(".selected"); }
-    get selectedIds() { return this.selected.map(row => (row.attr("id"))); }
-    get unselectedIds() { return this.unselected.map(row => (row.attr("id"))); }
-    select(ids) {
+    selectRecord(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         this.rows.forEach(row => {
             if (ids.contains(row.attr("id"))) { row.addClass("selected"); }
         });
     }
 
-    get hidden() { return this.rows.find(".hidden"); }
-    get hiddenIds() { return this.hidden.map(row => (row.attr("id"))); }
-    isHidden(ids) {
+    get allHiddenRows() { return this.rows.find(".hidden"); }
+    get allHiddenRowIds() { return this.hidden.map(row => (row.attr("id"))); }
+    rowIsHidden(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         return ids.every(id => (this.row(id).hasClass("hidden")));
     }
-    hide(ids) {
+    hideRow(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         this.rows.forEach(row => {
             if (ids.contains(row.attr("id"))) { row.addClass("hidden"); }
         });
     }
 
-    get collapsed() { return this.rows.find(".collapsed"); }
-    get collapsedIds() { return this.collapsed.map(row => (row.attr("id"))); }
-    isCollapsed(ids) {
+    get allCollapsedRows() { return this.rows.find(".collapsed"); }
+    get allCollapsedRowIds() { return this.allCollapsedRows.map(row => (row.attr("id"))); }
+    rowIsCollapsed(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         return ids.every(id => (this.row(id).hasClass("collapsed")));
     }
-    collapse(ids) {
+    collapseRow(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         this.rows.forEach(row => {
             if (ids.contains(row.attr("id"))) { row.addClass("collapsed"); }
         });
     }
 
-    get expanded() { return this.rows.not(".collapsed", ".hidden"); }
-    get expandedIds() { return this.expanded.map(row => (row.attr("id"))); }
-    isExpanded(ids) {
+    get allExpandedRows() { return this.rows.not(".collapsed", ".hidden"); }
+    get allExpandedRowIds() { return this.allExpandedRows.map(row => (row.attr("id"))); }
+    rowIsExpanded(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         return ids.every(id => (!this.row(id).hasClass("collapsed") && !this.row(id).hasClass("hidden")));
     }
-    expand(ids) {
+    expandRow(ids) {
         if (isInteger(ids)) { ids = [ids]; }
         this.rows.forEach(row => {
             if (ids.contains(row.attr("id"))) { row.removeClass("collapsed"); }
@@ -857,22 +798,80 @@ class UserDataUtility {
     descendantIdsOf(parentId) {
         return this.descendantsOf(parentId).map(row => (row.attr("id").split("_")[1]));
     }
-    
+
+    recordIsSelected(id) { return this.row(id).hasClass("selected"); }
+    get allSelectedRecords() { return this.allRowIds.reduce(id => (recordIsSelected(id))); }
+    get allUnselectedRecords() { return this.allRowIds.reduce(id => (!recordIsSelected(id))); }
+
+    rowRecordsAreIdentical(id) {
+        const local = this.localRecord(id);
+        const imported = this.importedRecord(id);
+        if (local === imported) { return true; }
+        if (local == null || imported == null) { return false; }
+        if (local.length !== imported.length) { return false; }
+        const localKeys = Object.keys(local);
+        const importedKeys = Object.keys(imported);
+        localKeys.forEach(key => {
+            if (!importedKeys.contains(key)) { return false; }
+            if (local[key] != imported[key]) { return false; }
+        });
+        return true;
+    }
+
+    localRecord(id) {
+        var record = [];
+        this.row(id).find("<tr>").forEach(line => {
+            const name = line.find("<td>").eq(2).text;
+            const value = line.find("<td>").eq(3).text;
+            if (value) { record[name] = value; }
+        });
+        return record;
+    }
+
+    importedRecord(id) {
+        var record = [];
+        this.row(id).find("<tr>").forEach(line => {
+            const name = line.find("<td>").eq(2).text;
+            const value = line.find("<td>").eq(5).text;
+            if (value) { record[name] = value; }
+        });
+        return record;
+    }
+
+    localRecordExists(id)   { return this.localRecord(id).length; }
+    importedRecordExists(id) { return this.importedRecord(id).length; }
+    localRecordIsNewer(id) { return this.localRecord(id).lastEdited > this.importedRecord(id).lastEdited; }
+
+    get allRowIds()              { return this.rows.map(row => (row.attr("id").split("_")[1])); }
+    get allClientRowIds()        { return this.allRowIds.reduce(id => (this.row(id).find(".inside1"))); }
+    get allIssueRowIds()         { return this.allRowIds.reduce(id => (this.row(id).find(".inside2"))); }
+    get allSessionRowIds()       { return this.allRowIds.reduce(id => (this.row(id).find(".inside3"))); }
+    get allDifferentRowIds()     { return this.allRowIds.reduce(id => (!rowRecordsAreIdentical(id))); }
+    get allIdenticalRowIds()     { return this.allRowIds.reduce(id => (rowRecordsAreIdentical(id))); }
+    get allSelectedRecordIds()   { return this.allRowIds.reduce(id => (this.row(id).hasClass("selected"))); }
+    get allUnselectedRecordIds() { return this.allRowIds.reduce(id => (!this.row(id).hasClass("selected"))); }
+    get allLocalRecordIds()      { return this.allRowIds.reduce(id => (localRecordExists(id))); }
+    get allImportedRecordIds()   { return this.allRowIds.reduce(id => (importedRecordExists(id))); }
+    get allNewerRecordIds()      { return this.allRowIds.map(id => (this.localRecordIsNewer(id) ? "local_" + id : "imported_" + id)); }
+    get allOlderRecordIds()      { return this.allRowIds.map(id => (this.localRecordIsNewer(id) ? "imported_" + id : "local_" + id)); }
+
     _doAdjustOption() {
         const adjust = this.adjust.data("value");
         const option = this.options.data(this.options.data("value")).substr(adjust.length + 1, this.options.data(this.options.data("value")).length - 1)
         console.log("'" + adjust + "'", "'" + option + "'");
 
-        const ids = (option == "all")        ? this.allIds
-                  : (option == "clients")    ? this.allClientIds
-                  : (option == "issues")     ? this.allIssueIds
-                  : (option == "sessions")   ? this.allSessionIds
-                  : (option == "selected")   ? this.allSelectedIds
-                  : (option == "unselected") ? this.allUnselectedIds
-                  : (option == "identical")  ? this.allIdenticalIds
-                  : (option == "different")  ? this.allDifferentIds
+        const ids = (option == "all")        ? this.allRowIds
+                  : (option == "clients")    ? this.allClientRowIds
+                  : (option == "issues")     ? this.allIssueRowIds
+                  : (option == "sessions")   ? this.allSessionRowIds
+                  : (option == "different")  ? this.allDifferentRowIds
+                  : (option == "identical")  ? this.allIdenticalRowIds
+                  : (option == "selected")   ? this.allSelectedRecordIds
+                  : (option == "unselected") ? this.allUnselectedRecordIds
                   : (option == "local")      ? this.allLocalRecordIds
                   : (option == "imported")   ? this.allImportedRecordIds
+                  : (option == "newer")      ? this.allNewerRecordIds
+                  : (option == "older")      ? this.allOlderRecordIds
                   : (option == "none")       ? [] : "";
 
         switch (adjust) {
