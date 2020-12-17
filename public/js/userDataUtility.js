@@ -729,54 +729,31 @@ class UserDataUtility {
     }
 
 
-    get allDifferentRows() { return this.allRowIds.reduce(id => (!isIdentical(id))); }
-    get allIdenticalRows() { return this.allRowIds.reduce(id => (isIdentical(id))); }
 
-    selectRecord(ids) {
-        if (isInteger(ids)) { ids = [ids]; }
+
+    selectRecords(ids) {
         this.rows.forEach(row => {
+        });
+
+    }
+    selectRecord(id) { 
             if (ids.contains(row.attr("id"))) { row.addClass("selected"); }
-        });
     }
 
-    get allHiddenRows() { return this.rows.find(".hidden"); }
-    get allHiddenRowIds() { return this.hidden.map(row => (row.attr("id"))); }
-    rowIsHidden(ids) {
-        if (isInteger(ids)) { ids = [ids]; }
-        return ids.every(id => (this.row(id).hasClass("hidden")));
-    }
-    hideRow(ids) {
-        if (isInteger(ids)) { ids = [ids]; }
-        this.rows.forEach(row => {
-            if (ids.contains(row.attr("id"))) { row.addClass("hidden"); }
-        });
-    }
+    get allHiddenRowIds() { return this.allRowIds.reduce(id => rowIsHidden(id)); }
+    rowIsHidden(id) { return this.row(id).hasClass("hidden"); }
+    hideRows(ids) { ids.forEach(id => { this.hideRow(id); }); }
+    hideRow(id) { this.row(id).addClass("hidden"); }
 
-    get allCollapsedRows() { return this.rows.find(".collapsed"); }
-    get allCollapsedRowIds() { return this.allCollapsedRows.map(row => (row.attr("id"))); }
-    rowIsCollapsed(ids) {
-        if (isInteger(ids)) { ids = [ids]; }
-        return ids.every(id => (this.row(id).hasClass("collapsed")));
-    }
-    collapseRow(ids) {
-        if (isInteger(ids)) { ids = [ids]; }
-        this.rows.forEach(row => {
-            if (ids.contains(row.attr("id"))) { row.addClass("collapsed"); }
-        });
-    }
+    get allCollapsedRowIds() { return this.allRowIds.reduce(id => this.rowIsCollapsed(id)); }
+    rowIsCollapsed(id) { return this.row(id).hasClass("collapsed"); }
+    collapseRows(ids) { ids.forEach(id => { this.collapseRow(id); }); }
+    collapseRow(id) { this.row(id).addClass("collapsed"); }
 
-    get allExpandedRows() { return this.rows.not(".collapsed", ".hidden"); }
-    get allExpandedRowIds() { return this.allExpandedRows.map(row => (row.attr("id"))); }
-    rowIsExpanded(ids) {
-        if (isInteger(ids)) { ids = [ids]; }
-        return ids.every(id => (!this.row(id).hasClass("collapsed") && !this.row(id).hasClass("hidden")));
-    }
-    expandRow(ids) {
-        if (isInteger(ids)) { ids = [ids]; }
-        this.rows.forEach(row => {
-            if (ids.contains(row.attr("id"))) { row.removeClass("collapsed"); }
-        });
-    }
+    get allExpandedRowIds() { return this.allRowIds.reduce(id => this.rowIsExpanded(id)); }
+    rowIsExpanded(id) { return !this.row(id).hasClass("collapsed") && !this.row(id).hasClass("hidden"); }
+    expandRows(ids) { ids.forEach(id => { this.expandRow(id); }); }
+    expandRow(id) { this.row(id).removeClass("collapsed"); this.row(id).removeClass("hidden"); }
 
     childrenOf(parentId) {
         return this.row(parentId).nextAll().filter(row => (row.find(parentId.split("_")[1])));
@@ -819,20 +796,20 @@ class UserDataUtility {
     }
 
     localRecord(id) {
-        var record = [];
+        var record = [], name, value;
         this.row(id).find("<tr>").forEach(line => {
-            const name = line.find("<td>").eq(2).text;
-            const value = line.find("<td>").eq(3).text;
+            name = line.find("<td>").eq(2).text;
+            value = line.find("<td>").eq(3).text;
             if (value) { record[name] = value; }
         });
         return record;
     }
 
     importedRecord(id) {
-        var record = [];
+        var record = [], name, value;
         this.row(id).find("<tr>").forEach(line => {
-            const name = line.find("<td>").eq(2).text;
-            const value = line.find("<td>").eq(5).text;
+            name = line.find("<td>").eq(2).text;
+            value = line.find("<td>").eq(5).text;
             if (value) { record[name] = value; }
         });
         return record;
