@@ -273,23 +273,23 @@ class UserDataUtility {
         this.options.data("hide_6_value", "hide different");
 
         this.options.data("select_indices", 8);
-        this.options.data("select_0_html", "All");
-        this.options.data("select_0_value", "select all");
-        this.options.data("select_1_html", "None");
-        this.options.data("select_1_value", "select none");
-        this.options.data("select_2_html", "Different");
-        this.options.data("select_2_value", "select different");
-        this.options.data("select_3_html", "Identical");
-        this.options.data("select_3_value", "select identical");
-        this.options.data("select_4_html", "Newer");
-        this.options.data("select_4_value", "select newer");
-        this.options.data("select_5_html", "Older");
-        this.options.data("select_5_value", "select older");
-        this.options.data("select_6_html", "Local");
-        this.options.data("select_6_value", "select local");
-        this.options.data("select_7_html", "Imported");
-        this.options.data("select_7_value", "select imported");
-
+        this.options.data("select_0_html", "Different");
+        this.options.data("select_0_value", "select different");
+        this.options.data("select_1_html", "Identical");
+        this.options.data("select_1_value", "select identical");
+        this.options.data("select_2_html", "Newer");
+        this.options.data("select_2_value", "select newer");
+        this.options.data("select_3_html", "Older");
+        this.options.data("select_3_value", "select older");
+        this.options.data("select_4_html", "Local");
+        this.options.data("select_4_value", "select local");
+        this.options.data("select_5_html", "Imported");
+        this.options.data("select_5_value", "select imported");
+        this.options.data("select_6_html", "Unselected");
+        this.options.data("select_6_value", "select unselected");
+        this.options.data("select_7_html", "None");
+        this.options.data("select_7_value", "select none");
+        
         this.actions.data("unselectedClass", "btn-secondary");
         this.actions.data("selectedClass", "btn-primary");
 
@@ -484,7 +484,7 @@ class UserDataUtility {
         this.rowButtons.on("click", function (e) {
             //add shift-click to back-step
             const row = $(this).parent().parent().parent().parent(); 
-            const id = row.attr("id");
+            const id = row.prop("id");
             if (e.shiftKey) {
                 if (row.hasClass("collapsed")) {
                     row.removeClass("collapsed");
@@ -525,7 +525,7 @@ class UserDataUtility {
         this.childrenButtons.on("click", function (e) {
             //Add shift-click to back-step
             const row = $(this).parent().parent().parent().parent(); 
-            const id = row.attr("id");
+            const id = row.prop("id");
 
             // If Control+Click, only affect children
             if (e.ctrlKey) {
@@ -574,7 +574,7 @@ class UserDataUtility {
         //click event for selectRecord buttons ("select_" + id)
         this.recordSelects.on("click", function (e) {
             const row = $(this).parent().parent().parent().parent(); 
-            const id = row.attr("id"); //.split("_")[1] if needed
+            const id = row.prop("id"); //.split("_")[1] if needed
             const value = $(this).html();
             if (row.hasClass("selected")) {
                 row.removeClass("selected");
@@ -589,7 +589,7 @@ class UserDataUtility {
         //click event for selectChildren buttons ("select_" + id + "_children")
         this.childrenSelects.on("click", function (e) {
             const row = $(this).parent().parent().parent().parent(); 
-            const id = row.attr("id");
+            const id = row.prop("id");
             if ($(this).hasClass("selected")) {
                 $(this).removeClass("selected");
                 $(this).html(self._squareIcon);
@@ -610,7 +610,7 @@ class UserDataUtility {
     }
 
     _buildRecord(tier, local, imported = []) {
-        var id = local.id, keys = [], localRecord, importedRecord;
+        var id = local.id, keys = [], localRecord, importedRecord, parentId;
         var unsortedKeys = Object.keys(local);
         if (imported.length) {
             unsortedKeys = unsortedKeys.concat(Object.keys(imported));
@@ -645,6 +645,7 @@ class UserDataUtility {
 
         if (unsortedKeys.find(key => (key.toLowerCase().includes("id")))) {
             keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("id"))));
+            parentId = local[keys[keys.length - 1]];
             unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
         }
         //console.log("After id", unsortedKeys, keys);
@@ -712,10 +713,13 @@ class UserDataUtility {
             record += "<tr>" + line + "</tr>";
         }
         this.scrollAreaDiv.append("<table id = 'row_" + id + "' class = 'flex-container'>" + record + "</table>");
-//console.log(local[children]);
+        if (parentId) { this.row(id).addClass("parentId_" + parentId); }
+        if (imported) { this.row(id).addClass("imported"); }
+        if (local)    { this.row(id).addClass("local"); }
+        //console.log(local[children]);
         if (children) {
             keys = Object.keys(local[children]);
-//console.log(keys);
+            //console.log(keys);
             if (imported && Object.keys(imported).includes(children)) {
                 keys = keys.concat(imported[children]).filter(key, index => (keys.indexOf(key) === index));
             }
@@ -728,17 +732,11 @@ class UserDataUtility {
         }
     }
 
+    selectLocalRecords(ids) { ids.forEach(id => { this.selectLocalRecord(id); }); }
+    selectLocalRecord(id) {  }
 
-
-
-    selectRecords(ids) {
-        this.rows.forEach(row => {
-        });
-
-    }
-    selectRecord(id) { 
-            if (ids.contains(row.attr("id"))) { row.addClass("selected"); }
-    }
+    selectImportedRecords(ids) { ids.forEach(id => { this.selectImportedRecord(id); }); }
+    selectImportedRecord(id) {  }
 
     get allHiddenRowIds() { return this.allRowIds.reduce(id => rowIsHidden(id)); }
     rowIsHidden(id) { return this.row(id).hasClass("hidden"); }
@@ -751,29 +749,25 @@ class UserDataUtility {
     collapseRow(id) { this.row(id).addClass("collapsed"); }
 
     get allExpandedRowIds() { return this.allRowIds.reduce(id => this.rowIsExpanded(id)); }
-    rowIsExpanded(id) { return !this.row(id).hasClass("collapsed") && !this.row(id).hasClass("hidden"); }
+    rowIsExpanded(id) { return (!this.row(id).hasClass("collapsed") && !this.row(id).hasClass("hidden")); }
     expandRows(ids) { ids.forEach(id => { this.expandRow(id); }); }
     expandRow(id) { this.row(id).removeClass("collapsed"); this.row(id).removeClass("hidden"); }
 
-    childrenOf(parentId) {
-        return this.row(parentId).nextAll().filter(row => (row.find(parentId.split("_")[1])));
-    }
+    childrenOf(parentId) { return $(".parentId_" + parentId); }
+    childrenIdsOf(parentId) { return this.childrenOf(parentId).map(row => (row.prop("id").split("_")[1])); }
 
-    childrenIdsOf(parentId) {
-        return this.childrenOf(parentId).map(row => (row.attr("id").split("_")[1]));
-    }
+    hasChildren(id) { return $(".parentId_" + id).length; }
 
-    descendantsOf(parentId) {
-        var rows = [];
-        this.childrenOf(parentId).forEach(row => {
-            rows.push(row);
-            if (row.hasChildren()) { rows.concat(this.descendantsOf(row.attr("id"))); }
-        });
-        return rows;
+    descendantsOf(id) {
+        const first = this.rows.index("#row_" + id);
+        while (this.hasChildren(id)) {
+            id = $(".parentId_" + id + ":last").prop("id").spilt("_")[1];
+        }
+        return first.nextUntil(this.row(id));
     }
 
     descendantIdsOf(parentId) {
-        return this.descendantsOf(parentId).map(row => (row.attr("id").split("_")[1]));
+        return this.descendantsOf(parentId).map(row => (row.prop("id").split("_")[1]));
     }
 
     recordIsSelected(id) { return this.row(id).hasClass("selected"); }
@@ -819,10 +813,18 @@ class UserDataUtility {
     importedRecordExists(id) { return this.importedRecord(id).length; }
     localRecordIsNewer(id) { return this.localRecord(id).lastEdited > this.importedRecord(id).lastEdited; }
 
-    get allRowIds()              { return this.rows.map(row => (row.attr("id").split("_")[1])); }
-    get allClientRowIds()        { return this.allRowIds.reduce(id => (this.row(id).find(".inside1"))); }
-    get allIssueRowIds()         { return this.allRowIds.reduce(id => (this.row(id).find(".inside2"))); }
-    get allSessionRowIds()       { return this.allRowIds.reduce(id => (this.row(id).find(".inside3"))); }
+    get allRowIds()              {
+        var ids = [];
+        for (var i = 0; i < this.rows.length; i++) {
+            ids.push(parseInt(this.rows.eq(i).prop("id").split("_")[1]));
+        }
+        console.log(ids);
+        return ids;
+    }
+
+    get allClientRowIds()        { return this.allRowIds.reduce(id => (this.row(id).find(".inside1").length)); }
+    get allIssueRowIds()         { return this.allRowIds.reduce(id => (this.row(id).find(".inside2").length)); }
+    get allSessionRowIds()       { return this.allRowIds.reduce(id => (this.row(id).find(".inside3").length)); }
     get allDifferentRowIds()     { return this.allRowIds.reduce(id => (!rowRecordsAreIdentical(id))); }
     get allIdenticalRowIds()     { return this.allRowIds.reduce(id => (rowRecordsAreIdentical(id))); }
     get allSelectedRecordIds()   { return this.allRowIds.reduce(id => (this.row(id).hasClass("selected"))); }
@@ -837,7 +839,7 @@ class UserDataUtility {
         const option = this.options.data(this.options.data("value")).substr(adjust.length + 1, this.options.data(this.options.data("value")).length - 1)
         console.log("'" + adjust + "'", "'" + option + "'");
 
-        const ids = (option == "all")        ? this.allRowIds
+        const ids = (option == "inverted")   ? this.allUnselectedRecordIds
                   : (option == "clients")    ? this.allClientRowIds
                   : (option == "issues")     ? this.allIssueRowIds
                   : (option == "sessions")   ? this.allSessionRowIds
@@ -849,14 +851,15 @@ class UserDataUtility {
                   : (option == "imported")   ? this.allImportedRecordIds
                   : (option == "newer")      ? this.allNewerRecordIds
                   : (option == "older")      ? this.allOlderRecordIds
-                  : (option == "none")       ? [] : "";
+                  : (option == "none")       ? [] : [];
 
+        console.log(ids);
         switch (adjust) {
             case "sort":     /* this.sort(option); */  break;
-            case "maximize": /* this.maximize(ids); */ break;
-            case "minimize": /* this.minimize(ids); */ break;
-            case "hide":     /* this.hide(ids); */     break;
-            case "select":   /* this.select(ids); */   break;
+            case "maximize": /* this.maximizeRows(ids); */ break;
+            case "minimize": /* this.minimizeRows(ids); */ break;
+            case "hide":     /* this.hideRows(ids); */     break;
+            case "select":   /* this.selectRows(ids); */   break;
         }
     }
 
