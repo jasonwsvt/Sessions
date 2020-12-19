@@ -662,6 +662,20 @@ class UserDataUtility {
             }
         });
 
+        $("." + this._rowButtonClass + ", ." + this._childrenButtonClass + ", ." + this._recordSelectClass + ", ." + this._childrenSelectClass).mousedown(function (e) {
+            if (e.ctrlKey || e.shiftKey) {
+                // For non-IE browsers
+                e.preventDefault();
+        
+                // For IE
+                if ($.support.msie) {
+                    this.onselectstart = function () { return false; };
+                    var me = this;  // capture in a closure
+                    window.setTimeout(function () { me.onselectstart = null; }, 0);
+                }
+            }
+        });
+
         if (true) {                                                     //change true to !imported
             this.importDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.importDiv.width() - 5) + "px");
             this.importDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
@@ -680,17 +694,17 @@ class UserDataUtility {
         }
         //console.log(unsortedKeys, keys);
 
-        if (unsortedKeys.find(key => (key == "id"))) {
-            keys.push(unsortedKeys.find(key => (key == "id")));
-            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
-        }
-        //console.log("After id", unsortedKeys, keys);
-
         if (unsortedKeys.find(key => (key.toLowerCase().includes("name")))) {
             keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("name"))));
             unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
         }
         //console.log("After name", unsortedKeys, keys);
+
+        if (unsortedKeys.find(key => (key == "id"))) {
+            keys.push(unsortedKeys.find(key => (key == "id")));
+            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
+        }
+        //console.log("After id", unsortedKeys, keys);
 
         if (unsortedKeys.includes("passwordHash")) {
             unsortedKeys.splice(unsortedKeys.indexOf("passwordHash"), 1);
@@ -855,9 +869,9 @@ class UserDataUtility {
     localRecord(id) {
         if (this.localRecordExists(id)) {
             var record = [], name, value;
-            this.row(id).find("<tr>").forEach(line => {
-                name = line.find("<td>").eq(2).text;
-                value = line.find("<td>").eq(3).text;
+            this.row(id).find("tr").forEach(line => {
+                name = line.find("td").eq(2).text;
+                value = line.find("td").eq(3).text;
                 if (value) { record[name] = value; }
             });
             return record;
@@ -868,9 +882,9 @@ class UserDataUtility {
     importedRecord(id) {
         if (this.importedRecordExists(id)) {
             var record = [], name, value;
-            this.row(id).find("<tr>").forEach(line => {
-                name = line.find("<td>").eq(2).text;
-                value = line.find("<td>").eq(5).text;
+            this.row(id).find("tr").forEach(line => {
+                name = line.find("td").eq(2).text;
+                value = line.find("td").eq(5).text;
                 if (value) { record[name] = value; }
             });
             return (record.length) ? record : null;
