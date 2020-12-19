@@ -26,7 +26,7 @@ class UserDataUtility {
     _divID = "userDataDiv";
     _buttonID = "userDataButton";
     _importDivID = "userDataImportDiv";
-    _importButtonID = "userDataImportButton";
+    _loadButtonID = "userDataLoadButton";
     _exportButtonID = "userDataExportButton";
     _adjustMenuButtonID = "userDataUtilityAdjustMenuButton";
     _adjustID = "userDataUtilityAdjustMenu";
@@ -100,7 +100,7 @@ class UserDataUtility {
                 $(this).blur();
             });
 
-            self.importButton.on("click", function() {
+            self.loadButton.on("click", function() {
                 self._importJSON();
                 $(this).blur();
             });
@@ -117,10 +117,10 @@ class UserDataUtility {
     get button()           { return $("#" + this._buttonID); }
     get div()              { return $("#" + this._divID); }
     get exportButton()     { return $("#" + this._exportButtonID); }
-    get importButton()     { return $("#" + this._importButtonID); }
+    get loadButton()       { return $("#" + this._loadButtonID); }
     get importDiv()        { return $("#" + this._importDivID); }
     get adjustMenuButton() { return $("#" + this._adjustMenuButtonID); }
-    get adjust()    { return $("#" + this._adjustID); }
+    get adjust()           { return $("#" + this._adjustID); }
     get actions()          { return $("#" + this._actionsID); }
     get options()          { return $("#" + this._optionsID); }
     get acknowledge()      { return $("#" + this._acknowledgeID); }
@@ -141,7 +141,7 @@ class UserDataUtility {
 
     build() {
         const importDiv = "<div id = '" + this._importDivID + "'></div>";
-        const importButton = "<button id = '" + this._importButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._importIcon + "</button>";
+        const loadButton = "<button id = '" + this._loadButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._importIcon + "</button>";
         const exportButton = "<button id = '" + this._exportButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._exportIcon + "</button>";
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._buttonIcon + "</button>";
@@ -177,7 +177,10 @@ class UserDataUtility {
         const adjust3 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'minimize'>Minimize</button>";
         const adjust4 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'hide'>Hide</button>";
         const adjust5 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'select'>Select</button>";
-        this.adjust.append(adjust1, adjust2, adjust3, adjust4, adjust5);
+        const adjust6 = "<button type = 'button' class = 'btn btn-sm btn-secondary hidden' value = 'import'>Import</button>";
+        const adjust7 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'export'>Export</button>";
+        const adjust8 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'delete'>Delete</button>";
+        this.adjust.append(adjust1, adjust2, adjust3, adjust4, adjust5, adjust6, adjust7, adjust8);
 
         this.adjust.data("unselectedClass", "btn-secondary");
         this.adjust.data("selectedClass", "btn-primary");
@@ -273,34 +276,93 @@ class UserDataUtility {
         this.options.data("hide_6_value", "hide different");
 
         this.options.data("select_indices", 8);
-        this.options.data("select_0_html", "Different");
-        this.options.data("select_0_value", "select different");
-        this.options.data("select_1_html", "Identical");
-        this.options.data("select_1_value", "select identical");
-        this.options.data("select_2_html", "Newer");
-        this.options.data("select_2_value", "select newer");
-        this.options.data("select_3_html", "Older");
-        this.options.data("select_3_value", "select older");
-        this.options.data("select_4_html", "Local");
-        this.options.data("select_4_value", "select local");
-        this.options.data("select_5_html", "Imported");
-        this.options.data("select_5_value", "select imported");
+        this.options.data("select_0_html", "Local");
+        this.options.data("select_0_hidden", "until load");
+        this.options.data("select_0_value", "select local");
+        this.options.data("select_1_html", "Loaded");
+        this.options.data("select_1_hidden", "until load");
+        this.options.data("select_1_value", "select loaded");
+        this.options.data("select_2_html", "Older");
+        this.options.data("select_2_hidden", "until load");
+        this.options.data("select_2_value", "select older");
+        this.options.data("select_3_html", "Newer");
+        this.options.data("select_3_hidden", "until load");
+        this.options.data("select_3_value", "select newer");
+        this.options.data("select_4_html", "Different");
+        this.options.data("select_4_hidden", "until load");
+        this.options.data("select_4_value", "select different");
+        this.options.data("select_5_html", "Identical");
+        this.options.data("select_5_hidden", "until load");
+        this.options.data("select_5_value", "select identical");
         this.options.data("select_6_html", "Unselected");
         this.options.data("select_6_value", "select unselected");
         this.options.data("select_7_html", "None");
         this.options.data("select_7_value", "select none");
         
+        this.options.data("export_indices", 6);
+        this.options.data("export_0_html", "Local");
+        this.options.data("export_0_value", "export local");
+        this.options.data("export_1_html", "Loaded");
+        this.options.data("export_1_hidden", "until load");
+        this.options.data("export_1_value", "export loaded");
+        this.options.data("export_2_html", "Older");
+        this.options.data("export_2_hidden", "until load");
+        this.options.data("export_2_value", "export older");
+        this.options.data("export_3_html", "Newer");
+        this.options.data("export_3_hidden", "until load");
+        this.options.data("export_3_value", "export newer");
+        this.options.data("export_4_html", "Selected");
+        this.options.data("export_4_value", "export selected");
+        this.options.data("export_5_html", "Unselected");
+        this.options.data("export_5_value", "export unselected");
+
+        this.options.data("import_indices", 6);
+        this.options.data("import_unselectedClass", "btn-warning");
+        this.options.data("import_selectedClass", "btn-warning");
+        this.options.data("import_0_html", "Local");
+        this.options.data("import_0_value", "import local");
+        this.options.data("import_1_html", "Loaded");
+        this.options.data("import_1_hidden", "until loaded");
+        this.options.data("import_1_value", "import loaded");
+        this.options.data("import_2_html", "Older");
+        this.options.data("import_2_value", "import older");
+        this.options.data("import_3_html", "Newer");
+        this.options.data("import_3_value", "import newer");
+        this.options.data("import_4_html", "Selected");
+        this.options.data("import_4_value", "import selected");
+        this.options.data("import_5_html", "Unselected");
+        this.options.data("import_5_value", "import unselected");
+
+        this.options.data("delete_indices", 6);
+        this.options.data("delete_unselectedClass", "btn-danger");
+        this.options.data("delete_selectedClass", "btn-danger");
+        this.options.data("delete_0_html", "Local");
+        this.options.data("delete_0_value", "delete local");
+        this.options.data("delete_1_html", "Loaded");
+        this.options.data("delete_1_hidden", "until load");
+        this.options.data("delete_1_value", "delete loaded");
+        this.options.data("delete_2_html", "Older");
+        this.options.data("delete_2_hidden", "until load");
+        this.options.data("delete_2_value", "delete older");
+        this.options.data("delete_3_html", "Newer");
+        this.options.data("delete_3_hidden", "until load");
+        this.options.data("delete_3_value", "delete newer");
+        this.options.data("delete_4_html", "Selected");
+        this.options.data("delete_4_value", "delete selected");
+        this.options.data("delete_5_html", "Unselected");
+        this.options.data("delete_5_value", "delete unselected");
+
         this.actions.data("unselectedClass", "btn-secondary");
         this.actions.data("selectedClass", "btn-primary");
 
-        this.importDiv.append(importButton);
-        this.importButton.prop("data-toggle", "popover");
+        this.importDiv.append(loadButton);
+        this.loadButton.prop("data-toggle", "popover");
         if (!window.FileReader) {
-            this.importButton.prop("data-content", "The FileReader API is not supported by your browser.");
-            this.importButton.prop("disabled", true);
+            this.loadButton.prop("data-content", "The FileReader API is not supported by your browser.");
+            this.loadButton.prop("disabled", true);
         }
         else {
-            this.importButton.prop("data-content", "Import data.");
+            this.loadButton.prop("data-content", "Import data.");
         }
 
 //        this.div.append(exportButton);
@@ -714,7 +776,7 @@ class UserDataUtility {
         }
         this.scrollAreaDiv.append("<table id = 'row_" + id + "' class = 'flex-container'>" + record + "</table>");
         if (parentId) { this.row(id).addClass("parentId_" + parentId); }
-        if (imported) { this.row(id).addClass("imported"); }
+        if (imported) { this.row(id).addClass("Loaded"); }
         if (local)    { this.row(id).addClass("local"); }
         //console.log(local[children]);
         if (children) {
@@ -775,6 +837,7 @@ class UserDataUtility {
     get allUnselectedRecords() { return this.allRowIds.reduce(id => (!recordIsSelected(id))); }
 
     rowRecordsAreIdentical(id) {
+        if (!this.localRecordExists(id) || !this.importedRecordExists(id)) { return false; }
         const local = this.localRecord(id);
         const imported = this.importedRecord(id);
         if (local === imported) { return true; }
@@ -790,47 +853,53 @@ class UserDataUtility {
     }
 
     localRecord(id) {
-        var record = [], name, value;
-        this.row(id).find("<tr>").forEach(line => {
-            name = line.find("<td>").eq(2).text;
-            value = line.find("<td>").eq(3).text;
-            if (value) { record[name] = value; }
-        });
-        return record;
+        if (this.localRecordExists(id)) {
+            var record = [], name, value;
+            this.row(id).find("<tr>").forEach(line => {
+                name = line.find("<td>").eq(2).text;
+                value = line.find("<td>").eq(3).text;
+                if (value) { record[name] = value; }
+            });
+            return record;
+        }
+        else { return null; }
     }
 
     importedRecord(id) {
-        var record = [], name, value;
-        this.row(id).find("<tr>").forEach(line => {
-            name = line.find("<td>").eq(2).text;
-            value = line.find("<td>").eq(5).text;
-            if (value) { record[name] = value; }
-        });
-        return record;
+        if (this.importedRecordExists(id)) {
+            var record = [], name, value;
+            this.row(id).find("<tr>").forEach(line => {
+                name = line.find("<td>").eq(2).text;
+                value = line.find("<td>").eq(5).text;
+                if (value) { record[name] = value; }
+            });
+            return (record.length) ? record : null;
+        }
+        else { return null; }
     }
 
-    localRecordExists(id)   { return this.localRecord(id).length; }
-    importedRecordExists(id) { return this.importedRecord(id).length; }
-    localRecordIsNewer(id) { return this.localRecord(id).lastEdited > this.importedRecord(id).lastEdited; }
+    get importedRecordsExist() { return !!$(".imported").length; }
+    localRecordExists(id)      { return this.row(id).hasClass("local"); }
+    importedRecordExists(id)   { return this.row(id).hasClass("Loaded"); }
+    localRecordIsNewer(id)     { return this.localRecord(id).lastEdited > this.importedRecord(id).lastEdited; }
 
-    get allRowIds()              {
+    get allRowIds() {
         var ids = [];
         for (var i = 0; i < this.rows.length; i++) {
             ids.push(parseInt(this.rows.eq(i).prop("id").split("_")[1]));
         }
-        console.log(ids);
         return ids;
     }
 
-    get allClientRowIds()        { return this.allRowIds.reduce(id => (this.row(id).find(".inside1").length)); }
-    get allIssueRowIds()         { return this.allRowIds.reduce(id => (this.row(id).find(".inside2").length)); }
-    get allSessionRowIds()       { return this.allRowIds.reduce(id => (this.row(id).find(".inside3").length)); }
-    get allDifferentRowIds()     { return this.allRowIds.reduce(id => (!rowRecordsAreIdentical(id))); }
-    get allIdenticalRowIds()     { return this.allRowIds.reduce(id => (rowRecordsAreIdentical(id))); }
-    get allSelectedRecordIds()   { return this.allRowIds.reduce(id => (this.row(id).hasClass("selected"))); }
-    get allUnselectedRecordIds() { return this.allRowIds.reduce(id => (!this.row(id).hasClass("selected"))); }
-    get allLocalRecordIds()      { return this.allRowIds.reduce(id => (localRecordExists(id))); }
-    get allImportedRecordIds()   { return this.allRowIds.reduce(id => (importedRecordExists(id))); }
+    get allClientRowIds()        { return this.allRowIds.filter(id => (this.row(id).find(".inside1").length)); }
+    get allIssueRowIds()         { return this.allRowIds.filter(id => (this.row(id).find(".inside2").length)); }
+    get allSessionRowIds()       { return this.allRowIds.filter(id => (this.row(id).find(".inside3").length)); }
+    get allDifferentRowIds()     { return this.allRowIds.filter(id => (!this.rowRecordsAreIdentical(id))); }
+    get allIdenticalRowIds()     { return this.allRowIds.filter(id => (this.rowRecordsAreIdentical(id))); }
+    get allSelectedRecordIds()   { return this.allRowIds.filter(id => (this.row(id).hasClass("selected"))); }
+    get allUnselectedRecordIds() { return this.allRowIds.filter(id => (!this.row(id).hasClass("selected"))); }
+    get allLocalRecordIds()      { return this.allRowIds.filter(id => (this.localRecordExists(id))); }
+    get allImportedRecordIds()   { return this.allRowIds.filter(id => (this.importedRecordExists(id))); }
     get allNewerRecordIds()      { return this.allRowIds.map(id => (this.localRecordIsNewer(id) ? "local_" + id : "imported_" + id)); }
     get allOlderRecordIds()      { return this.allRowIds.map(id => (this.localRecordIsNewer(id) ? "imported_" + id : "local_" + id)); }
 
@@ -848,7 +917,7 @@ class UserDataUtility {
                   : (option == "selected")   ? this.allSelectedRecordIds
                   : (option == "unselected") ? this.allUnselectedRecordIds
                   : (option == "local")      ? this.allLocalRecordIds
-                  : (option == "imported")   ? this.allImportedRecordIds
+                  : (option == "Loaded")   ? this.allImportedRecordIds
                   : (option == "newer")      ? this.allNewerRecordIds
                   : (option == "older")      ? this.allOlderRecordIds
                   : (option == "none")       ? [] : [];
