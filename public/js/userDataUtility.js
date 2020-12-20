@@ -107,37 +107,39 @@ class UserDataUtility {
         }); 
     }
 
-    get userUtilities()    { return this._userUtilities; }
-    get utilities()        { return this.userUtilities.utilities; }
-    get app()              { return this.utilities.app; }
-    get currentUser()      { return this.app.users.currentUser; }
-    get lines()            { return this.app.editor.lines; }
-    get buttons()          { return this.app.buttons; }
-
-    get button()           { return $("#" + this._buttonID); }
-    get div()              { return $("#" + this._divID); }
-    get exportButton()     { return $("#" + this._exportButtonID); }
-    get loadButton()       { return $("#" + this._loadButtonID); }
-    get importDiv()        { return $("#" + this._importDivID); }
-    get adjustMenuButton() { return $("#" + this._adjustMenuButtonID); }
-    get adjust()           { return $("#" + this._adjustID); }
-    get actions()          { return $("#" + this._actionsID); }
-    get options()          { return $("#" + this._optionsID); }
-    get acknowledge()      { return $("#" + this._acknowledgeID); }
-    get execute()          { return $("#" + this._executeID); }
-    get scrollAreaDiv()    { return $("#" + this._scrollAreaDivID); }
-    get messagesDiv()      { return $("#" + this._messagesDivID); }
-    get actionDiv()        { return $("#" + this._actionDivID); }
-    get rowButtons()       { return $("." + this._rowButtonClass); }
-    get recordSelects()    { return $("." + this._recordSelectClass); }
-    get childrenButtons()  { return $("." + this._childrenButtonClass); }
-    get childrenSelects()  { return $("." + this._childrenSelectClass); }
-    get rows()             { return this.scrollAreaDiv.children(); }
-    row(id)                { return $("#row_" + id); }
-    rowButton(id)          { return this.row(id).find("." + this._rowButtonClass); }
-    recordSelect(id)       { return this.row(id).find("." + this._recordSelectClass); }
-    childrenButton(id)     { return this.row(id).find("." + this._childrenButtonClass); }
-    childrenSelect(id)     { return this.row(id).find("." + this._childrenSelectClass); }
+    get userUtilities()      { return this._userUtilities; }
+    get utilities()          { return this.userUtilities.utilities; }
+    get app()                { return this.utilities.app; }
+    get currentUser()        { return this.app.users.currentUser; }
+    get lines()              { return this.app.editor.lines; }
+    get buttons()            { return this.app.buttons; }
+  
+    get button()             { return $("#" + this._buttonID); }
+    get div()                { return $("#" + this._divID); }
+    get exportButton()       { return $("#" + this._exportButtonID); }
+    get loadButton()         { return $("#" + this._loadButtonID); }
+    get importDiv()          { return $("#" + this._importDivID); }
+    get adjustMenuButton()   { return $("#" + this._adjustMenuButtonID); }
+    get adjust()             { return $("#" + this._adjustID); }
+    get actions()            { return $("#" + this._actionsID); }
+    get options()            { return $("#" + this._optionsID); }
+    get acknowledge()        { return $("#" + this._acknowledgeID); }
+    get execute()            { return $("#" + this._executeID); }
+    get scrollAreaDiv()      { return $("#" + this._scrollAreaDivID); }
+    get messagesDiv()        { return $("#" + this._messagesDivID); }
+    get actionDiv()          { return $("#" + this._actionDivID); }
+    get rowButtons()         { return $("." + this._rowButtonClass); }
+    get recordSelects()      { return $("." + this._recordSelectClass); }
+    get childrenButtons()    { return $("." + this._childrenButtonClass); }
+    get childrenSelects()    { return $("." + this._childrenSelectClass); }
+    get rows()               { return this.scrollAreaDiv.children(); }
+    row(id)                  { return $("#row_" + id); }
+    rowButton(id)            { return this.row(id).find("." + this._rowButtonClass); }
+    childrenButton(id)       { return this.row(id).find("." + this._childrenButtonClass); }
+    localRecordSelect(id)    { return this.row(id).find("." + this._recordSelectClass); }
+    localChildrenSelect(id)  { return this.row(id).find("." + this._childrenSelectClass); }
+    loadedRecordSelect(id)   { return this.row(id).find("." + this._recordSelectClass); }
+    loadedChildrenSelect(id) { return this.row(id).find("." + this._childrenSelectClass); }
 
     build() {
         const importDiv = "<div id = '" + this._importDivID + "'></div>";
@@ -670,8 +672,8 @@ class UserDataUtility {
                 // For IE
                 if ($.support.msie) {
                     this.onselectstart = function () { return false; };
-                    var me = this;  // capture in a closure
-                    window.setTimeout(function () { me.onselectstart = null; }, 0);
+                    var self = this;  // capture in a closure
+                    window.setTimeout(function () { self.onselectstart = null; }, 0);
                 }
             }
         });
@@ -808,11 +810,27 @@ class UserDataUtility {
         }
     }
 
-    selectLocalRecords(ids) { ids.forEach(id => { this.selectLocalRecord(id); }); }
-    selectLocalRecord(id) {  }
+    localRecordExists(id) {}
+    loadedRecordExists(id) {}
 
-    selectImportedRecords(ids) { ids.forEach(id => { this.selectImportedRecord(id); }); }
-    selectImportedRecord(id) {  }
+    selectLocalRecords(ids)    {                    ids.forEach(id => { this.selectLocalRecord(id); }); }
+    selectLocalChildren(id)    {    this.childrenOf(id).forEach(id => { this.selectLocalRecord(id); }); }
+    selectLocalDescendents(id) { this.descendantsOf(id).forEach(id => { this.selectLocalRecord(id); }); }
+    selectLocalRecord(id) {
+        if (this.row(id).hasClass("selected")) {
+            this.row(id).removeClass("selected");
+            this.recordSelect(id).html(self._squareIcon);
+        }
+        else {
+            this.row(id).addClass("selected");
+            this.recordSelect(id).html(self._checkedIcon);
+        }
+    }
+
+    selectLoadedRecords(ids)    {                    ids.forEach(id => { this.selectLoadedRecord(id); }); }
+    selectLoadedChildren(id)    {    this.childrenOf(id).forEach(id => { this.selectLoadedRecord(id); }); }
+    selectLoadedDescendents(id) { this.descendantsOf(id).forEach(id => { this.selectLoadedRecord(id); }); }
+    selectLoadedRecord(id) {  }
 
     get allHiddenRowIds() { return this.allRowIds.reduce(id => rowIsHidden(id)); }
     rowIsHidden(id) { return this.row(id).hasClass("hidden"); }
