@@ -14,7 +14,7 @@ class UserDataUtility {
     _hiddenIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye-slash" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/><path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299l.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/><path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709z"/><path fill-rule="evenodd" d="M13.646 14.354l-12-12 .708-.708 12 12-.708.708z"/></svg>';
     _expandedIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-fullscreen" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/></svg>';
     _collapsedIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-fullscreen-exit" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5zm5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5zM0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zm10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4z"/></svg>';
-    _importIcon = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>';
+    _loadIcon = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>';
     _exportIcon = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-upload" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path fill-rule="evenodd" d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>';
     _downArrowIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/></svg>';
     _upArrowIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/></svg>';
@@ -25,7 +25,7 @@ class UserDataUtility {
 
     _divID = "userDataDiv";
     _buttonID = "userDataButton";
-    _importDivID = "userDataImportDiv";
+    _loadDivID = "userDataLoadDiv";
     _loadButtonID = "userDataLoadButton";
     _exportButtonID = "userDataExportButton";
     _adjustMenuButtonID = "userDataUtilityAdjustMenuButton";
@@ -101,7 +101,7 @@ class UserDataUtility {
             });
 
             self.loadButton.on("click", function() {
-                self._importJSON();
+                self._loadJSON();
                 $(this).blur();
             });
         }); 
@@ -118,7 +118,7 @@ class UserDataUtility {
     get div()                   { return $("#" + this._divID); }
     get exportButton()          { return $("#" + this._exportButtonID); }
     get loadButton()            { return $("#" + this._loadButtonID); }
-    get importDiv()             { return $("#" + this._importDivID); }
+    get loadDiv()             { return $("#" + this._loadDivID); }
     get adjustMenuButton()      { return $("#" + this._adjustMenuButtonID); }
     get adjust()                { return $("#" + this._adjustID); }
     get actions()               { return $("#" + this._actionsID); }
@@ -144,8 +144,8 @@ class UserDataUtility {
     loadedChildrenSelect(id)    { return this.row(id).find("." + this._loadedChildrenSelectClass); }
 
     build() {
-        const importDiv = "<div id = '" + this._importDivID + "'></div>";
-        const loadButton = "<button id = '" + this._loadButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._importIcon + "</button>";
+        const loadDiv = "<div id = '" + this._loadDivID + "'></div>";
+        const loadButton = "<button id = '" + this._loadButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._loadIcon + "</button>";
         const exportButton = "<button id = '" + this._exportButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._exportIcon + "</button>";
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._buttonIcon + "</button>";
@@ -173,7 +173,7 @@ class UserDataUtility {
         const actionDiv = "<div id = '" + this._actionDivID + "' class = 'd-flex justify-content-start'>" + actions + acknowledge + execute + "</div>";
 
         this.userUtilities.div.append(button + div);
-        this.div.append(top + scrollDiv + messagesDiv + actionDiv + importDiv);
+        this.div.append(top + scrollDiv + messagesDiv + actionDiv + loadDiv);
         this.actions.append(action1 + action2 + action3);
 
         const adjust1 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'sort'>Sort</button>";
@@ -359,14 +359,14 @@ class UserDataUtility {
         this.actions.data("unselectedClass", "btn-secondary");
         this.actions.data("selectedClass", "btn-primary");
 
-        this.importDiv.append(loadButton);
+        this.loadDiv.append(loadButton);
         this.loadButton.prop("data-toggle", "popover");
         if (!window.FileReader) {
             this.loadButton.prop("data-content", "The FileReader API is not supported by your browser.");
             this.loadButton.prop("disabled", true);
         }
         else {
-            this.loadButton.prop("data-content", "Import data.");
+            this.loadButton.prop("data-content", "Load data.");
         }
 
 //        this.div.append(exportButton);
@@ -543,7 +543,7 @@ class UserDataUtility {
         this.currentUser.pushToStorage();
         this.scrollAreaDiv.empty();
         //call buildRecord with data
-        this._buildRecord(0, this.currentUser.pullRecords(), false);  //change false to imported
+        this._buildRecord(0, this.currentUser.pullRecords(), false);  //change false to loaded
 
         //click event for rowButtons (id + "_row")
         this.rowButtons.on("click", function (e) {
@@ -693,20 +693,20 @@ class UserDataUtility {
             });
         });
 
-        if (true) {                                                     //change true to !imported
-            this.importDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.importDiv.width() - 5) + "px");
-            this.importDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
+        if (true) {                                                     //change true to !loaded
+            this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 5) + "px");
+            this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
         }
         else {
-            this.importDiv.addClass("hidden");
+            this.loadDiv.addClass("hidden");
         }
     }
 
-    _buildRecord(tier, local, imported = []) {
-        var id = local.id, keys = [], localRecord, importedRecord, parentId;
+    _buildRecord(tier, local, loaded = []) {
+        var id = local.id, keys = [], localRecord, loadedRecord, parentId;
         var unsortedKeys = Object.keys(local);
-        if (imported.length) {
-            unsortedKeys = unsortedKeys.concat(Object.keys(imported));
+        if (loaded.length) {
+            unsortedKeys = unsortedKeys.concat(Object.keys(loaded));
             unsortedKeys = unsortedKeys.filter(key, index => (unsortedKeys.indexOf(key) === index));
         }
         //console.log(unsortedKeys, keys);
@@ -759,13 +759,13 @@ class UserDataUtility {
         
         const rowButton = "<span class = 'rowButton'>" + this._expandedIcon + "</span>";
         const selectLocalRecord = "<span id = 'local_" + id + "' class = '" + this._localRecordSelectClass + "'>" + this._squareIcon + "</span>";
-        const selectImportedRecord = "<span id = 'imported_" + id + "' class = '" + this._loadedRecordSelectClass + "'>" + this._squareIcon + "</span>";
+        const selectLoadedRecord = "<span id = 'loaded_" + id + "' class = '" + this._loadedRecordSelectClass + "'>" + this._squareIcon + "</span>";
         const childrenRowsButton = "<span class = '" + this._childrenRowsButtonClass + "'>" + this._expandedIcon + "</span>";
         const selectLocalChildren = "<span class = '" + this._localChildrenSelectClass + "'>" + this._squareIcon + "</span>";
-        const selectImportedChildren = "<span class = '" + this._loadedChildrenSelectClass + "'>" + this._squareIcon + "</span>";
+        const selectLoadedChildren = "<span class = '" + this._loadedChildrenSelectClass + "'>" + this._squareIcon + "</span>";
 
         var record = "", line;
-        //console.log(local, imported, children, keys);
+        //console.log(local, loaded, children, keys);
 
         keys.forEach((key, index) => {
             line = (index == 0) ? "<td class = 'outside" + tier + "'>" + rowButton + "</td>" : "<td></td>";
@@ -779,13 +779,13 @@ class UserDataUtility {
                 line += (index == 0) ? "<td>" + selectLocalRecord + "</td>" : "<td></td>";
             }
             else { line += "<td></td><td></td>"; }
-            if (imported) {
+            if (loaded) {
                 line += "<td>";
-                line += (isArray(imported[key])) ? this._escapeHTML(imported[key]).join("<br>")
-                        : (parseInt(imported[key]) < 3155760000 && parseInt(imported[key]) > 1577880000)
-                        ? this.parseDate(imported[key]) : imported[key];
+                line += (isArray(loaded[key])) ? this._escapeHTML(loaded[key]).join("<br>")
+                        : (parseInt(loaded[key]) < 3155760000 && parseInt(loaded[key]) > 1577880000)
+                        ? this.parseDate(loaded[key]) : loaded[key];
                 line += "</td>";
-                line += (index == 0) ? "<td>" + selectImportedRecord + "</td>" : "<td></td>";
+                line += (index == 0) ? "<td>" + selectLoadedRecord + "</td>" : "<td></td>";
             }
             else { line += "<td></td><td></td>"; }
             record+= "<tr>" + line + "</tr>";
@@ -798,29 +798,29 @@ class UserDataUtility {
                 line += "<td>" + selectLocalChildren + "</td>";
             }
             else { line += "<td></td><td></td>"; }
-            if (isArray(imported[children]) && imported[children].length) {
-                line += "<td>(" + imported[children].length + ")</td>";
-                line += "<td>" + selectImportedChildren + "</td>";
+            if (isArray(loaded[children]) && loaded[children].length) {
+                line += "<td>(" + loaded[children].length + ")</td>";
+                line += "<td>" + selectLoadedChildren + "</td>";
             }
             else { line += "<td></td><td></td>"; }
             record += "<tr>" + line + "</tr>";
         }
         this.scrollAreaDiv.append("<table id = 'row_" + id + "' class = 'flex-container'>" + record + "</table>");
         if (parentId) { this.row(id).addClass("parentId_" + parentId); }
-        if (imported) { this.row(id).addClass("Loaded"); }
+        if (loaded) { this.row(id).addClass("Loaded"); }
         if (local)    { this.row(id).addClass("local"); }
         //console.log(local[children]);
         if (children) {
             keys = Object.keys(local[children]);
             //console.log(keys);
-            if (imported && Object.keys(imported).includes(children)) {
-                keys = keys.concat(imported[children]).filter(key, index => (keys.indexOf(key) === index));
+            if (loaded && Object.keys(loaded).includes(children)) {
+                keys = keys.concat(loaded[children]).filter(key, index => (keys.indexOf(key) === index));
             }
             keys.forEach(key => {
                 localRecord = (local[children][key]) ? local[children][key] : false;
-                importedRecord = (imported && imported[children] && imported[children][key]) ? imported[children][key] : false;
-                //console.log(key, tier + 1, localRecord, importedRecord);
-                this._buildRecord(tier + 1, localRecord, importedRecord);
+                loadedRecord = (loaded && loaded[children] && loaded[children][key]) ? loaded[children][key] : false;
+                //console.log(key, tier + 1, localRecord, loadedRecord);
+                this._buildRecord(tier + 1, localRecord, loadedRecord);
             });
         }
     }
@@ -879,26 +879,35 @@ class UserDataUtility {
         return this.descendantsOf(parentId).map(row => (row.prop("id").split("_")[1]));
     }
 
-    recordIsSelected(id) { return this.row(id).hasClass("selected"); }
-    get allSelectedRecords() { return this.allRowIds.reduce(id => (recordIsSelected(id))); }
-    get allUnselectedRecords() { return this.allRowIds.reduce(id => (!recordIsSelected(id))); }
+    rowIsSelected(id)                { return this.localRecordIsSelected(id) || this.loadedRecordIsSelected(id); }
+    get allSelectedRows()            { return this.allRowIds.reduce(id => (rowIsSelected(id))); }
+    get allUnselectedRows()          { return this.allRowIds.reduce(id => (!rowIsSelected(id))); }
+
+    localRecordIsSelected(id)        { return this.row(id).find(this._localRecordSelectClass).html() == this._checkedIcon; }
+    loadedRecordIsSelected(id)       { return this.row(id).find(this._loadedRecordSelectClass).html() == this._checkedIcon; }
+    get allSelectedLocalRecords()    { return this.allLocalRecordIds.filter(id => this.localRecordIsSelected(id)); }
+    get allUnselectedLocalRecords()  { return this.allLocalRecordIds.filter(id => (!this.localRecordIsSelected(id))); }
+    get allSelectedLoadedRecords()   { return this.allLoadedRecordIds.filter(id => this.loadedRecordIsSelected(id)); }
+    get allUnselectedLoadedRecords() { return this.allLoadedRecordIds.filter(id => (!this.loadedRecordIsSelected(id))); }
 
     rowRecordsAreIdentical(id) {
-        if (!this.localRecordExists(id) || !this.importedRecordExists(id)) { return false; }
+        if (!this.localRecordExists(id) || !this.loadedRecordExists(id)) { return false; }
         const local = this.localRecord(id);
-        const imported = this.importedRecord(id);
-        if (local === imported) { return true; }
-        if (local == null || imported == null) { return false; }
-        if (local.length !== imported.length) { return false; }
+        const loaded = this.loadedRecord(id);
+        if (local === loaded) { return true; }
+        if (local == null || loaded == null) { return false; }
+        if (local.length !== loaded.length) { return false; }
         const localKeys = Object.keys(local);
-        const importedKeys = Object.keys(imported);
+        const loadedKeys = Object.keys(loaded);
         localKeys.forEach(key => {
-            if (!importedKeys.contains(key)) { return false; }
-            if (local[key] != imported[key]) { return false; }
+            if (!loadedKeys.contains(key)) { return false; }
+            if (local[key] != loaded[key]) { return false; }
         });
         return true;
     }
 
+    localRecordExists(id)    { return this.row(id).hasClass("local"); }
+    localRecordIsNewer(id)   { return parseInt(this.localRecord(id).lastEdited) > parseInt(this.loadedRecord(id).lastEdited); }
     localRecord(id) {
         if (this.localRecordExists(id)) {
             var record = [], name, value;
@@ -912,8 +921,10 @@ class UserDataUtility {
         else { return null; }
     }
 
-    importedRecord(id) {
-        if (this.importedRecordExists(id)) {
+    get loadedRecordsExist() { return !!$(".loaded").length; }
+    loadedRecordExists(id)   { return this.row(id).hasClass("loaded"); }
+    loadedRecord(id) {
+        if (this.loadedRecordExists(id)) {
             var record = [], name, value;
             this.row(id).find("tr").forEach(line => {
                 name = line.find("td").eq(2).text;
@@ -925,11 +936,7 @@ class UserDataUtility {
         else { return null; }
     }
 
-    get importedRecordsExist() { return !!$(".imported").length; }
-    localRecordExists(id)      { return this.row(id).hasClass("local"); }
-    importedRecordExists(id)   { return this.row(id).hasClass("Loaded"); }
-    localRecordIsNewer(id)     { return this.localRecord(id).lastEdited > this.importedRecord(id).lastEdited; }
-
+    //Row id collections
     get allRowIds() {
         var ids = [];
         for (var i = 0; i < this.rows.length; i++) {
@@ -943,12 +950,14 @@ class UserDataUtility {
     get allSessionRowIds()       { return this.allRowIds.filter(id => (this.row(id).find(".inside3").length)); }
     get allDifferentRowIds()     { return this.allRowIds.filter(id => (!this.rowRecordsAreIdentical(id))); }
     get allIdenticalRowIds()     { return this.allRowIds.filter(id => (this.rowRecordsAreIdentical(id))); }
+
+    //Record id collections
     get allSelectedRecordIds()   { return this.allRowIds.filter(id => (this.row(id).hasClass("selected"))); }
     get allUnselectedRecordIds() { return this.allRowIds.filter(id => (!this.row(id).hasClass("selected"))); }
     get allLocalRecordIds()      { return this.allRowIds.filter(id => (this.localRecordExists(id))); }
-    get allImportedRecordIds()   { return this.allRowIds.filter(id => (this.importedRecordExists(id))); }
-    get allNewerRecordIds()      { return this.allRowIds.map(id => (this.localRecordIsNewer(id) ? "local_" + id : "imported_" + id)); }
-    get allOlderRecordIds()      { return this.allRowIds.map(id => (this.localRecordIsNewer(id) ? "imported_" + id : "local_" + id)); }
+    get allLoadedRecordIds()     { return this.allRowIds.filter(id => (this.loadedRecordExists(id))); }
+    get allNewerRecordIds()      { return this.allRowIds.map(id => (this.localRecordIsNewer(id) ? "local_" + id : "loaded_" + id)); }
+    get allOlderRecordIds()      { return this.allRowIds.map(id => (this.localRecordIsNewer(id) ? "loaded_" + id : "local_" + id)); }
 
     _doAdjustOption() {
         const adjust = this.adjust.data("value");
@@ -964,7 +973,7 @@ class UserDataUtility {
                   : (option == "selected")   ? this.allSelectedRecordIds
                   : (option == "unselected") ? this.allUnselectedRecordIds
                   : (option == "local")      ? this.allLocalRecordIds
-                  : (option == "Loaded")   ? this.allImportedRecordIds
+                  : (option == "Loaded")     ? this.allLoadedRecordIds
                   : (option == "newer")      ? this.allNewerRecordIds
                   : (option == "older")      ? this.allOlderRecordIds
                   : (option == "none")       ? [] : [];
@@ -1016,7 +1025,7 @@ class UserDataUtility {
         }
     }
 
-    _importJSON() {
+    _loadJSON() {
         const hiddenDiv = "<div id = 'hiddenDiv' class = 'hidden'></div>";
         const fileInput = "<input id = 'upload' type = 'file'>";
         var fi = $();
