@@ -39,7 +39,7 @@ class UserDataUtility {
     _actionDivID = "userDataUtilityActionDiv";
     _rowButtonClass = "rowButton";
     _recordSelectClass = "selectRecord";
-    _childrenButtonClass = "childrenButton";
+    _childrenRowsButtonClass = "childrenRowsButton";
     _childrenSelectClass = "selectChildren";
 
 
@@ -107,39 +107,41 @@ class UserDataUtility {
         }); 
     }
 
-    get userUtilities()      { return this._userUtilities; }
-    get utilities()          { return this.userUtilities.utilities; }
-    get app()                { return this.utilities.app; }
-    get currentUser()        { return this.app.users.currentUser; }
-    get lines()              { return this.app.editor.lines; }
-    get buttons()            { return this.app.buttons; }
-  
-    get button()             { return $("#" + this._buttonID); }
-    get div()                { return $("#" + this._divID); }
-    get exportButton()       { return $("#" + this._exportButtonID); }
-    get loadButton()         { return $("#" + this._loadButtonID); }
-    get importDiv()          { return $("#" + this._importDivID); }
-    get adjustMenuButton()   { return $("#" + this._adjustMenuButtonID); }
-    get adjust()             { return $("#" + this._adjustID); }
-    get actions()            { return $("#" + this._actionsID); }
-    get options()            { return $("#" + this._optionsID); }
-    get acknowledge()        { return $("#" + this._acknowledgeID); }
-    get execute()            { return $("#" + this._executeID); }
-    get scrollAreaDiv()      { return $("#" + this._scrollAreaDivID); }
-    get messagesDiv()        { return $("#" + this._messagesDivID); }
-    get actionDiv()          { return $("#" + this._actionDivID); }
-    get rowButtons()         { return $("." + this._rowButtonClass); }
-    get recordSelects()      { return $("." + this._recordSelectClass); }
-    get childrenButtons()    { return $("." + this._childrenButtonClass); }
-    get childrenSelects()    { return $("." + this._childrenSelectClass); }
-    get rows()               { return this.scrollAreaDiv.children(); }
-    row(id)                  { return $("#row_" + id); }
-    rowButton(id)            { return this.row(id).find("." + this._rowButtonClass); }
-    childrenButton(id)       { return this.row(id).find("." + this._childrenButtonClass); }
-    localRecordSelect(id)    { return this.row(id).find("." + this._recordSelectClass); }
-    localChildrenSelect(id)  { return this.row(id).find("." + this._childrenSelectClass); }
-    loadedRecordSelect(id)   { return this.row(id).find("." + this._recordSelectClass); }
-    loadedChildrenSelect(id) { return this.row(id).find("." + this._childrenSelectClass); }
+    get userUtilities()         { return this._userUtilities; }
+    get utilities()             { return this.userUtilities.utilities; }
+    get app()                   { return this.utilities.app; }
+    get currentUser()           { return this.app.users.currentUser; }
+    get lines()                 { return this.app.editor.lines; }
+    get buttons()               { return this.app.buttons; }
+     
+    get button()                { return $("#" + this._buttonID); }
+    get div()                   { return $("#" + this._divID); }
+    get exportButton()          { return $("#" + this._exportButtonID); }
+    get loadButton()            { return $("#" + this._loadButtonID); }
+    get importDiv()             { return $("#" + this._importDivID); }
+    get adjustMenuButton()      { return $("#" + this._adjustMenuButtonID); }
+    get adjust()                { return $("#" + this._adjustID); }
+    get actions()               { return $("#" + this._actionsID); }
+    get options()               { return $("#" + this._optionsID); }
+    get acknowledge()           { return $("#" + this._acknowledgeID); }
+    get execute()               { return $("#" + this._executeID); }
+    get scrollAreaDiv()         { return $("#" + this._scrollAreaDivID); }
+    get messagesDiv()           { return $("#" + this._messagesDivID); }
+    get actionDiv()             { return $("#" + this._actionDivID); }
+    get rows()                  { return this.scrollAreaDiv.children(); }
+    row(id)                     { return $("#row_" + id); }
+    get rowButtons()            { return                 $("." + this._rowButtonClass); }
+    rowButton(id)               { return this.row(id).find("." + this._rowButtonClass); }
+    get childrenRowsButtons()   { return                 $("." + this._childrenRowsButtonClass); }
+    childrenRowsButton(id)      { return this.row(id).find("." + this._childrenRowsButtonClass); }
+    get localRecordSelects()    { return                 $("." + this._localRecordSelectClass); }
+    localRecordSelect(id)       { return this.row(id).find("." + this._localRecordSelectClass); }
+    get localChildrenSelects()  { return                 $("." + this._localChildrenSelectClass); }
+    localChildrenSelect(id)     { return this.row(id).find("." + this._localChildrenSelectClass); }
+    get loadedRecordSelects()   { return                 $("." + this._loadedRecordSelectClass); }
+    loadedRecordSelect(id)      { return this.row(id).find("." + this._loadedRecordSelectClass); }
+    get loadedChildrenSelects() { return                 $("." + this._loadedChildrenSelectClass); }
+    loadedChildrenSelect(id)    { return this.row(id).find("." + this._loadedChildrenSelectClass); }
 
     build() {
         const importDiv = "<div id = '" + this._importDivID + "'></div>";
@@ -507,7 +509,6 @@ class UserDataUtility {
                 button.removeClass(this.options.data("selectedClass"));
                 button.addClass(this.options.data("unselectedClass"));
             }
-
         }
     }
 
@@ -585,8 +586,8 @@ class UserDataUtility {
             }
         });
 
-        //click event for childrenButton buttons (id + "_children")
-        this.childrenButtons.on("click", function (e) {
+        //click event for childrenRowsButton buttons (id + "_children")
+        this.childrenRowsButtons.on("click", function (e) {
             //Add shift-click to back-step
             const row = $(this).parent().parent().parent().parent(); 
             const id = row.prop("id");
@@ -636,46 +637,60 @@ class UserDataUtility {
         });
         
         //click event for selectRecord buttons ("select_" + id)
-        this.recordSelects.on("click", function (e) {
+        this.localRecordSelects.on("click", function (e) {
             const row = $(this).parent().parent().parent().parent(); 
-            const id = row.prop("id"); //.split("_")[1] if needed
-            const value = $(this).html();
-            if (row.hasClass("selected")) {
-                row.removeClass("selected");
-                $(this).html(self._squareIcon);
+            self.selectRecords("local_" + row.prop("id").split("_")[1]);
+            if (!e.ctrlKey) {
+                self.selectRecords(self.localDescendentsOf(row.prop("id").split("_")[1]));
             }
-            else {
-                row.addClass("selected");
-                $(this).html(self._checkedIcon);
+        });
+
+        this.loadedRecordSelects.on("click", function (e) {
+            const row = $(this).parent().parent().parent().parent();
+            self.selectRecords("loaded_" + row.prop("id").split("_")[1]);
+            if (!e.ctrlKey) {
+                self.selectRecords(self.loadedDescendentsOf(row.prop("id").split("_")[1]));
             }
         });
 
         //click event for selectChildren buttons ("select_" + id + "_children")
-        this.childrenSelects.on("click", function (e) {
-            const row = $(this).parent().parent().parent().parent(); 
-            const id = row.prop("id");
-            if ($(this).hasClass("selected")) {
-                $(this).removeClass("selected");
-                $(this).html(self._squareIcon);
+        this.localChildrenSelects.on("click", function (e) {
+            const row = $(this).parent().parent().parent().parent();
+            self.childrenSelect("localChildrenSelect_" + row.prop("id").split("_")[1]);
+            if (e.ctrlKey) {
+                self.selectRecords(self.localChildrenOf(row.prop("id").split("_")[1]));
             }
             else {
-                $(this).addClass("selected");
-                $(this).html(self._checkedIcon);
+                self.selectRecords(self.localDescendentsOf(row.prop("id").split("_")[1]));
             }
         });
 
-        $("." + this._rowButtonClass + ", ." + this._childrenButtonClass + ", ." + this._recordSelectClass + ", ." + this._childrenSelectClass).mousedown(function (e) {
-            if (e.ctrlKey || e.shiftKey) {
-                // For non-IE browsers
-                e.preventDefault();
-        
-                // For IE
-                if ($.support.msie) {
-                    this.onselectstart = function () { return false; };
-                    var self = this;  // capture in a closure
-                    window.setTimeout(function () { self.onselectstart = null; }, 0);
-                }
+        //click event for selectChildren buttons ("select_" + id + "_children")
+        this.loadedChildrenSelects.on("click", function (e) {
+            const row = $(this).parent().parent().parent().parent();
+            self.childrenSelect("loadedChildrenSelect_" + row.prop("id").split("_")[1]);
+            if (e.ctrlKey) {
+                self.selectRecords(self.loadedChildrenOf(row.prop("id").split("_")[1]));
             }
+            else {
+                self.selectRecords(self.loadedDescendentsOf(row.prop("id").split("_")[1]));
+            }
+        });
+
+        [this._rowButtonClass, this._childrenRowsButtonClass, this._localRecordSelectClass, this._loadedRecordSelectClass, this._localChildrenSelectClass, this._loadedChildrenSelectClass].forEach(c => {
+            c.mousedown(function (e) {
+                if (e.ctrlKey || e.shiftKey) {
+                    // For non-IE browsers
+                    e.preventDefault();
+            
+                    // For IE
+                    if ($.support.msie) {
+                        this.onselectstart = function () { return false; };
+                        var self = this;  // capture in a closure
+                        window.setTimeout(function () { self.onselectstart = null; }, 0);
+                    }
+                }
+            });
         });
 
         if (true) {                                                     //change true to !imported
@@ -743,11 +758,11 @@ class UserDataUtility {
         keys = keys.concat(unsortedKeys);
         
         const rowButton = "<span class = 'rowButton'>" + this._expandedIcon + "</span>";
-        const selectLocalRecord = "<span id = 'local_" + id + "' class = 'selectRecord local'>" + this._squareIcon + "</span>";
-        const selectImportedRecord = "<span id = 'imported_" + id + "' class = 'selectRecord imported'>" + this._squareIcon + "</span>";
-        const childrenButton = "<span class = 'childrenButton'>" + this._expandedIcon + "</span>";
-        const selectLocalChildren = "<span class = 'selectChildren local'>" + this._squareIcon + "</span>";
-        const selectImportedChildren = "<span class = 'selectChildren imported'>" + this._squareIcon + "</span>";
+        const selectLocalRecord = "<span id = 'local_" + id + "' class = '" + this._localRecordSelectClass + "'>" + this._squareIcon + "</span>";
+        const selectImportedRecord = "<span id = 'imported_" + id + "' class = '" + this._loadedRecordSelectClass + "'>" + this._squareIcon + "</span>";
+        const childrenRowsButton = "<span class = '" + this._childrenRowsButtonClass + "'>" + this._expandedIcon + "</span>";
+        const selectLocalChildren = "<span class = '" + this._localChildrenSelectClass + "'>" + this._squareIcon + "</span>";
+        const selectImportedChildren = "<span class = '" + this._loadedChildrenSelectClass + "'>" + this._squareIcon + "</span>";
 
         var record = "", line;
         //console.log(local, imported, children, keys);
@@ -776,7 +791,7 @@ class UserDataUtility {
             record+= "<tr>" + line + "</tr>";
         });
         if (children) {
-            line = "<td class = 'outside" + tier + "'>" + childrenButton + "</td>";
+            line = "<td class = 'outside" + tier + "'>" + childrenRowsButton + "</td>";
             line += "<td class = 'inside" + tier + "'>" + children + ":</td>";
             if (isArray(local[children]) && local[children].length) {
                 line += "<td>(" + local[children].length + ")</td>";
