@@ -5,43 +5,44 @@ class UserDataUtility {
     _userUtilities = null;
     _group = null;
 
-    _buttonIcon = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-person-lines-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm2 9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/></svg>';
-    _fullIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2z"/></svg>';
-    _partIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square-half" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 1h6a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H8V1zm6-1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12z"/></svg>';
-    _emptyIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/></svg>';
-    _plusIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>';
-    _minusIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-dash-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/></svg>';
-    _hiddenIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye-slash" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/><path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299l.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/><path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709z"/><path fill-rule="evenodd" d="M13.646 14.354l-12-12 .708-.708 12 12-.708.708z"/></svg>';
-    _expandedIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-fullscreen" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/></svg>';
+    _buttonIcon    = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-person-lines-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm2 9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/></svg>';
+    _fullIcon      = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2z"/></svg>';
+    _partIcon      = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square-half" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 1h6a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H8V1zm6-1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12z"/></svg>';
+    _emptyIcon     = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/></svg>';
+    _plusIcon      = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>';
+    _minusIcon     = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-dash-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/></svg>';
+    _hiddenIcon    = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye-slash" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/><path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299l.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/><path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709z"/><path fill-rule="evenodd" d="M13.646 14.354l-12-12 .708-.708 12 12-.708.708z"/></svg>';
+    _expandedIcon  = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-fullscreen" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/></svg>';
     _collapsedIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-fullscreen-exit" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5zm5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5zM0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zm10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4z"/></svg>';
-    _loadIcon = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>';
-    _exportIcon = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-upload" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path fill-rule="evenodd" d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>';
+    _loadIcon      = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>';
+    _exportIcon    = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-upload" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path fill-rule="evenodd" d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>';
     _downArrowIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/></svg>';
-    _upArrowIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/></svg>';
-    _squareIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/></svg>';
-    _checkedIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/></svg>';
-    _caretDownIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>';
-    _caretUpIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16"><path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/></svg>';
+    _upArrowIcon   = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/></svg>';
+    _squareIcon    = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/></svg>';
+    _checkedIcon   = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/></svg>';
+    _caretDownIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>';
+    _caretUpIcon   = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-up-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/></svg>';
 
-    _divID = "userDataDiv";
-    _buttonID = "userDataButton";
-    _loadDivID = "userDataLoadDiv";
-    _loadButtonID = "userDataLoadButton";
-    _exportButtonID = "userDataExportButton";
-    _adjustMenuButtonID = "userDataUtilityAdjustMenuButton";
-    _adjustID = "userDataUtilityAdjustMenu";
-    _optionsID = "userDataUtilityOptions";
-    _actionsID = "userDataUtilityActions";
-    _acknowledgeID = "userDataUtilityAcknowledge";
-    _executeID = "userDataUtilityexecute";
-    _scrollAreaDivID = "userDataUtilityScrollAreaDiv";
-    _messagesDivID = "userDataUtilityMessagesDiv";
-    _actionDivID = "userDataUtilityActionDiv";
-    _rowButtonClass = "rowButton";
-    _recordSelectClass = "selectRecord";
-    _childrenRowsButtonClass = "childrenRowsButton";
-    _childrenSelectClass = "selectChildren";
-
+    _divID                     = "userDataDiv";
+    _buttonID                  = "userDataButton";
+    _loadDivID                 = "userDataLoadDiv";
+    _loadButtonID              = "userDataLoadButton";
+    _exportButtonID            = "userDataExportButton";
+    _adjustMenuButtonID        = "userDataUtilityAdjustMenuButton";
+    _adjustID                  = "userDataUtilityAdjustMenu";
+    _optionsID                 = "userDataUtilityOptions";
+    _actionsID                 = "userDataUtilityActions";
+    _acknowledgeID             = "userDataUtilityAcknowledge";
+    _executeID                 = "userDataUtilityexecute";
+    _scrollAreaDivID           = "userDataUtilityScrollAreaDiv";
+    _messagesDivID             = "userDataUtilityMessagesDiv";
+    _actionDivID               = "userDataUtilityActionDiv";
+    _rowButtonClass            = "userDataUtilityrowButton";
+    _childrenRowsButtonClass   = "childrenRowsButton";
+    _localSelectClass    = "localSelectClass";
+    _localChildrenSelectClass  = "localChildrenSelectClass";
+    _loadedSelectClass   = "loadedSelectClass";
+    _loadedChildrenSelectClass = "loadedChildrenSelectClass";
 
     constructor (userUtilities, group) {
         const self = this;
@@ -134,12 +135,12 @@ class UserDataUtility {
     rowButton(id)               { return this.row(id).find("." + this._rowButtonClass); }
     get childrenRowsButtons()   { return                 $("." + this._childrenRowsButtonClass); }
     childrenRowsButton(id)      { return this.row(id).find("." + this._childrenRowsButtonClass); }
-    get localRecordSelects()    { return                 $("." + this._localRecordSelectClass); }
-    localRecordSelect(id)       { return this.row(id).find("." + this._localRecordSelectClass); }
+    get localSelects()    { return                 $("." + this._localSelectClass); }
+    localSelect(id)       { return this.row(id).find("." + this._localSelectClass); }
     get localChildrenSelects()  { return                 $("." + this._localChildrenSelectClass); }
     localChildrenSelect(id)     { return this.row(id).find("." + this._localChildrenSelectClass); }
-    get loadedRecordSelects()   { return                 $("." + this._loadedRecordSelectClass); }
-    loadedRecordSelect(id)      { return this.row(id).find("." + this._loadedRecordSelectClass); }
+    get loadedSelects()   { return                 $("." + this._loadedSelectClass); }
+    loadedSelect(id)      { return this.row(id).find("." + this._loadedSelectClass); }
     get loadedChildrenSelects() { return                 $("." + this._loadedChildrenSelectClass); }
     loadedChildrenSelect(id)    { return this.row(id).find("." + this._loadedChildrenSelectClass); }
 
@@ -512,10 +513,6 @@ class UserDataUtility {
         }
     }
 
-    _manageActionButtons() {
-        
-    }
-
     _manageGroup(group) {
         var i, button;
         if (group.find("button").length == 0) { console.trace(); return; }
@@ -637,7 +634,7 @@ class UserDataUtility {
         });
         
         //click event for selectRecord buttons ("select_" + id)
-        this.localRecordSelects.on("click", function (e) {
+        this.localSelects.on("click", function (e) {
             const row = $(this).parent().parent().parent().parent(); 
             self.selectRecords("local_" + row.prop("id").split("_")[1]);
             if (!e.ctrlKey) {
@@ -645,7 +642,7 @@ class UserDataUtility {
             }
         });
 
-        this.loadedRecordSelects.on("click", function (e) {
+        this.loadedSelects.on("click", function (e) {
             const row = $(this).parent().parent().parent().parent();
             self.selectRecords("loaded_" + row.prop("id").split("_")[1]);
             if (!e.ctrlKey) {
@@ -677,7 +674,7 @@ class UserDataUtility {
             }
         });
 
-        [this._rowButtonClass, this._childrenRowsButtonClass, this._localRecordSelectClass, this._loadedRecordSelectClass, this._localChildrenSelectClass, this._loadedChildrenSelectClass].forEach(c => {
+        [this._rowButtonClass, this._childrenRowsButtonClass, this._localSelectClass, this._loadedSelectClass, this._localChildrenSelectClass, this._loadedChildrenSelectClass].forEach(c => {
             c.mousedown(function (e) {
                 if (e.ctrlKey || e.shiftKey) {
                     // For non-IE browsers
@@ -758,8 +755,8 @@ class UserDataUtility {
         keys = keys.concat(unsortedKeys);
         
         const rowButton = "<span class = 'rowButton'>" + this._expandedIcon + "</span>";
-        const selectLocalRecord = "<span id = 'local_" + id + "' class = '" + this._localRecordSelectClass + "'>" + this._squareIcon + "</span>";
-        const selectLoadedRecord = "<span id = 'loaded_" + id + "' class = '" + this._loadedRecordSelectClass + "'>" + this._squareIcon + "</span>";
+        const selectLocal = "<span id = 'local_" + id + "' class = '" + this._localSelectClass + "'>" + this._squareIcon + "</span>";
+        const selectLoaded = "<span id = 'loaded_" + id + "' class = '" + this._loadedSelectClass + "'>" + this._squareIcon + "</span>";
         const childrenRowsButton = "<span class = '" + this._childrenRowsButtonClass + "'>" + this._expandedIcon + "</span>";
         const selectLocalChildren = "<span class = '" + this._localChildrenSelectClass + "'>" + this._squareIcon + "</span>";
         const selectLoadedChildren = "<span class = '" + this._loadedChildrenSelectClass + "'>" + this._squareIcon + "</span>";
@@ -776,7 +773,7 @@ class UserDataUtility {
                         : (parseInt(local[key]) < 3155760000 && parseInt(local[key]) > 1577880000)
                         ? this.parseDate(local[key]) : local[key];
                 line += "</td>";
-                line += (index == 0) ? "<td>" + selectLocalRecord + "</td>" : "<td></td>";
+                line += (index == 0) ? "<td>" + selectLocal + "</td>" : "<td></td>";
             }
             else { line += "<td></td><td></td>"; }
             if (loaded) {
@@ -785,7 +782,7 @@ class UserDataUtility {
                         : (parseInt(loaded[key]) < 3155760000 && parseInt(loaded[key]) > 1577880000)
                         ? this.parseDate(loaded[key]) : loaded[key];
                 line += "</td>";
-                line += (index == 0) ? "<td>" + selectLoadedRecord + "</td>" : "<td></td>";
+                line += (index == 0) ? "<td>" + selectLoaded + "</td>" : "<td></td>";
             }
             else { line += "<td></td><td></td>"; }
             record+= "<tr>" + line + "</tr>";
@@ -825,15 +822,12 @@ class UserDataUtility {
         }
     }
 
-    localRecordExists(id) {}
-    loadedRecordExists(id) {}
-
-    selectLocalRecords(ids)    {                    ids.forEach(id => { this.selectLocalRecord(id); }); }
-    selectLocalChildren(id)    {    this.childrenOf(id).forEach(id => { this.selectLocalRecord(id); }); }
-    selectLocalDescendents(id) { this.descendantsOf(id).forEach(id => { this.selectLocalRecord(id); }); }
-    selectLocalRecord(id) {
-        if (this.row(id).hasClass("selected")) {
-            this.row(id).removeClass("selected");
+    selectLocals(ids)    {                    ids.forEach(id => { this.selectLocal(id); }); }
+    selectLocalChildren(id)    {    this.childrenOf(id).forEach(id => { this.selectLocal(id); }); }
+    selectLocalDescendents(id) { this.descendantsOf(id).forEach(id => { this.selectLocal(id); }); }
+    selectLocal(id) {
+        if (this.row(id).hasClass(this._localSelectClass)) {
+            this.row(id).removeClass("selected);
             this.recordSelect(id).html(self._squareIcon);
         }
         else {
@@ -842,25 +836,29 @@ class UserDataUtility {
         }
     }
 
-    selectLoadedRecords(ids)    {                    ids.forEach(id => { this.selectLoadedRecord(id); }); }
-    selectLoadedChildren(id)    {    this.childrenOf(id).forEach(id => { this.selectLoadedRecord(id); }); }
-    selectLoadedDescendents(id) { this.descendantsOf(id).forEach(id => { this.selectLoadedRecord(id); }); }
-    selectLoadedRecord(id) {  }
+    selectLoadeds(ids)    {                    ids.forEach(id => { this.selectLoaded(id); }); }
+    selectLoadedChildren(id)    {    this.childrenOf(id).forEach(id => { this.selectLoaded(id); }); }
+    selectLoadedDescendents(id) { this.descendantsOf(id).forEach(id => { this.selectLoaded(id); }); }
+    selectLoaded(id) {
 
-    get allHiddenRowIds() { return this.allRowIds.reduce(id => rowIsHidden(id)); }
-    rowIsHidden(id) { return this.row(id).hasClass("hidden"); }
-    hideRows(ids) { ids.forEach(id => { this.hideRow(id); }); }
+    }
+
+    rowIsHidden(id)            { return this.row(id).hasClass("hidden"); }
+    rowIsCollapsed(id)         { return this.row(id).hasClass("collapsed"); }
+    rowIsExpanded(id)          { return (!this.rowisCollapsed(id) && !this.rowisHidden(id)); }
+    rowIsSelected(id)          { return this.localIsSelected(id) || this.loadedIsSelected(id); }
+    localExists(id)      { return this.row(id).find("." + this._localSelectClass); }
+    localIsSelected(id)  { return this.row(id).find(this._localSelectClass).html() == this._checkedIcon; }
+    loadedExists(id)     { return this.row(id).find("." + this._loadedSelectClass); }
+    loadedIsSelected(id) { return this.row(id).find(this._loadedSelectClass).html() == this._checkedIcon; }
+
     hideRow(id) { this.row(id).addClass("hidden"); }
-
-    get allCollapsedRowIds() { return this.allRowIds.reduce(id => this.rowIsCollapsed(id)); }
-    rowIsCollapsed(id) { return this.row(id).hasClass("collapsed"); }
-    collapseRows(ids) { ids.forEach(id => { this.collapseRow(id); }); }
     collapseRow(id) { this.row(id).addClass("collapsed"); }
-
-    get allExpandedRowIds() { return this.allRowIds.reduce(id => this.rowIsExpanded(id)); }
-    rowIsExpanded(id) { return (!this.row(id).hasClass("collapsed") && !this.row(id).hasClass("hidden")); }
-    expandRows(ids) { ids.forEach(id => { this.expandRow(id); }); }
     expandRow(id) { this.row(id).removeClass("collapsed"); this.row(id).removeClass("hidden"); }
+
+    hideRows(ids) { ids.forEach(id => { this.hideRow(id); }); }
+    collapseRows(ids) { ids.forEach(id => { this.collapseRow(id); }); }
+    expandRows(ids) { ids.forEach(id => { this.expandRow(id); }); }
 
     childrenOf(parentId) { return $(".parentId_" + parentId); }
     childrenIdsOf(parentId) { return this.childrenOf(parentId).map(row => (row.prop("id").split("_")[1])); }
@@ -879,21 +877,10 @@ class UserDataUtility {
         return this.descendantsOf(parentId).map(row => (row.prop("id").split("_")[1]));
     }
 
-    rowIsSelected(id)                { return this.localRecordIsSelected(id) || this.loadedRecordIsSelected(id); }
-    get allSelectedRows()            { return this.allRowIds.reduce(id => (rowIsSelected(id))); }
-    get allUnselectedRows()          { return this.allRowIds.reduce(id => (!rowIsSelected(id))); }
-
-    localRecordIsSelected(id)        { return this.row(id).find(this._localRecordSelectClass).html() == this._checkedIcon; }
-    loadedRecordIsSelected(id)       { return this.row(id).find(this._loadedRecordSelectClass).html() == this._checkedIcon; }
-    get allSelectedLocalRecords()    { return this.allLocalRecordIds.filter(id => this.localRecordIsSelected(id)); }
-    get allUnselectedLocalRecords()  { return this.allLocalRecordIds.filter(id => (!this.localRecordIsSelected(id))); }
-    get allSelectedLoadedRecords()   { return this.allLoadedRecordIds.filter(id => this.loadedRecordIsSelected(id)); }
-    get allUnselectedLoadedRecords() { return this.allLoadedRecordIds.filter(id => (!this.loadedRecordIsSelected(id))); }
-
     rowRecordsAreIdentical(id) {
-        if (!this.localRecordExists(id) || !this.loadedRecordExists(id)) { return false; }
-        const local = this.localRecord(id);
-        const loaded = this.loadedRecord(id);
+        if (!this.localExists(id) || !this.loadedExists(id)) { return false; }
+        const local = this.local(id);
+        const loaded = this.loaded(id);
         if (local === loaded) { return true; }
         if (local == null || loaded == null) { return false; }
         if (local.length !== loaded.length) { return false; }
@@ -906,10 +893,11 @@ class UserDataUtility {
         return true;
     }
 
-    localRecordExists(id)    { return this.row(id).hasClass("local"); }
-    localRecordIsNewer(id)   { return parseInt(this.localRecord(id).lastEdited) > parseInt(this.loadedRecord(id).lastEdited); }
-    localRecord(id) {
-        if (this.localRecordExists(id)) {
+    get localsExist() { return !!$(".local").length; }
+    localExists(id)    { return this.row(id).hasClass("local"); }
+    localIsNewer(id)   { return parseInt(this.local(id).lastEdited) > parseInt(this.loaded(id).lastEdited); }
+    local(id) {
+        if (this.localExists(id)) {
             var record = [], name, value;
             this.row(id).find("tr").forEach(line => {
                 name = line.find("td").eq(2).text;
@@ -921,10 +909,10 @@ class UserDataUtility {
         else { return null; }
     }
 
-    get loadedRecordsExist() { return !!$(".loaded").length; }
-    loadedRecordExists(id)   { return this.row(id).hasClass("loaded"); }
-    loadedRecord(id) {
-        if (this.loadedRecordExists(id)) {
+    get loadedsExist() { return !!$(".loaded").length; }
+    loadedExists(id)   { return this.row(id).hasClass("loaded"); }
+    loaded(id) {
+        if (this.loadedExists(id)) {
             var record = [], name, value;
             this.row(id).find("tr").forEach(line => {
                 name = line.find("td").eq(2).text;
@@ -936,7 +924,7 @@ class UserDataUtility {
         else { return null; }
     }
 
-    //Row id collections
+    //Id collections
     get allRowIds() {
         var ids = [];
         for (var i = 0; i < this.rows.length; i++) {
@@ -945,19 +933,25 @@ class UserDataUtility {
         return ids;
     }
 
+    get allLocalIds()            { return this.allRowIds.filter(id => (this.localExists(id))); }
+    get allLoadedIds()           { return this.allRowIds.filter(id => (this.loadedExists(id))); }
+
     get allClientRowIds()        { return this.allRowIds.filter(id => (this.row(id).find(".inside1").length)); }
     get allIssueRowIds()         { return this.allRowIds.filter(id => (this.row(id).find(".inside2").length)); }
     get allSessionRowIds()       { return this.allRowIds.filter(id => (this.row(id).find(".inside3").length)); }
+    get allHiddenRowIds()        { return this.allRowIds.filter(id => rowIsHidden(id)); }
+    get allCollapsedRowIds()     { return this.allRowIds.filter(id => this.rowIsCollapsed(id)); }
+    get allExpandedRowIds()      { return this.allRowIds.filter(id => this.rowIsExpanded(id)); }
     get allDifferentRowIds()     { return this.allRowIds.filter(id => (!this.rowRecordsAreIdentical(id))); }
     get allIdenticalRowIds()     { return this.allRowIds.filter(id => (this.rowRecordsAreIdentical(id))); }
-
-    //Record id collections
-    get allSelectedRecordIds()   { return this.allRowIds.filter(id => (this.row(id).hasClass("selected"))); }
-    get allUnselectedRecordIds() { return this.allRowIds.filter(id => (!this.row(id).hasClass("selected"))); }
-    get allLocalRecordIds()      { return this.allRowIds.filter(id => (this.localRecordExists(id))); }
-    get allLoadedRecordIds()     { return this.allRowIds.filter(id => (this.loadedRecordExists(id))); }
-    get allNewerRecordIds()      { return this.allRowIds.map(id => (this.localRecordIsNewer(id) ? "local_" + id : "loaded_" + id)); }
-    get allOlderRecordIds()      { return this.allRowIds.map(id => (this.localRecordIsNewer(id) ? "loaded_" + id : "local_" + id)); }
+    get allSelectedLocalIds()    { return this.allLocalIds.filter(id => this.localIsSelected(id)); }
+    get allSelectedLoadedIds()   { return this.allLoadedIds.filter(id => this.loadedIsSelected(id)); }
+    get allUnselectedLocalIds()  { return this.allLocalIds.filter(id => (!this.localIsSelected(id))); }
+    get allUnselectedLoadedIds() { return this.allLoadedIds.filter(id => (!this.loadedIsSelected(id))); }
+    get allUnselectedRows()      { return this.allRowIds.filter(id => (!rowIsSelected(id))); }
+    get allSelectedRows()        { return this.allRowIds.filter(id => (rowIsSelected(id))); }
+    get allNewerRecordIds()      { return this.allRowIds.map(id => (this.localExists && (!this.loadedExists || (this.loadedExists && this.localIsNewer(id))) ? "local_" + id : "loaded_" + id)); }
+    get allOlderRecordIds()      { return this.allRowIds.map(id => (this.localExists && (!this.loadedExists || (this.loadedExists && this.localIsNewer(id))) ? "loaded_" + id : "local_" + id)); }
 
     _doAdjustOption() {
         const adjust = this.adjust.data("value");
@@ -972,8 +966,8 @@ class UserDataUtility {
                   : (option == "identical")  ? this.allIdenticalRowIds
                   : (option == "selected")   ? this.allSelectedRecordIds
                   : (option == "unselected") ? this.allUnselectedRecordIds
-                  : (option == "local")      ? this.allLocalRecordIds
-                  : (option == "Loaded")     ? this.allLoadedRecordIds
+                  : (option == "local")      ? this.allLocalIds
+                  : (option == "Loaded")     ? this.allLoadedIds
                   : (option == "newer")      ? this.allNewerRecordIds
                   : (option == "older")      ? this.allOlderRecordIds
                   : (option == "none")       ? [] : [];
