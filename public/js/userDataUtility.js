@@ -547,36 +547,35 @@ class UserDataUtility {
             //add shift-click to back-step
             const row = $(this).parent().parent().parent().parent(); 
             const id = row.prop("id");
-            if (e.shiftKey) {
-                if (row.hasClass("collapsed")) {
-                    row.removeClass("collapsed");
-                    row.addClass("expanded");
+            if (row.hasClass("collapsed")) {
+                row.removeClass("collapsed");
+                if (e.shiftKey) {
+                    //row.addClass("expanded");
                     $(this).html(self._expandedIcon);
                 }
-                else if (row.hasClass("hidden")) {
-                    row.removeClass("hidden");
-                    row.addClass("collapsed");
-                    $(this).html(self._collapsedIcon);
-                }
                 else {
-                    row.removeClass("expanded");
                     row.addClass("hidden");
                     $(this).html(self._hiddenIcon);
                 }
             }
+            else if (row.hasClass("hidden")) {
+                row.removeClass("hidden");
+                if (e.shiftKey) {
+                    row.addClass("collapsed");
+                    $(this).html(self._collapsedIcon);
+                }
+                else {
+                    //row.addClass("expanded");
+                    $(this).html(self._expandedIcon);
+                }
+            }
             else {
-                if (row.hasClass("collapsed")) {
-                    row.removeClass("collapsed");
+                //row.removeClass("expanded");
+                if (e.shiftKey) {
                     row.addClass("hidden");
                     $(this).html(self._hiddenIcon);
                 }
-                else if (row.hasClass("hidden")) {
-                    row.removeClass("hidden");
-                    row.addClass("expanded");
-                    $(this).html(self._expandedIcon);
-                }
                 else {
-                    row.removeClass("expanded");
                     row.addClass("collapsed");
                     $(this).html(self._collapsedIcon);
                 }
@@ -589,89 +588,83 @@ class UserDataUtility {
             const row = $(this).parent().parent().parent().parent(); 
             const id = row.prop("id");
 
-            // If Control+Click, only affect children
-            if (e.ctrlKey) {
-                if (row.hasClass("collapsed")) {
-                    row.removeClass("collapsed");
-                    row.addClass("expanded");
+            // If neither Shift or Control are active, forward and all descendants
+            // If Shift is active, backwards
+            // If Control is active, only affect children
+            if (row.hasClass("collapsed")) {
+                row.removeClass("collapsed");
+                if (e.shiftKey) {
+                    //row.addClass("expanded");
                     $(this).html(self._expandedIcon);
-                    self.expand(self.childrenOf(id));
-                }
-                else if (row.hasClass("hidden")) {
-                    row.removeClass("hidden");
-                    row.addClass("collapsed");
-                    $(this).html(self._collapsedIcon);
-                    self.collapse(self.childrenOf(id));
+                    if (e.ctrlKey) { self.expand(self.childIdsOf(id)); }
+                    else { self.expand(self.descendantIdsOf(id)); }
                 }
                 else {
-                    row.removeClass("expanded");
                     row.addClass("hidden");
                     $(this).html(self._hiddenIcon);
-                    self.hide(childrenOf(id));
+                    if (e.ctrlKey) { self.hide(self.childIdsOf(id)); }
+                    else { self.hide(self.descendantsOf(id)); }
                 }
             }
-            //If Click, affect all offspring
-            else {
-                if (row.hasClass("collapsed")) {
-                    row.removeClass("collapsed");
-                    row.addClass("hidden");
-                    $(this).html(self._hiddenIcon);
-                    self.hide(descendantsOf(id));
-                }
-                else if (row.hasClass("hidden")) {
-                    row.removeClass("hidden");
-                    row.addClass("expanded");
-                    $(this).html(self._expandedIcon);
-                    self.expand(self.descendantsOf(id));
-                }
-                else {
-                    row.removeClass("expanded");
+            else if (row.hasClass("hidden")) {
+                row.removeClass("hidden");
+                if (e.shiftKey) {
                     row.addClass("collapsed");
                     $(this).html(self._collapsedIcon);
-                    self.collapse(self.descendantsOf(id));
+                    if (e.ctrlKey) { self.collapse(self.childIdsOf(id)); }
+                    else { self.collapse(self.descendantIdsOf(id)); }
+                }
+                else {
+                    //row.addClass("expanded");
+                    $(this).html(self._expandedIcon);
+                    if (e.ctrlKey) { self.expand(self.childIdsOf(id)); }
+                    else { self.expand(self.descendantsOf(id)); }
+                }
+            }
+            else {
+                //row.removeClass("expanded");
+                if (e.shiftKey) {
+                    row.addClass("hidden");
+                    $(this).html(self._hiddenIcon);
+                    if (e.ctrlKey) { self.hide(childIdsOf(id)); }
+                    else { self.hide(self.descendantsOf(id)); }
+                }
+                else {
+                    row.addClass("collapsed");
+                    $(this).html(self._collapsedIcon);
+                    if (e.ctrlKey) { self.collapse(self.childIdsOf(id)); }
+                    else { self.collapse(self.descendantIdsOf(id)); }
                 }
             }
         });
         
         //click event for selectRecord buttons ("select_" + id)
         this.localSelects.on("click", function (e) {
-            const row = $(this).parent().parent().parent().parent(); 
-            self.selectRecords("local_" + row.prop("id").split("_")[1]);
-            if (!e.ctrlKey) {
-                self.selectRecords(self.localDescendentsOf(row.prop("id").split("_")[1]));
-            }
+            const id = "local_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
+            self.selectRecord(id);
+            if (!e.ctrlKey) { self.selectRecords(self.descendentIdsOf(id)); }
         });
 
         this.loadedSelects.on("click", function (e) {
-            const row = $(this).parent().parent().parent().parent();
-            self.selectRecords("loaded_" + row.prop("id").split("_")[1]);
-            if (!e.ctrlKey) {
-                self.selectRecords(self.loadedDescendentsOf(row.prop("id").split("_")[1]));
-            }
+            const id = "loaded_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
+            self.selectRecord(id);
+            if (!e.ctrlKey) { self.selectRecords(self.descendentIdsOf(id)); }
         });
 
         //click event for selectChildren buttons ("select_" + id + "_children")
         this.localChildrenSelects.on("click", function (e) {
-            const row = $(this).parent().parent().parent().parent();
-            self.childrenSelect("localChildrenSelect_" + row.prop("id").split("_")[1]);
-            if (e.ctrlKey) {
-                self.selectRecords(self.localChildrenOf(row.prop("id").split("_")[1]));
-            }
-            else {
-                self.selectRecords(self.localDescendentsOf(row.prop("id").split("_")[1]));
-            }
+            const id = "local_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
+            self.childrenSelect(id);
+            if (e.ctrlKey) { self.selectRecords(self.childIdsOf(id)); }
+            else { self.selectRecords(self.descendentIdsOf(id)); }
         });
 
         //click event for selectChildren buttons ("select_" + id + "_children")
         this.loadedChildrenSelects.on("click", function (e) {
-            const row = $(this).parent().parent().parent().parent();
-            self.childrenSelect("loadedChildrenSelect_" + row.prop("id").split("_")[1]);
-            if (e.ctrlKey) {
-                self.selectRecords(self.loadedChildrenOf(row.prop("id").split("_")[1]));
-            }
-            else {
-                self.selectRecords(self.loadedDescendentsOf(row.prop("id").split("_")[1]));
-            }
+            const id = "loaded_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
+            self.childrenSelect(id);
+            if (e.ctrlKey) { self.selectRecords(self.loadedChildrenOf(id)); }
+            else { self.selectRecords(self.loadedDescendentsOf(id)); }
         });
 
         [this._rowButtonClass, this._childrenRowsButtonClass, this._localSelectClass, this._loadedSelectClass, this._localChildrenSelectClass, this._loadedChildrenSelectClass].forEach(c => {
