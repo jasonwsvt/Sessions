@@ -822,35 +822,38 @@ class UserDataUtility {
         }
     }
 
-    selectLocals(ids)    {                    ids.forEach(id => { this.selectLocal(id); }); }
-    selectLocalChildren(id)    {    this.childrenOf(id).forEach(id => { this.selectLocal(id); }); }
-    selectLocalDescendents(id) { this.descendantsOf(id).forEach(id => { this.selectLocal(id); }); }
-    selectLocal(id) {
-        if (this.row(id).hasClass(this._localSelectClass)) {
-            this.row(id).removeClass("selected);
-            this.recordSelect(id).html(self._squareIcon);
-        }
-        else {
-            this.row(id).addClass("selected");
-            this.recordSelect(id).html(self._checkedIcon);
+    selectMultiple(ids)  { ids.forEach(id => this.select(id)); }
+    select(id) {
+        if (this.recordExists(id) && !this.recordIsSelected(id)) {
+            const selectClass = "_" + id.split("_")[0] + "SelectClass";
+            const otherRecordId = (id.startsWith("local_") ? "loaded_" : "local_") + id.split("_")[1];
+            this.unselect(otherRecordId);
+            this.row(id).addClass(selectClass);
+            this.row(id).find("." + selectClass).html(self._checkedIcon);
         }
     }
 
-    selectLoadeds(ids)    {                    ids.forEach(id => { this.selectLoaded(id); }); }
-    selectLoadedChildren(id)    {    this.childrenOf(id).forEach(id => { this.selectLoaded(id); }); }
-    selectLoadedDescendents(id) { this.descendantsOf(id).forEach(id => { this.selectLoaded(id); }); }
-    selectLoaded(id) {
+    unselect(id) {
+        const selectClass = "_" + id.split("_")[0] + "SelectClass";
 
+        if (this.recordExists(id) && this.recordIsSelected(id)) {
+            this.row(id).removeClass(selectClass);
+            this.row(id).find("." + selectClass).html(self._squareIcon);
+        }
+    }
+
+    recordIsSelected(id) {
+        return this.row(id).find("._" + id.split("_")[0] + "SelectClass").html() == this._checkedIcon;
+    }
+
+    recordExists(id) {
+        return !!this.row(id).find("._" + id.split("_")[0] + "SelectClass").html().length;
     }
 
     rowIsHidden(id)            { return this.row(id).hasClass("hidden"); }
     rowIsCollapsed(id)         { return this.row(id).hasClass("collapsed"); }
     rowIsExpanded(id)          { return (!this.rowisCollapsed(id) && !this.rowisHidden(id)); }
     rowIsSelected(id)          { return this.localIsSelected(id) || this.loadedIsSelected(id); }
-    localExists(id)      { return this.row(id).find("." + this._localSelectClass); }
-    localIsSelected(id)  { return this.row(id).find(this._localSelectClass).html() == this._checkedIcon; }
-    loadedExists(id)     { return this.row(id).find("." + this._loadedSelectClass); }
-    loadedIsSelected(id) { return this.row(id).find(this._loadedSelectClass).html() == this._checkedIcon; }
 
     hideRow(id) { this.row(id).addClass("hidden"); }
     collapseRow(id) { this.row(id).addClass("collapsed"); }
@@ -860,8 +863,7 @@ class UserDataUtility {
     collapseRows(ids) { ids.forEach(id => { this.collapseRow(id); }); }
     expandRows(ids) { ids.forEach(id => { this.expandRow(id); }); }
 
-    childrenOf(parentId) { return $(".parentId_" + parentId); }
-    childrenIdsOf(parentId) { return this.childrenOf(parentId).map(row => (row.prop("id").split("_")[1])); }
+    childrenIdsOf(parentId) { return $(".parentId_" + parentId).map(row => (row.prop("id").split("_")[1])); }
 
     hasChildren(id) { return $(".parentId_" + id).length; }
 
@@ -893,9 +895,9 @@ class UserDataUtility {
         return true;
     }
 
-    get localsExist() { return !!$(".local").length; }
-    localExists(id)    { return this.row(id).hasClass("local"); }
-    localIsNewer(id)   { return parseInt(this.local(id).lastEdited) > parseInt(this.loaded(id).lastEdited); }
+    get localsExist() { return !!$(this._localSelectClass).length; }
+    localExists(id)   { return this.row(id).hasClass(this._localSelectClass); }
+    localIsNewer(id)  { return parseInt(this.local(id).lastEdited) > parseInt(this.loaded(id).lastEdited); }
     local(id) {
         if (this.localExists(id)) {
             var record = [], name, value;
@@ -909,8 +911,8 @@ class UserDataUtility {
         else { return null; }
     }
 
-    get loadedsExist() { return !!$(".loaded").length; }
-    loadedExists(id)   { return this.row(id).hasClass("loaded"); }
+    get loadedsExist() { return !!$(this._loadedSelectClass).length; }
+    loadedExists(id)   { return this.row(id).hasClass(this._loadedSelectClass); }
     loaded(id) {
         if (this.loadedExists(id)) {
             var record = [], name, value;
