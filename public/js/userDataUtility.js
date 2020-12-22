@@ -822,8 +822,9 @@ class UserDataUtility {
         }
     }
 
-    selectMultiple(ids)  { ids.forEach(id => this.select(id)); }
-    select(id) {
+    selectRecords(ids)  { ids.forEach(id => this.select(id)); }
+    selectRecord(id) {
+        if (id.startsWith("row_")) { return; }
         if (this.recordExists(id) && !this.recordIsSelected(id)) {
             const selectClass = "_" + id.split("_")[0] + "SelectClass";
             const otherRecordId = (id.startsWith("local_") ? "loaded_" : "local_") + id.split("_")[1];
@@ -853,7 +854,11 @@ class UserDataUtility {
     rowIsHidden(id)            { return this.row(id).hasClass("hidden"); }
     rowIsCollapsed(id)         { return this.row(id).hasClass("collapsed"); }
     rowIsExpanded(id)          { return (!this.rowisCollapsed(id) && !this.rowisHidden(id)); }
-    rowIsSelected(id)          { return this.localIsSelected(id) || this.loadedIsSelected(id); }
+    rowIsSelected(id) {
+        const localId = "local_" + id.split("_")[1];
+        const loadedId = "loaded_" + id.split("_")[1];
+        return this.recordIsSelected(localId) || this.recordIsSelected(loadedId);
+    }
 
     hideRow(id) { this.row(id).addClass("hidden"); }
     collapseRow(id) { this.row(id).addClass("collapsed"); }
@@ -875,15 +880,16 @@ class UserDataUtility {
         return first.nextUntil(this.row(id));
     }
 
-    descendantIdsOf(parentId) {
-        return this.descendantsOf(parentId).map(row => (row.prop("id").split("_")[1]));
+    descendantIdsOf(id) {
+        return this.descendantsOf(id).map(row => (row.prop("id").split("_")[1]));
     }
 
     rowRecordsAreIdentical(id) {
-        if (!this.localExists(id) || !this.loadedExists(id)) { return false; }
-        const local = this.local(id);
-        const loaded = this.loaded(id);
-        if (local === loaded) { return true; }
+        const localId = "local_" + id.split("_")[1];
+        const loadedId = "loaded_" + id.split("_")[1];
+        if (!this.recordExists(localId) || !this.recordExists(loadedId)) { return false; }
+        const local = this.record(localId);
+        const loaded = this.record(loadedId);
         if (local == null || loaded == null) { return false; }
         if (local.length !== loaded.length) { return false; }
         const localKeys = Object.keys(local);
@@ -895,11 +901,58 @@ class UserDataUtility {
         return true;
     }
 
-    get localsExist() { return !!$(this._localSelectClass).length; }
-    localExists(id)   { return this.row(id).hasClass(this._localSelectClass); }
-    localIsNewer(id)  { return parseInt(this.local(id).lastEdited) > parseInt(this.loaded(id).lastEdited); }
-    local(id) {
-        if (this.localExists(id)) {
+    newerRecord(id)  {
+        const localId = "local_" + id.split("_")[1];
+        const loadedId = "loaded_" + id.split("_")[1];
+        if (!this.recordExists(localId)) { return loadedId; }
+        if (!this.recordExists(loadedId)) { return localId; }
+        const localLastEdited = parseInt(this.record(localId).lastEdited);
+        const loadedLastEdited = parseInt(this.record(loadedId).lastEdited);
+        if (localLastEdited && loadedLastEdited) {
+            if (localLastEdited > loadedLastEdited) { return localId; }
+            else { return loadedId; }
+        }
+        const localCreation = parseInt(this.record(localId).creation);
+        const loadedCreation = parseInt(this.record(loadedId).creation);
+        if (localCreation && loadedCreation) {
+            if (localCreation > loadedCreation) { return localId; }
+            else { return loadedId; }
+        }
+        const localLastOpened = parseInt(this.record(localId).lastOpened);
+        const loadedLastOpened = parseInt(this.record(loadedId).lastOpened);
+        if (localLastOpened && loadedLastOpened) {
+            if (localLastOpened > loadedLastOpened) { return localId; }
+            else { return loadedId; }
+        }
+    }
+    
+    olderRecord(id)  {
+        const localId = "local_" + id.split("_")[1];
+        const loadedId = "loaded_" + id.split("_")[1];
+        if (!this.recordExists(localId)) { return loadedId; }
+        if (!this.recordExists(loadedId)) { return localId; }
+        const localLastEdited = parseInt(this.record(localId).lastEdited);
+        const loadedLastEdited = parseInt(this.record(loadedId).lastEdited);
+        if (localLastEdited && loadedLastEdited) {
+            if (localLastEdited < loadedLastEdited) { return localId; }
+            else { return loadedId; }
+        }
+        const localCreation = parseInt(this.record(localId).creation);
+        const loadedCreation = parseInt(this.record(loadedId).creation);
+        if (localCreation && loadedCreation) {
+            if (localCreation < loadedCreation) { return localId; }
+            else { return loadedId; }
+        }
+        const localLastOpened = parseInt(this.record(localId).lastOpened);
+        const loadedLastOpened = parseInt(this.record(loadedId).lastOpened);
+        if (localLastOpened && loadedLastOpened) {
+            if (localLastOpened < loadedLastOpened) { return localId; }
+            else { return loadedId; }
+        }
+    }
+    
+    record(id) {
+        if (id.startsWith("local_") && this.recordExists(id)) {
             var record = [], name, value;
             this.row(id).find("tr").forEach(line => {
                 name = line.find("td").eq(2).text;
@@ -908,13 +961,7 @@ class UserDataUtility {
             });
             return record;
         }
-        else { return null; }
-    }
-
-    get loadedsExist() { return !!$(this._loadedSelectClass).length; }
-    loadedExists(id)   { return this.row(id).hasClass(this._loadedSelectClass); }
-    loaded(id) {
-        if (this.loadedExists(id)) {
+        else if (id.startsWith("loaded_") && this.recordExists(id)) {
             var record = [], name, value;
             this.row(id).find("tr").forEach(line => {
                 name = line.find("td").eq(2).text;
@@ -926,8 +973,10 @@ class UserDataUtility {
         else { return null; }
     }
 
+    get loadedsExist() { return !!$(this._loadedSelectClass).length; }
+
     //Id collections
-    get allRowIds() {
+    get allIds() {
         var ids = [];
         for (var i = 0; i < this.rows.length; i++) {
             ids.push(parseInt(this.rows.eq(i).prop("id").split("_")[1]));
@@ -935,25 +984,22 @@ class UserDataUtility {
         return ids;
     }
 
-    get allLocalIds()            { return this.allRowIds.filter(id => (this.localExists(id))); }
-    get allLoadedIds()           { return this.allRowIds.filter(id => (this.loadedExists(id))); }
-
-    get allClientRowIds()        { return this.allRowIds.filter(id => (this.row(id).find(".inside1").length)); }
-    get allIssueRowIds()         { return this.allRowIds.filter(id => (this.row(id).find(".inside2").length)); }
-    get allSessionRowIds()       { return this.allRowIds.filter(id => (this.row(id).find(".inside3").length)); }
-    get allHiddenRowIds()        { return this.allRowIds.filter(id => rowIsHidden(id)); }
-    get allCollapsedRowIds()     { return this.allRowIds.filter(id => this.rowIsCollapsed(id)); }
-    get allExpandedRowIds()      { return this.allRowIds.filter(id => this.rowIsExpanded(id)); }
-    get allDifferentRowIds()     { return this.allRowIds.filter(id => (!this.rowRecordsAreIdentical(id))); }
-    get allIdenticalRowIds()     { return this.allRowIds.filter(id => (this.rowRecordsAreIdentical(id))); }
-    get allSelectedLocalIds()    { return this.allLocalIds.filter(id => this.localIsSelected(id)); }
-    get allSelectedLoadedIds()   { return this.allLoadedIds.filter(id => this.loadedIsSelected(id)); }
-    get allUnselectedLocalIds()  { return this.allLocalIds.filter(id => (!this.localIsSelected(id))); }
-    get allUnselectedLoadedIds() { return this.allLoadedIds.filter(id => (!this.loadedIsSelected(id))); }
-    get allUnselectedRows()      { return this.allRowIds.filter(id => (!rowIsSelected(id))); }
-    get allSelectedRows()        { return this.allRowIds.filter(id => (rowIsSelected(id))); }
-    get allNewerRecordIds()      { return this.allRowIds.map(id => (this.localExists && (!this.loadedExists || (this.loadedExists && this.localIsNewer(id))) ? "local_" + id : "loaded_" + id)); }
-    get allOlderRecordIds()      { return this.allRowIds.map(id => (this.localExists && (!this.loadedExists || (this.loadedExists && this.localIsNewer(id))) ? "loaded_" + id : "local_" + id)); }
+    get allLocalIds()            { return this.allIds.filter(id => this.localExists(id)); }
+    get allLoadedIds()           { return this.allIds.filter(id => this.loadedExists(id)); }
+    get allClientRowIds()        { return this.allIds.filter(id => this.row(id).find(".inside1").length); }
+    get allIssueRowIds()         { return this.allIds.filter(id => this.row(id).find(".inside2").length); }
+    get allSessionRowIds()       { return this.allIds.filter(id => this.row(id).find(".inside3").length); }
+    get allHiddenRowIds()        { return this.allIds.filter(id => rowIsHidden(id)); }
+    get allCollapsedRowIds()     { return this.allIds.filter(id => this.rowIsCollapsed(id)); }
+    get allExpandedRowIds()      { return this.allIds.filter(id => this.rowIsExpanded(id)); }
+    get allDifferentRowIds()     { return this.allIds.filter(id => !this.rowRecordsAreIdentical(id)); }
+    get allIdenticalRowIds()     { return this.allIds.filter(id => this.rowRecordsAreIdentical(id)); }
+    get allUnselectedRowIds()    { return this.allIds.filter(id => !rowIsSelected(id)); }
+    get allSelectedRowIds()      { return this.allIds.filter(id => rowIsSelected(id)); }
+    get allSelectedRecordIds()   { return this.allIds.filter(id => this.localIsSelected(id)); }
+    get allUnselectedRecordIds() { return this.allIds.filter(id => !this.localIsSelected(id)); }
+    get allNewerRecordIds()      { return this.allIds.map(id => this.newerRecord(id)); }
+    get allOlderRecordIds()      { return this.allIds.map(id => this.olderRecord(id)); }
 
     _doAdjustOption() {
         const adjust = this.adjust.data("value");
