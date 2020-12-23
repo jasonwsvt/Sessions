@@ -772,11 +772,6 @@ class UserDataUtility {
         this.expandRow(id);
     }
 
-
-    rowsAreHidden(ids)    { return ids.every(id => this.rowIsHidden(id)); }
-    rowsAreCollapsed(ids) { return ids.every(id => this.rowIsCollapsed(id)); }
-    rowsAreExpanded(ids)  { return ids.every(id => this.rowIsExpanded(id)); }
-
     hasChildren(id)    { return $(".parentId_" + id).length; }
     rowIsHidden(id)    { return this.row(id).hasClass("hidden"); }
     rowIsCollapsed(id) { return this.row(id).hasClass("collapsed"); }
@@ -790,15 +785,21 @@ class UserDataUtility {
         return this.row(id).find("._" + id.split("_")[0] + "SelectClass").html() == this._checkedIcon;
     }
 
+    rowsAreHidden(ids)      { return ids.every(id => this.rowIsHidden(id)); }
+    rowsAreCollapsed(ids)   { return ids.every(id => this.rowIsCollapsed(id)); }
+    rowsAreExpanded(ids)    { return ids.every(id => this.rowIsExpanded(id)); }
+    recordsAreSelected(ids) { return ids.every(id => this.recordIsSelected(id)); }
+    rowsAreSelected(ids)    { return ids.every(id => this.rowIsSelected(id)); }
+
     hideRows(ids)       { ids.forEach(id => this.hideRow(id)); }
     collapseRows(ids)   { ids.forEach(id => this.collapseRow(id)); }
     expandRows(ids)     { ids.forEach(id => this.expandRow(id)); }
+    selectRecords(ids)  { ids.forEach(id => this.selectRecord(id)); }
 
     unhideRows(ids)     { ids.forEach(id => this.unhideRow(id)); }
     uncollapseRows(ids) { ids.forEach(id => this.uncollapseRow(id)); }
     unexpandRows(ids)   { ids.forEach(id => this.unexpandRow(id)); }
     unselectRecords(ids){ ids.forEach(id => this.unselectRecord(id)); }
-    selectRecords(ids)  { ids.forEach(id => this.selectRecord(id)); }
 
     hideRow(id)         {   this.row(id).addClass("hidden");     this.rowButton(id).html(self._hiddenIcon); }
     collapseRow(id)     {   this.row(id).addClass("collapsed");  this.rowButton(id).html(self._collapsedIcon); }
@@ -832,20 +833,6 @@ class UserDataUtility {
             this.row(id).removeClass(selectClass);
             this.row(id).find("." + selectClass).html(self._squareIcon);
         }
-    }
-
-    childrenIdsOf(parentId) { return $(".parentId_" + parentId).map(row => (row.prop("id").split("_")[1])); }
-
-    descendantsOf(id) {
-        const first = this.rows.index("#row_" + id);
-        while (this.hasChildren(id)) {
-            id = $(".parentId_" + id + ":last").prop("id").spilt("_")[1];
-        }
-        return first.nextUntil(this.row(id));
-    }
-
-    descendantIdsOf(id) {
-        return this.descendantsOf(id).map(row => (row.prop("id").split("_")[1]));
     }
 
     rowRecordsAreIdentical(id) {
@@ -949,6 +936,18 @@ class UserDataUtility {
             ids.push(parseInt(this.rows.eq(i).prop("id").split("_")[1]));
         }
         return ids;
+    }
+
+    childrenIdsOf(parentId) {
+        return $(".parentId_" + parentId).map(row => (row.prop("id").split("_")[1]));
+    }
+
+    descendantIdsOf(id) {
+        const first = this.rows.index("#row_" + id);
+        while (this.hasChildren(id)) {
+            id = $(".parentId_" + id + ":last").prop("id").spilt("_")[1];
+        }
+        return first.nextUntil(this.row(id)).map(row => (row.prop("id").split("_")[1]));
     }
 
     get allLocalIds()            { return this.allIds.filter(id => this.localExists(id)); }
