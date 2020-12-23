@@ -764,25 +764,36 @@ class UserDataUtility {
         }
     }
 
+    id(id)          { return (id.contains("_")) ? id.split("_")[1] : id; }
+    localId(id)     { return "local_" + this.id(id); }
+    loadedId(id)    { return "loaded_" + this.id(id); }
+    rowId(id)       { return "row_" + this.id(id); }
+    idPrefix(id)    { return (id.contains("_")) ? id.split("_")[0] : null;}
+    isLocalId(id)   { return id.startsWith("local_"); }
+    isLoadedId(id)  { return id.startsWith("loaded_"); }
+    isRowId(id)     { return id.startsWith("row_"); }
+    idHasPrefix(id) { return (id.contains("_")); }
+    isRecordId(id)  { return (this.idIsLocal(id) || this.idIsLoaded(id)); }
+
+    selectClass(id) { return "_" + this.idPrefix(id) + "SelectClass"; }
+    otherRecordId(id) { return (this.isRecordId(id) ? (this.isLocalId(id)) ? this.loadedId(id) : this.localId(id);
+
     resetRows(ids) { return ids.forEach(id => this.reset(id)); }
     resetRow(id) {
-        if (id.contains("_")) { id = id.split("_")[1]; }
-        this.unselectRecord("local_" + id);
-        this.unselectRecord("loaded_" + id);
-        this.expandRow(id);
+        this.unselectRecord(this.localId(id));
+        this.unselectRecord(this.loadedId(id));
+        this.expandRow(this.rowId(id));
     }
 
-    hasChildren(id)    { return $(".parentId_" + id).length; }
-    rowIsHidden(id)    { return this.row(id).hasClass("hidden"); }
-    rowIsCollapsed(id) { return this.row(id).hasClass("collapsed"); }
-    rowIsExpanded(id)  { return (!this.rowIsCollapsed(id) && !this.rowIsHidden(id)); }
+    hasChildren(id)    { return $(".parentId_" + this.id(id)).length; }
+    rowIsHidden(id)    { return this.row(this.rowId(id)).hasClass("hidden"); }
+    rowIsCollapsed(id) { return this.row(this.rowId(id)).hasClass("collapsed"); }
+    rowIsExpanded(id)  { return (!this.rowIsCollapsed(this.rowId(id)) && !this.rowIsHidden(this.rowId(id))); }
     rowIsSelected(id) {
-        const localId = "local_" + id.split("_")[1];
-        const loadedId = "loaded_" + id.split("_")[1];
-        return this.recordIsSelected(localId) || this.recordIsSelected(loadedId);
+        return this.recordIsSelected(this.localId(id)) || this.recordIsSelected(this.loadedId(id));
     }
     recordIsSelected(id) {
-        return this.row(id).find("._" + id.split("_")[0] + "SelectClass").html() == this._checkedIcon;
+        return this.row(id).find("._" + this.idPrefix(id) + "SelectClass").html() == this._checkedIcon;
     }
 
     rowsAreHidden(ids)      { return ids.every(id => this.rowIsHidden(id)); }
@@ -805,13 +816,13 @@ class UserDataUtility {
     collapseRow(id)     {   this.row(id).addClass("collapsed");  this.rowButton(id).html(self._collapsedIcon); }
     expandRow(id)       { /*this.row(id).addClass("expanded");*/ this.rowButton(id).html(self._expandedIcon); }
     selectRecord(id) {
-        if (!id.contains("_") || id.startsWith("row_")) {
+        if (!isRecordId(id)) {
             console.log("calling selectRecord without local_id or loaded_id");
             console.trace();
             return;
         }
         if (this.recordExists(id) && !this.recordIsSelected(id)) {
-            const selectClass = "_" + id.split("_")[0] + "SelectClass";
+            const selectClass = "_" + this.idPrefix(id) + "SelectClass";
             const otherRecordId = (id.startsWith("local_") ? "loaded_" : "local_") + id.split("_")[1];
             this.unselectRecord(otherRecordId);
             this.row(id).addClass(selectClass);
