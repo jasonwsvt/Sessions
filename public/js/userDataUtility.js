@@ -596,14 +596,14 @@ class UserDataUtility {
                 if (e.shiftKey) {
                     //row.addClass("expanded");
                     $(this).html(self._expandedIcon);
-                    if (e.ctrlKey) { self.expand(self.childIdsOf(id)); }
-                    else { self.expand(self.descendantIdsOf(id)); }
+                    if (e.ctrlKey) { self.expandRow(self.childIdsOf(id)); }
+                    else { self.expandRow(self.descendantIdsOf(id)); }
                 }
                 else {
                     row.addClass("hidden");
                     $(this).html(self._hiddenIcon);
-                    if (e.ctrlKey) { self.hide(self.childIdsOf(id)); }
-                    else { self.hide(self.descendantsOf(id)); }
+                    if (e.ctrlKey) { self.hideRow(self.childIdsOf(id)); }
+                    else { self.hideRow(self.descendantsOf(id)); }
                 }
             }
             else if (row.hasClass("hidden")) {
@@ -611,14 +611,14 @@ class UserDataUtility {
                 if (e.shiftKey) {
                     row.addClass("collapsed");
                     $(this).html(self._collapsedIcon);
-                    if (e.ctrlKey) { self.collapse(self.childIdsOf(id)); }
-                    else { self.collapse(self.descendantIdsOf(id)); }
+                    if (e.ctrlKey) { self.collapseRow(self.childIdsOf(id)); }
+                    else { self.collapseRow(self.descendantIdsOf(id)); }
                 }
                 else {
                     //row.addClass("expanded");
                     $(this).html(self._expandedIcon);
-                    if (e.ctrlKey) { self.expand(self.childIdsOf(id)); }
-                    else { self.expand(self.descendantsOf(id)); }
+                    if (e.ctrlKey) { self.expandRow(self.childIdsOf(id)); }
+                    else { self.expandRow(self.descendantsOf(id)); }
                 }
             }
             else {
@@ -626,14 +626,14 @@ class UserDataUtility {
                 if (e.shiftKey) {
                     row.addClass("hidden");
                     $(this).html(self._hiddenIcon);
-                    if (e.ctrlKey) { self.hide(childIdsOf(id)); }
-                    else { self.hide(self.descendantsOf(id)); }
+                    if (e.ctrlKey) { self.hideRow(childIdsOf(id)); }
+                    else { self.hideRow(self.descendantsOf(id)); }
                 }
                 else {
                     row.addClass("collapsed");
                     $(this).html(self._collapsedIcon);
-                    if (e.ctrlKey) { self.collapse(self.childIdsOf(id)); }
-                    else { self.collapse(self.descendantIdsOf(id)); }
+                    if (e.ctrlKey) { self.collapseRow(self.childIdsOf(id)); }
+                    else { self.collapseRow(self.descendantIdsOf(id)); }
                 }
             }
         });
@@ -683,7 +683,7 @@ class UserDataUtility {
             });
         });
 
-        if (true) {                                                     //change true to !loaded
+        if (true) { //change true to !loaded
             this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 5) + "px");
             this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
         }
@@ -815,55 +815,54 @@ class UserDataUtility {
         }
     }
 
-    selectRecords(ids)  { ids.forEach(id => this.select(id)); }
+    hasChildren(id)    { return $(".parentId_" + id).length; }
+    rowIsHidden(id)    { return this.row(id).hasClass("hidden"); }
+    rowIsCollapsed(id) { return this.row(id).hasClass("collapsed"); }
+    rowIsExpanded(id)  { return (!this.rowIsCollapsed(id) && !this.rowIsHidden(id)); }
+    rowIsSelected(id) {
+        const localId = "local_" + id.split("_")[1];
+        const loadedId = "loaded_" + id.split("_")[1];
+        return this.recordIsSelected(localId) || this.recordIsSelected(loadedId);
+    }
+    recordIsSelected(id) {
+        return this.row(id).find("._" + id.split("_")[0] + "SelectClass").html() == this._checkedIcon;
+    }
+
     selectRecord(id) {
-        if (id.startsWith("row_")) { return; }
+        if (id.startsWith("row_")) {
+            const localId = "local_" + id.split("_")[1];
+            const loadedId = "loaded_" + id.split("_")[1];
+            if (!recordExists(localId)) { return loadedId; }
+            else if (!recordExists(loadedId)) { return localId; }
+            return;
+        }
         if (this.recordExists(id) && !this.recordIsSelected(id)) {
             const selectClass = "_" + id.split("_")[0] + "SelectClass";
             const otherRecordId = (id.startsWith("local_") ? "loaded_" : "local_") + id.split("_")[1];
-            this.unselect(otherRecordId);
+            this.unselectRecord(otherRecordId);
             this.row(id).addClass(selectClass);
             this.row(id).find("." + selectClass).html(self._checkedIcon);
         }
     }
 
-    unselect(id) {
-        const selectClass = "_" + id.split("_")[0] + "SelectClass";
-
+    unselectRecord(id) {
         if (this.recordExists(id) && this.recordIsSelected(id)) {
+            const selectClass = "_" + id.split("_")[0] + "SelectClass";
             this.row(id).removeClass(selectClass);
             this.row(id).find("." + selectClass).html(self._squareIcon);
         }
-    }
-
-    recordIsSelected(id) {
-        return this.row(id).find("._" + id.split("_")[0] + "SelectClass").html() == this._checkedIcon;
-    }
-
-    recordExists(id) {
-        return !!this.row(id).find("._" + id.split("_")[0] + "SelectClass").html().length;
-    }
-
-    rowIsHidden(id)            { return this.row(id).hasClass("hidden"); }
-    rowIsCollapsed(id)         { return this.row(id).hasClass("collapsed"); }
-    rowIsExpanded(id)          { return (!this.rowisCollapsed(id) && !this.rowisHidden(id)); }
-    rowIsSelected(id) {
-        const localId = "local_" + id.split("_")[1];
-        const loadedId = "loaded_" + id.split("_")[1];
-        return this.recordIsSelected(localId) || this.recordIsSelected(loadedId);
     }
 
     hideRow(id) { this.row(id).addClass("hidden"); }
     collapseRow(id) { this.row(id).addClass("collapsed"); }
     expandRow(id) { this.row(id).removeClass("collapsed"); this.row(id).removeClass("hidden"); }
 
-    hideRows(ids) { ids.forEach(id => { this.hideRow(id); }); }
-    collapseRows(ids) { ids.forEach(id => { this.collapseRow(id); }); }
-    expandRows(ids) { ids.forEach(id => { this.expandRow(id); }); }
+    selectRecords(ids) { ids.forEach(id => this.selectRecord(id)); }
+    hideRows(ids)      { ids.forEach(id => this.hideRow(id)); }
+    collapseRows(ids)  { ids.forEach(id => this.collapseRow(id)); }
+    expandRows(ids)    { ids.forEach(id => this.expandRow(id)); }
 
     childrenIdsOf(parentId) { return $(".parentId_" + parentId).map(row => (row.prop("id").split("_")[1])); }
-
-    hasChildren(id) { return $(".parentId_" + id).length; }
 
     descendantsOf(id) {
         const first = this.rows.index("#row_" + id);
@@ -902,19 +901,19 @@ class UserDataUtility {
         const localLastEdited = parseInt(this.record(localId).lastEdited);
         const loadedLastEdited = parseInt(this.record(loadedId).lastEdited);
         if (localLastEdited && loadedLastEdited) {
-            if (localLastEdited > loadedLastEdited) { return localId; }
+            if (localLastEdited >= loadedLastEdited) { return localId; }
             else { return loadedId; }
         }
         const localCreation = parseInt(this.record(localId).creation);
         const loadedCreation = parseInt(this.record(loadedId).creation);
         if (localCreation && loadedCreation) {
-            if (localCreation > loadedCreation) { return localId; }
+            if (localCreation >= loadedCreation) { return localId; }
             else { return loadedId; }
         }
         const localLastOpened = parseInt(this.record(localId).lastOpened);
         const loadedLastOpened = parseInt(this.record(loadedId).lastOpened);
         if (localLastOpened && loadedLastOpened) {
-            if (localLastOpened > loadedLastOpened) { return localId; }
+            if (localLastOpened >= loadedLastOpened) { return localId; }
             else { return loadedId; }
         }
     }
@@ -967,6 +966,9 @@ class UserDataUtility {
     }
 
     get loadedsExist() { return !!$(this._loadedSelectClass).length; }
+    recordExists(id) {
+        return !!this.row(id).find("._" + id.split("_")[0] + "SelectClass").html().length;
+    }
 
     //Id collections
     get allIds() {
