@@ -93,7 +93,7 @@ class UserDataUtility {
                 $(this).blur();
                 self.adjustMenuButton.html($(this).html() + self._caretDownIcon);
                 self.adjust.addClass("hidden");
-                self._manageAdjustButtons();
+                self.manage();
             }); 
 
             self.exportButton.on("click", function() {
@@ -119,7 +119,7 @@ class UserDataUtility {
     get div()                   { return $("#" + this._divID); }
     get exportButton()          { return $("#" + this._exportButtonID); }
     get loadButton()            { return $("#" + this._loadButtonID); }
-    get loadDiv()             { return $("#" + this._loadDivID); }
+    get loadDiv()               { return $("#" + this._loadDivID); }
     get adjustMenuButton()      { return $("#" + this._adjustMenuButtonID); }
     get adjust()                { return $("#" + this._adjustID); }
     get actions()               { return $("#" + this._actionsID); }
@@ -130,17 +130,17 @@ class UserDataUtility {
     get messagesDiv()           { return $("#" + this._messagesDivID); }
     get actionDiv()             { return $("#" + this._actionDivID); }
     get rows()                  { return this.scrollAreaDiv.children(); }
-    row(id)                     { return $("#row_" + id); }
+    row(id)                     { return $(this.rowId(id)); }
     get rowButtons()            { return                 $("." + this._rowButtonClass); }
     rowButton(id)               { return this.row(id).find("." + this._rowButtonClass); }
-    get childrenRowsButtons()   { return                 $("." + this._childrenRowsButtonClass); }
+    get childrenRowButtons()    { return                 $("." + this._childrenRowsButtonClass); }
     childrenRowsButton(id)      { return this.row(id).find("." + this._childrenRowsButtonClass); }
-    get localSelects()    { return                 $("." + this._localSelectClass); }
-    localSelect(id)       { return this.row(id).find("." + this._localSelectClass); }
+    get localSelects()          { return                 $("." + this._localSelectClass); }
+    localSelect(id)             { return this.row(id).find("." + this._localSelectClass); }
     get localChildrenSelects()  { return                 $("." + this._localChildrenSelectClass); }
     localChildrenSelect(id)     { return this.row(id).find("." + this._localChildrenSelectClass); }
-    get loadedSelects()   { return                 $("." + this._loadedSelectClass); }
-    loadedSelect(id)      { return this.row(id).find("." + this._loadedSelectClass); }
+    get loadedSelects()         { return                 $("." + this._loadedSelectClass); }
+    loadedSelect(id)            { return this.row(id).find("." + this._loadedSelectClass); }
     get loadedChildrenSelects() { return                 $("." + this._loadedChildrenSelectClass); }
     loadedChildrenSelect(id)    { return this.row(id).find("." + this._loadedChildrenSelectClass); }
 
@@ -394,7 +394,7 @@ class UserDataUtility {
             this.options.data("value", "");
         }
 
-        this._manageAdjustButtons();
+        this.manage();
 
         this.messagesDiv.text("Please select one or more records to perform an action.");
 
@@ -409,11 +409,6 @@ class UserDataUtility {
     }
 
     manage() {
-        this._manageAdjustButtons();
-        this._manageActionButtons();
-    }
-
-    _manageAdjustButtons() {
         this.adjust.data("index", this.adjust.find("button").index(this));
         this._manageGroup(this.adjust);
         this._buildOptionButtons();
@@ -561,7 +556,7 @@ class UserDataUtility {
         });
 
         //click event for childrenRowsButton buttons (id + "_children")
-        this.childrenRowsButtons.on("click", function (e) {
+        this.childrenRowButtons.on("click", function (e) {
             //Add shift-click to back-step
             const id = $(this).parent().parent().parent().parent().prop("id");
             const childIds = self.childIds(id);
@@ -616,7 +611,7 @@ class UserDataUtility {
             else { self.selectRecords(self.loadedDescendentsOf(id)); }
         });
 
-        [this._rowButtonClass, this._childrenRowsButtonClass, this._localSelectClass, this._loadedSelectClass, this._localChildrenSelectClass, this._loadedChildrenSelectClass].forEach(c => {
+        [this.rowButtons, this.childrenRowButtons, this.localSelects, this.loadedSelects, this.localChildrenSelects, this.loadedChildrenSelects].forEach(c => {
             c.mousedown(function (e) {
                 if (e.ctrlKey || e.shiftKey) {
                     // For non-IE browsers
@@ -745,9 +740,9 @@ class UserDataUtility {
             record += "<tr>" + line + "</tr>";
         }
         this.scrollAreaDiv.append("<table id = 'row_" + id + "' class = 'flex-container'>" + record + "</table>");
-        if (parentId) { this.row(id).addClass("parentId_" + parentId); }
-        if (loaded) { this.row(id).addClass("Loaded"); }
-        if (local)    { this.row(id).addClass("local"); }
+        if (parentId) { this.row("row_" + id).addClass("parentId_" + parentId); }
+        if (loaded) { this.row("row_" + id).addClass("loaded"); }
+        if (local)    { this.row("row_" + id).addClass("local"); }
         //console.log(local[children]);
         if (children) {
             keys = Object.keys(local[children]);
@@ -764,22 +759,22 @@ class UserDataUtility {
         }
     }
 
-    hasPrefix(id)       { return (id.contains("_") && this.isPrefix(this.idPrefix(id))); }
-    idPrefix(id)        { return (id.contains("_") ? id.split("_")[0] : null); }
+    hasPrefix(id)       { return (id.includes("_") && this.isPrefix(this.idPrefix(id))); }
+    idPrefix(id)        { return (id.includes("_") ? id.split("_")[0] : null); }
     isPrefix(prefix)    { return (["local", "loaded", "row", "parentId"].includes(prefix)); }
-    isId(id)            { return (this.hasPrefix(id) && isNumber(this.id(id))) }
-    id(id)              { return (this.idHasPrefix(id)) ? id.split("_")[1] : id; }
+    isId(id)            { return (id.includes("_") && isNumber(id.split("_")[1])); }
+    id(id)              { return (this.isId(id)) ? id.split("_")[1] : id; }
     localId(id)         { return "local_" + this.id(id); }
     loadedId(id)        { return "loaded_" + this.id(id); }
     rowId(id)           { return "row_" + this.id(id); }
     parentId(id)        { return "parentId_" + this.id(id); }
-    hasLocalPrefix(id)  { return id.startsWith("local_"); }
-    hasLoadedPrefix(id) { return id.startsWith("loaded_"); }
-    hasRowPrefix(id)    { return id.startsWith("row_"); }
-    hasParentPrefix(id) { return id.startsWith("parentId_"); }
-    isRecordId(id)      { return (this.idIsLocal(id) || this.idIsLoaded(id)); }
+    hasLocalPrefix(id)  { return (this.isId(id) && id.startsWith("local_")); }
+    hasLoadedPrefix(id) { return (this.isId(id) && id.startsWith("loaded_")); }
+    hasRowPrefix(id)    { return (this.isId(id) && id.startsWith("row_")); }
+    hasParentPrefix(id) { return (this.isId(id) && id.startsWith("parentId_")); }
+    isRecordId(id)      { return (this.hasLocalPrefix(id) || this.hasLoadedPrefix(id)); }
  
-    selectClass(id)   { return "_" + this.idPrefix(id) + "SelectClass"; }
+    selectClass(id)   { return this.idPrefix(id) + "SelectClass"; }
     otherRecordId(id) { return (this.isRecordId(id) ? (this.hasLocalPrefix(id)) ? this.loadedId(id) : this.localId(id): null); }
 
     resetRows(ids) { return ids.forEach(id => this.reset(id)); }
@@ -820,7 +815,7 @@ class UserDataUtility {
     collapseRow(id)     {   this.row(id).addClass("collapsed");  this.rowButton(id).html(self._collapsedIcon); }
     expandRow(id)       { /*this.row(id).addClass("expanded");*/ this.rowButton(id).html(self._expandedIcon); }
     selectRecord(id) {
-        if (!isRecordId(id)) {
+        if (!this.isRecordId(id)) {
             console.log("calling selectRecord without local_id or loaded_id");
             console.trace();
             return;
@@ -938,40 +933,45 @@ class UserDataUtility {
 
     get loadedsExist() { return !!$(this._loadedSelectClass).length; }
     recordExists(id) {
-        return !!this.row(id).find("._" + this.prefix(id) + "SelectClass").html().length;
+        console.log(id);
+        console.log("." + this.selectClass(id));
+        console.log(this.row(id));
+        console.log(this.row(id).find("." + this.selectClass(id)));
+        console.log(this.row(id).find("." + this.selectClass(id)).html());
+        return !!this.row(id).find("." + this.selectClass(id)).html().length;
     }
 
     //Id collections
-    get allIds() {
+    get allIds() { return this.allRowIds.map(parseInt(this.id(this.rows.eq(i).prop("id")))); }
+    get allRowIds() {
         var ids = [];
         for (var i = 0; i < this.rows.length; i++) {
-            ids.push(parseInt(this.id(this.rows.eq(i).prop("id"))));
+            ids.push(this.rows.eq(i).prop("id"));
         }
         return ids;
     }
 
-    childrenIdsOf(parentId) {
+    childIdsOf(parentId) {
         const row = $(".parentId_" + this.id(parentId));
-        const rowIds = rows.map(row => (this.prefix(parentId) + this.id(row.prop("id"))));
+        const rowIds = rows.map(row => (this.idPrefix(parentId) + this.id(row.prop("id"))));
         return rowIds.filter(id => this.isRecordId(id));
     }
 
     descendantIdsOf(id) {
         var ids = [];
         if (this.hasChildren(id)) {
-            this.childrenIdsOf(id).forEach(childId => {
+            this.childIdsOf(id).forEach(childId => {
                 ids.push(childId);
                 if (this.hasChildren(childId)) {
                     ids.concat(this.descendantIdsOf(childId));
                 }
             });
-            return ids;
         }
-        else { return [id]; }
+        return ids;
     }
 
-    get allLocalIds()            { return this.allIds.filter(id => this.localExists(id)); }
-    get allLoadedIds()           { return this.allIds.filter(id => this.loadedExists(id)); }
+    get allLocalIds()            { return this.allIds.map(id => "local_" + id).filter(id => this.recordExists(id)); }
+    get allLoadedIds()           { return this.allIds.map(id => "loaded_" + id).filter(id => this.loadedExists(id)) }
     get allClientRowIds()        { return this.allIds.filter(id => this.row(id).find(".inside1").length); }
     get allIssueRowIds()         { return this.allIds.filter(id => this.row(id).find(".inside2").length); }
     get allSessionRowIds()       { return this.allIds.filter(id => this.row(id).find(".inside3").length); }
