@@ -764,19 +764,23 @@ class UserDataUtility {
         }
     }
 
-    id(id)          { return (id.contains("_")) ? id.split("_")[1] : id; }
-    localId(id)     { return "local_" + this.id(id); }
-    loadedId(id)    { return "loaded_" + this.id(id); }
-    rowId(id)       { return "row_" + this.id(id); }
-    idPrefix(id)    { return (id.contains("_")) ? id.split("_")[0] : null;}
-    isLocalId(id)   { return id.startsWith("local_"); }
-    isLoadedId(id)  { return id.startsWith("loaded_"); }
-    isRowId(id)     { return id.startsWith("row_"); }
-    idHasPrefix(id) { return (id.contains("_")); }
-    isRecordId(id)  { return (this.idIsLocal(id) || this.idIsLoaded(id)); }
-
-    selectClass(id) { return "_" + this.idPrefix(id) + "SelectClass"; }
-    otherRecordId(id) { return (this.isRecordId(id) ? (this.isLocalId(id)) ? this.loadedId(id) : this.localId(id);
+    hasPrefix(id)       { return (id.contains("_") && this.isPrefix(this.idPrefix(id))); }
+    idPrefix(id)        { return (id.contains("_") ? id.split("_")[0] : null); }
+    isPrefix(prefix)    { return (["local", "loaded", "row", "parentId"].includes(prefix)); }
+    isId(id)            { return (this.hasPrefix(id) && isNumber(this.id(id))) }
+    id(id)              { return (this.idHasPrefix(id)) ? id.split("_")[1] : id; }
+    localId(id)         { return "local_" + this.id(id); }
+    loadedId(id)        { return "loaded_" + this.id(id); }
+    rowId(id)           { return "row_" + this.id(id); }
+    parentId(id)        { return "parentId_" + this.id(id); }
+    hasLocalPrefix(id)  { return id.startsWith("local_"); }
+    hasLoadedPrefix(id) { return id.startsWith("loaded_"); }
+    hasRowPrefix(id)    { return id.startsWith("row_"); }
+    hasParentPrefix(id) { return id.startsWith("parentId_"); }
+    isRecordId(id)      { return (this.idIsLocal(id) || this.idIsLoaded(id)); }
+ 
+    selectClass(id)   { return "_" + this.idPrefix(id) + "SelectClass"; }
+    otherRecordId(id) { return (this.isRecordId(id) ? (this.hasLocalPrefix(id)) ? this.loadedId(id) : this.localId(id): null); }
 
     resetRows(ids) { return ids.forEach(id => this.reset(id)); }
     resetRow(id) {
@@ -822,33 +826,30 @@ class UserDataUtility {
             return;
         }
         if (this.recordExists(id) && !this.recordIsSelected(id)) {
-            const selectClass = "_" + this.idPrefix(id) + "SelectClass";
-            const otherRecordId = (id.startsWith("local_") ? "loaded_" : "local_") + id.split("_")[1];
-            this.unselectRecord(otherRecordId);
-            this.row(id).addClass(selectClass);
-            this.row(id).find("." + selectClass).html(self._checkedIcon);
+            this.unselectRecord(this.otherRecordId(id));
+            this.row(id).addClass(this.selectClass(id));
+            this.row(id).find("." + this.selectClass(id)).html(self._checkedIcon);
         }
     }
 
-    unhideRow(id)       {   this.row(id).removeClass("hidden");     this.row(id).html(""); }
+    unhideRow(id)       {   this.row(id).removeClass("hidden");     this.rowButton(id).html(""); }
     uncollapseRow(id)   {   this.row(id).removeClass("collapsed");  this.rowButton(id).html(""); }
     unexpandRow(id)     { /*this.row(id).removeClass("expanded");*/ this.rowButton(id).html(""); }
     unselectRecord(id) {
-        if (!id.contains("_") || id.startsWith("row_")) {
+        if (!this.isRecordId(id)) {
             console.log("calling selectRecord without local_id or loaded_id");
             console.trace();
             return;
         }
         if (this.recordExists(id) && this.recordIsSelected(id)) {
-            const selectClass = "_" + id.split("_")[0] + "SelectClass";
-            this.row(id).removeClass(selectClass);
-            this.row(id).find("." + selectClass).html(self._squareIcon);
+            this.row(id).removeClass(this.selectClass(id));
+            this.row(id).find("." + this.selectClass(id)).html(self._squareIcon);
         }
     }
 
     rowRecordsAreIdentical(id) {
-        const localId = "local_" + id.split("_")[1];
-        const loadedId = "loaded_" + id.split("_")[1];
+        const localId = this.localId(id);
+        const loadedId = this.loadedId(id);
         if (!this.recordExists(localId) || !this.recordExists(loadedId)) { return false; }
         const local = this.record(localId);
         const loaded = this.record(loadedId);
@@ -864,24 +865,24 @@ class UserDataUtility {
     }
 
     newerRecord(id)  {
-        const localId = "local_" + id.split("_")[1];
-        const loadedId = "loaded_" + id.split("_")[1];
+        const localId = this.localId(id), local = this.record(localId);
+        const loadedId = this.loadedId(id), loaded = this.record(loadedId);
         if (!this.recordExists(localId)) { return loadedId; }
         if (!this.recordExists(loadedId)) { return localId; }
-        const localLastEdited = parseInt(this.record(localId).lastEdited);
-        const loadedLastEdited = parseInt(this.record(loadedId).lastEdited);
+        const localLastEdited = parseInt(local.lastEdited);
+        const loadedLastEdited = parseInt(loaded.lastEdited);
         if (localLastEdited && loadedLastEdited) {
             if (localLastEdited >= loadedLastEdited) { return localId; }
             else { return loadedId; }
         }
-        const localCreation = parseInt(this.record(localId).creation);
-        const loadedCreation = parseInt(this.record(loadedId).creation);
+        const localCreation = parseInt(local.creation);
+        const loadedCreation = parseInt(loaded.creation);
         if (localCreation && loadedCreation) {
             if (localCreation >= loadedCreation) { return localId; }
             else { return loadedId; }
         }
-        const localLastOpened = parseInt(this.record(localId).lastOpened);
-        const loadedLastOpened = parseInt(this.record(loadedId).lastOpened);
+        const localLastOpened = parseInt(local.lastOpened);
+        const loadedLastOpened = parseInt(loaded.lastOpened);
         if (localLastOpened && loadedLastOpened) {
             if (localLastOpened >= loadedLastOpened) { return localId; }
             else { return loadedId; }
@@ -889,24 +890,24 @@ class UserDataUtility {
     }
     
     olderRecord(id)  {
-        const localId = "local_" + id.split("_")[1];
-        const loadedId = "loaded_" + id.split("_")[1];
+        const localId = this.localId(id), local = this.record(localId);
+        const loadedId = this.loadedId(id), loaded = this.record(loadedId);
         if (!this.recordExists(localId)) { return loadedId; }
         if (!this.recordExists(loadedId)) { return localId; }
-        const localLastEdited = parseInt(this.record(localId).lastEdited);
-        const loadedLastEdited = parseInt(this.record(loadedId).lastEdited);
+        const localLastEdited = parseInt(local.lastEdited);
+        const loadedLastEdited = parseInt(loaded.lastEdited);
         if (localLastEdited && loadedLastEdited) {
             if (localLastEdited < loadedLastEdited) { return localId; }
             else { return loadedId; }
         }
-        const localCreation = parseInt(this.record(localId).creation);
-        const loadedCreation = parseInt(this.record(loadedId).creation);
+        const localCreation = parseInt(local.creation);
+        const loadedCreation = parseInt(loaded.creation);
         if (localCreation && loadedCreation) {
             if (localCreation < loadedCreation) { return localId; }
             else { return loadedId; }
         }
-        const localLastOpened = parseInt(this.record(localId).lastOpened);
-        const loadedLastOpened = parseInt(this.record(loadedId).lastOpened);
+        const localLastOpened = parseInt(local.lastOpened);
+        const loadedLastOpened = parseInt(loadedId.lastOpened);
         if (localLastOpened && loadedLastOpened) {
             if (localLastOpened < loadedLastOpened) { return localId; }
             else { return loadedId; }
@@ -914,7 +915,7 @@ class UserDataUtility {
     }
     
     record(id) {
-        if (id.startsWith("local_") && this.recordExists(id)) {
+        if (this.hasLocalPrefix(id) && this.recordExists(id)) {
             var record = [], name, value;
             this.row(id).find("tr").forEach(line => {
                 name = line.find("td").eq(2).text;
@@ -937,28 +938,36 @@ class UserDataUtility {
 
     get loadedsExist() { return !!$(this._loadedSelectClass).length; }
     recordExists(id) {
-        return !!this.row(id).find("._" + id.split("_")[0] + "SelectClass").html().length;
+        return !!this.row(id).find("._" + this.prefix(id) + "SelectClass").html().length;
     }
 
     //Id collections
     get allIds() {
         var ids = [];
         for (var i = 0; i < this.rows.length; i++) {
-            ids.push(parseInt(this.rows.eq(i).prop("id").split("_")[1]));
+            ids.push(parseInt(this.id(this.rows.eq(i).prop("id"))));
         }
         return ids;
     }
 
     childrenIdsOf(parentId) {
-        return $(".parentId_" + parentId).map(row => (row.prop("id").split("_")[1]));
+        const row = $(".parentId_" + this.id(parentId));
+        const rowIds = rows.map(row => (this.prefix(parentId) + this.id(row.prop("id"))));
+        return rowIds.filter(id => this.isRecordId(id));
     }
 
     descendantIdsOf(id) {
-        const first = this.rows.index("#row_" + id);
-        while (this.hasChildren(id)) {
-            id = $(".parentId_" + id + ":last").prop("id").spilt("_")[1];
+        var ids = [];
+        if (this.hasChildren(id)) {
+            this.childrenIdsOf(id).forEach(childId => {
+                ids.push(childId);
+                if (this.hasChildren(childId)) {
+                    ids.concat(this.descendantIdsOf(childId));
+                }
+            });
+            return ids;
         }
-        return first.nextUntil(this.row(id)).map(row => (row.prop("id").split("_")[1]));
+        else { return [id]; }
     }
 
     get allLocalIds()            { return this.allIds.filter(id => this.localExists(id)); }
