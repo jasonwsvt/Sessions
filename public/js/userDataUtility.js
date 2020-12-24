@@ -768,10 +768,10 @@ class UserDataUtility {
     loadedId(id)        { return "loaded_" + this.id(id); }
     rowId(id)           { return "row_" + this.id(id); }
     parentId(id)        { return "parentId_" + this.id(id); }
-    hasLocalPrefix(id)  { return (this.isId(id) && id.startsWith("local_")); }
-    hasLoadedPrefix(id) { return (this.isId(id) && id.startsWith("loaded_")); }
     hasRowPrefix(id)    { return (this.isId(id) && id.startsWith("row_")); }
     hasParentPrefix(id) { return (this.isId(id) && id.startsWith("parentId_")); }
+    hasLocalPrefix(id)  { return (this.isId(id) && id.startsWith("local_")); }
+    hasLoadedPrefix(id) { return (this.isId(id) && id.startsWith("loaded_")); }
     isRecordId(id)      { return (this.hasLocalPrefix(id) || this.hasLoadedPrefix(id)); }
  
     selectClass(id)   { return this.idPrefix(id) + "SelectClass"; }
