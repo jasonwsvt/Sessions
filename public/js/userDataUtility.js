@@ -762,7 +762,7 @@ class UserDataUtility {
     hasPrefix(id)       { return (id.includes("_") && this.isPrefix(this.idPrefix(id))); }
     idPrefix(id)        { return (id.includes("_") ? id.split("_")[0] : null); }
     isPrefix(prefix)    { return (["local", "loaded", "row", "parentId"].includes(prefix)); }
-    isId(id)            { return (id.includes("_") && isNumber(id.split("_")[1])); }
+    isId(id)            { return (this.hasPrefix(id) && !!parseInt(id.split("_")[1])); }
     id(id)              { return (this.isId(id)) ? id.split("_")[1] : id; }
     localId(id)         { return "local_" + this.id(id); }
     loadedId(id)        { return "loaded_" + this.id(id); }
@@ -816,7 +816,7 @@ class UserDataUtility {
     expandRow(id)       { /*this.row(id).addClass("expanded");*/ this.rowButton(id).html(self._expandedIcon); }
     selectRecord(id) {
         if (!this.isRecordId(id)) {
-            console.log("calling selectRecord without local_id or loaded_id");
+            console.log("calling selectRecord without local_id or loaded_id", id);
             console.trace();
             return;
         }
@@ -933,9 +933,11 @@ class UserDataUtility {
 
     get loadedsExist() { return !!$(this._loadedSelectClass).length; }
     recordExists(id) {
-        console.log(id);
+        console.log(id, this.rowId(id));
         console.log("." + this.selectClass(id));
         console.log(this.row(id));
+        console.log($("." + this.selectClass(id)));
+        console.log(this.selectLocal(id));
         console.log(this.row(id).find("." + this.selectClass(id)));
         console.log(this.row(id).find("." + this.selectClass(id)).html());
         return !!this.row(id).find("." + this.selectClass(id)).html().length;
