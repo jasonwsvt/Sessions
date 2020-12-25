@@ -130,7 +130,7 @@ class UserDataUtility {
     get messagesDiv()           { return $("#" + this._messagesDivID); }
     get actionDiv()             { return $("#" + this._actionDivID); }
     get rows()                  { return this.scrollAreaDiv.children(); }
-    row(id)                     { return $(this.rowId(id)); }
+    row(id)                     { return $("#" + this.rowId(id)); }
     get rowButtons()            { return                 $("." + this._rowButtonClass); }
     rowButton(id)               { return this.row(id).find("." + this._rowButtonClass); }
     get childrenRowButtons()    { return                 $("." + this._childrenRowsButtonClass); }
@@ -559,9 +559,6 @@ class UserDataUtility {
         this.childrenRowButtons.on("click", function (e) {
             //Add shift-click to back-step
             const id = $(this).parent().parent().parent().parent().prop("id");
-            const childIds = self.childIds(id);
-            const descendentIds = self.descendentIds(id);
-
             // If neither Shift nor Control are active, forward and all descendants
             // If Shift is active, backwards
             // If Control is active, only affect children
@@ -586,13 +583,13 @@ class UserDataUtility {
         this.localSelects.on("click", function (e) {
             const id = "local_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
             self.selectRecord(id);
-            if (!e.ctrlKey) { self.selectRecords(self.descendentIdsOf(id)); }
+            if (!e.ctrlKey) { self.selectRecords(self.descendantIdsOf(id)); }
         });
 
         this.loadedSelects.on("click", function (e) {
             const id = "loaded_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
             self.selectRecord(id);
-            if (!e.ctrlKey) { self.selectRecords(self.descendentIdsOf(id)); }
+            if (!e.ctrlKey) { self.selectRecords(self.descendantIdsOf(id)); }
         });
 
         //click event for selectChildren buttons ("select_" + id + "_children")
@@ -600,7 +597,7 @@ class UserDataUtility {
             const id = "local_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
             self.childrenSelect(id);
             if (e.ctrlKey) { self.selectRecords(self.childIdsOf(id)); }
-            else { self.selectRecords(self.descendentIdsOf(id)); }
+            else { self.selectRecords(self.descendantIdsOf(id)); }
         });
 
         //click event for selectChildren buttons ("select_" + id + "_children")
@@ -608,7 +605,7 @@ class UserDataUtility {
             const id = "loaded_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
             self.childrenSelect(id);
             if (e.ctrlKey) { self.selectRecords(self.loadedChildrenOf(id)); }
-            else { self.selectRecords(self.loadedDescendentsOf(id)); }
+            else { self.selectRecords(self.loadeddescendantsOf(id)); }
         });
 
         [this.rowButtons, this.childrenRowButtons, this.localSelects, this.loadedSelects, this.localChildrenSelects, this.loadedChildrenSelects].forEach(c => {
@@ -763,7 +760,7 @@ class UserDataUtility {
     idPrefix(id)        { return (id.includes("_") ? id.split("_")[0] : null); }
     isPrefix(prefix)    { return (["local", "loaded", "row", "parentId"].includes(prefix)); }
     isId(id)            { return (this.hasPrefix(id) && !!parseInt(id.split("_")[1])); }
-    id(id)              { return (this.isId(id)) ? id.split("_")[1] : id; }
+    id(id)              { return (this.isId(id)) ? id.split("_")[1] : (isNumber(id)) ? id : null; }
     localId(id)         { return "local_" + this.id(id); }
     loadedId(id)        { return "loaded_" + this.id(id); }
     rowId(id)           { return "row_" + this.id(id); }
@@ -792,7 +789,7 @@ class UserDataUtility {
         return this.recordIsSelected(this.localId(id)) || this.recordIsSelected(this.loadedId(id));
     }
     recordIsSelected(id) {
-        return this.row(id).find("._" + this.idPrefix(id) + "SelectClass").html() == this._checkedIcon;
+        return this.row(id).find("." + this.selectClass(id)).html() == this._checkedIcon;
     }
 
     rowsAreHidden(ids)      { return ids.every(id => this.rowIsHidden(id)); }
@@ -821,7 +818,7 @@ class UserDataUtility {
             return;
         }
         if (this.recordExists(id) && !this.recordIsSelected(id)) {
-            this.unselectRecord(this.otherRecordId(id));
+            if (this.recordExists(this.otherRecordId(id))) { this.unselectRecord(this.otherRecordId(id)); }
             this.row(id).addClass(this.selectClass(id));
             this.row(id).find("." + this.selectClass(id)).html(self._checkedIcon);
         }
@@ -933,11 +930,11 @@ class UserDataUtility {
 
     get loadedsExist() { return !!$(this._loadedSelectClass).length; }
     recordExists(id) {
-        console.log(id, this.rowId(id));
-        console.log("." + this.selectClass(id));
+        if (this.hasLoadedPrefix(id) && !this.loadedsExist) { return false; }
+        console.log(id); //, this.rowId(id));
+        console.log(this.rowId(id));
         console.log(this.row(id));
-        console.log($("." + this.selectClass(id)));
-        console.log(this.selectLocal(id));
+        console.log(this.selectClass(id));
         console.log(this.row(id).find("." + this.selectClass(id)));
         console.log(this.row(id).find("." + this.selectClass(id)).html());
         return !!this.row(id).find("." + this.selectClass(id)).html().length;
