@@ -931,12 +931,6 @@ class UserDataUtility {
     get loadedsExist() { return !!$(this._loadedSelectClass).length; }
     recordExists(id) {
         if (this.hasLoadedPrefix(id) && !this.loadedsExist) { return false; }
-        console.log(id); //, this.rowId(id));
-        console.log(this.rowId(id));
-        console.log(this.row(id));
-        console.log(this.selectClass(id));
-        console.log(this.row(id).find("." + this.selectClass(id)));
-        console.log(this.row(id).find("." + this.selectClass(id)).html());
         return !!this.row(id).find("." + this.selectClass(id)).html().length;
     }
 
@@ -951,8 +945,13 @@ class UserDataUtility {
     }
 
     childIdsOf(parentId) {
-        const row = $(".parentId_" + this.id(parentId));
-        const rowIds = rows.map(row => (this.idPrefix(parentId) + this.id(row.prop("id"))));
+        const rows = (!isArray($(".parentId_" + this.id(parentId))))
+            ? [$(".parentId_" + this.id(parentId))] : $(".parentId_" + this.id(parentId));
+        if (!isArray(rows)) { rows = [rows]; }
+        const prefix = this.idPrefix(parentId);
+        console.log(rows);
+        rows.forEach(row => { console.log(row, row.prop("id")); });
+        const rowIds = rows.map(row => (prefix + this.id(row.prop("id"))));
         return rowIds.filter(id => this.isRecordId(id));
     }
 
