@@ -131,18 +131,12 @@ class UserDataUtility {
     get actionDiv()             { return $("#" + this._actionDivID); }
     get rows()                  { return this.scrollAreaDiv.children(); }
     row(id)                     { return $("#" + this.rowId(id)); }
-    get rowButtons()            { return                 $("." + this._rowButtonClass); }
-    rowButton(id)               { return this.row(id).find("." + this._rowButtonClass); }
-    get childrenRowButtons()    { return                 $("." + this._childrenRowsButtonClass); }
-    childrenRowsButton(id)      { return this.row(id).find("." + this._childrenRowsButtonClass); }
-    get localSelects()          { return                 $("." + this._localSelectClass); }
-    localSelect(id)             { return this.row(id).find("." + this._localSelectClass); }
-    get localChildrenSelects()  { return                 $("." + this._localChildrenSelectClass); }
-    localChildrenSelect(id)     { return this.row(id).find("." + this._localChildrenSelectClass); }
-    get loadedSelects()         { return                 $("." + this._loadedSelectClass); }
-    loadedSelect(id)            { return this.row(id).find("." + this._loadedSelectClass); }
-    get loadedChildrenSelects() { return                 $("." + this._loadedChildrenSelectClass); }
-    loadedChildrenSelect(id)    { return this.row(id).find("." + this._loadedChildrenSelectClass); }
+    rowButton(id)               { return this.row(id).find("tr:first>td:first>span"); }
+    childrenRowsButton(id)      { return this.row(id).find("tr:last>td:first>span"); }
+    localSelect(id)             { return (this.localRecordExists(id)) ? this.row(id).find("tr:first>td:nth-of-type(4)>span") : null; }
+    localChildrenSelect(id)     { return (this.localRecordExists(id)) ? this.row(id).find("tr:last>td:nth-of-type(4)>span") : null; }
+    loadedSelect(id)            { return (this.loadedRecordExists(id)) ? this.row(id).find("tr:first>td:nth-of-type(6)>span") : null; }
+    loadedChildrenSelect(id)    { return (this.loadedRecordExists(id)) ? this.row(id).find("tr:last>td:nth-of-type(6)>span") : null; }
 
     build() {
         const loadDiv = "<div id = '" + this._loadDivID + "'></div>";
@@ -537,118 +531,6 @@ class UserDataUtility {
         //call buildRecord with data
         this._buildRecord(0, this.currentUser.pullRecords(), false);  //change false to loaded
 
-        //click event for rowButtons (id + "_row")
-        this.rowButtons.on("click", function (e) {
-            //add shift-click to back-step
-            const id = $(this).parent().parent().parent().parent().prop("id"); 
-            if (self.rowIsCollapsed(id))   { self.uncollapseRow(id);
-                if (e.shiftKey)            { self.expandRow(id); }
-                else                       { self.hideRow(id); }
-            }
-            else if (self.rowIsHidden(id)) { self.unhideRow(id);
-                if (e.shiftKey)            { self.collapseRow(id); }
-                else                       { self.expandRow(id); }
-            }
-            else                           { self.unexpandRow(id);
-                if (e.shiftKey)            { self.hideRow(id); }
-                else                       { self.collapseRow(id); }
-            }
-        });
-
-        //click event for childrenRowsButton buttons (id + "_children")
-        this.childrenRowButtons.on("click", function (e) {
-            //Add shift-click to back-step
-            const id = $(this).parent().parent().parent().parent().prop("id");
-            // If neither Shift nor Control are active, forward and all descendants
-            // If Shift is active, backwards
-            // If Control is active, only affect children
-
-            ids = (e.ctrlKey) ? self.childIdsOf(id) : self.descendantIdsOf(id);
-
-            if (rowsAreCollapsed(ids))   { self.uncollapseRows(ids);
-                if (e.shiftKey)          { self.expandRows(ids); }
-                else                     { self.hideRows(ids); }
-            }
-            else if (rowsAreHidden(ids)) { self.unhideRows(ids);
-                if (e.shiftKey)          { self.collapseRows(ids); }
-                else                     { self.expandRows(ids); }
-            }
-            else                         {  
-                if (e.shiftKey)          { self.uncollapseRows(ids); self.hideRows(ids); }
-                else                     { self.unhideRows(ids); self.collapseRows(ids); }
-            }
-        });
-        
-        //click event for select local record buttons ("local_" + id)
-        this.localSelects.on("click", function (e) {
-            const id = "local_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
-            if (self.recordIsSelected(id)) {
-                self.unselectRecord(id);
-                if (!e.ctrlKey) { self.unselectRecords(self.descendantIdsOf(id)); }
-            }
-            else {
-                self.selectRecord(id);
-                if (!e.ctrlKey) { self.selectRecords(self.descendantIdsOf(id)); }
-            }
-        });
-
-        //click event for select loaded record buttons ("loaded_" + id)
-        this.loadedSelects.on("click", function (e) {
-            const id = "loaded_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
-            if (self.recordIsSelected(id)) {
-                self.unselectRecord(id);
-                if (!e.ctrlKey) { self.unselectRecords(self.descendantIdsOf(id)); }
-            }
-            else {
-                self.selectRecord(id);
-                if (!e.ctrlKey) { self.selectRecords(self.descendantIdsOf(id)); }
-            }
-        });
-
-        //click event for select local Children buttons ("local_" + id + "_children")
-        this.localChildrenSelects.on("click", function (e) {
-            const id = "local_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
-            const ids = (e.ctrlKey) ? self.childIdsOf(id) : self.descendantIdsOf(id);
-            if (self.childrenSelectIsSelected(id)) {
-                self.unselectChildrenSelect(id);
-                self.unselectRecords(ids);
-            }
-            else {
-                self.selectChildrenSelect(id);
-                self.selectRecords(ids);
-            }
-        });
-
-        //click event for select loaded Children buttons ("loaded_" + id + "_children")
-        this.loadedChildrenSelects.on("click", function (e) {
-            const id = "loaded_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
-            const ids = (e.ctrlKey) ? self.childIdsOf(id) : self.descendantIdsOf(id);
-            if (self.childrenSelectIsSelected(id)) {
-                self.unselectChildrenSelect(id);
-                self.unselectRecords(ids);
-            }
-            else {
-                self.selectChildrenSelect(id);
-                self.selectRecords(ids);
-            }
-        });
-
-        [this.rowButtons, this.childrenRowButtons, this.localSelects, this.loadedSelects, this.localChildrenSelects, this.loadedChildrenSelects].forEach(c => {
-            c.mousedown(function (e) {
-                if (e.ctrlKey || e.shiftKey) {
-                    // For non-IE browsers
-                    e.preventDefault();
-            
-                    // For IE
-                    if ($.support.msie) {
-                        this.onselectstart = function () { return false; };
-                        var self = this;  // capture in a closure
-                        window.setTimeout(function () { self.onselectstart = null; }, 0);
-                    }
-                }
-            });
-        });
-
         if (true) { //change true to !loaded
             this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 5) + "px");
             this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
@@ -713,12 +595,12 @@ class UserDataUtility {
 
         keys = keys.concat(unsortedKeys);
         
-        const rowButton = "<span class = 'rowButton'>" + this._expandedIcon + "</span>";
-        const selectLocal = "<span id = 'local_" + id + "' class = '" + this._localSelectClass + "'>" + this._squareIcon + "</span>";
-        const selectLoaded = "<span id = 'loaded_" + id + "' class = '" + this._loadedSelectClass + "'>" + this._squareIcon + "</span>";
-        const childrenRowsButton = "<span class = '" + this._childrenRowsButtonClass + "'>" + this._expandedIcon + "</span>";
-        const selectLocalChildren = "<span class = '" + this._localChildrenSelectClass + "'>" + this._squareIcon + "</span>";
-        const selectLoadedChildren = "<span class = '" + this._loadedChildrenSelectClass + "'>" + this._squareIcon + "</span>";
+        const rowButton = "<span>" + this._expandedIcon + "</span>";
+        const selectLocal = "<span>" + this._squareIcon + "</span>";
+        const selectLoaded = "<span>" + this._squareIcon + "</span>";
+        const childrenRowsButton = "<span>" + this._expandedIcon + "</span>";
+        const selectLocalChildren = "<span>" + this._squareIcon + "</span>";
+        const selectLoadedChildren = "<span>" + this._squareIcon + "</span>";
 
         var record = "", line;
         //console.log(local, loaded, children, keys);
@@ -765,6 +647,119 @@ class UserDataUtility {
         if (parentId) { this.row("row_" + id).addClass("parentId_" + parentId); }
         if (loaded) { this.row("row_" + id).addClass("loaded"); }
         if (local)    { this.row("row_" + id).addClass("local"); }
+
+        //click event for rowButtons ("row_" + id)
+        this.rowButton(id).on("click", function (e) {
+            //add shift-click to back-step
+            const id = $(this).parent().parent().parent().parent().prop("id"); 
+            if (self.rowIsCollapsed(id))   { self.uncollapseRow(id);
+                if (e.shiftKey)            { self.expandRow(id); }
+                else                       { self.hideRow(id); }
+            }
+            else if (self.rowIsHidden(id)) { self.unhideRow(id);
+                if (e.shiftKey)            { self.collapseRow(id); }
+                else                       { self.expandRow(id); }
+            }
+            else                           { self.unexpandRow(id);
+                if (e.shiftKey)            { self.hideRow(id); }
+                else                       { self.collapseRow(id); }
+            }
+        });
+
+        //click event for childrenRowsButton buttons (id + "_children")
+        this.childrenRowButton(id).on("click", function (e) {
+            //Add shift-click to back-step
+            const id = $(this).parent().parent().parent().parent().prop("id");
+            // If neither Shift nor Control are active, forward and all descendants
+            // If Shift is active, backwards
+            // If Control is active, only affect children
+
+            ids = (e.ctrlKey) ? self.childIdsOf(id) : self.descendantIdsOf(id);
+
+            if (rowsAreCollapsed(ids))   { self.uncollapseRows(ids);
+                if (e.shiftKey)          { self.expandRows(ids); }
+                else                     { self.hideRows(ids); }
+            }
+            else if (rowsAreHidden(ids)) { self.unhideRows(ids);
+                if (e.shiftKey)          { self.collapseRows(ids); }
+                else                     { self.expandRows(ids); }
+            }
+            else                         {  
+                if (e.shiftKey)          { self.uncollapseRows(ids); self.hideRows(ids); }
+                else                     { self.unhideRows(ids); self.collapseRows(ids); }
+            }
+        });
+        
+        //click event for select local record buttons ("local_" + id)
+        this.localSelect(id).on("click", function (e) {
+            const id = self.localId($(this).parent().parent().parent().parent().prop("id"));
+            if (self.recordIsSelected(id)) {
+                self.unselectRecord(id);
+                if (!e.ctrlKey) { self.unselectRecords(self.descendantIdsOf(id)); }
+            }
+            else {
+                self.selectRecord(id);
+                if (!e.ctrlKey) { self.selectRecords(self.descendantIdsOf(id)); }
+            }
+        });
+
+        //click event for select loaded record buttons ("loaded_" + id)
+        this.loadedSelect(id).on("click", function (e) {
+            const id = self.loadedId($(this).parent().parent().parent().parent().prop("id"));
+            if (self.recordIsSelected(id)) {
+                self.unselectRecord(id);
+                if (!e.ctrlKey) { self.unselectRecords(self.descendantIdsOf(id)); }
+            }
+            else {
+                self.selectRecord(id);
+                if (!e.ctrlKey) { self.selectRecords(self.descendantIdsOf(id)); }
+            }
+        });
+
+        //click event for select local Children buttons ("local_" + id + "_children")
+        this.localChildrenSelect(id).on("click", function (e) {
+            const id = self.localId($(this).parent().parent().parent().parent().prop("id"));
+            const ids = (e.ctrlKey) ? self.childIdsOf(id) : self.descendantIdsOf(id);
+            if (self.childrenSelectIsSelected(id)) {
+                self.unselectChildrenSelect(id);
+                self.unselectRecords(ids);
+            }
+            else {
+                self.selectChildrenSelect(id);
+                self.selectRecords(ids);
+            }
+        });
+
+        //click event for select loaded Children buttons ("loaded_" + id + "_children")
+        this.loadedChildrenSelect(id).on("click", function (e) {
+            const id = self.loadedId($(this).parent().parent().parent().parent().prop("id"));
+            const ids = (e.ctrlKey) ? self.childIdsOf(id) : self.descendantIdsOf(id);
+            if (self.childrenSelectIsSelected(id)) {
+                self.unselectChildrenSelect(id);
+                self.unselectRecords(ids);
+            }
+            else {
+                self.selectChildrenSelect(id);
+                self.selectRecords(ids);
+            }
+        });
+
+        [this.rowButton(id), this.childrenRowButton(id), this.localSelect(id), this.loadedSelects(id), this.localChildrenSelect(id), this.loadedChildrenSelect(id)].forEach(c => {
+            c.mousedown(function (e) {
+                if (e.ctrlKey || e.shiftKey) {
+                    // For non-IE browsers
+                    e.preventDefault();
+            
+                    // For IE
+                    if ($.support.msie) {
+                        this.onselectstart = function () { return false; };
+                        var self = this;  // capture in a closure
+                        window.setTimeout(function () { self.onselectstart = null; }, 0);
+                    }
+                }
+            });
+        });
+
         //console.log(local[children]);
         if (children) {
             keys = Object.keys(local[children]);
@@ -781,23 +776,8 @@ class UserDataUtility {
         }
     }
 
-    hasPrefix(id)       { return (id.includes("_") && this.isPrefix(this.idPrefix(id))); }
-    idPrefix(id)        { return (id.includes("_") ? id.split("_")[0] : null); }
-    isPrefix(prefix)    { return (["local", "loaded", "row", "parentId"].includes(prefix)); }
-    isId(id)            { return (this.hasPrefix(id) && !!parseInt(id.split("_")[1])); }
-    id(id)              { return (this.isId(id)) ? id.split("_")[1] : (isNumber(id)) ? id : null; }
-    localId(id)         { return "local_" + this.id(id); }
-    loadedId(id)        { return "loaded_" + this.id(id); }
-    rowId(id)           { return "row_" + this.id(id); }
-    parentId(id)        { return "parentId_" + this.id(id); }
-    hasRowPrefix(id)    { return (this.isId(id) && id.startsWith("row_")); }
-    hasParentPrefix(id) { return (this.isId(id) && id.startsWith("parentId_")); }
-    hasLocalPrefix(id)  { return (this.isId(id) && id.startsWith("local_")); }
-    hasLoadedPrefix(id) { return (this.isId(id) && id.startsWith("loaded_")); }
-    isRecordId(id)      { return (this.hasLocalPrefix(id) || this.hasLoadedPrefix(id)); }
- 
-    selectClass(id)   { return this.idPrefix(id) + "SelectClass"; }
-    otherRecordId(id) { return (this.isRecordId(id) ? (this.hasLocalPrefix(id)) ? this.loadedId(id) : this.localId(id): null); }
+    localRecordExists(id) { return this.row(id).hasClass("local"); }
+    loadedRecordExists(id) { return this.row(id).hasClass("loaded"); }
 
     resetRows(ids) { return ids.forEach(id => this.reset(id)); }
     resetRow(id) {
@@ -806,16 +786,13 @@ class UserDataUtility {
         this.expandRow(this.rowId(id));
     }
 
-    hasChildren(id)    { return $(".parentId_" + this.id(id)).length; }
-    rowIsHidden(id)    { return this.row(this.rowId(id)).hasClass("hidden"); }
-    rowIsCollapsed(id) { return this.row(this.rowId(id)).hasClass("collapsed"); }
-    rowIsExpanded(id)  { return (!this.rowIsCollapsed(this.rowId(id)) && !this.rowIsHidden(this.rowId(id))); }
-    rowIsSelected(id) {
-        return this.recordIsSelected(this.localId(id)) || this.recordIsSelected(this.loadedId(id));
-    }
-    recordIsSelected(id) {
-        return this.row(id).find("." + this.selectClass(id)).html() == this._checkedIcon;
-    }
+    hasChildren(id)            { return !!$(".parentId_" + this.id(id)).length; }
+    rowIsHidden(id)            { return this.row(id).hasClass("hidden"); }
+    rowIsCollapsed(id)         { return this.row(id).hasClass("collapsed"); }
+    rowIsExpanded(id)          { return (!this.rowIsCollapsed(id) && !this.rowIsHidden(id)); }
+    rowIsSelected(id)          { return this.localRecordIsSelected(id) || this.loadedRecordIsSelected(id); }
+    localRecordIsSelected(id)  { return this.localSelect(id).html() == this._checkedIcon; }
+    loadedRecordIsSelected(id) { return this.loadedSelect(id).html() == this._checkedIcon; }
 
     rowsAreHidden(ids)      { return ids.every(id => this.rowIsHidden(id)); }
     rowsAreCollapsed(ids)   { return ids.every(id => this.rowIsCollapsed(id)); }
@@ -836,12 +813,26 @@ class UserDataUtility {
     hideRow(id)         {   this.row(id).addClass("hidden");     this.rowButton(id).html(self._hiddenIcon); }
     collapseRow(id)     {   this.row(id).addClass("collapsed");  this.rowButton(id).html(self._collapsedIcon); }
     expandRow(id)       { /*this.row(id).addClass("expanded");*/ this.rowButton(id).html(self._expandedIcon); }
-    selectRecord(id) {
-        if (!this.isRecordId(id)) {
-            console.log("calling selectRecord without local_id or loaded_id", id);
-            console.trace();
-            return;
+    selectLocalRecord(id)      {
+        if (this.localRecordExists(id) && !this.localRecordIsSelected(id)) {
+            if (this.loadedRecordExists(id)) { this.unselectLoadedRecord(id); }
+            console.log("selecting loaded record");
+            console.log(this.selectClass(id));
+            this.row(id).addClass("localSelected");
+            this.localSelect(id).html(self._checkedIcon);
         }
+    }
+    selectLoadedRecord(id)     {
+        if (this.loadedRecordExists(id) && !this.loadedRecordIsSelected(id)) {
+            if (this.localRecordExists(id)) { this.unselectLocalRecord(id); }
+            console.log("selecting loaded record");
+            this.row(id).addClass("loadedSelected");
+            this.loadedSelect(id).html(self._checkedIcon);
+        }
+    }
+    unselectLocalRecord(id)    {}
+    unselectLoadedRecord(id)   {}
+    selectRecord(id) {
         if (this.recordExists(id) && !this.recordIsSelected(id)) {
             if (this.recordExists(this.otherRecordId(id))) { this.unselectRecord(this.otherRecordId(id)); }
             console.log("selecting record");
