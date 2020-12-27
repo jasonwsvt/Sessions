@@ -133,7 +133,7 @@
     width: 16px;
 }
 
-#userDataImportDiv {
+#userDataLoadDiv {
     z-index: 3;
     position: absolute;
     display: flex;

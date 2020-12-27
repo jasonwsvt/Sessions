@@ -579,33 +579,58 @@ class UserDataUtility {
             }
         });
         
-        //click event for selectRecord buttons ("select_" + id)
+        //click event for select local record buttons ("local_" + id)
         this.localSelects.on("click", function (e) {
             const id = "local_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
-            self.selectRecord(id);
-            if (!e.ctrlKey) { self.selectRecords(self.descendantIdsOf(id)); }
+            if (self.recordIsSelected(id)) {
+                self.unselectRecord(id);
+                if (!e.ctrlKey) { self.unselectRecords(self.descendantIdsOf(id)); }
+            }
+            else {
+                self.selectRecord(id);
+                if (!e.ctrlKey) { self.selectRecords(self.descendantIdsOf(id)); }
+            }
         });
 
+        //click event for select loaded record buttons ("loaded_" + id)
         this.loadedSelects.on("click", function (e) {
             const id = "loaded_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
-            self.selectRecord(id);
-            if (!e.ctrlKey) { self.selectRecords(self.descendantIdsOf(id)); }
+            if (self.recordIsSelected(id)) {
+                self.unselectRecord(id);
+                if (!e.ctrlKey) { self.unselectRecords(self.descendantIdsOf(id)); }
+            }
+            else {
+                self.selectRecord(id);
+                if (!e.ctrlKey) { self.selectRecords(self.descendantIdsOf(id)); }
+            }
         });
 
-        //click event for selectChildren buttons ("select_" + id + "_children")
+        //click event for select local Children buttons ("local_" + id + "_children")
         this.localChildrenSelects.on("click", function (e) {
             const id = "local_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
-            self.childrenSelect(id);
-            if (e.ctrlKey) { self.selectRecords(self.childIdsOf(id)); }
-            else { self.selectRecords(self.descendantIdsOf(id)); }
+            const ids = (e.ctrlKey) ? self.childIdsOf(id) : self.descendantIdsOf(id);
+            if (self.childrenSelectIsSelected(id)) {
+                self.unselectChildrenSelect(id);
+                self.unselectRecords(ids);
+            }
+            else {
+                self.selectChildrenSelect(id);
+                self.selectRecords(ids);
+            }
         });
 
-        //click event for selectChildren buttons ("select_" + id + "_children")
+        //click event for select loaded Children buttons ("loaded_" + id + "_children")
         this.loadedChildrenSelects.on("click", function (e) {
             const id = "loaded_" + $(this).parent().parent().parent().parent().prop("id").split("_")[1];
-            self.childrenSelect(id);
-            if (e.ctrlKey) { self.selectRecords(self.loadedChildrenOf(id)); }
-            else { self.selectRecords(self.loadeddescendantsOf(id)); }
+            const ids = (e.ctrlKey) ? self.childIdsOf(id) : self.descendantIdsOf(id);
+            if (self.childrenSelectIsSelected(id)) {
+                self.unselectChildrenSelect(id);
+                self.unselectRecords(ids);
+            }
+            else {
+                self.selectChildrenSelect(id);
+                self.selectRecords(ids);
+            }
         });
 
         [this.rowButtons, this.childrenRowButtons, this.localSelects, this.loadedSelects, this.localChildrenSelects, this.loadedChildrenSelects].forEach(c => {
@@ -819,6 +844,8 @@ class UserDataUtility {
         }
         if (this.recordExists(id) && !this.recordIsSelected(id)) {
             if (this.recordExists(this.otherRecordId(id))) { this.unselectRecord(this.otherRecordId(id)); }
+            console.log("selecting record");
+            console.log(this.selectClass(id));
             this.row(id).addClass(this.selectClass(id));
             this.row(id).find("." + this.selectClass(id)).html(self._checkedIcon);
         }
@@ -834,6 +861,8 @@ class UserDataUtility {
             return;
         }
         if (this.recordExists(id) && this.recordIsSelected(id)) {
+            console.log("unselecting record");
+            console.log(this.selectClass(id));
             this.row(id).removeClass(this.selectClass(id));
             this.row(id).find("." + this.selectClass(id)).html(self._squareIcon);
         }
@@ -947,12 +976,9 @@ class UserDataUtility {
     childIdsOf(parentId) {
         const rows = (!isArray($(".parentId_" + this.id(parentId))))
             ? [$(".parentId_" + this.id(parentId))] : $(".parentId_" + this.id(parentId));
-        if (!isArray(rows)) { rows = [rows]; }
         const prefix = this.idPrefix(parentId);
-        console.log(rows);
-        rows.forEach(row => { console.log(row, row.prop("id")); });
-        const rowIds = rows.map(row => (prefix + this.id(row.prop("id"))));
-        return rowIds.filter(id => this.isRecordId(id));
+        rows.forEach(row => { console.log(row.prop("id")); });
+        return rows.map(row => (prefix + this.id(row.prop("id")))).filter(id => this.isRecordId(id));
     }
 
     descendantIdsOf(id) {
