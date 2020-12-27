@@ -817,7 +817,6 @@ class UserDataUtility {
         if (this.localRecordExists(id) && !this.localRecordIsSelected(id)) {
             if (this.loadedRecordExists(id)) { this.unselectLoadedRecord(id); }
             console.log("selecting loaded record");
-            console.log(this.selectClass(id));
             this.row(id).addClass("localSelected");
             this.localSelect(id).html(self._checkedIcon);
         }
@@ -830,32 +829,22 @@ class UserDataUtility {
             this.loadedSelect(id).html(self._checkedIcon);
         }
     }
-    unselectLocalRecord(id)    {}
-    unselectLoadedRecord(id)   {}
-    selectRecord(id) {
-        if (this.recordExists(id) && !this.recordIsSelected(id)) {
-            if (this.recordExists(this.otherRecordId(id))) { this.unselectRecord(this.otherRecordId(id)); }
-            console.log("selecting record");
-            console.log(this.selectClass(id));
-            this.row(id).addClass(this.selectClass(id));
-            this.row(id).find("." + this.selectClass(id)).html(self._checkedIcon);
-        }
-    }
 
     unhideRow(id)       {   this.row(id).removeClass("hidden");     this.rowButton(id).html(""); }
     uncollapseRow(id)   {   this.row(id).removeClass("collapsed");  this.rowButton(id).html(""); }
     unexpandRow(id)     { /*this.row(id).removeClass("expanded");*/ this.rowButton(id).html(""); }
-    unselectRecord(id) {
-        if (!this.isRecordId(id)) {
-            console.log("calling selectRecord without local_id or loaded_id");
-            console.trace();
-            return;
+    unselectLocalRecord(id)    {
+        if (this.localRecordExists(id) && this.localRecordIsSelected(id)) {
+            console.log("unselecting local record");
+            this.row(id).removeClass("localRecord");
+            this.localSelect(id).html(self._squareIcon);
         }
-        if (this.recordExists(id) && this.recordIsSelected(id)) {
-            console.log("unselecting record");
-            console.log(this.selectClass(id));
-            this.row(id).removeClass(this.selectClass(id));
-            this.row(id).find("." + this.selectClass(id)).html(self._squareIcon);
+    }
+    unselectLoadedRecord(id)   {
+        if (this.loadedRecordExists(id) && this.loadedRecordIsSelected(id)) {
+            console.log("unselecting loaded record");
+            this.row(id).removeClass("loadedRecord");
+            this.loadedSelect(id).html(self._squareIcon);
         }
     }
 
