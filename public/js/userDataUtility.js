@@ -778,6 +778,7 @@ class UserDataUtility {
 
     localRecordExists(id) { return this.row(id).hasClass("local"); }
     loadedRecordExists(id) { return this.row(id).hasClass("loaded"); }
+    get loadedsExist() { return !!$(".loaded").length; }
 
     resetRows(ids) { return ids.forEach(id => this.reset(id)); }
     resetRow(id) {
@@ -794,21 +795,23 @@ class UserDataUtility {
     localRecordIsSelected(id)  { return this.localSelect(id).html() == this._checkedIcon; }
     loadedRecordIsSelected(id) { return this.loadedSelect(id).html() == this._checkedIcon; }
 
-    rowsAreHidden(ids)      { return ids.every(id => this.rowIsHidden(id)); }
-    rowsAreCollapsed(ids)   { return ids.every(id => this.rowIsCollapsed(id)); }
-    rowsAreExpanded(ids)    { return ids.every(id => this.rowIsExpanded(id)); }
-    recordsAreSelected(ids) { return ids.every(id => this.recordIsSelected(id)); }
-    rowsAreSelected(ids)    { return ids.every(id => this.rowIsSelected(id)); }
+    rowsAreHidden(ids)            { return ids.every(id => this.rowIsHidden(id)); }
+    rowsAreCollapsed(ids)         { return ids.every(id => this.rowIsCollapsed(id)); }
+    rowsAreExpanded(ids)          { return ids.every(id => this.rowIsExpanded(id)); }
+    rowsAreSelected(ids)          { return ids.every(id => this.rowIsSelected(id)); }
+    localRecordsAreSelected(ids)  { return ids.every(id => this.localRecordIsSelected(id)); }
+    loadedRecordsAreSelected(ids) { return ids.every(id => this.loadedRecordIsSelected(id)); }
 
-    hideRows(ids)       { ids.forEach(id => this.hideRow(id)); }
-    collapseRows(ids)   { ids.forEach(id => this.collapseRow(id)); }
-    expandRows(ids)     { ids.forEach(id => this.expandRow(id)); }
-    selectRecords(ids)  { ids.forEach(id => this.selectRecord(id)); }
+    hideRows(ids)             { ids.forEach(id => this.hideRow(id)); }
+    collapseRows(ids)         { ids.forEach(id => this.collapseRow(id)); }
+    expandRows(ids)           { ids.forEach(id => this.expandRow(id)); }
+    selectLocalRecords(ids)   { ids.forEach(id => this.selectLocalRecord(id)); }
+    selectLoadedRecords(ids)  { ids.forEach(id => this.selectLoadedRecord(id)); }
 
     unhideRows(ids)     { ids.forEach(id => this.unhideRow(id)); }
     uncollapseRows(ids) { ids.forEach(id => this.uncollapseRow(id)); }
     unexpandRows(ids)   { ids.forEach(id => this.unexpandRow(id)); }
-    unselectRecords(ids){ ids.forEach(id => this.unselectRecord(id)); }
+    unselectRows(ids)   { ids.forEach(id => this.unselectRow(id)); }
 
     hideRow(id)         {   this.row(id).addClass("hidden");     this.rowButton(id).html(self._hiddenIcon); }
     collapseRow(id)     {   this.row(id).addClass("collapsed");  this.rowButton(id).html(self._collapsedIcon); }
@@ -833,6 +836,8 @@ class UserDataUtility {
     unhideRow(id)       {   this.row(id).removeClass("hidden");     this.rowButton(id).html(""); }
     uncollapseRow(id)   {   this.row(id).removeClass("collapsed");  this.rowButton(id).html(""); }
     unexpandRow(id)     { /*this.row(id).removeClass("expanded");*/ this.rowButton(id).html(""); }
+    unselectRow(id)     { this.unselectLocalRecord(id); this.unselectLoadedRecord(id); }
+
     unselectLocalRecord(id)    {
         if (this.localRecordExists(id) && this.localRecordIsSelected(id)) {
             console.log("unselecting local record");
@@ -915,8 +920,8 @@ class UserDataUtility {
         }
     }
     
-    record(id) {
-        if (this.hasLocalPrefix(id) && this.recordExists(id)) {
+    localRecord(id) {
+        if (this.localRecordExists(id)) {
             var record = [], name, value;
             this.row(id).find("tr").forEach(line => {
                 name = line.find("td").eq(2).text;
@@ -925,22 +930,18 @@ class UserDataUtility {
             });
             return record;
         }
-        else if (id.startsWith("loaded_") && this.recordExists(id)) {
+    }
+
+    loadedRecord(id) {
+        if (this.loadedRecordExists(id)) {
             var record = [], name, value;
             this.row(id).find("tr").forEach(line => {
                 name = line.find("td").eq(2).text;
                 value = line.find("td").eq(5).text;
                 if (value) { record[name] = value; }
             });
-            return (record.length) ? record : null;
+            return record;
         }
-        else { return null; }
-    }
-
-    get loadedsExist() { return !!$(this._loadedSelectClass).length; }
-    recordExists(id) {
-        if (this.hasLoadedPrefix(id) && !this.loadedsExist) { return false; }
-        return !!this.row(id).find("." + this.selectClass(id)).html().length;
     }
 
     //Id collections
