@@ -776,16 +776,15 @@ class UserDataUtility {
         }
     }
 
+    resetRows(ids) { return ids.forEach(id => this.reset(id)); }
+    resetRow(id) {
+        this.unselectRow(id);
+        this.expandRow(this.rowId(id));
+    }
+
     localRecordExists(id) { return this.row(id).hasClass("local"); }
     loadedRecordExists(id) { return this.row(id).hasClass("loaded"); }
     get loadedsExist() { return !!$(".loaded").length; }
-
-    resetRows(ids) { return ids.forEach(id => this.reset(id)); }
-    resetRow(id) {
-        this.unselectRecord(this.localId(id));
-        this.unselectRecord(this.loadedId(id));
-        this.expandRow(this.rowId(id));
-    }
 
     hasChildren(id)            { return !!$(".parentId_" + this.id(id)).length; }
     rowIsHidden(id)            { return this.row(id).hasClass("hidden"); }
@@ -801,6 +800,63 @@ class UserDataUtility {
     rowsAreSelected(ids)          { return ids.every(id => this.rowIsSelected(id)); }
     localRecordsAreSelected(ids)  { return ids.every(id => this.localRecordIsSelected(id)); }
     loadedRecordsAreSelected(ids) { return ids.every(id => this.loadedRecordIsSelected(id)); }
+
+    rowRecordsAreIdentical(id) {
+        if (!this.localRecordExists(id) || !this.recordExists(loadedId)) { return false; }
+        const local = this.localRecord(id);
+        const loaded = this.loadedRecord(id);
+        if (local == null || loaded == null) { return false; }
+        if (local.length !== loaded.length) { return false; }
+        const localKeys = Object.keys(local);
+        const loadedKeys = Object.keys(loaded);
+        localKeys.forEach(key => {
+            if (!loadedKeys.contains(key)) { return false; }
+            if (local[key] != loaded[key]) { return false; }
+        });
+        return true;
+    }
+
+    loadedRecordIsNewer(id)  {
+        if (!this.loadedRecordExists(id)) { return false; }
+        if (!this.localRecordExists(id)) { return true; }
+        const local = this.localRecord(id), loaded = this.loadedRecord(id);
+        const localLastEdited = parseInt(local.lastEdited);
+        const loadedLastEdited = parseInt(loaded.lastEdited);
+        if (localLastEdited > 0 && loadedLastEdited > 0) {
+            return (loadedLastEdited > localLastEdited) ? true : false;
+        }
+        const localCreation = parseInt(local.creation);
+        const loadedCreation = parseInt(loaded.creation);
+        if (localCreation > 0 && loadedCreation > 0) {
+            return (loadedCreation > localCreation) ? true : false;
+        }
+        const localLastOpened = parseInt(local.lastOpened);
+        const loadedLastOpened = parseInt(loaded.lastOpened);
+        if (localLastOpened > 0 && loadedLastOpened > 0) {
+            return (loadedLastOpened > localLastOpened) ? true : false;
+        }
+    }
+    
+    loadedRecordIsOlder(id)  {
+        if (!this.loadedRecordExists(id)) { return false; }
+        if (!this.localRecordExists(id)) { return true; }
+        const local = this.localRecord(id), loaded = this.loadedRecord(id);
+        const localLastEdited = parseInt(local.lastEdited);
+        const loadedLastEdited = parseInt(loaded.lastEdited);
+        if (localLastEdited > 0 && loadedLastEdited > 0) {
+            return (loadedLastEdited < localLastEdited) ? true : false;
+        }
+        const localCreation = parseInt(local.creation);
+        const loadedCreation = parseInt(loaded.creation);
+        if (localCreation > 0 && loadedCreation > 0) {
+            return (loadedLastEdited < localLastEdited) ? true : false;
+        }
+        const localLastOpened = parseInt(local.lastOpened);
+        const loadedLastOpened = parseInt(loadedId.lastOpened);
+        if (localLastOpened > 0 && loadedLastOpened > 0) {
+            return (loadedLastOpened < localLastOpened) ? true : false;
+        }
+    }
 
     hideRows(ids)             { ids.forEach(id => this.hideRow(id)); }
     collapseRows(ids)         { ids.forEach(id => this.collapseRow(id)); }
@@ -837,7 +893,6 @@ class UserDataUtility {
     uncollapseRow(id)   {   this.row(id).removeClass("collapsed");  this.rowButton(id).html(""); }
     unexpandRow(id)     { /*this.row(id).removeClass("expanded");*/ this.rowButton(id).html(""); }
     unselectRow(id)     { this.unselectLocalRecord(id); this.unselectLoadedRecord(id); }
-
     unselectLocalRecord(id)    {
         if (this.localRecordExists(id) && this.localRecordIsSelected(id)) {
             console.log("unselecting local record");
@@ -852,74 +907,7 @@ class UserDataUtility {
             this.loadedSelect(id).html(self._squareIcon);
         }
     }
-
-    rowRecordsAreIdentical(id) {
-        const localId = this.localId(id);
-        const loadedId = this.loadedId(id);
-        if (!this.recordExists(localId) || !this.recordExists(loadedId)) { return false; }
-        const local = this.record(localId);
-        const loaded = this.record(loadedId);
-        if (local == null || loaded == null) { return false; }
-        if (local.length !== loaded.length) { return false; }
-        const localKeys = Object.keys(local);
-        const loadedKeys = Object.keys(loaded);
-        localKeys.forEach(key => {
-            if (!loadedKeys.contains(key)) { return false; }
-            if (local[key] != loaded[key]) { return false; }
-        });
-        return true;
-    }
-
-    newerRecord(id)  {
-        const localId = this.localId(id), local = this.record(localId);
-        const loadedId = this.loadedId(id), loaded = this.record(loadedId);
-        if (!this.recordExists(localId)) { return loadedId; }
-        if (!this.recordExists(loadedId)) { return localId; }
-        const localLastEdited = parseInt(local.lastEdited);
-        const loadedLastEdited = parseInt(loaded.lastEdited);
-        if (localLastEdited && loadedLastEdited) {
-            if (localLastEdited >= loadedLastEdited) { return localId; }
-            else { return loadedId; }
-        }
-        const localCreation = parseInt(local.creation);
-        const loadedCreation = parseInt(loaded.creation);
-        if (localCreation && loadedCreation) {
-            if (localCreation >= loadedCreation) { return localId; }
-            else { return loadedId; }
-        }
-        const localLastOpened = parseInt(local.lastOpened);
-        const loadedLastOpened = parseInt(loaded.lastOpened);
-        if (localLastOpened && loadedLastOpened) {
-            if (localLastOpened >= loadedLastOpened) { return localId; }
-            else { return loadedId; }
-        }
-    }
-    
-    olderRecord(id)  {
-        const localId = this.localId(id), local = this.record(localId);
-        const loadedId = this.loadedId(id), loaded = this.record(loadedId);
-        if (!this.recordExists(localId)) { return loadedId; }
-        if (!this.recordExists(loadedId)) { return localId; }
-        const localLastEdited = parseInt(local.lastEdited);
-        const loadedLastEdited = parseInt(loaded.lastEdited);
-        if (localLastEdited && loadedLastEdited) {
-            if (localLastEdited < loadedLastEdited) { return localId; }
-            else { return loadedId; }
-        }
-        const localCreation = parseInt(local.creation);
-        const loadedCreation = parseInt(loaded.creation);
-        if (localCreation && loadedCreation) {
-            if (localCreation < loadedCreation) { return localId; }
-            else { return loadedId; }
-        }
-        const localLastOpened = parseInt(local.lastOpened);
-        const loadedLastOpened = parseInt(loadedId.lastOpened);
-        if (localLastOpened && loadedLastOpened) {
-            if (localLastOpened < loadedLastOpened) { return localId; }
-            else { return loadedId; }
-        }
-    }
-    
+   
     localRecord(id) {
         if (this.localRecordExists(id)) {
             var record = [], name, value;
@@ -945,8 +933,7 @@ class UserDataUtility {
     }
 
     //Id collections
-    get allIds() { return this.allRowIds.map(parseInt(this.id(this.rows.eq(i).prop("id")))); }
-    get allRowIds() {
+    get allIds() {
         var ids = [];
         for (var i = 0; i < this.rows.length; i++) {
             ids.push(this.rows.eq(i).prop("id"));
@@ -954,7 +941,7 @@ class UserDataUtility {
         return ids;
     }
 
-    childIdsOf(parentId) {
+    localChildIdsOf(parentId) {
         const rows = (!isArray($(".parentId_" + this.id(parentId))))
             ? [$(".parentId_" + this.id(parentId))] : $(".parentId_" + this.id(parentId));
         const prefix = this.idPrefix(parentId);
@@ -962,21 +949,42 @@ class UserDataUtility {
         return rows.map(row => (prefix + this.id(row.prop("id")))).filter(id => this.isRecordId(id));
     }
 
-    descendantIdsOf(id) {
+    loadedChildIdsOf(parentId) {
+        const rows = (!isArray($(".parentId_" + this.id(parentId))))
+            ? [$(".parentId_" + this.id(parentId))] : $(".parentId_" + this.id(parentId));
+        const prefix = this.idPrefix(parentId);
+        rows.forEach(row => { console.log(row.prop("id")); });
+        return rows.map(row => (prefix + this.id(row.prop("id")))).filter(id => this.isRecordId(id));
+    }
+
+    localDescendantIdsOf(id) {
         var ids = [];
-        if (this.hasChildren(id)) {
-            this.childIdsOf(id).forEach(childId => {
+        if (this.hasLocalChildren(id)) {
+            this.localChildIdsOf(id).forEach(childId => {
                 ids.push(childId);
-                if (this.hasChildren(childId)) {
-                    ids.concat(this.descendantIdsOf(childId));
+                if (this.hasLocalChildren(childId)) {
+                    ids.concat(this.localDescendantIdsOf(childId));
                 }
             });
         }
         return ids;
     }
 
-    get allLocalIds()            { return this.allIds.map(id => "local_" + id).filter(id => this.recordExists(id)); }
-    get allLoadedIds()           { return this.allIds.map(id => "loaded_" + id).filter(id => this.loadedExists(id)) }
+    loadedDescendantIdsOf(id) {
+        var ids = [];
+        if (this.hasLoadedChildren(id)) {
+            this.loadedChildIdsOf(id).forEach(childId => {
+                ids.push(childId);
+                if (this.hasLoadedChildren(childId)) {
+                    ids.concat(this.loadedDescendantIdsOf(childId));
+                }
+            });
+        }
+        return ids;
+    }
+
+    get allLocalIds()            { return this.allIds.filter(id => this.localRecordExists(id)); }
+    get allLoadedIds()           { return this.allIds.filter(id => this.loadedRecordExists(id)) }
     get allClientRowIds()        { return this.allIds.filter(id => this.row(id).find(".inside1").length); }
     get allIssueRowIds()         { return this.allIds.filter(id => this.row(id).find(".inside2").length); }
     get allSessionRowIds()       { return this.allIds.filter(id => this.row(id).find(".inside3").length); }
@@ -989,8 +997,8 @@ class UserDataUtility {
     get allSelectedRowIds()      { return this.allIds.filter(id => rowIsSelected(id)); }
     get allSelectedRecordIds()   { return this.allIds.filter(id => this.localIsSelected(id)); }
     get allUnselectedRecordIds() { return this.allIds.filter(id => !this.localIsSelected(id)); }
-    get allNewerRecordIds()      { return this.allIds.map(id => this.newerRecord(id)); }
-    get allOlderRecordIds()      { return this.allIds.map(id => this.olderRecord(id)); }
+    get allNewerLoadedRecordIds() { return this.allIds.map(id => this.newerRecord(id)); }
+    get allOlderLoadedRecordIds() { return this.allIds.map(id => this.olderRecord(id)); }
 
     _doAdjustOption() {
         const adjust = this.adjust.data("value");
