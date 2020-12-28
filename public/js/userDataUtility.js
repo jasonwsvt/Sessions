@@ -758,7 +758,7 @@ class UserDataUtility {
             record += "<tr>" + line + "</tr>";
         }
         this.scrollAreaDiv.append("<table id = 'row_" + id + "' class = 'flex-container'>" + record + "</table>");
-        if (parentId) { this.row("row_" + id).addClass("parentId_" + parentId); }
+        if (parentId) { this.row("row_" + id).addClass(this.parentId("row_" + parentId)); }
         if (loaded) { this.row("row_" + id).addClass("loaded"); }
         if (local)    { this.row("row_" + id).addClass("local"); }
 
@@ -784,12 +784,13 @@ class UserDataUtility {
         this.expandRow(this.rowId(id));
     }
 
-    localRecordExists(id) { return this.row(id).hasClass("local"); }
-    loadedRecordExists(id) { return this.row(id).hasClass("loaded"); }
-    get loadedsExist() { return !!$(".loaded").length; }
+    parentId(id)               { return "parentId_" + id.split("_")[1]; }
+    localRecordExists(id)      { return this.row(id).hasClass("local"); }
+    loadedRecordExists(id)     { return this.row(id).hasClass("loaded"); }
+    get loadedsExist()         { return !!$(".loaded").length; }
 
-    hasLocalChildren(id)       { return !!$(".parentId_" + this.id(id)).length; }
-    hasLoadedChildren(id)      { return !!$(".parentId_" + this.id(id)).length; }
+    hasLocalChildren(id)       { return (this.localRecordExists(id) && !!$("." + this.parentId(id)).length); }
+    hasLoadedChildren(id)      { return (this.loadedRecordExists(id) && !!$("." + this.parentId(id)).length); }
     rowIsHidden(id)            { return this.row(id).hasClass("hidden"); }
     rowIsCollapsed(id)         { return this.row(id).hasClass("collapsed"); }
     rowIsExpanded(id)          { return (!this.rowIsCollapsed(id) && !this.rowIsHidden(id)); }
@@ -875,15 +876,15 @@ class UserDataUtility {
     expandRow(id)       { /*this.row(id).addClass("expanded");*/ this.rowButton(id).html(self._expandedIcon); }
     selectLocalRecord(id)      {
         if (this.localRecordExists(id) && !this.localRecordIsSelected(id)) {
-            if (this.loadedRecordExists(id)) { this.unselectLoadedRecord(id); }
-            console.log("selecting loaded record");
+            if (this.loadedRecordExists(id) && this.loadedRecordIsSelected(id)) { this.unselectLoadedRecord(id); }
+            console.log("selecting local record");
             this.row(id).addClass("localSelected");
             this.localSelect(id).html(self._checkedIcon);
         }
     }
     selectLoadedRecord(id)     {
         if (this.loadedRecordExists(id) && !this.loadedRecordIsSelected(id)) {
-            if (this.localRecordExists(id)) { this.unselectLocalRecord(id); }
+            if (this.localRecordExists(id) && this.localRecordIsSelected(id)) { this.unselectLocalRecord(id); }
             console.log("selecting loaded record");
             this.row(id).addClass("loadedSelected");
             this.loadedSelect(id).html(self._checkedIcon);
@@ -943,19 +944,15 @@ class UserDataUtility {
     }
 
     localChildIdsOf(parentId) {
-        const rows = (!isArray($(".parentId_" + this.id(parentId))))
-            ? [$(".parentId_" + this.id(parentId))] : $(".parentId_" + this.id(parentId));
-        const prefix = this.idPrefix(parentId);
-        rows.forEach(row => { console.log(row.prop("id")); });
-        return rows.map(row => (prefix + this.id(row.prop("id")))).filter(id => this.isRecordId(id));
+        var rows = $("." + this.parentId(parentId));
+        if (!isArray(rows)) { rows = [rows]; }
+        return rows.map(row => (row.prop("id"))).filter(id => this.localRecordExists(id));
     }
 
     loadedChildIdsOf(parentId) {
-        const rows = (!isArray($(".parentId_" + this.id(parentId))))
-            ? [$(".parentId_" + this.id(parentId))] : $(".parentId_" + this.id(parentId));
-        const prefix = this.idPrefix(parentId);
-        rows.forEach(row => { console.log(row.prop("id")); });
-        return rows.map(row => (prefix + this.id(row.prop("id")))).filter(id => this.isRecordId(id));
+        var rows = $("." + this.parentId(parentId));
+        if (!isArray(rows)) { rows = [rows]; }
+        return rows.map(row => (row.prop("id"))).filter(id => this.loadedRecordExists(id));
     }
 
     localDescendantIdsOf(id) {
