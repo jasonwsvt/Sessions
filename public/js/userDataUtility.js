@@ -760,7 +760,7 @@ class UserDataUtility {
         this.scrollAreaDiv.append("<table id = 'row_" + id + "' class = 'flex-container'>" + record + "</table>");
         if (parentId) { this.row("row_" + id).addClass(this.parentId("row_" + parentId)); }
         if (loaded) { this.row("row_" + id).addClass("loaded"); }
-        if (local)    { this.row("row_" + id).addClass("local"); }
+        if (local)  { this.row("row_" + id).addClass("local"); }
 
         //console.log(local[children]);
         if (children) {
@@ -877,7 +877,7 @@ class UserDataUtility {
     selectLocalRecord(id)      {
         if (this.localRecordExists(id) && !this.localRecordIsSelected(id)) {
             if (this.loadedRecordExists(id) && this.loadedRecordIsSelected(id)) { this.unselectLoadedRecord(id); }
-            console.log("selecting local record");
+            console.log("selecting local record", id);
             this.row(id).addClass("localSelected");
             this.localSelect(id).html(self._checkedIcon);
         }
@@ -961,7 +961,7 @@ class UserDataUtility {
             this.localChildIdsOf(id).forEach(childId => {
                 ids.push(childId);
                 if (this.hasLocalChildren(childId)) {
-                    ids.concat(this.localDescendantIdsOf(childId));
+                    ids = ids.concat(this.localDescendantIdsOf(childId));
                 }
             });
         }
@@ -974,7 +974,7 @@ class UserDataUtility {
             this.loadedChildIdsOf(id).forEach(childId => {
                 ids.push(childId);
                 if (this.hasLoadedChildren(childId)) {
-                    ids.concat(this.loadedDescendantIdsOf(childId));
+                    ids = ids.concat(this.loadedDescendantIdsOf(childId));
                 }
             });
         }
