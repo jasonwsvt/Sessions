@@ -587,7 +587,7 @@ class UserDataUtility {
                 if (e.shiftKey)               { self.uncollapseRows(ids); self.hideRows(ids); }
                 else                          { self.unhideRows(ids); self.collapseRows(ids); }
             }
-            self.updateChildrenSelectStatuses(id);
+            self.updateChildrenRowsButtonStatuses(id);
         });
         
         //click event for select local record buttons ("local_" + id)
@@ -854,6 +854,7 @@ class UserDataUtility {
 
     updateChildrenRowsButtonStatuses(id) {
         if (this.hasParent(id)) { this.updateChildrenRowsButtonStatus(this.parentRowId(id)); }
+        this.updateChildrenRowsButtonStatus(id);
         if (this.hasChildren(id)) { 
             this.allDescendantIdsOf(id).forEach(id => this.updateChildrenRowsButtonStatus(id));
         }
