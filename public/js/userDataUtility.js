@@ -139,10 +139,10 @@ class UserDataUtility {
     loadedChildrenSelect(id)    { return (this.loadedRecordExists(id)) ? this.row(id).find("tr:last>td:nth-of-type(6)>span") : null; }
     get rowButtons()            { return this.scrollAreaDiv.find("tr:first>td:first>span"); }
     get childrenRowsButtons()   { return this.scrollAreaDiv.find("tr:last>td:first>span"); }
-    get localSelects()          { return this.scrollAreaDiv.find(".local tr:first>td:nth-of-type(4)>span"); }
-    get loadedSelects()         { return this.scrollAreaDiv.find(".loaded tr:first>td:nth-of-type(6)>span"); }
-    get localChildrenSelects()  { return this.scrollAreaDiv.find(".local tr:last>td:nth-of-type(4)>span"); }
-    get loadedChildrenSelects() { return this.scrollAreaDiv.find(".loaded tr:last>td:nth-of-type(6)>span"); }
+    get localSelects()          { return this.scrollAreaDiv.find(".local tr:first-child>td:nth-of-type(4)>span"); }
+    get loadedSelects()         { return this.scrollAreaDiv.find(".loaded tr:first-child>td:nth-of-type(6)>span"); }
+    get localChildrenSelects()  { return this.scrollAreaDiv.find(".local tr:last-child>td:nth-of-type(4)>span"); }
+    get loadedChildrenSelects() { return this.scrollAreaDiv.find(".loaded tr:last-child>td:nth-of-type(6)>span"); }
 
     build() {
         const loadDiv = "<div id = '" + this._loadDivID + "'></div>";
@@ -795,8 +795,8 @@ class UserDataUtility {
     rowIsCollapsed(id)         { return this.row(id).hasClass("collapsed"); }
     rowIsExpanded(id)          { return (!this.rowIsCollapsed(id) && !this.rowIsHidden(id)); }
     rowIsSelected(id)          { return this.localRecordIsSelected(id) || this.loadedRecordIsSelected(id); }
-    localRecordIsSelected(id)  { return this.localSelect(id).html() == this._checkedIcon; }
-    loadedRecordIsSelected(id) { return this.loadedSelect(id).html() == this._checkedIcon; }
+    localRecordIsSelected(id)  { return this.row(id).hasClass("localSelected"); }
+    loadedRecordIsSelected(id) { return this.row(id).hasClass("loadedSelected"); }
 
     rowsAreHidden(ids)            { return ids.every(id => this.rowIsHidden(id)); }
     rowsAreCollapsed(ids)         { return ids.every(id => this.rowIsCollapsed(id)); }
@@ -860,16 +860,18 @@ class UserDataUtility {
         return false;
     }
 
-    hideRows(ids)             { ids.forEach(id => this.hideRow(id)); }
-    collapseRows(ids)         { ids.forEach(id => this.collapseRow(id)); }
-    expandRows(ids)           { ids.forEach(id => this.expandRow(id)); }
-    selectLocalRecords(ids)   { ids.forEach(id => this.selectLocalRecord(id)); }
-    selectLoadedRecords(ids)  { ids.forEach(id => this.selectLoadedRecord(id)); }
+    hideRows(ids)              { ids.forEach(id => this.hideRow(id)); }
+    collapseRows(ids)          { ids.forEach(id => this.collapseRow(id)); }
+    expandRows(ids)            { ids.forEach(id => this.expandRow(id)); }
+    selectLocalRecords(ids)    { ids.forEach(id => this.selectLocalRecord(id)); }
+    selectLoadedRecords(ids)   { ids.forEach(id => this.selectLoadedRecord(id)); }
 
-    unhideRows(ids)     { ids.forEach(id => this.unhideRow(id)); }
-    uncollapseRows(ids) { ids.forEach(id => this.uncollapseRow(id)); }
-    unexpandRows(ids)   { ids.forEach(id => this.unexpandRow(id)); }
-    unselectRows(ids)   { ids.forEach(id => this.unselectRow(id)); }
+    unhideRows(ids)            { ids.forEach(id => this.unhideRow(id)); }
+    uncollapseRows(ids)        { ids.forEach(id => this.uncollapseRow(id)); }
+    unexpandRows(ids)          { ids.forEach(id => this.unexpandRow(id)); }
+    unselectRows(ids)          { ids.forEach(id => this.unselectRow(id)); }
+    unselectLocalRecords(ids)  { ids.forEach(id => this.unselectLocalRecord(id)); }
+    unselectLoadedRecords(ids) { ids.forEach(id => this.unselectLoadedRecord(id)); }
 
     hideRow(id)         {   this.row(id).addClass("hidden");     this.rowButton(id).html(self._hiddenIcon); }
     collapseRow(id)     {   this.row(id).addClass("collapsed");  this.rowButton(id).html(self._collapsedIcon); }
@@ -877,9 +879,8 @@ class UserDataUtility {
     selectLocalRecord(id)      {
         if (this.localRecordExists(id) && !this.localRecordIsSelected(id)) {
             if (this.loadedRecordExists(id) && this.loadedRecordIsSelected(id)) { this.unselectLoadedRecord(id); }
-            console.log("selecting local record", id);
             this.row(id).addClass("localSelected");
-            this.localSelect(id).html(self._checkedIcon);
+            this.localSelect(id).html(this._checkedIcon);
         }
     }
     selectLoadedRecord(id)     {
@@ -887,7 +888,7 @@ class UserDataUtility {
             if (this.localRecordExists(id) && this.localRecordIsSelected(id)) { this.unselectLocalRecord(id); }
             console.log("selecting loaded record");
             this.row(id).addClass("loadedSelected");
-            this.loadedSelect(id).html(self._checkedIcon);
+            this.loadedSelect(id).html(this._checkedIcon);
         }
     }
 
@@ -898,15 +899,15 @@ class UserDataUtility {
     unselectLocalRecord(id)    {
         if (this.localRecordExists(id) && this.localRecordIsSelected(id)) {
             console.log("unselecting local record");
-            this.row(id).removeClass("localRecord");
-            this.localSelect(id).html(self._squareIcon);
+            this.row(id).removeClass("localSelected");
+            this.localSelect(id).html(this._squareIcon);
         }
     }
     unselectLoadedRecord(id)   {
         if (this.loadedRecordExists(id) && this.loadedRecordIsSelected(id)) {
             console.log("unselecting loaded record");
-            this.row(id).removeClass("loadedRecord");
-            this.loadedSelect(id).html(self._squareIcon);
+            this.row(id).removeClass("loadedSelected");
+            this.loadedSelect(id).html(this._squareIcon);
         }
     }
    
