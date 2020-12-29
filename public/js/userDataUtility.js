@@ -22,6 +22,7 @@ class UserDataUtility {
     _checkedIcon   = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/></svg>';
     _caretDownIcon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>';
     _caretUpIcon   = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-up-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/></svg>';
+    _multiIcon     = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-dash-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/></svg>'
 
     _divID                     = "userDataDiv";
     _buttonID                  = "userDataButton";
@@ -137,8 +138,8 @@ class UserDataUtility {
     loadedSelect(id)            { return (this.loadedRecordExists(id)) ? this.row(id).find("tr:first>td:nth-of-type(6)>span") : null; }
     localChildrenSelect(id)     { return (this.localRecordExists(id)) ? this.row(id).find("tr:last>td:nth-of-type(4)>span") : null; }
     loadedChildrenSelect(id)    { return (this.loadedRecordExists(id)) ? this.row(id).find("tr:last>td:nth-of-type(6)>span") : null; }
-    get rowButtons()            { return this.scrollAreaDiv.find("tr:first>td:first>span"); }
-    get childrenRowsButtons()   { return this.scrollAreaDiv.find("tr:last>td:first>span"); }
+    get rowButtons()            { return this.scrollAreaDiv.find("tr:first-child>td:first-child>span"); }
+    get childrenRowsButtons()   { return this.scrollAreaDiv.find("tr:last-child>td:first-child>span"); }
     get localSelects()          { return this.scrollAreaDiv.find(".local tr:first-child>td:nth-of-type(4)>span"); }
     get loadedSelects()         { return this.scrollAreaDiv.find(".loaded tr:first-child>td:nth-of-type(6)>span"); }
     get localChildrenSelects()  { return this.scrollAreaDiv.find(".local tr:last-child>td:nth-of-type(4)>span"); }
@@ -561,6 +562,7 @@ class UserDataUtility {
                 if (e.shiftKey)            { self.hideRow(id); }
                 else                       { self.collapseRow(id); }
             }
+            if (self.hasParent(id)) { self.updateChildrenRowsButtonStatus(self.parentRowId(id)); }
         });
 
         //click event for childrenRowsButton buttons (id + "_children")
@@ -571,20 +573,21 @@ class UserDataUtility {
             // If Shift is active, backwards
             // If Control is active, only affect children
 
-            ids = (e.ctrlKey) ? self.childIdsOf(id) : self.descendantIdsOf(id);
+            const ids = (e.ctrlKey) ? self.allChildIdsOf(id) : self.allDescendantIdsOf(id);
 
-            if (rowsAreCollapsed(ids))   { self.uncollapseRows(ids);
-                if (e.shiftKey)          { self.expandRows(ids); }
-                else                     { self.hideRows(ids); }
+            if (self.rowsAreCollapsed(ids))   { self.uncollapseRows(ids);
+                if (e.shiftKey)               { self.expandRows(ids); }
+                else                          { self.hideRows(ids); }
             }
-            else if (rowsAreHidden(ids)) { self.unhideRows(ids);
-                if (e.shiftKey)          { self.collapseRows(ids); }
-                else                     { self.expandRows(ids); }
+            else if (self.rowsAreHidden(ids)) { self.unhideRows(ids);
+                if (e.shiftKey)               { self.collapseRows(ids); }
+                else                          { self.expandRows(ids); }
             }
-            else                         {  
-                if (e.shiftKey)          { self.uncollapseRows(ids); self.hideRows(ids); }
-                else                     { self.unhideRows(ids); self.collapseRows(ids); }
+            else                              {  
+                if (e.shiftKey)               { self.uncollapseRows(ids); self.hideRows(ids); }
+                else                          { self.unhideRows(ids); self.collapseRows(ids); }
             }
+            self.updateChildrenSelectStatuses(id);
         });
         
         //click event for select local record buttons ("local_" + id)
@@ -598,7 +601,7 @@ class UserDataUtility {
                 self.selectLocalRecord(id);
                 if (!e.ctrlKey) { self.selectLocalRecords(self.localDescendantIdsOf(id)); }
             }
-            self.updateAncestorChildrenSelectStatuses(id);
+            self.updateChildrenSelectStatuses(id);
         });
 
         //click event for select loaded record buttons ("loaded_" + id)
@@ -612,7 +615,7 @@ class UserDataUtility {
                 self.selectLoadedRecord(id);
                 if (!e.ctrlKey) { self.selectLoadedRecords(self.loadedDescendantIdsOf(id)); }
             }
-            self.updateAncestorChildrenSelectStatuses(id);
+            self.updateChildrenSelectStatuses(id);
         });
 
         //click event for select local Children buttons ("local_" + id + "_children")
@@ -625,8 +628,7 @@ class UserDataUtility {
             else {
                 self.selectLocalChildrenSelect(id);   self.selectLocalRecords(ids);
             }
-            self.updateChildrenSelectStatus(id);
-            self.updateAncestorChildrenSelectStatuses(id);
+            self.updateChildrenSelectStatuses(id);
         });
 
         //click event for select loaded Children buttons ("loaded_" + id + "_children")
@@ -639,8 +641,7 @@ class UserDataUtility {
             else {
                 self.selectLoadedChildrenSelect(id);   self.selectLoadedRecords(ids);
             }
-            self.updateChildrenSelectStatus(id);
-            self.updateAncestorChildrenSelectStatuses(id);
+            self.updateChildrenSelectStatuses(id);
         });
 
         [this.rowButtons, this.childrenRowsButtons, this.localSelects, this.loadedSelects, this.localChildrenSelects, this.loadedChildrenSelects].forEach(c => {
@@ -797,6 +798,7 @@ class UserDataUtility {
     parentRowId(id)    { return (this.parentClass(id)) ? "row_" + this.parentClass(id).split("_")[1] : null; }
     get loadedsExist() { return !!$(".loaded").length; }
 
+    hasChildren(id)       { return (this.hasLocalChildren(id) || this.hasLoadedChildren(id)); }
     hasLocalChildren(id)  { return (this.localRecordExists(id) && !!$("." + this.parentId(id)).length); }
     hasLoadedChildren(id) { return (this.loadedRecordExists(id) && !!$("." + this.parentId(id)).length); }
     rowIsHidden(id)       { return this.row(id).hasClass("hidden"); }
@@ -820,10 +822,12 @@ class UserDataUtility {
     localRecordsAreUnselected(ids)     { return ids.every(id => !this.localRecordIsSelected(id)); }
     loadedRecordsAreUnselected(ids)    { return ids.every(id => !this.loadedRecordIsSelected(id)); }
 
-    updateAncestorChildrenSelectStatuses(id) {
-        while (this.hasParent(id)) { 
-            id = this.parentRowId(id);
-            this.updateChildrenSelectStatus(id);
+    updateChildrenSelectStatuses(id) {
+        console.log(id, "has parent:", this.hasParent(id));
+        if (this.hasParent(id)) { this.updateChildrenSelectStatus(this.parentRowId(id)); }
+        this.updateChildrenSelectStatus(id);
+        if (this.hasChildren(id)) { 
+            this.allDescendantIdsOf(id).forEach(id => this.updateChildrenSelectStatus(id));
         }
     }
     updateChildrenSelectStatus(id) {
@@ -840,7 +844,26 @@ class UserDataUtility {
         this.loadedChildrenSelect(id).html(
             (this.loadedRecordsAreSelected(this.loadedChildIdsOf(id))) ? this._fullIcon :
             (this.loadedRecordsAreUnselected(this.loadedChildIdsOf(id))) ? this._emptyIcon :
-            this._partIcon);
+            this._multiIcon);
+    }
+
+    selectLocalChildrenSelect(id)    { this.localChildIdsOf(id).forEach(id => this.selectLocalRecord(id)); }
+    selectLoadedChildrenSelect(id)   { this.loadedChildIdsOf(id).forEach(id => this.selectLoadedRecord(id)); }
+    unselectLocalChildrenSelect(id)  { this.localChildIdsOf(id).forEach(id => this.unselectLocalRecord(id)); }
+    unselectLoadedChildrenSelect(id) { this.loadedChildIdsOf(id).forEach(id => this.unselectLoadedRecord(id)); }
+
+    updateChildrenRowsButtonStatuses(id) {
+        if (this.hasParent(id)) { this.updateChildrenRowsButtonStatus(this.parentRowId(id)); }
+        if (this.hasChildren(id)) { 
+            this.allDescendantIdsOf(id).forEach(id => this.updateChildrenRowsButtonStatus(id));
+        }
+    }
+
+    updateChildrenRowsButtonStatus(id) {
+        this.childrenRowsButton(id).html(
+            (this.rowsAreHidden(this.allChildIdsOf(id))) ? this._hiddenIcon :
+            (this.rowsAreCollapsed(this.allChildIdsOf(id))) ? this._collapsedIcon :
+            (this.rowsAreExpanded(this.allChildIdsOf(id))) ? this._expandedIcon : this._multiIcon);
     }
 
     rowRecordsAreIdentical(id) {
@@ -911,9 +934,9 @@ class UserDataUtility {
     unselectLocalRecords(ids)  { ids.forEach(id => this.unselectLocalRecord(id)); }
     unselectLoadedRecords(ids) { ids.forEach(id => this.unselectLoadedRecord(id)); }
 
-    hideRow(id)         {   this.row(id).addClass("hidden");     this.rowButton(id).html(self._hiddenIcon); }
-    collapseRow(id)     {   this.row(id).addClass("collapsed");  this.rowButton(id).html(self._collapsedIcon); }
-    expandRow(id)       { /*this.row(id).addClass("expanded");*/ this.rowButton(id).html(self._expandedIcon); }
+    hideRow(id)         {   this.row(id).addClass("hidden");     this.rowButton(id).html(this._hiddenIcon); }
+    collapseRow(id)     {   this.row(id).addClass("collapsed");  this.rowButton(id).html(this._collapsedIcon); }
+    expandRow(id)       { /*this.row(id).addClass("expanded");*/ this.rowButton(id).html(this._expandedIcon); }
     selectLocalRecord(id)      {
         if (this.localRecordExists(id) && !this.localRecordIsSelected(id)) {
             if (this.loadedRecordExists(id) && this.loadedRecordIsSelected(id)) { this.unselectLoadedRecord(id); }
@@ -982,16 +1005,26 @@ class UserDataUtility {
         return ids;
     }
 
-    localChildIdsOf(parentId) {
+    localChildIdsOf(parentId) { return this.allChildIdsOf(parentId).filter(id => this.localRecordExists(id)); }
+    loadedChildIdsOf(parentId) { return this.allChildIdsOf(parentId).filter(id => this.loadedRecordExists(id)); }
+    allChildIdsOf(parentId) {
         var rows = $("." + this.parentId(parentId));
         if (!isArray(rows)) { rows = [rows]; }
-        return rows.map(row => (row.prop("id"))).filter(id => this.localRecordExists(id));
+        return rows.map(row => (row.prop("id")));
     }
 
-    loadedChildIdsOf(parentId) {
-        var rows = $("." + this.parentId(parentId));
-        if (!isArray(rows)) { rows = [rows]; }
-        return rows.map(row => (row.prop("id"))).filter(id => this.loadedRecordExists(id));
+    allDescendantIdsOf(id) {
+        var ids = [];
+        if (this.hasLocalChildren(id)) {
+            this.allChildIdsOf(id).forEach(childId => {
+                ids.push(childId);
+                if (this.hasLocalChildren(childId)) {
+                    ids = ids.concat(this.localDescendantIdsOf(childId), this.loadedDescendantIdsOf(childId));
+                    ids.filter((id, index) => ids.indexOf(id) === index);
+                }
+            });
+        }
+        return ids;
     }
 
     localDescendantIdsOf(id) {
