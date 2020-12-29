@@ -598,6 +598,7 @@ class UserDataUtility {
                 self.selectLocalRecord(id);
                 if (!e.ctrlKey) { self.selectLocalRecords(self.localDescendantIdsOf(id)); }
             }
+            self.updateAncestorChildrenSelectStatuses(id);
         });
 
         //click event for select loaded record buttons ("loaded_" + id)
@@ -611,6 +612,7 @@ class UserDataUtility {
                 self.selectLoadedRecord(id);
                 if (!e.ctrlKey) { self.selectLoadedRecords(self.loadedDescendantIdsOf(id)); }
             }
+            self.updateAncestorChildrenSelectStatuses(id);
         });
 
         //click event for select local Children buttons ("local_" + id + "_children")
@@ -623,6 +625,8 @@ class UserDataUtility {
             else {
                 self.selectLocalChildrenSelect(id);   self.selectLocalRecords(ids);
             }
+            self.updateChildrenSelectStatus(id);
+            self.updateAncestorChildrenSelectStatuses(id);
         });
 
         //click event for select loaded Children buttons ("loaded_" + id + "_children")
@@ -635,6 +639,8 @@ class UserDataUtility {
             else {
                 self.selectLoadedChildrenSelect(id);   self.selectLoadedRecords(ids);
             }
+            self.updateChildrenSelectStatus(id);
+            self.updateAncestorChildrenSelectStatuses(id);
         });
 
         [this.rowButtons, this.childrenRowsButtons, this.localSelects, this.loadedSelects, this.localChildrenSelects, this.loadedChildrenSelects].forEach(c => {
@@ -783,27 +789,59 @@ class UserDataUtility {
         this.unselectRow(id);
         this.expandRow(this.rowId(id));
     }
+    classList(id)      { return this.row(id).attr("class").split(" "); }
+    parentClass(id)    { return this.classList(id).find(c => c.startsWith("parentId_")); }
+    hasParent(id)      { return !!this.parentClass(id); }
 
-    parentId(id)               { return "parentId_" + id.split("_")[1]; }
-    localRecordExists(id)      { return this.row(id).hasClass("local"); }
-    loadedRecordExists(id)     { return this.row(id).hasClass("loaded"); }
-    get loadedsExist()         { return !!$(".loaded").length; }
+    parentId(id)       { return "parentId_" + id.split("_")[1]; }
+    parentRowId(id)    { return (this.parentClass(id)) ? "row_" + this.parentClass(id).split("_")[1] : null; }
+    get loadedsExist() { return !!$(".loaded").length; }
 
-    hasLocalChildren(id)       { return (this.localRecordExists(id) && !!$("." + this.parentId(id)).length); }
-    hasLoadedChildren(id)      { return (this.loadedRecordExists(id) && !!$("." + this.parentId(id)).length); }
-    rowIsHidden(id)            { return this.row(id).hasClass("hidden"); }
-    rowIsCollapsed(id)         { return this.row(id).hasClass("collapsed"); }
-    rowIsExpanded(id)          { return (!this.rowIsCollapsed(id) && !this.rowIsHidden(id)); }
-    rowIsSelected(id)          { return this.localRecordIsSelected(id) || this.loadedRecordIsSelected(id); }
-    localRecordIsSelected(id)  { return this.row(id).hasClass("localSelected"); }
-    loadedRecordIsSelected(id) { return this.row(id).hasClass("loadedSelected"); }
+    hasLocalChildren(id)  { return (this.localRecordExists(id) && !!$("." + this.parentId(id)).length); }
+    hasLoadedChildren(id) { return (this.loadedRecordExists(id) && !!$("." + this.parentId(id)).length); }
+    rowIsHidden(id)       { return this.row(id).hasClass("hidden"); }
+    rowIsCollapsed(id)    { return this.row(id).hasClass("collapsed"); }
+    rowIsExpanded(id)     { return (!this.rowIsCollapsed(id) && !this.rowIsHidden(id)); }
+    rowIsSelected(id)     { return this.localRecordIsSelected(id) || this.loadedRecordIsSelected(id); }
 
-    rowsAreHidden(ids)            { return ids.every(id => this.rowIsHidden(id)); }
-    rowsAreCollapsed(ids)         { return ids.every(id => this.rowIsCollapsed(id)); }
-    rowsAreExpanded(ids)          { return ids.every(id => this.rowIsExpanded(id)); }
-    rowsAreSelected(ids)          { return ids.every(id => this.rowIsSelected(id)); }
-    localRecordsAreSelected(ids)  { return ids.every(id => this.localRecordIsSelected(id)); }
-    loadedRecordsAreSelected(ids) { return ids.every(id => this.loadedRecordIsSelected(id)); }
+    rowsAreHidden(ids)    { return ids.every(id => this.rowIsHidden(id)); }
+    rowsAreCollapsed(ids) { return ids.every(id => this.rowIsCollapsed(id)); }
+    rowsAreExpanded(ids)  { return ids.every(id => this.rowIsExpanded(id)); }
+    rowsAreSelected(ids)  { return ids.every(id => this.rowIsSelected(id)); }
+
+    localRecordExists(id)              { return this.row(id).hasClass("local"); }
+    loadedRecordExists(id)             { return this.row(id).hasClass("loaded"); }
+    localRecordIsSelected(id)          { return this.row(id).hasClass("localSelected"); }
+    loadedRecordIsSelected(id)         { return this.row(id).hasClass("loadedSelected"); }
+    localChildrenSelectIsSelected(id)  { return this.localRecordsAreSelected(this.localChildIdsOf(id)); }
+    loadedChildrenSelectIsSelected(id) { return this.loadedRecordsAreSelected(this.loadedChildIdsOf(id)); }
+    localRecordsAreSelected(ids)       { return ids.every(id => this.localRecordIsSelected(id)); }
+    loadedRecordsAreSelected(ids)      { return ids.every(id => this.loadedRecordIsSelected(id)); }
+    localRecordsAreUnselected(ids)     { return ids.every(id => !this.localRecordIsSelected(id)); }
+    loadedRecordsAreUnselected(ids)    { return ids.every(id => !this.loadedRecordIsSelected(id)); }
+
+    updateAncestorChildrenSelectStatuses(id) {
+        while (this.hasParent(id)) { 
+            id = this.parentRowId(id);
+            this.updateChildrenSelectStatus(id);
+        }
+    }
+    updateChildrenSelectStatus(id) {
+        if (this.localRecordExists(id)) { this.updateLocalChildrenSelectStatus(id); }
+        if (this.loadedRecordExists(id)) { this.updateLoadedChildrenSelectStatus(id); }
+    }
+    updateLocalChildrenSelectStatus(id) {
+        this.localChildrenSelect(id).html(
+            (this.localRecordsAreSelected(this.localChildIdsOf(id))) ? this._fullIcon :
+            (this.localRecordsAreUnselected(this.localChildIdsOf(id))) ? this._emptyIcon :
+            this._partIcon);
+    }
+    updateLoadedChildrenSelectStatus(id) {
+        this.loadedChildrenSelect(id).html(
+            (this.loadedRecordsAreSelected(this.loadedChildIdsOf(id))) ? this._fullIcon :
+            (this.loadedRecordsAreUnselected(this.loadedChildIdsOf(id))) ? this._emptyIcon :
+            this._partIcon);
+    }
 
     rowRecordsAreIdentical(id) {
         if (!this.localRecordExists(id) || !this.recordExists(loadedId)) { return false; }
