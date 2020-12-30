@@ -179,8 +179,8 @@ class UserDataUtility {
         this.actions.append(action1 + action2 + action3);
 
         const adjust1 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'sort'>Sort</button>";
-        const adjust2 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'maximize'>Maximize</button>";
-        const adjust3 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'minimize'>Minimize</button>";
+        const adjust2 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'expand'>Expand</button>";
+        const adjust3 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'collapse'>Collapse</button>";
         const adjust4 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'hide'>Hide</button>";
         const adjust5 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'select'>Select</button>";
         const adjust6 = "<button type = 'button' class = 'btn btn-sm btn-secondary hidden' value = 'import'>Import</button>";
@@ -233,37 +233,37 @@ class UserDataUtility {
         this.options.data("sort_3_1_unselected", "Opened");
         this.options.data("sort_3_1_value", "sort opened ascending");
         
-        this.options.data("maximize_indices", 7);
-        this.options.data("maximize_0_html", "Sessions");
-        this.options.data("maximize_0_value", "minimize sessions");
-        this.options.data("maximize_1_html", "Issues");
-        this.options.data("maximize_1_value", "minimize issues");
-        this.options.data("maximize_2_html", "Clients");
-        this.options.data("maximize_2_value", "minimize clients");
-        this.options.data("maximize_3_html", "Selected");
-        this.options.data("maximize_3_value", "maximize selected");
-        this.options.data("maximize_4_html", "Unselected");
-        this.options.data("maximize_4_value", "maximize unselected");
-        this.options.data("maximize_5_html", "Identical");
-        this.options.data("maximize_5_value", "maximize identical");
-        this.options.data("maximize_6_html", "Different");
-        this.options.data("maximize_6_value", "maximize different");
+        this.options.data("expand_indices", 7);
+        this.options.data("expand_0_html", "Sessions");
+        this.options.data("expand_0_value", "expand sessions");
+        this.options.data("expand_1_html", "Issues");
+        this.options.data("expand_1_value", "collapse issues");
+        this.options.data("expand_2_html", "Clients");
+        this.options.data("expand_2_value", "expand clients");
+        this.options.data("expand_3_html", "Selected");
+        this.options.data("expand_3_value", "expand selected");
+        this.options.data("expand_4_html", "Unselected");
+        this.options.data("expand_4_value", "expand unselected");
+        this.options.data("expand_5_html", "Identical");
+        this.options.data("expand_5_value", "expand identical");
+        this.options.data("expand_6_html", "Different");
+        this.options.data("expand_6_value", "expand different");
 
-        this.options.data("minimize_indices", 7);
-        this.options.data("minimize_0_html", "Sessions");
-        this.options.data("minimize_0_value", "minimize sessions");
-        this.options.data("minimize_1_html", "Issues");
-        this.options.data("minimize_1_value", "minimize issues");
-        this.options.data("minimize_2_html", "Clients");
-        this.options.data("minimize_2_value", "minimize clients");
-        this.options.data("minimize_3_html", "Selected");
-        this.options.data("minimize_3_value", "minimize selected");
-        this.options.data("minimize_4_html", "Unselected");
-        this.options.data("minimize_4_value", "minimize unselected");
-        this.options.data("minimize_5_html", "Identical");
-        this.options.data("minimize_5_value", "minimize identical");
-        this.options.data("minimize_6_html", "Different");
-        this.options.data("minimize_6_value", "minimize different");
+        this.options.data("collapse_indices", 7);
+        this.options.data("collapse_0_html", "Sessions");
+        this.options.data("collapse_0_value", "collapse sessions");
+        this.options.data("collapse_1_html", "Issues");
+        this.options.data("collapse_1_value", "collapse issues");
+        this.options.data("collapse_2_html", "Clients");
+        this.options.data("collapse_2_value", "collapse clients");
+        this.options.data("collapse_3_html", "Selected");
+        this.options.data("collapse_3_value", "collapse selected");
+        this.options.data("collapse_4_html", "Unselected");
+        this.options.data("collapse_4_value", "collapse unselected");
+        this.options.data("collapse_5_html", "Identical");
+        this.options.data("collapse_5_value", "collapse identical");
+        this.options.data("collapse_6_html", "Different");
+        this.options.data("collapse_6_value", "collapse different");
 
         this.options.data("hide_indices", 7);
         this.options.data("hide_0_html", "Sessions");
@@ -1020,8 +1020,8 @@ class UserDataUtility {
             this.allChildIdsOf(id).forEach(childId => {
                 ids.push(childId);
                 if (this.hasLocalChildren(childId)) {
-                    ids = ids.concat(this.localDescendantIdsOf(childId), this.loadedDescendantIdsOf(childId));
-                    ids.filter((id, index) => ids.indexOf(id) === index);
+                    ids = ids.concat(this.localDescendantIdsOf(childId), this.loadedDescendantIdsOf(childId))
+                             .filter((id, index) => ids.indexOf(id) === index);
                 }
             });
         }
@@ -1054,49 +1054,75 @@ class UserDataUtility {
         return ids;
     }
 
-    get allLocalIds()            { return this.allIds.filter(id => this.localRecordExists(id)); }
-    get allLoadedIds()           { return this.allIds.filter(id => this.loadedRecordExists(id)) }
-    get allClientRowIds()        { return this.allIds.filter(id => this.row(id).find(".inside1").length); }
-    get allIssueRowIds()         { return this.allIds.filter(id => this.row(id).find(".inside2").length); }
-    get allSessionRowIds()       { return this.allIds.filter(id => this.row(id).find(".inside3").length); }
-    get allHiddenRowIds()        { return this.allIds.filter(id => rowIsHidden(id)); }
-    get allCollapsedRowIds()     { return this.allIds.filter(id => this.rowIsCollapsed(id)); }
-    get allExpandedRowIds()      { return this.allIds.filter(id => this.rowIsExpanded(id)); }
-    get allDifferentRowIds()     { return this.allIds.filter(id => !this.rowRecordsAreIdentical(id)); }
-    get allIdenticalRowIds()     { return this.allIds.filter(id => this.rowRecordsAreIdentical(id)); }
-    get allUnselectedRowIds()    { return this.allIds.filter(id => !rowIsSelected(id)); }
-    get allSelectedRowIds()      { return this.allIds.filter(id => rowIsSelected(id)); }
-    get allSelectedRecordIds()   { return this.allIds.filter(id => this.localIsSelected(id)); }
-    get allUnselectedRecordIds() { return this.allIds.filter(id => !this.localIsSelected(id)); }
-    get allNewerLoadedRecordIds() { return this.allIds.map(id => this.newerRecord(id)); }
-    get allOlderLoadedRecordIds() { return this.allIds.map(id => this.olderRecord(id)); }
+    get allLocalIds()             { return this.allIds.filter(id => this.localRecordExists(id)); }
+    get allLoadedIds()            { return this.allIds.filter(id => this.loadedRecordExists(id)) }
+    get allClientRowIds()         { return this.allIds.filter(id => this.row(id).find(".inside1").length); }
+    get allIssueRowIds()          { return this.allIds.filter(id => this.row(id).find(".inside2").length); }
+    get allSessionRowIds()        { return this.allIds.filter(id => this.row(id).find(".inside3").length); }
+    get allHiddenRowIds()         { return this.allIds.filter(id => this.rowIsHidden(id)); }
+    get allCollapsedRowIds()      { return this.allIds.filter(id => this.rowIsCollapsed(id)); }
+    get allExpandedRowIds()       { return this.allIds.filter(id => this.rowIsExpanded(id)); }
+    get allDifferentRecordIds()   { return this.allIds.filter(id => !this.rowRecordsAreIdentical(id)); }
+    get allIdenticalRecordIds()   { return this.allIds.filter(id => this.rowRecordsAreIdentical(id)); }
+    get allUnselectedRowIds()     { return this.allIds.filter(id => !this.rowIsSelected(id)); }
+    get allSelectedRowIds()       { return this.allIds.filter(id => this.rowIsSelected(id)); }
+    get allSelectedRecordIds()    { return this.allIds.filter(id => this.localRecordIsSelected(id)); }
+    get allUnselectedRecordIds()  { return this.allIds.filter(id => !this.localRecordIsSelected(id)); }
+    get allNewerLoadedRecordIds() { return this.allIds.filter(id => this.loadedRecordIsNewer(id)); }
+    get allOlderLoadedRecordIds() { return this.allIds.filter(id => this.loadedRecordIsOlder(id)); }
+    get allNewerLoadedRecordIds() { return this.allIds.filter(id => this.localRecordIsNewer(id)); }
+    get allOlderLoadedRecordIds() { return this.allIds.filter(id => this.localRecordIsOlder(id)); }
 
     _doAdjustOption() {
         const adjust = this.adjust.data("value");
         const option = this.options.data(this.options.data("value")).substr(adjust.length + 1, this.options.data(this.options.data("value")).length - 1)
         console.log("'" + adjust + "'", "'" + option + "'");
 
-        const ids = (option == "inverted")   ? this.allUnselectedRecordIds
-                  : (option == "clients")    ? this.allClientRowIds
-                  : (option == "issues")     ? this.allIssueRowIds
-                  : (option == "sessions")   ? this.allSessionRowIds
-                  : (option == "different")  ? this.allDifferentRowIds
-                  : (option == "identical")  ? this.allIdenticalRowIds
-                  : (option == "selected")   ? this.allSelectedRecordIds
-                  : (option == "unselected") ? this.allUnselectedRecordIds
-                  : (option == "local")      ? this.allLocalIds
-                  : (option == "Loaded")     ? this.allLoadedIds
-                  : (option == "newer")      ? this.allNewerRecordIds
-                  : (option == "older")      ? this.allOlderRecordIds
-                  : (option == "none")       ? [] : [];
+        if (adjust == "sort") {
 
-        console.log(ids);
-        switch (adjust) {
-            case "sort":     /* this.sort(option); */  break;
-            case "maximize": /* this.maximizeRows(ids); */ break;
-            case "minimize": /* this.minimizeRows(ids); */ break;
-            case "hide":     /* this.hideRows(ids); */     break;
-            case "select":   /* this.selectRows(ids); */   break;
+        }
+        else if (["expand", "collapse", "hide"].includes(adjust)) {
+            const ids = (option == "clients")    ? this.allClientRowIds
+                      : (option == "issues")     ? this.allIssueRowIds
+                      : (option == "sessions")   ? this.allSessionRowIds
+                      : (option == "different")  ? this.allDifferentRowIds
+                      : (option == "identical")  ? this.allIdenticalRowIds
+                      : (option == "selected")   ? this.allSelectedRowIds
+                      : (option == "unselected") ? this.allUnselectedRowIds : [];
+
+            console.log(ids);
+            switch (adjust) {
+                case "expand":   this.expandRows(ids);   break;
+                case "collapse": this.collapseRows(ids); break;
+                case "hide":     this.hideRows(ids);     break;
+            }
+        }
+        else if (adjust == "select") {
+            switch (option) {
+                case "local":     this.selectLocalRecords(this.allLocalIds);              break;
+                case "loaded":    this.selectLoadedRecords(this.allLoadedIds);            break;
+                case "older":
+                    this.allIds.forEach(id => {
+                        if (!this.loadedRecordExists(id)) { this.selectLocalRecord(id); }
+                        else if (!this.localRecordExists(id) || this.loadedRecordIsOlder(id)) { this.selectLoadedRecord(id); }
+                        else { this.selectLocalRecord(id); }
+                    });
+                    break;
+                case "newer":
+                    this.allIds.forEach(id => {
+                        if (!this.loadedRecordExists(id)) { this.selectLocalRecord(id); }
+                        else if (!this.localRecordExists(id) || this.loadedRecordIsNewer(id)) { this.selectLoadedRecord(id); }
+                        else { this.selectLocalRecord(id); }
+                    });
+                    break;
+                case "different": this.selectLoadedRecords(this.allDifferentRecordIds);   break;
+                case "identical": this.selectLoadedRecords(this.allIdenticalRecordIds);   break;
+                case "unselected":
+                    this.selectLocalRecords(this.allUnselectedLocalRecordIds);
+                    if (this.loadedRecordExists) { this.selectLoadedRecords(this.allUnselectedLoadedRecordIds); }
+                    break;
+                case "none": this.unselectRows(this.allIds); break;
+            }
         }
     }
 
