@@ -796,8 +796,8 @@ class UserDataUtility {
 
     parentId(id)       { return "parentId_" + id.split("_")[1]; }
     parentRowId(id)    { return (this.parentClass(id)) ? "row_" + this.parentClass(id).split("_")[1] : null; }
-    get loadedsExist() { return !!$(".loaded").length; }
 
+    get loadedRecordsExist() { return !!$(".loaded").length; }
     hasChildren(id)       { return (this.hasLocalChildren(id) || this.hasLoadedChildren(id)); }
     hasLocalChildren(id)  { return (this.localRecordExists(id) && !!$("." + this.parentId(id)).length); }
     hasLoadedChildren(id) { return (this.loadedRecordExists(id) && !!$("." + this.parentId(id)).length); }
@@ -1118,8 +1118,24 @@ class UserDataUtility {
                 case "different": this.selectLoadedRecords(this.allDifferentRecordIds);   break;
                 case "identical": this.selectLoadedRecords(this.allIdenticalRecordIds);   break;
                 case "unselected":
-                    this.selectLocalRecords(this.allUnselectedLocalRecordIds);
-                    if (this.loadedRecordExists) { this.selectLoadedRecords(this.allUnselectedLoadedRecordIds); }
+                    if (this.loadedRecordsExist) {
+                        this.allIds.forEach(id => {
+                            if (!this.rowIsSelected(id)) {
+                                if (this.loadedRecordExists(id)) { this.selectLoadedRecord(id); }
+                                else { this.selectLocalRecord(id); }
+                            }
+                            else {
+                                if (this.localRecordIsSelected(id)) { this.selectLoadedRecord(id); }
+                                else { this.selectLocalRecord(id); }
+                            }
+                        })
+                    }
+                    else {
+                        const selectedRows = this.allSelectedRowIds;
+                        const unselectedRows = this.allUnselectedRowIds;
+                        this.unselectRows(selectedRows);
+                        this.selectLocalRecords(unselectedRows);
+                    }
                     break;
                 case "none": this.unselectRows(this.allIds); break;
             }
@@ -1129,13 +1145,13 @@ class UserDataUtility {
     parseDate(ts) {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const d = new Date(ts * 1000);
-        const year = String(d.getFullYear()).slice(2);
-        const month = String((d.getMonth() > 12) ? d.getMonth() - 12 : d.getMonth()).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        const hour = String((d.getHours() > 12) ? d.getHours() - 12 : d.getHours()).padStart(2, '0');
+        const year   = String(d.getFullYear()).slice(2);
+        const month  = String((d.getMonth() > 12) ? d.getMonth() - 12 : d.getMonth()).padStart(2, '0');
+        const day    = String(d.getDate()).padStart(2, '0');
+        const hour   = String((d.getHours() > 12) ? d.getHours() - 12 : d.getHours()).padStart(2, '0');
         const minute = String(d.getMinutes()).padStart(2, '0');
         const second = String(d.getSeconds()).padStart(2, '0');
-        const ampm = String((d.getHours() > 12) ? "PM" : "AM");
+        const ampm   = String((d.getHours() > 12) ? "PM" : "AM");
         return `${month}/${day}/${year} ${hour}:${minute}:${second}${ampm}`;
     }
 
