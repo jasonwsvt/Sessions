@@ -793,6 +793,9 @@ class UserDataUtility {
     classList(id)      { return this.row(id).attr("class").split(" "); }
     parentClass(id)    { return this.classList(id).find(c => c.startsWith("parentId_")); }
     hasParent(id)      { return !!this.parentClass(id); }
+    get allParentRowIds() {
+        return [...new Set(this.allIds.filter(id => this.hasParent(id)).map(id => this.parentRowId(id)))];
+    }
 
     parentId(id)       { return "parentId_" + id.split("_")[1]; }
     parentRowId(id)    { return (this.parentClass(id)) ? "row_" + this.parentClass(id).split("_")[1] : null; }
@@ -822,13 +825,15 @@ class UserDataUtility {
     localRecordsAreUnselected(ids)     { return ids.every(id => !this.localRecordIsSelected(id)); }
     loadedRecordsAreUnselected(ids)    { return ids.every(id => !this.loadedRecordIsSelected(id)); }
 
-    updateChildrenSelectStatuses(id) {
-        console.log(id, "has parent:", this.hasParent(id));
-        if (this.hasParent(id)) { this.updateChildrenSelectStatus(this.parentRowId(id)); }
-        this.updateChildrenSelectStatus(id);
-        if (this.hasChildren(id)) { 
-            this.allDescendantIdsOf(id).forEach(id => this.updateChildrenSelectStatus(id));
-        }
+    updateChildrenSelectStatuses(ids) {
+        if (!isArray(ids)) { ids = [ids]; }
+        ids.forEach(id => {
+            if (this.hasParent(id)) { this.updateChildrenSelectStatus(this.parentRowId(id)); }
+            this.updateChildrenSelectStatus(id);
+            if (this.hasChildren(id)) { 
+                this.allDescendantIdsOf(id).forEach(id => this.updateChildrenSelectStatus(id));
+            }
+        });
     }
     updateChildrenSelectStatus(id) {
         if (this.localRecordExists(id)) { this.updateLocalChildrenSelectStatus(id); }
@@ -1099,14 +1104,21 @@ class UserDataUtility {
         }
         else if (adjust == "select") {
             switch (option) {
-                case "local":     this.selectLocalRecords(this.allLocalIds);              break;
-                case "loaded":    this.selectLoadedRecords(this.allLoadedIds);            break;
+                case "local":
+                    this.selectLocalRecords(this.allLocalIds);
+                    this.updateChildrenSelectStatuses(this.allParentRowIds);
+                    break;
+                case "loaded":
+                    this.selectLoadedRecords(this.allLoadedIds);
+                    this.updateChildrenSelectStatuses(this.allParentRowIds);
+                    break;
                 case "older":
                     this.allIds.forEach(id => {
                         if (!this.loadedRecordExists(id)) { this.selectLocalRecord(id); }
                         else if (!this.localRecordExists(id) || this.loadedRecordIsOlder(id)) { this.selectLoadedRecord(id); }
                         else { this.selectLocalRecord(id); }
                     });
+                    this.updateChildrenSelectStatuses(this.allParentRowIds);
                     break;
                 case "newer":
                     this.allIds.forEach(id => {
@@ -1114,21 +1126,23 @@ class UserDataUtility {
                         else if (!this.localRecordExists(id) || this.loadedRecordIsNewer(id)) { this.selectLoadedRecord(id); }
                         else { this.selectLocalRecord(id); }
                     });
+                    this.updateChildrenSelectStatuses(this.allParentRowIds);
                     break;
-                case "different": this.selectLoadedRecords(this.allDifferentRecordIds);   break;
-                case "identical": this.selectLoadedRecords(this.allIdenticalRecordIds);   break;
+                case "different":
+                    this.selectLoadedRecords(this.allDifferentRecordIds);
+                    this.updateChildrenSelectStatuses(this.allParentRowIds);
+                    break;
+                case "identical":
+                    this.selectLoadedRecords(this.allIdenticalRecordIds);
+                    this.updateChildrenSelectStatuses(this.allParentRowIds);
+                    break;
                 case "unselected":
                     if (this.loadedRecordsExist) {
                         this.allIds.forEach(id => {
-                            if (!this.rowIsSelected(id)) {
-                                if (this.loadedRecordExists(id)) { this.selectLoadedRecord(id); }
-                                else { this.selectLocalRecord(id); }
-                            }
-                            else {
-                                if (this.localRecordIsSelected(id)) { this.selectLoadedRecord(id); }
-                                else { this.selectLocalRecord(id); }
-                            }
-                        })
+                            if (this.loadedRecordExists(id) &&
+                               (!this.rowIsSelected(id) || !this.loadedRecordIsSelected(id))) { this.selectLoadedRecord(id); }
+                            else if (this.localRecordExists(id)) { this.selectLocalRecord(id); }
+                        });
                     }
                     else {
                         const selectedRows = this.allSelectedRowIds;
