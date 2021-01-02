@@ -76,14 +76,10 @@
     background-color: rgba(238, 238, 238, 1);
 }
 
-.outside0 { width: 16px; }
-.inside0 { width: 174px; }
-.outside1 { width: 32px; }
-.inside1 { width: 159px; }
-.outside2 { width: 48px; }
-.inside2 { width: 143px; }
-.outside3 { width: 64px; }
-.inside3 { width: 136px; }
+.outside0 { width: 16px; } .inside0 { width: 174px; }
+.outside1 { width: 32px; } .inside1 { width: 159px; }
+.outside2 { width: 48px; } .inside2 { width: 143px; }
+.outside3 { width: 64px; } .inside3 { width: 126px; }
 
 .collapsed tr:not(:first-of-type):not(:last-of-type) { display: none; }
 

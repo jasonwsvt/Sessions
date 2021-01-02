@@ -237,7 +237,7 @@ class UserDataUtility {
         this.options.data("expand_0_html", "Sessions");
         this.options.data("expand_0_value", "expand sessions");
         this.options.data("expand_1_html", "Issues");
-        this.options.data("expand_1_value", "collapse issues");
+        this.options.data("expand_1_value", "expand issues");
         this.options.data("expand_2_html", "Clients");
         this.options.data("expand_2_value", "expand clients");
         this.options.data("expand_3_html", "Selected");
@@ -1016,9 +1016,9 @@ class UserDataUtility {
     localChildIdsOf(parentId) { return this.allChildIdsOf(parentId).filter(id => this.localRecordExists(id)); }
     loadedChildIdsOf(parentId) { return this.allChildIdsOf(parentId).filter(id => this.loadedRecordExists(id)); }
     allChildIdsOf(parentId) {
-        var rows = $("." + this.parentId(parentId));
-        if (!isArray(rows)) { rows = [rows]; }
-        return rows.map(row => (row.prop("id")));
+        var ids = [];
+        $("." + this.parentId(parentId)).each(function() { ids.push(this.id); });
+        return ids;
     }
 
     allDescendantIdsOf(id) {
@@ -1084,7 +1084,7 @@ class UserDataUtility {
         var parentIds;
         const adjust = this.adjust.data("value");
         const option = this.options.data(this.options.data("value")).substr(adjust.length + 1, this.options.data(this.options.data("value")).length - 1)
-        console.log("'" + adjust + "'", "'" + option + "'");
+        console.log(adjust, this.options.data(this.options.data("value")), "'" + adjust + "'", "'" + option + "'");
 
         if (adjust == "sort") {
 
@@ -1166,7 +1166,7 @@ class UserDataUtility {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const d = new Date(ts * 1000);
         const year   = String(d.getFullYear()).slice(2);
-        const month  = String((d.getMonth() > 12) ? d.getMonth() - 12 : d.getMonth()).padStart(2, '0');
+        const month  = String(d.getMonth()+1).padStart(2, '0');
         const day    = String(d.getDate()).padStart(2, '0');
         const hour   = String((d.getHours() > 12) ? d.getHours() - 12 : d.getHours()).padStart(2, '0');
         const minute = String(d.getMinutes()).padStart(2, '0');
