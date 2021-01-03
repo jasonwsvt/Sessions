@@ -192,6 +192,34 @@ class UserDataUtility {
         this.adjust.data("selectedClass", "btn-primary");
         this.adjust.data("default", "sort");
 
+        this.setUpOptionsData();
+
+        this.actions.data("unselectedClass", "btn-secondary");
+        this.actions.data("selectedClass", "btn-primary");
+
+        this.loadDiv.append(loadButton);
+        this.loadButton.prop("data-toggle", "popover");
+        if (!window.FileReader) {
+            this.loadButton.prop("data-content", "The FileReader API is not supported by your browser.");
+            this.loadButton.prop("disabled", true);
+        }
+        else {
+            this.loadButton.prop("data-content", "Load data.");
+        }
+
+//        this.div.append(exportButton);
+//        this.exportButton.prop("data-toggle", "popover");
+//        this.exportButton.prop("data-content", "Export data.");
+
+        this.div.css("left", String(this.userUtilities.div.position().left) + "px");
+        this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
+
+    }
+
+    setUpOptionsData() {
+        const loaded = false;
+        this.options.removeData();
+
         this.options.data("default_unselectedClass", "btn-info");
         this.options.data("default_selectedClass", "btn-info");
 
@@ -233,7 +261,6 @@ class UserDataUtility {
         this.options.data("sort_3_1_unselected", "Opened");
         this.options.data("sort_3_1_value", "sort opened ascending");
         
-        this.options.data("expand_indices", 7);
         this.options.data("expand_0_html", "Sessions");
         this.options.data("expand_0_value", "expand sessions");
         this.options.data("expand_1_html", "Issues");
@@ -244,12 +271,16 @@ class UserDataUtility {
         this.options.data("expand_3_value", "expand selected");
         this.options.data("expand_4_html", "Unselected");
         this.options.data("expand_4_value", "expand unselected");
-        this.options.data("expand_5_html", "Identical");
-        this.options.data("expand_5_value", "expand identical");
-        this.options.data("expand_6_html", "Different");
-        this.options.data("expand_6_value", "expand different");
 
-        this.options.data("collapse_indices", 7);
+        if (!loaded) { this.options.data("expand_indices", 5); }
+        else {
+            this.options.data("expand_indices", 7);
+            this.options.data("expand_5_html", "Identical");
+            this.options.data("expand_5_value", "expand identical");
+            this.options.data("expand_6_html", "Different");
+            this.options.data("expand_6_value", "expand different");
+        }
+
         this.options.data("collapse_0_html", "Sessions");
         this.options.data("collapse_0_value", "collapse sessions");
         this.options.data("collapse_1_html", "Issues");
@@ -260,12 +291,16 @@ class UserDataUtility {
         this.options.data("collapse_3_value", "collapse selected");
         this.options.data("collapse_4_html", "Unselected");
         this.options.data("collapse_4_value", "collapse unselected");
-        this.options.data("collapse_5_html", "Identical");
-        this.options.data("collapse_5_value", "collapse identical");
-        this.options.data("collapse_6_html", "Different");
-        this.options.data("collapse_6_value", "collapse different");
 
-        this.options.data("hide_indices", 7);
+        if (!loaded) { this.options.data("collapse_indices", 5); }
+        else {
+            this.options.data("collapse_indices", 7);
+            this.options.data("collapse_5_html", "Identical");
+            this.options.data("collapse_5_value", "collapse identical");
+            this.options.data("collapse_6_html", "Different");
+            this.options.data("collapse_6_value", "collapse different");
+        }
+
         this.options.data("hide_0_html", "Sessions");
         this.options.data("hide_0_value", "hide sessions");
         this.options.data("hide_1_html", "Issues");
@@ -276,108 +311,119 @@ class UserDataUtility {
         this.options.data("hide_3_value", "hide selected");
         this.options.data("hide_4_html", "Unselected");
         this.options.data("hide_4_value", "hide unselected");
-        this.options.data("hide_5_html", "Identical");
-        this.options.data("hide_5_value", "hide identical");
-        this.options.data("hide_6_html", "Different");
-        this.options.data("hide_6_value", "hide different");
 
-        this.options.data("select_indices", 8);
-        this.options.data("select_0_html", "Local");
-        this.options.data("select_0_hidden", "until load");
-        this.options.data("select_0_value", "select local");
-        this.options.data("select_1_html", "Loaded");
-        this.options.data("select_1_hidden", "until load");
-        this.options.data("select_1_value", "select loaded");
-        this.options.data("select_2_html", "Older");
-        this.options.data("select_2_hidden", "until load");
-        this.options.data("select_2_value", "select older");
-        this.options.data("select_3_html", "Newer");
-        this.options.data("select_3_hidden", "until load");
-        this.options.data("select_3_value", "select newer");
-        this.options.data("select_4_html", "Different");
-        this.options.data("select_4_hidden", "until load");
-        this.options.data("select_4_value", "select different");
-        this.options.data("select_5_html", "Identical");
-        this.options.data("select_5_hidden", "until load");
-        this.options.data("select_5_value", "select identical");
-        this.options.data("select_6_html", "Unselected");
-        this.options.data("select_6_value", "select unselected");
-        this.options.data("select_7_html", "None");
-        this.options.data("select_7_value", "select none");
-        
-        this.options.data("export_indices", 6);
-        this.options.data("export_0_html", "Local");
-        this.options.data("export_0_value", "export local");
-        this.options.data("export_1_html", "Loaded");
-        this.options.data("export_1_hidden", "until load");
-        this.options.data("export_1_value", "export loaded");
-        this.options.data("export_2_html", "Older");
-        this.options.data("export_2_hidden", "until load");
-        this.options.data("export_2_value", "export older");
-        this.options.data("export_3_html", "Newer");
-        this.options.data("export_3_hidden", "until load");
-        this.options.data("export_3_value", "export newer");
-        this.options.data("export_4_html", "Selected");
-        this.options.data("export_4_value", "export selected");
-        this.options.data("export_5_html", "Unselected");
-        this.options.data("export_5_value", "export unselected");
+        if (!loaded) { this.options.data("hide_indices", 5); }
+        else {
+            this.options.data("hide_indices", 7);
+            this.options.data("hide_5_html", "Identical");
+            this.options.data("hide_5_value", "hide identical");
+            this.options.data("hide_6_html", "Different");
+            this.options.data("hide_6_value", "hide different");
+        }
 
-        this.options.data("import_indices", 6);
-        this.options.data("import_unselectedClass", "btn-warning");
-        this.options.data("import_selectedClass", "btn-warning");
-        this.options.data("import_0_html", "Local");
-        this.options.data("import_0_value", "import local");
-        this.options.data("import_1_html", "Loaded");
-        this.options.data("import_1_hidden", "until loaded");
-        this.options.data("import_1_value", "import loaded");
-        this.options.data("import_2_html", "Older");
-        this.options.data("import_2_value", "import older");
-        this.options.data("import_3_html", "Newer");
-        this.options.data("import_3_value", "import newer");
-        this.options.data("import_4_html", "Selected");
-        this.options.data("import_4_value", "import selected");
-        this.options.data("import_5_html", "Unselected");
-        this.options.data("import_5_value", "import unselected");
-
-        this.options.data("delete_indices", 6);
-        this.options.data("delete_unselectedClass", "btn-danger");
-        this.options.data("delete_selectedClass", "btn-danger");
-        this.options.data("delete_0_html", "Local");
-        this.options.data("delete_0_value", "delete local");
-        this.options.data("delete_1_html", "Loaded");
-        this.options.data("delete_1_hidden", "until load");
-        this.options.data("delete_1_value", "delete loaded");
-        this.options.data("delete_2_html", "Older");
-        this.options.data("delete_2_hidden", "until load");
-        this.options.data("delete_2_value", "delete older");
-        this.options.data("delete_3_html", "Newer");
-        this.options.data("delete_3_hidden", "until load");
-        this.options.data("delete_3_value", "delete newer");
-        this.options.data("delete_4_html", "Selected");
-        this.options.data("delete_4_value", "delete selected");
-        this.options.data("delete_5_html", "Unselected");
-        this.options.data("delete_5_value", "delete unselected");
-
-        this.actions.data("unselectedClass", "btn-secondary");
-        this.actions.data("selectedClass", "btn-primary");
-
-        this.loadDiv.append(loadButton);
-        this.loadButton.prop("data-toggle", "popover");
-        if (!window.FileReader) {
-            this.loadButton.prop("data-content", "The FileReader API is not supported by your browser.");
-            this.loadButton.prop("disabled", true);
+        if (!loaded) {
+            this.options.data("select_indices", 3);
+            this.options.data("select_0_html", "All");
+            this.options.data("select_0_value", "select local");
+            this.options.data("select_1_html", "None");
+            this.options.data("select_1_value", "select none");
+            this.options.data("select_2_html", "Unselected");
+            this.options.data("select_2_value", "select unselected");
         }
         else {
-            this.loadButton.prop("data-content", "Load data.");
+            this.options.data("select_indices", 8);
+            this.options.data("select_0_html", "Local");
+            this.options.data("select_0_value", "select local");
+            this.options.data("select_1_html", "Loaded");
+            this.options.data("select_1_value", "select loaded");
+            this.options.data("select_2_html", "Older");
+            this.options.data("select_2_value", "select older");
+            this.options.data("select_3_html", "Newer");
+            this.options.data("select_3_value", "select newer");
+            this.options.data("select_4_html", "Different");
+            this.options.data("select_4_value", "select different");
+            this.options.data("select_5_html", "Identical");
+            this.options.data("select_5_value", "select identical");
+            this.options.data("select_6_html", "None");
+            this.options.data("select_6_value", "select none");
+            this.options.data("select_7_html", "Unselected");
+            this.options.data("select_7_value", "select unselected");
+        }
+        
+        if (!loaded) {
+            this.options.data("export_indices", 3);
+            this.options.data("export_0_html", "All");
+            this.options.data("export_0_value", "export local");
+            this.options.data("export_1_html", "Selected");
+            this.options.data("export_1_value", "export selected");
+            this.options.data("export_2_html", "Unselected");
+            this.options.data("export_2_value", "export unselected");
+        }
+        else {
+            this.options.data("export_indices", 6);
+            this.options.data("export_0_html", "Local");
+            this.options.data("export_0_value", "export local");
+            this.options.data("export_1_html", "Loaded");
+            this.options.data("export_1_hidden", "until load");
+            this.options.data("export_1_value", "export loaded");
+            this.options.data("export_2_html", "Older");
+            this.options.data("export_2_hidden", "until load");
+            this.options.data("export_2_value", "export older");
+            this.options.data("export_3_html", "Newer");
+            this.options.data("export_3_hidden", "until load");
+            this.options.data("export_3_value", "export newer");
+            this.options.data("export_4_html", "Selected");
+            this.options.data("export_4_value", "export selected");
+            this.options.data("export_5_html", "Unselected");
+            this.options.data("export_5_value", "export unselected");
         }
 
-//        this.div.append(exportButton);
-//        this.exportButton.prop("data-toggle", "popover");
-//        this.exportButton.prop("data-content", "Export data.");
+        if (loaded) {
+            this.options.data("import_indices", 6);
+            this.options.data("import_unselectedClass", "btn-warning");
+            this.options.data("import_selectedClass", "btn-warning");
+            this.options.data("import_0_html", "Local");
+            this.options.data("import_0_value", "import local");
+            this.options.data("import_1_html", "Loaded");
+            this.options.data("import_1_hidden", "until loaded");
+            this.options.data("import_1_value", "import loaded");
+            this.options.data("import_2_html", "Older");
+            this.options.data("import_2_value", "import older");
+            this.options.data("import_3_html", "Newer");
+            this.options.data("import_3_value", "import newer");
+            this.options.data("import_4_html", "Selected");
+            this.options.data("import_4_value", "import selected");
+            this.options.data("import_5_html", "Unselected");
+            this.options.data("import_5_value", "import unselected");
+        }
 
-        this.div.css("left", String(this.userUtilities.div.position().left) + "px");
-        this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
+        this.options.data("delete_unselectedClass", "btn-danger");
+        this.options.data("delete_selectedClass", "btn-danger");
 
+        if (!loaded) {
+            this.options.data("delete_indices", 3);
+            this.options.data("delete_0_html", "All");
+            this.options.data("delete_0_value", "delete local");
+            this.options.data("delete_1_html", "Selected");
+            this.options.data("delete_1_value", "delete selected");
+            this.options.data("delete_2_html", "Unselected");
+            this.options.data("delete_2_value", "delete unselected");
+        }
+        else {
+            this.options.data("delete_indices", 6);
+            this.options.data("delete_0_html", "Local");
+            this.options.data("delete_0_value", "delete local");
+            this.options.data("delete_1_html", "Loaded");
+            this.options.data("delete_1_value", "delete loaded");
+            this.options.data("delete_2_html", "Older");
+            this.options.data("delete_2_value", "delete older");
+            this.options.data("delete_3_html", "Newer");
+            this.options.data("delete_3_value", "delete newer");
+            this.options.data("delete_4_html", "Selected");
+            this.options.data("delete_4_value", "delete selected");
+            this.options.data("delete_5_html", "Unselected");
+            this.options.data("delete_5_value", "delete unselected");
+        }
     }
 
     reset() {
@@ -624,6 +670,7 @@ class UserDataUtility {
         //click event for select local Children buttons ("local_" + id + "_children")
         this.localChildrenSelects.on("click", function (e) {
             const id = $(this).parent().parent().parent().parent().prop("id");
+            //console.log(id, self.localChildIdsOf(id));
             const ids = (e.ctrlKey) ? self.localChildIdsOf(id) : self.localDescendantIdsOf(id);
             if (self.localChildrenSelectIsSelected(id)) {
                 self.unselectLocalChildrenSelect(id); self.unselectLocalRecords(ids);
@@ -1017,7 +1064,10 @@ class UserDataUtility {
     loadedChildIdsOf(parentId) { return this.allChildIdsOf(parentId).filter(id => this.loadedRecordExists(id)); }
     allChildIdsOf(parentId) {
         var ids = [];
-        $("." + this.parentId(parentId)).each(function() { ids.push(this.id); });
+        var rows = $("." + this.parentId(parentId));
+        for (var i = 0; i < rows.length; i++) {
+            ids.push(rows.eq(i).attr("id"));
+        }
         return ids;
     }
 
