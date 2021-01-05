@@ -845,11 +845,10 @@ class UserDataUtility {
             console.log("got here");
             this.allChildIdsOf(id).forEach(childId => {
                 const loaded = this.loadedRecordExists(childId);
-                if (this.hasChildren(childId)) {         console.log("got here");
-                value = this.sortRecords(childId, method, direction); }
-                const methodRow     = this.row(childId).contains(method);
-                const nameRow       = this.row(childId).contains("name");
-                const creationRow   = this.row(childId).contains("creation");
+                if (this.hasChildren(childId)) { value = this.sortRecords(childId, method, direction); }
+                const methodRow     = $("#" + childId + ":contains('" + method + "')");
+                const nameRow       = $("#" + childId + ":contains('name')");
+                const creationRow   = $("#" + childId + ":contains('creation')");
                 const methodValue   = (methodRow)   ? ((loaded) ? methodRow.next().next().next().text()   : methodRow.next().text())   : false;
                 const nameValue     = (nameRow)     ? ((loaded) ? nameRow.next().next().next().text()     : nameRow.next().text())     : false;
                 const creationValue = (creationRow) ? ((loaded) ? creationRow.next().next().next().text() : creationRow.next().text()) : false;
@@ -867,10 +866,10 @@ class UserDataUtility {
                 if (this.hasChildren(id)) {
                     const lastDescendantId = this.allDescendantIdsOf(item.id).slice(-1);
                     const rows = this.row(item.id).nextUntil(lastDescendantId).addBack().add(lastDescendantId).detach();
-                    this.scrollAreaDiv.children().eq(index).before(rows);
+                    this.scrollAreaDiv.children().eq(this.row(item.id).parent().index() + index + 1).after(rows);
                 }
             });
-            return (direction == descending) ? sortValues.slice(-1) : sortValues.slice(0);
+            return (direction == "descending") ? sortValues.slice(-1) : sortValues.slice(0);
         }
     }
 
