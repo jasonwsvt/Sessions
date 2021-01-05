@@ -842,34 +842,39 @@ class UserDataUtility {
         const index     = this.options.data("sort_index");
         const state     = this.options.data("sort_" + index + "_state");
         const value     = this.options.data("sort_" + index + "_" + state + "_value");
-        const type      = (value.split(" ")[1] == "alphabetic") ? "name"
+        const method    = (value.split(" ")[1] == "alphabetic") ? "name"
                         : (value.split(" ")[1] == "creation")   ? "creation"
                         : (value.split(" ")[1] == "edited")     ? "lastEdited"
                         : (value.split(" ")[1] == "opened")     ? "lastOpened" : null;
         const direction = value.split(" ")[2];
 
-        return this.sortMethod(type, data, direction);
+        return this.sortMethod(method, this.scrollAreaDiv.eq(0).attr("id"), direction);
     }
 
-    sortMethod(method, data, direction) {
-        var keys;
-        var childrenId;
-        data.forEach(record => {
-            keys = Object.keys(record);
-            childrenId = keys.find(key => (key.toLowerCase().includes("id")));
-            if (childrenId) {
-                record[childrenId] = this.sortMethod(method, record[childrenId], direction);
-            }
-        });
-        data.sort(method);
-        if (direction == "descending") { data.reverse(); }
+    sortMethod(method, id, direction) {
+        var value, sortValues = [], row;
+        if (this.hasChildren(id)) {
+            this.allChildIdsOf(id).forEach(childId => {
+                loaded = this.loadedRecordExists(childId);
+                if (this.hasChildren(childId)) { value = this.sortMethod(method, childId, direction); }
+                methodRow     = this.row(childId).contains(method);
+                nameRow       = this.row(childId).contains("name");
+                creationRow   = this.row(childId).contains("creation");
+                methodValue   = (methodRow)   ? ((loaded) ? methodRow.next().next().next().text()   : methodRow.next().text())   : false;
+                nameValue     = (nameRow)     ? ((loaded) ? nameRow.next().next().next().text()     : nameRow.next().text())     : false;
+                creationValue = (creationRow) ? ((loaded) ? creationRow.next().next().next().text() : creationRow.next().text()) : false;
+                sortValue = (                        methodRow   && methodValue   != "false") ? methodValue
+                          : (method == "name"     && creationRow && creationValue != "false") ? creationValue
+                          : (method == "creation" && nameRow     && nameValue     != "false") ? nameValue
+                          :                                                                     value;
+                sortValues.push({ id = childId, value = sortValue });
+                sortValues.sort((a,b) => a.value.toLowerCase().localeCompare(b.value.toLowerCase()));
+                if (direction == "descending") { sortValues.reverse(); }
+            });
+
+        }
         return data;
     }
-
-    sortByName       = function(a,b) { return a.name.toLowerCase().localeCompare(b.name.toLowerCase()); }   
-    sortByCreation   = function(a,b) { return (Number(a.creation) - Number(b.creation)); }
-    sortByLastEdited = function(a,b) { return (Number(a._data.lastEdited) - Number(b._data.lastEdited)); }
-    sortByLastOpened = function(a,b) { return (Number(a._data.lastOpened) - Number(b._data.lastOpened)); }
 
     resetRows(ids)        { return ids.forEach(id => this.reset(id)); }
     resetRow(id)          { this.unselectRow(id); this.expandRow(this.rowId(id)); }
