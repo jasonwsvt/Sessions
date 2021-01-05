@@ -838,25 +838,15 @@ class UserDataUtility {
         }
     }
 
-    sortRecords() {
-        const index     = this.options.data("sort_index");
-        const state     = this.options.data("sort_" + index + "_state");
-        const value     = this.options.data("sort_" + index + "_" + state + "_value");
-        const method    = (value.split(" ")[1] == "alphabetic") ? "name"
-                        : (value.split(" ")[1] == "creation")   ? "creation"
-                        : (value.split(" ")[1] == "edited")     ? "lastEdited"
-                        : (value.split(" ")[1] == "opened")     ? "lastOpened" : null;
-        const direction = value.split(" ")[2];
-
-        return this.sortMethod(method, this.scrollAreaDiv.eq(0).attr("id"), direction);
-    }
-
-    sortMethod(method, id, direction) {
-        var sortValues = [];
+    sortRecords(id, method, direction) {
+        var sortValues = [], value;
+        console.log(id, this.hasChildren(id));
         if (this.hasChildren(id)) {
+            console.log("got here");
             this.allChildIdsOf(id).forEach(childId => {
                 const loaded = this.loadedRecordExists(childId);
-                if (this.hasChildren(childId)) { const value = this.sortMethod(method, childId, direction); }
+                if (this.hasChildren(childId)) {         console.log("got here");
+                value = this.sortRecords(childId, method, direction); }
                 const methodRow     = this.row(childId).contains(method);
                 const nameRow       = this.row(childId).contains("name");
                 const creationRow   = this.row(childId).contains("creation");
@@ -867,19 +857,21 @@ class UserDataUtility {
                           : (method == "name"     && creationRow && creationValue != "false") ? creationValue
                           : (method == "creation" && nameRow     && nameValue     != "false") ? nameValue
                           :                                                                     value;
-                sortValues.push({ id = childId, value = sortValue });
+                sortValues.push({ id: childId, value: sortValue });
             });
             sortValues.sort((a,b) => a.value.toLowerCase().localeCompare(b.value.toLowerCase()));
-            if (direction == "descending") { sortValues.reverse(); }
+            if (direction == "descending") {         console.log("got here");
+            sortValues.reverse(); }
             sortValues.forEach((item, index) => {
+                console.log("got here");
                 if (this.hasChildren(id)) {
                     const lastDescendantId = this.allDescendantIdsOf(item.id).slice(-1);
                     const rows = this.row(item.id).nextUntil(lastDescendantId).addBack().add(lastDescendantId).detach();
                     this.scrollAreaDiv.children().eq(index).before(rows);
                 }
             });
+            return (direction == descending) ? sortValues.slice(-1) : sortValues.slice(0);
         }
-        return data;
     }
 
     resetRows(ids)        { return ids.forEach(id => this.reset(id)); }
@@ -1179,8 +1171,14 @@ class UserDataUtility {
         const option = this.options.data(this.options.data("value")).substr(adjust.length + 1, this.options.data(this.options.data("value")).length - 1)
         console.log(adjust, this.options.data(this.options.data("value")), "'" + adjust + "'", "'" + option + "'");
 
-        if (adjust == "sort") {
-
+        if (adjust == "sort") { 
+            const method = (option.split(" ")[0] == "alphabetic") ? "name"
+                         : (option.split(" ")[0] == "creation")   ? "creation"
+                         : (option.split(" ")[0] == "edited")     ? "lastEdited"
+                         : (option.split(" ")[0] == "opened")     ? "lastOpened" : null;
+            const direction = option.split(" ")[1];
+    
+            this.sortRecords(this.scrollAreaDiv.children().eq(0).attr("id"), method, direction);
         }
         else if (["expand", "collapse", "hide"].includes(adjust)) {
             const ids = (option == "clients")    ? this.allClientRowIds
