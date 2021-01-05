@@ -852,26 +852,32 @@ class UserDataUtility {
     }
 
     sortMethod(method, id, direction) {
-        var value, sortValues = [], row;
+        var sortValues = [];
         if (this.hasChildren(id)) {
             this.allChildIdsOf(id).forEach(childId => {
-                loaded = this.loadedRecordExists(childId);
-                if (this.hasChildren(childId)) { value = this.sortMethod(method, childId, direction); }
-                methodRow     = this.row(childId).contains(method);
-                nameRow       = this.row(childId).contains("name");
-                creationRow   = this.row(childId).contains("creation");
-                methodValue   = (methodRow)   ? ((loaded) ? methodRow.next().next().next().text()   : methodRow.next().text())   : false;
-                nameValue     = (nameRow)     ? ((loaded) ? nameRow.next().next().next().text()     : nameRow.next().text())     : false;
-                creationValue = (creationRow) ? ((loaded) ? creationRow.next().next().next().text() : creationRow.next().text()) : false;
-                sortValue = (                        methodRow   && methodValue   != "false") ? methodValue
+                const loaded = this.loadedRecordExists(childId);
+                if (this.hasChildren(childId)) { const value = this.sortMethod(method, childId, direction); }
+                const methodRow     = this.row(childId).contains(method);
+                const nameRow       = this.row(childId).contains("name");
+                const creationRow   = this.row(childId).contains("creation");
+                const methodValue   = (methodRow)   ? ((loaded) ? methodRow.next().next().next().text()   : methodRow.next().text())   : false;
+                const nameValue     = (nameRow)     ? ((loaded) ? nameRow.next().next().next().text()     : nameRow.next().text())     : false;
+                const creationValue = (creationRow) ? ((loaded) ? creationRow.next().next().next().text() : creationRow.next().text()) : false;
+                const sortValue = (                        methodRow   && methodValue   != "false") ? methodValue
                           : (method == "name"     && creationRow && creationValue != "false") ? creationValue
                           : (method == "creation" && nameRow     && nameValue     != "false") ? nameValue
                           :                                                                     value;
                 sortValues.push({ id = childId, value = sortValue });
-                sortValues.sort((a,b) => a.value.toLowerCase().localeCompare(b.value.toLowerCase()));
-                if (direction == "descending") { sortValues.reverse(); }
             });
-
+            sortValues.sort((a,b) => a.value.toLowerCase().localeCompare(b.value.toLowerCase()));
+            if (direction == "descending") { sortValues.reverse(); }
+            sortValues.forEach((item, index) => {
+                if (this.hasChildren(id)) {
+                    const lastDescendantId = this.allDescendantIdsOf(item.id).slice(-1);
+                    const rows = this.row(item.id).nextUntil(lastDescendantId).addBack().add(lastDescendantId).detach();
+                    this.scrollAreaDiv.children().eq(index).before(rows);
+                }
+            });
         }
         return data;
     }
