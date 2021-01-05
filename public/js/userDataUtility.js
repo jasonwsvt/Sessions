@@ -581,7 +581,7 @@ class UserDataUtility {
         this.currentUser.pushToStorage();
         this.scrollAreaDiv.empty();
         //call buildRecord with data
-        this._buildRecord(0, this.sortMethod(this.currentUser.pullRecords()), false);  //change false to loaded
+        this._buildRecord(0, this.currentUser.pullRecords(), false);  //change false to loaded
 
         if (true) { //change true to !loaded
             this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 5) + "px");
@@ -838,88 +838,38 @@ class UserDataUtility {
         }
     }
 
-    sortMethod(data) {
-        const index = this.options.data("sort_index");
-        const state = this.options.data("sort_" + index + "_state");
-        const value = this.options.data("sort_" + index + "_" + state + "_value");
-        const type = value.split(" ")[1];
+    sortRecords() {
+        const index     = this.options.data("sort_index");
+        const state     = this.options.data("sort_" + index + "_state");
+        const value     = this.options.data("sort_" + index + "_" + state + "_value");
+        const type      = (value.split(" ")[1] == "alphabetic") ? "name"
+                        : (value.split(" ")[1] == "creation")   ? "creation"
+                        : (value.split(" ")[1] == "edited")     ? "lastEdited"
+                        : (value.split(" ")[1] == "opened")     ? "lastOpened" : null;
         const direction = value.split(" ")[2];
 
-        switch (type) {
-            case "alphabetic": this.sortAlphabetically(data, direction); break;
-            case "creation":   this.sortByCreation(data, direction);     break;
-            case "edited":     this.sortByLastEdited(data, direction);   break;
-            case "opened":     this.sortByLastOpened(data, direction);   break;
-        }
-
-        return data;
+        return this.sortMethod(type, data, direction);
     }
 
-    sortAlphabetically(data, direction) {
+    sortMethod(method, data, direction) {
         var keys;
         var childrenId;
         data.forEach(record => {
             keys = Object.keys(record);
             childrenId = keys.find(key => (key.toLowerCase().includes("id")));
             if (childrenId) {
-                record[childrenId] = this.sortAlphabetically(record[childrenId]);
+                record[childrenId] = this.sortMethod(method, record[childrenId], direction);
             }
         });
-        data.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+        data.sort(method);
         if (direction == "descending") { data.reverse(); }
         return data;
     }
 
-    sortByCreation(data, direction) {
-        var keys;
-        var childrenId;
-        data.forEach(record => {
-            keys = Object.keys(record);
-            childrenId = keys.find(key => (key.toLowerCase().includes("id")));
-            if (childrenId) {
-                record[childrenId] = this.sortByCreation(record[childrenId]);
-            }
-        });
-        data.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-        ? this._siblings.sort((a,b) => (Number(a.creation) - Number(b.creation)))
-        : this._siblings.sort((a,b) => (a.children.firstCreated.creation - b.children.firstCreated.creation));
-        if (direction == "descending") { data.reverse(); }
-        return data;
-    }
-
-    sortByLastEdited(data, direction) {
-        var keys;
-        var childrenId;
-        data.forEach(record => {
-            keys = Object.keys(record);
-            childrenId = keys.find(key => (key.toLowerCase().includes("id")));
-            if (childrenId) {
-                record[childrenId] = this.sortByLastEdited(record[childrenId]);
-            }
-        });
-        data.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-        ? this._siblings.sort((a,b) => (Number(a._data.lastEdited) - Number(b._data.lastEdited)))
-        : this._siblings.sort((a,b) => (a.children.mostRecentlyEdited.lastEdited - b.children.mostRecentlyEdited.lastEdited));
-        if (direction == "descending") { data.reverse(); }
-        return data;
-    }
-
-    sortByLastOpened(data, direction) {
-        var keys;
-        var childrenId;
-        data.forEach(record => {
-            keys = Object.keys(record);
-            childrenId = keys.find(key => (key.toLowerCase().includes("id")));
-            if (childrenId) {
-                record[childrenId] = this.sortByLastOpened(record[childrenId]);
-            }
-        });
-        data.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-        ? this._siblings.sort((a,b) => (Number(a._data.lastOpened) - Number(b._data.lastOpened)))
-        : this._siblings.sort((a,b) => (a.children.mostRecentlyOpened.lastOpened - b.children.mostRecentlyOpened.lastOpened));
-        if (direction == "descending") { data.reverse(); }
-        return data;
-    }
+    sortByName       = function(a,b) { return a.name.toLowerCase().localeCompare(b.name.toLowerCase()); }   
+    sortByCreation   = function(a,b) { return (Number(a.creation) - Number(b.creation)); }
+    sortByLastEdited = function(a,b) { return (Number(a._data.lastEdited) - Number(b._data.lastEdited)); }
+    sortByLastOpened = function(a,b) { return (Number(a._data.lastOpened) - Number(b._data.lastOpened)); }
 
     resetRows(ids)        { return ids.forEach(id => this.reset(id)); }
     resetRow(id)          { this.unselectRow(id); this.expandRow(this.rowId(id)); }
