@@ -840,36 +840,36 @@ class UserDataUtility {
 
     sortRecords(id, method, direction) {
         var sortValues = [], value;
-        console.log(id, this.hasChildren(id));
         if (this.hasChildren(id)) {
-            console.log("got here");
+            console.log(id, "has children");
             this.allChildIdsOf(id).forEach(childId => {
                 const loaded = this.loadedRecordExists(childId);
                 if (this.hasChildren(childId)) { value = this.sortRecords(childId, method, direction); }
-                const methodRow     = $("#" + childId + ":contains('" + method + "')");
-                const nameRow       = $("#" + childId + ":contains('name')");
-                const creationRow   = $("#" + childId + ":contains('creation')");
-                const methodValue   = (methodRow)   ? ((loaded) ? methodRow.next().next().next().text()   : methodRow.next().text())   : false;
-                const nameValue     = (nameRow)     ? ((loaded) ? nameRow.next().next().next().text()     : nameRow.next().text())     : false;
-                const creationValue = (creationRow) ? ((loaded) ? creationRow.next().next().next().text() : creationRow.next().text()) : false;
+                const methodRow     = this.row(childId).find("td:contains('" + method + "')");
+                const nameRow       = this.row(childId).find("td:contains('name')");
+                const creationRow   = this.row(childId).find("td:contains('creation')");
+                const methodValue   = (methodRow.length)   ? ((loaded) ? methodRow.next().next().next().text()   : methodRow.next().text())   : false;
+                const nameValue     = (nameRow.length)     ? ((loaded) ? nameRow.next().next().next().text()     : nameRow.next().text())     : false;
+                const creationValue = (creationRow.length) ? ((loaded) ? creationRow.next().next().next().text() : creationRow.next().text()) : false;
                 const sortValue = (                        methodRow   && methodValue   != "false") ? methodValue
-                          : (method == "name"     && creationRow && creationValue != "false") ? creationValue
-                          : (method == "creation" && nameRow     && nameValue     != "false") ? nameValue
-                          :                                                                     value;
+                                : (method == "name"     && creationRow && creationValue != "false") ? creationValue
+                                : (method == "creation" && nameRow     && nameValue     != "false") ? nameValue
+                                :                                                                     value;
                 sortValues.push({ id: childId, value: sortValue });
             });
+            console.log(id, sortValues);
             sortValues.sort((a,b) => a.value.toLowerCase().localeCompare(b.value.toLowerCase()));
-            if (direction == "descending") {         console.log("got here");
-            sortValues.reverse(); }
+            if (direction == "descending") { sortValues.reverse(); }
             sortValues.forEach((item, index) => {
-                console.log("got here");
-                if (this.hasChildren(id)) {
+                if (this.hasChildren(item.id)) {
+                    console.log("including all the descendants", this.allDescendantIdsOf(item.id));
                     const lastDescendantId = this.allDescendantIdsOf(item.id).slice(-1);
+                    console.log("moving", item, "to", this.row(id).parent().index() + index + 1);
                     const rows = this.row(item.id).nextUntil(lastDescendantId).addBack().add(lastDescendantId).detach();
-                    this.scrollAreaDiv.children().eq(this.row(item.id).parent().index() + index + 1).after(rows);
+                    this.scrollAreaDiv.children().eq(this.row(id).parent().index() + index + 1).after(rows);
                 }
             });
-            return (direction == "descending") ? sortValues.slice(-1) : sortValues.slice(0);
+            return (direction == "descending") ? sortValues.slice(-1)[1] : sortValues.slice(0)[1];
         }
     }
 
@@ -1107,11 +1107,11 @@ class UserDataUtility {
 
     allDescendantIdsOf(id) {
         var ids = [];
-        if (this.hasLocalChildren(id)) {
+        if (this.hasChildren(id)) {
             this.allChildIdsOf(id).forEach(childId => {
                 ids.push(childId);
-                if (this.hasLocalChildren(childId)) {
-                    ids = ids.concat(this.localDescendantIdsOf(childId), this.loadedDescendantIdsOf(childId))
+                if (this.hasChildren(childId)) {
+                    ids = ids.concat(this.allDescendantIdsOf(childId))
                              .filter((id, index) => ids.indexOf(id) === index);
                 }
             });
@@ -1125,7 +1125,8 @@ class UserDataUtility {
             this.localChildIdsOf(id).forEach(childId => {
                 ids.push(childId);
                 if (this.hasLocalChildren(childId)) {
-                    ids = ids.concat(this.localDescendantIdsOf(childId));
+                    ids = ids.concat(this.localDescendantIdsOf(childId))
+                    .filter((id, index) => ids.indexOf(id) === index);
                 }
             });
         }
@@ -1138,7 +1139,8 @@ class UserDataUtility {
             this.loadedChildIdsOf(id).forEach(childId => {
                 ids.push(childId);
                 if (this.hasLoadedChildren(childId)) {
-                    ids = ids.concat(this.loadedDescendantIdsOf(childId));
+                    ids = ids.concat(this.loadedDescendantIdsOf(childId))
+                    .filter((id, index) => ids.indexOf(id) === index);
                 }
             });
         }
