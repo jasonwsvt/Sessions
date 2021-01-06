@@ -851,13 +851,11 @@ class UserDataUtility {
                 const methodValue   = (methodRow.length)   ? ((loaded) ? methodRow.next().next().next().text()   : methodRow.next().text())   : false;
                 const nameValue     = (nameRow.length)     ? ((loaded) ? nameRow.next().next().next().text()     : nameRow.next().text())     : false;
                 const creationValue = (creationRow.length) ? ((loaded) ? creationRow.next().next().next().text() : creationRow.next().text()) : false;
-                const sortValue = (                        methodRow   && methodValue   != "false") ? methodValue
-                                : (method == "name"     && creationRow && creationValue != "false") ? creationValue
-                                : (method == "creation" && nameRow     && nameValue     != "false") ? nameValue
-                                :                                                                     value;
+                console.log(id, method, methodValue, value);
+                const sortValue = (methodRow   && methodValue   != false) ? methodValue : value;
                 sortValues.push({ id: childId, value: sortValue });
             });
-            console.log(id, sortValues);
+            console.log(id, "before sort:", sortValues);
             sortValues.sort((a,b) => a.value.toLowerCase().localeCompare(b.value.toLowerCase()));
             if (direction == "descending") { sortValues.reverse(); }
             sortValues.forEach((item, index) => {
@@ -869,7 +867,8 @@ class UserDataUtility {
                     this.scrollAreaDiv.children().eq(this.row(id).parent().index() + index + 1).after(rows);
                 }
             });
-            return (direction == "descending") ? sortValues.slice(-1)[1] : sortValues.slice(0)[1];
+            console.log(id, "after sort:", sortValues);
+            return (direction == "descending") ? sortValues.pop().value : sortValues.shift().value;
         }
     }
 
