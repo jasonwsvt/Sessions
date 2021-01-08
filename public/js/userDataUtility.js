@@ -232,34 +232,34 @@ class UserDataUtility {
         this.options.data("sort_0_states", 2);
         this.options.data("sort_0_0_selected", this._downArrowIcon + "A-Z");
         this.options.data("sort_0_0_unselected", "A-Z");
-        this.options.data("sort_0_0_value", "sort alphabetic descending");
+        this.options.data("sort_0_0_value", "sort alphabetic ascending");
         this.options.data("sort_0_1_selected", this._upArrowIcon + "A-Z");
         this.options.data("sort_0_1_unselected", "A-Z");
-        this.options.data("sort_0_1_value", "sort alphabetic ascending");
+        this.options.data("sort_0_1_value", "sort alphabetic descending");
         this.options.data("sort_1_state", 0);
         this.options.data("sort_1_states", 2);
         this.options.data("sort_1_0_selected", this._downArrowIcon + "Creation");
         this.options.data("sort_1_0_unselected", "Creation");
-        this.options.data("sort_1_0_value", "sort creation descending");
+        this.options.data("sort_1_0_value", "sort creation ascending");
         this.options.data("sort_1_1_selected", this._upArrowIcon + "Creation");
         this.options.data("sort_1_1_unselected", "Creation");
-        this.options.data("sort_1_1_value", "sort creation ascending");
+        this.options.data("sort_1_1_value", "sort creation descending");
         this.options.data("sort_2_state", 0);
         this.options.data("sort_2_states", 2);
         this.options.data("sort_2_0_selected", this._downArrowIcon + "Edited");
         this.options.data("sort_2_0_unselected", "Edited");
-        this.options.data("sort_2_0_value", "sort edited descending");
+        this.options.data("sort_2_0_value", "sort edited ascending");
         this.options.data("sort_2_1_selected", this._upArrowIcon + "Edited");
         this.options.data("sort_2_1_unselected", "Edited");
-        this.options.data("sort_2_1_value", "sort edited ascending");
+        this.options.data("sort_2_1_value", "sort edited descending");
         this.options.data("sort_3_state", 0);
         this.options.data("sort_3_states", 2);
         this.options.data("sort_3_0_selected", this._downArrowIcon + "Opened");
         this.options.data("sort_3_0_unselected", "Opened");
-        this.options.data("sort_3_0_value", "sort opened descending");
+        this.options.data("sort_3_0_value", "sort opened ascending");
         this.options.data("sort_3_1_selected", this._upArrowIcon + "Opened");
         this.options.data("sort_3_1_unselected", "Opened");
-        this.options.data("sort_3_1_value", "sort opened ascending");
+        this.options.data("sort_3_1_value", "sort opened descending");
         
         this.options.data("expand_0_html", "Sessions");
         this.options.data("expand_0_value", "expand sessions");
@@ -819,8 +819,20 @@ class UserDataUtility {
         }
         this.scrollAreaDiv.append("<table id = 'row_" + id + "' class = 'flex-container'>" + record + "</table>");
         if (parentId) { this.row("row_" + id).addClass(this.parentId("row_" + parentId)); }
-        if (loaded) { this.row("row_" + id).addClass("loaded"); }
-        if (local)  { this.row("row_" + id).addClass("local"); }
+        if (loaded) {
+            this.row("row_" + id).addClass("loaded");
+            this.row("row_" + id).data("loaded_name", (keys.includes("name")) ? loaded.name : this.parseDate(loaded.creation));
+            if (keys.includes("creation"))   { this.row("row_" + id).data("loaded_creation",   loaded.creation); }
+            if (keys.includes("lastEdited")) { this.row("row_" + id).data("loaded_lastEdited", loaded.lastEdited); }
+            if (keys.includes("lastOpened")) { this.row("row_" + id).data("loaded_lastOpened", loaded.lastOpened); }
+        }
+        if (local)  {
+            this.row("row_" + id).addClass("local");
+            this.row("row_" + id).data("local_name", (keys.includes("name")) ? local.name : this.parseDate(local.creation));
+            if (keys.includes("creation"))   { this.row("row_" + id).data("local_creation",   local.creation); }
+            if (keys.includes("lastEdited")) { this.row("row_" + id).data("local_lastEdited", local.lastEdited); }
+            if (keys.includes("lastOpened")) { this.row("row_" + id).data("local_lastOpened", local.lastOpened); }
+        }
 
         //console.log(local[children]);
         if (children) {
@@ -838,37 +850,55 @@ class UserDataUtility {
         }
     }
 
-    sortRecords(id, method, direction) {
-        var sortValues = [], value;
+    sortChildren(id, method, direction) {
+        var sortValues = [], sortedValues, loaded, children, child, childData, value, methodRow, methodValue, sortValue, lastDescendantId, rows;
         if (this.hasChildren(id)) {
-            console.log(id, "has children");
-            this.allChildIdsOf(id).forEach(childId => {
-                const loaded = this.loadedRecordExists(childId);
-                if (this.hasChildren(childId)) { value = this.sortRecords(childId, method, direction); }
-                const methodRow     = this.row(childId).find("td:contains('" + method + "')");
-                const nameRow       = this.row(childId).find("td:contains('name')");
-                const creationRow   = this.row(childId).find("td:contains('creation')");
-                const methodValue   = (methodRow.length)   ? ((loaded) ? methodRow.next().next().next().text()   : methodRow.next().text())   : false;
-                const nameValue     = (nameRow.length)     ? ((loaded) ? nameRow.next().next().next().text()     : nameRow.next().text())     : false;
-                const creationValue = (creationRow.length) ? ((loaded) ? creationRow.next().next().next().text() : creationRow.next().text()) : false;
-                console.log(id, method, methodValue, value);
-                const sortValue = (methodRow   && methodValue   != false) ? methodValue : value;
-                sortValues.push({ id: childId, value: sortValue });
+            //console.log(id, "has children");
+            children = this.allChildIdsOf(id)
+            //Determining sort values
+            children.forEach(childId => {
+                loaded = this.loadedRecordExists(childId);
+                child = this.row(childId);
+                if (this.hasChildren(childId)) { value = this.sortChildren(childId, method, direction); }
+                childData = child.data(((loaded) ? "loaded" : "local") + "_" + method);
+                //console.log(id, childId, method, sortValue);
+                sortValues.push({ id: childId, value: (childData ? childData : value) });
             });
-            console.log(id, "before sort:", sortValues);
-            sortValues.sort((a,b) => a.value.toLowerCase().localeCompare(b.value.toLowerCase()));
-            if (direction == "descending") { sortValues.reverse(); }
-            sortValues.forEach((item, index) => {
-                if (this.hasChildren(item.id)) {
-                    console.log("including all the descendants", this.allDescendantIdsOf(item.id));
-                    const lastDescendantId = this.allDescendantIdsOf(item.id).slice(-1);
-                    console.log("moving", item, "to", this.row(id).parent().index() + index + 1);
-                    const rows = this.row(item.id).nextUntil(lastDescendantId).addBack().add(lastDescendantId).detach();
-                    this.scrollAreaDiv.children().eq(this.row(id).parent().index() + index + 1).after(rows);
-                }
-            });
-            console.log(id, "after sort:", sortValues);
-            return (direction == "descending") ? sortValues.pop().value : sortValues.shift().value;
+
+            if (children.length > 1) {
+                console.log(id, "before", method, direction, "sort:", sortValues);
+                //Sorting values
+                sortedValues = sortValues;
+                sortedValues.sort((a,b) => (isString(a) ? a.value.toLowerCase().localeCompare(b.value.toLowerCase()) : a.value - b.value));
+                if (direction == "descending") { sortedValues.reverse(); }
+                console.log(id, "after", method, direction, "sort:", sortedValues);
+
+                //Moving rows of id and children based on sort
+                sortedValues.forEach((item, index) => {
+                    index += this.row(id).parent().index() + 1;
+                    if (this.hasChildren(item.id)) {
+                        lastDescendantId = this.allDescendantIdsOf(item.id).slice(-1);
+                        rows = this.row(item.id).nextUntil("#" + lastDescendantId).addBack().add("#" + lastDescendantId);
+                        //console.log("including all the descendants", this.allDescendantIdsOf(item.id));
+                        console.log("moving child", item.id, "of", id, " and its children:", rows, "to", index);
+                    }
+                    else {
+                        rows = this.row(item.id);
+                        console.log("moving child", item.id, "of", id, ":", rows, "to", index);
+                    }
+                    //this.scrollAreaDiv.eq(index).after(rows);
+                });
+                return sortedValues[(direction == "descending") ? 0 : sortedValues.length - 1].value;
+            } else {
+                console.log(id, "only has one child so no sorting necessary");
+                return sortValues[0].value;
+            }
+        }
+        else {
+            //If no children, just return sort value
+            loaded = this.loadedRecordExists(id);
+            methodRow = this.row(id).find("td:contains('" + method + "')");
+            return (methodRow.length) ? (loaded ? methodRow.next().next().next().text() : methodRow.next().text()) : false;
         }
     }
 
@@ -1178,7 +1208,7 @@ class UserDataUtility {
                          : (option.split(" ")[0] == "opened")     ? "lastOpened" : null;
             const direction = option.split(" ")[1];
     
-            this.sortRecords(this.scrollAreaDiv.children().eq(0).attr("id"), method, direction);
+            this.sortChildren(this.scrollAreaDiv.children().eq(0).attr("id"), method, direction);
         }
         else if (["expand", "collapse", "hide"].includes(adjust)) {
             const ids = (option == "clients")    ? this.allClientRowIds
@@ -1256,14 +1286,14 @@ class UserDataUtility {
     parseDate(ts) {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const d = new Date(ts * 1000);
-        const year   = String(d.getFullYear()).slice(2);
+        const year   = String(d.getFullYear());
         const month  = String(d.getMonth()+1).padStart(2, '0');
         const day    = String(d.getDate()).padStart(2, '0');
         const hour   = String((d.getHours() > 12) ? d.getHours() - 12 : d.getHours()).padStart(2, '0');
         const minute = String(d.getMinutes()).padStart(2, '0');
         const second = String(d.getSeconds()).padStart(2, '0');
         const ampm   = String((d.getHours() > 12) ? "PM" : "AM");
-        return `${month}/${day}/${year} ${hour}:${minute}:${second}${ampm}`;
+        return `${year}/${month}/${day} ${hour}:${minute}:${second}${ampm}`;
     }
 
     _escapeHTML(html) {
