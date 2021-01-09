@@ -851,7 +851,7 @@ class UserDataUtility {
     }
 
     sortChildren(id, method, direction) {
-        var sortValues = [], sortedValues, loaded, children, child, childData, value, methodRow, methodValue, sortValue, lastDescendantId, rows;
+        var sortValues = [], sortedValues, index, loaded, children, child, childData, value, methodRow, methodValue, sortValue, lastDescendantId, rows;
         if (this.hasChildren(id)) {
             //console.log(id, "has children");
             children = this.allChildIdsOf(id)
@@ -866,38 +866,39 @@ class UserDataUtility {
             });
 
             if (children.length > 1) {
-                console.log(id, "before", method, direction, "sort:", sortValues);
+                //console.log(id, "before", method, direction, "sort:", sortValues);
                 //Sorting values
                 sortedValues = [...sortValues];
                 sortedValues.sort((a,b) => (isString(a) ? a.value.toLowerCase().localeCompare(b.value.toLowerCase()) : a.value - b.value));
                 if (direction == "descending") { sortedValues.reverse(); }
-                console.log(id, "after", method, direction, "sort:", sortedValues);
+                //console.log(id, "after", method, direction, "sort:", sortedValues);
 
                 //Moving rows of id and children based on sort
-                sortedValues.forEach((item, index) => {
-                    index += this.row(id).parent().index() + 1;
+                index = id;
+                sortedValues.forEach((item) => {
                     if (this.hasChildren(item.id)) {
-                        lastDescendantId = this.allDescendantIdsOf(item.id).slice(-1);
-                        rows = this.row(item.id).nextUntil("#" + lastDescendantId).addBack().add("#" + lastDescendantId);
+                        lastDescendantId = this.allDescendantIdsOf(item.id).slice(-1)[0];
+                        //console.log(item.id, this.allDescendantIdsOf(item.id), lastDescendantId);
+                        rows = this.row(item.id).nextUntil("#" + lastDescendantId).addBack().add("#" + lastDescendantId).detach();
                         //console.log("including all the descendants", this.allDescendantIdsOf(item.id));
-                        console.log("inserting", item.id, "after", this.scrollAreaDiv.children().eq(index).attr("id"));
-                        console.log("moving child", item.id, "of", id, " and its children", "to", index, ":", rows);
+                        console.log("moving", item.id, "to", lastDescendantId, "after", index, rows);
                     }
                     else {
-                        rows = this.row(item.id);
-                        console.log("moving child", item.id, "of", id, "to", index, ":", rows);
+                        rows = this.row(item.id).detach();
+                        console.log("moving", item.id, "after", index, rows);
                     }
-                    console.log("inserting after", this.scrollAreaDiv.children().eq(index).attr("id"));
-                    //this.scrollAreaDiv.children().eq(index).after(rows);
+                    this.row(index).after(rows);
+                    index = (this.hasChildren(item.id)) ? this.allDescendantIdsOf(item.id).slice(-1)[0] : item.id;
                 });
                 return sortedValues[(direction == "descending") ? 0 : sortedValues.length - 1].value;
             } else {
-                console.log(id, "only has one child so no sorting necessary");
+                //console.log(id, "only has one child so no sorting necessary");
                 return sortValues[0].value;
             }
         }
         else {
             //If no children, just return sort value
+            console.log("shouldn't get here");
             loaded = this.loadedRecordExists(id);
             const sortData = this.row(id).data(((loaded) ? "loaded" : "local") + "_" + method);
             //console.log(id, childId, method, sortValue);
