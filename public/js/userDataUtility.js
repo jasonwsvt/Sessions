@@ -881,11 +881,11 @@ class UserDataUtility {
                         //console.log(item.id, this.allDescendantIdsOf(item.id), lastDescendantId);
                         rows = this.row(item.id).nextUntil("#" + lastDescendantId).addBack().add("#" + lastDescendantId).detach();
                         //console.log("including all the descendants", this.allDescendantIdsOf(item.id));
-                        console.log("moving", item.id, "to", lastDescendantId, "after", index, rows);
+                        //console.log("moving", item.id, "to", lastDescendantId, "after", index, rows);
                     }
                     else {
                         rows = this.row(item.id).detach();
-                        console.log("moving", item.id, "after", index, rows);
+                        //console.log("moving", item.id, "after", index, rows);
                     }
                     this.row(index).after(rows);
                     index = (this.hasChildren(item.id)) ? this.allDescendantIdsOf(item.id).slice(-1)[0] : item.id;
@@ -895,14 +895,6 @@ class UserDataUtility {
                 //console.log(id, "only has one child so no sorting necessary");
                 return sortValues[0].value;
             }
-        }
-        else {
-            //If no children, just return sort value
-            console.log("shouldn't get here");
-            loaded = this.loadedRecordExists(id);
-            const sortData = this.row(id).data(((loaded) ? "loaded" : "local") + "_" + method);
-            //console.log(id, childId, method, sortValue);
-            return (sortData) ? sortData : value;
         }
     }
 
