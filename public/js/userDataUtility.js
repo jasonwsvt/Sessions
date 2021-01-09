@@ -869,7 +869,7 @@ class UserDataUtility {
                 //console.log(id, "before", method, direction, "sort:", sortValues);
                 //Sorting values
                 sortedValues = [...sortValues];
-                sortedValues.sort((a,b) => (isString(a) ? a.value.toLowerCase().localeCompare(b.value.toLowerCase()) : a.value - b.value));
+                sortedValues.sort((a,b) => (isString(a.value) ? a.value.toLowerCase().localeCompare(b.value.toLowerCase()) : a.value - b.value));
                 if (direction == "descending") { sortedValues.reverse(); }
                 //console.log(id, "after", method, direction, "sort:", sortedValues);
 
