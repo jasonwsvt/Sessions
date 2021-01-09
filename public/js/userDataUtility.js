@@ -868,7 +868,7 @@ class UserDataUtility {
             if (children.length > 1) {
                 console.log(id, "before", method, direction, "sort:", sortValues);
                 //Sorting values
-                sortedValues = sortValues;
+                sortedValues = [...sortValues];
                 sortedValues.sort((a,b) => (isString(a) ? a.value.toLowerCase().localeCompare(b.value.toLowerCase()) : a.value - b.value));
                 if (direction == "descending") { sortedValues.reverse(); }
                 console.log(id, "after", method, direction, "sort:", sortedValues);
@@ -880,13 +880,15 @@ class UserDataUtility {
                         lastDescendantId = this.allDescendantIdsOf(item.id).slice(-1);
                         rows = this.row(item.id).nextUntil("#" + lastDescendantId).addBack().add("#" + lastDescendantId);
                         //console.log("including all the descendants", this.allDescendantIdsOf(item.id));
-                        console.log("moving child", item.id, "of", id, " and its children:", rows, "to", index);
+                        console.log("inserting", item.id, "after", this.scrollAreaDiv.children().eq(index).attr("id"));
+                        console.log("moving child", item.id, "of", id, " and its children", "to", index, ":", rows);
                     }
                     else {
                         rows = this.row(item.id);
-                        console.log("moving child", item.id, "of", id, ":", rows, "to", index);
+                        console.log("moving child", item.id, "of", id, "to", index, ":", rows);
                     }
-                    //this.scrollAreaDiv.eq(index).after(rows);
+                    console.log("inserting after", this.scrollAreaDiv.children().eq(index).attr("id"));
+                    //this.scrollAreaDiv.children().eq(index).after(rows);
                 });
                 return sortedValues[(direction == "descending") ? 0 : sortedValues.length - 1].value;
             } else {
@@ -897,8 +899,9 @@ class UserDataUtility {
         else {
             //If no children, just return sort value
             loaded = this.loadedRecordExists(id);
-            methodRow = this.row(id).find("td:contains('" + method + "')");
-            return (methodRow.length) ? (loaded ? methodRow.next().next().next().text() : methodRow.next().text()) : false;
+            const sortData = this.row(id).data(((loaded) ? "loaded" : "local") + "_" + method);
+            //console.log(id, childId, method, sortValue);
+            return (sortData) ? sortData : value;
         }
     }
 
