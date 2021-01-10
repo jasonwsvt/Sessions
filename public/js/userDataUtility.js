@@ -223,7 +223,7 @@ class UserDataUtility {
         this.options.data("default_unselectedClass", "btn-info");
         this.options.data("default_selectedClass", "btn-info");
 
-        this.options.data("sort_default", "sort_1_0_selected");
+//        this.options.data("sort_default", "sort_1_0_selected");
         this.options.data("sort_indices", 4);
         this.options.data("sort_default", "sort_0_0_selected");
         this.options.data("sort_unselectedClass", "btn-dark");
@@ -1086,6 +1086,8 @@ class UserDataUtility {
         }
     }
    
+    get allLocalRecords() { return this.localRecords(this.allLocalIds); }
+    localRecords(ids) { return ids.map(id => this.localRecord(id)); }
     localRecord(id) {
         if (this.localRecordExists(id)) {
             var record = [], name, value;
@@ -1098,6 +1100,8 @@ class UserDataUtility {
         }
     }
 
+    get allLoadedRecords() { return this.loadedRecords(this.allLoadedIds); }
+    loadedRecords(ids) { return ids.map(id => this.loadedRecord(id)); }
     loadedRecord(id) {
         if (this.loadedRecordExists(id)) {
             var record = [], name, value;
@@ -1235,17 +1239,15 @@ class UserDataUtility {
                     break;
                 case "older":
                     this.allIds.forEach(id => {
-                        if (!this.loadedRecordExists(id)) { this.selectLocalRecord(id); }
-                        else if (!this.localRecordExists(id) || this.loadedRecordIsOlder(id)) { this.selectLoadedRecord(id); }
-                        else { this.selectLocalRecord(id); }
+                        if (!this.loadedRecordExists(id) || this.loadedRecordIsNewer(id)) { this.selectLocalRecord(id); }
+                        else { this.selectLoadedRecord(id); }
                     });
                     parentIds = this.allParentRowIds;
                     break;
                 case "newer":
                     this.allIds.forEach(id => {
-                        if (!this.loadedRecordExists(id)) { this.selectLocalRecord(id); }
-                        else if (!this.localRecordExists(id) || this.loadedRecordIsNewer(id)) { this.selectLoadedRecord(id); }
-                        else { this.selectLocalRecord(id); }
+                        if (!this.loadedRecordExists(id) || this.loadedRecordIsOlder(id)) { this.selectLocalRecord(id); }
+                        else { this.selectLoadedRecord(id); }
                     });
                     parentIds = this.allParentRowIds;
                     break;
@@ -1276,6 +1278,22 @@ class UserDataUtility {
                 case "none": this.unselectRows(this.allIds); break;
             }
             this.updateChildrenSelectStatuses(parentIds);
+        }
+        else if (adjust == "export") {
+            this._exportJSON((option == "local")    ? this.allLocalRecords
+                           : (option == "loaded")   ? this.allLoadedRecords
+                           : (option == "selected") ? this.allSelectedRowIds.map(id =>
+                                                        (this.localRecordIsSelected(id)
+                                                            ? this.localRecord(id) : this.loadedRecord(id)))
+                           : (option == "newer")    ? this.allIds.map(id =>
+                                                        (!this.loadedRecordExists(id) || this.loadedRecordIsOlder(id))
+                                                            ? this.localRecord(id)
+                                                            : this.loadedRecord(id))
+                           : (option == "older")    ? this.allIds.map(id =>
+                                                        (!this.loadedRecordExists(id) || this.loadedRecordIsNewer(id))
+                                                            ? this.localRecord(id)
+                                                            : this.loadedRecord(id))
+                           : []);
         }
     }
 
