@@ -4,6 +4,7 @@
 class UserDataUtility {
     _userUtilities = null;
     _group = null;
+    loadedData = null;
 
     _buttonIcon    = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-person-lines-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm2 9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/></svg>';
     _fullIcon      = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2z"/></svg>';
@@ -581,9 +582,9 @@ class UserDataUtility {
         this.currentUser.pushToStorage();
         this.scrollAreaDiv.empty();
         //call buildRecord with data
-        this._buildRecord(0, this.currentUser.pullRecords(), false);  //change false to loaded
+        this._buildRecord(0, this.currentUser.pullRecords(), this.loadedData);
 
-        if (true) { //change true to !loaded
+        if (!this.loadedData) {
             this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 5) + "px");
             this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
         }
@@ -710,8 +711,9 @@ class UserDataUtility {
         });
     }
 
-    _buildRecord(tier, local, loaded = []) {
+    _buildRecord(tier, local, loaded) {
         var id = local.id, keys = [], localRecord, loadedRecord, parentId;
+        if (!loaded) { loaded = []; }
         var unsortedKeys = Object.keys(local);
         if (loaded.length) {
             unsortedKeys = unsortedKeys.concat(Object.keys(loaded));
@@ -825,6 +827,7 @@ class UserDataUtility {
             if (keys.includes("creation"))   { this.row("row_" + id).data("loaded_creation",   loaded.creation); }
             if (keys.includes("lastEdited")) { this.row("row_" + id).data("loaded_lastEdited", loaded.lastEdited); }
             if (keys.includes("lastOpened")) { this.row("row_" + id).data("loaded_lastOpened", loaded.lastOpened); }
+            if (keys.includes("lines"))      { this.row("row_" + id).data("loaded_lines",      loaded.lines); }
         }
         if (local)  {
             this.row("row_" + id).addClass("local");
@@ -832,6 +835,7 @@ class UserDataUtility {
             if (keys.includes("creation"))   { this.row("row_" + id).data("local_creation",   local.creation); }
             if (keys.includes("lastEdited")) { this.row("row_" + id).data("local_lastEdited", local.lastEdited); }
             if (keys.includes("lastOpened")) { this.row("row_" + id).data("local_lastOpened", local.lastOpened); }
+            if (keys.includes("lines"))      { this.row("row_" + id).data("local_lines",      local.lines); }
         }
 
         //console.log(local[children]);
@@ -1090,11 +1094,12 @@ class UserDataUtility {
     localRecords(ids) { return ids.map(id => this.localRecord(id)); }
     localRecord(id) {
         if (this.localRecordExists(id)) {
-            var record = [], name, value;
-            this.row(id).find("tr").forEach(line => {
-                name = line.find("td").eq(2).text;
-                value = line.find("td").eq(3).text;
-                if (value) { record[name] = value; }
+            var record = new Object(), name, value, data, self = this;
+            this.row(id).find("tr").each(function() {
+                name = $(this).find("td").eq(1).text().slice(0, -1);
+                data = self.row(id).data("local_" + name);
+                value = (data) ? data : $(this).find("td").eq(2).text();
+                if ((name == "lines" || !name.endsWith("s"))) { record[name] = value; }
             });
             return record;
         }
@@ -1104,11 +1109,12 @@ class UserDataUtility {
     loadedRecords(ids) { return ids.map(id => this.loadedRecord(id)); }
     loadedRecord(id) {
         if (this.loadedRecordExists(id)) {
-            var record = [], name, value;
-            this.row(id).find("tr").forEach(line => {
-                name = line.find("td").eq(2).text;
-                value = line.find("td").eq(5).text;
-                if (value) { record[name] = value; }
+            var record = new Object(), name, value, data, self = this;
+            this.row(id).find("tr").each(function() {
+                name = $(this).find("td").eq(1).text().slice(0, -1);
+                data = self.row(id).data("loaded_" + name);
+                value = (data) ? data : $(this).find("td").eq(4).text();
+                if ((name == "lines" || !name.endsWith("s")) && value) { record[name] = value; }
             });
             return record;
         }
@@ -1315,9 +1321,12 @@ class UserDataUtility {
         return html.map(line => (jQuery(line).text()));
 }
 
-    _exportJSON(data) {
+    _exportJSON(arrayObject) {
+        const data = [JSON.stringify(arrayObject, null, 2)];
+        console.log(arrayObject, data);
         const blob1 = new Blob(data, { type: "text/plain;charset=utf-8" });
         const name = this.currentUser.username + ".json";
+        console.log(blob1);
  
         //Check the Browser.
         const isIE = false || !!document.documentMode;
@@ -1329,38 +1338,38 @@ class UserDataUtility {
             a.attr("download", name);
             a.attr("href", link);
             $("body").append(a);
+            a.on("click", function(e) { e.stopPropagation(); });
             a[0].click();
             $("body").remove(a);
         }
     }
 
     _loadJSON() {
-        const hiddenDiv = "<div id = 'hiddenDiv' class = 'hidden'></div>";
-        const fileInput = "<input id = 'upload' type = 'file'>";
-        var fi = $();
-        $("body").append(hiddenDiv);
-        $("hiddenDiv").append(fileInput);
-        $("upload").click( function () {
-            var $i = $('#upload'), // Put file input ID here
-                input = $i[0]; // Getting the element from jQuery
-            if (input.files && input.files[0]) {
-                file = input.files[0]; // The file
-                fr = new FileReader(); // FileReader instance
-                fr.onload = () => {
-                    // Do stuff on onload, use fr.result for contents of file
-                    this.currentUser.synchronize(fr.result);
-                };
-                fr.readAsText(file);
-                //fr.readAsDataURL(file);
-            } else {
-                // Handle errors here
-                alert( "Either a file was not selected, or the browser is incompatible." )
-            }
+        const self = this;
+        var a = $("<div id = 'loadDiv' class = 'hidden'></div>");
+        a.append("<input id = 'loadFile' type = 'file'>");
+        $("body").append(a);
+        $("#loadFile").on("change", function() { 
+            let file = this.files[0];
+            let reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = function() {
+                this.loadedData = JSON.parse(reader.result);
+                this.buildRecords();
+            };
+            reader.onerror = function() {
+              console.log(reader.error);
+            };
+            $("body").remove("#loadDiv");
         });
-
-        $("upload").click();
-        $("hiddenDiv").remove();
+        $("#loadFile").on("click", function(e) { e.stopPropagation(); });
+        $("#loadFile").trigger("click");
     }
+
+    readFile(input) {
+
+    }
+
 
     delete() {
 
