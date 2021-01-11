@@ -1354,8 +1354,8 @@ class UserDataUtility {
             let reader = new FileReader();
             reader.readAsText(file);
             reader.onload = function() {
-                this.loadedData = JSON.parse(reader.result);
-                this.buildRecords();
+                self.loadedData = JSON.parse(reader.result);
+                //self.buildRecords();
             };
             reader.onerror = function() {
               console.log(reader.error);
