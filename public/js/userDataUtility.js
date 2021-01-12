@@ -4,6 +4,7 @@
 class UserDataUtility {
     _userUtilities = null;
     _group = null;
+    localData = null;
     loadedData = false;
 
     _buttonIcon    = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-person-lines-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm2 9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/></svg>';
@@ -582,7 +583,7 @@ class UserDataUtility {
 
     _buildRecords() {
         const self = this;
-        const localData = this.currentUser.pullRecords();
+        this.localData = this.currentUser.pullRecords();
         //clear scrollAreaDiv
         this.currentUser.pushToStorage();
         this.scrollAreaDiv.empty();
@@ -911,11 +912,12 @@ class UserDataUtility {
     }
 
     resetRows(ids)        { return ids.forEach(id => this.reset(id)); }
-    resetRow(id)          { this.unselectRow(id); this.expandRow(this.rowId(id)); }
+    resetRow(id)          { this.unselectRow(id); this.expandRow(id); }
     classList(id)         { return this.row(id).attr("class").split(" "); }
     parentClass(id)       { return this.classList(id).find(c => c.startsWith("parentId_")); }
     hasParent(id)         { return !!this.parentClass(id); }
     parentId(id)          { return "parentId_" + id.split("_")[1]; }
+    rowId(id)             { return "rowId_" + id.split("_")[1]; }
     parentRowId(id)       { return (this.parentClass(id)) ? "row_" + this.parentClass(id).split("_")[1] : null; }
     parentRowIds(ids)     { return [...new Set(ids.filter(id => this.hasParent(id)).map(id => this.parentRowId(id)))]; }
     get allParentRowIds() { return this.parentRowIds(this.allIds); }
