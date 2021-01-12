@@ -4,7 +4,7 @@
 class UserDataUtility {
     _userUtilities = null;
     _group = null;
-    loadedData = null;
+    loadedData = false;
 
     _buttonIcon    = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-person-lines-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm2 9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/></svg>';
     _fullIcon      = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2z"/></svg>';
@@ -218,7 +218,7 @@ class UserDataUtility {
     }
 
     setUpOptionsData() {
-        const loaded = false;
+        const loaded = (this.loadedData != false);
         this.options.removeData();
 
         this.options.data("default_unselectedClass", "btn-info");
@@ -427,6 +427,10 @@ class UserDataUtility {
     }
 
     reset() {
+        //clear loaded data
+        this.loadedData = false;
+        this.loadDiv.removeClass("hidden");
+
         //set adjust default to sort
         this.adjust.data("value", this.adjust.data("default"));
 
@@ -578,13 +582,15 @@ class UserDataUtility {
 
     _buildRecords() {
         const self = this;
+        const localData = this.currentUser.pullRecords();
         //clear scrollAreaDiv
         this.currentUser.pushToStorage();
         this.scrollAreaDiv.empty();
         //call buildRecord with data
-        this._buildRecord(0, this.currentUser.pullRecords(), this.loadedData);
+        console.log(localData, this.loadedData);
+        this._buildRecord(0, localData, this.loadedData);
 
-        if (!this.loadedData) {
+        if (this.loadedData == false) {
             this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 5) + "px");
             this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
         }
@@ -713,13 +719,15 @@ class UserDataUtility {
 
     _buildRecord(tier, local, loaded) {
         var id = local.id, keys = [], localRecord, loadedRecord, parentId;
-        if (!loaded) { loaded = []; }
-        var unsortedKeys = Object.keys(local);
-        if (loaded.length) {
-            unsortedKeys = unsortedKeys.concat(Object.keys(loaded));
-            unsortedKeys = unsortedKeys.filter(key, index => (unsortedKeys.indexOf(key) === index));
-        }
-        //console.log(unsortedKeys, keys);
+        const localKeys = (Object.keys(local).length) ? Object.keys(local) : [];
+        const loadedKeys = (Object.keys(loaded).length) ? Object.keys(loaded) : [];
+        var unsortedKeys = Array.from(new Set([...localKeys, ...loadedKeys]));
+
+        console.log("local:", local);
+        console.log("localKeys:", localKeys);
+        console.log("loaded:", loaded);
+        console.log("loadedKeys:", loadedKeys);
+        console.log("unsortedKeys:", unsortedKeys);
 
         if (unsortedKeys.find(key => (key.toLowerCase().includes("name")))) {
             keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("name"))));
@@ -1354,8 +1362,9 @@ class UserDataUtility {
             let reader = new FileReader();
             reader.readAsText(file);
             reader.onload = function() {
-                self.loadedData = JSON.parse(reader.result);
-                //self.buildRecords();
+                self.loadedData = this.buildLoadedData(JSON.parse(reader.result));
+                self.setUpOptionsData();
+                self._buildRecords();
             };
             reader.onerror = function() {
               console.log(reader.error);
@@ -1366,13 +1375,22 @@ class UserDataUtility {
         $("#loadFile").trigger("click");
     }
 
-    readFile(input) {
-
-    }
-
-
-    delete() {
-
+    buildLoadedData(loaded) {
+        while (true) {
+            record = loaded.find(r => !loaded.find(p => Object.keys(p).find(k => (k.endsWith("Id")))) == r.id);
+            if (!record) { break; }
+            parentIdKey = Object.keys(record).find(key => key.endsWith("Id"));
+            if (parentIdKey) {
+                parentId = record[parentIdKey];
+                parent = loaded.find(r => (Object.keys(r).includes(parentIdKey) && r[parentIdKey] == parentId));
+                groupName = parentIdKey.splice(0,-2) + "s";
+                parentKeys = Object.keys(parent);
+                if (!parentKeys.includes(groupName)) { parent[groupName] = []; }
+                parent[groupName].push(record);
+                loaded.splice(loaded.indexOf(record));
+            }
+        }
+        return loaded;
     }
 
     getOptionValues() {
