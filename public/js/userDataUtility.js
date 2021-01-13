@@ -719,11 +719,11 @@ class UserDataUtility {
         const loadedKeys = (Object.keys(loaded).length) ? Object.keys(loaded) : [];
         var unsortedKeys = Array.from(new Set([...localKeys, ...loadedKeys]));
 
-        console.log("local:", local);
-        console.log("localKeys:", localKeys);
-        console.log("loaded:", loaded);
-        console.log("loadedKeys:", loadedKeys);
-        console.log("unsortedKeys:", unsortedKeys);
+        //console.log("local:", local);
+        //console.log("localKeys:", localKeys);
+        //console.log("loaded:", loaded);
+        //console.log("loadedKeys:", loadedKeys);
+        //console.log("unsortedKeys:", unsortedKeys);
 
         if (unsortedKeys.find(key => (key.toLowerCase().includes("name")))) {
             keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("name"))));
@@ -844,14 +844,15 @@ class UserDataUtility {
 
         //console.log(local[children]);
         if (children) {
-            keys = Object.keys(local[children]);
+            keys = local[children].map(child => child.id);
             //console.log(keys);
             if (loaded && Object.keys(loaded).includes(children)) {
-                keys = keys.concat(loaded[children]).filter(key, index => (keys.indexOf(key) === index));
+                keys = keys.concat(loaded[children].map(child => child.id)).filter((key, index) => (keys.indexOf(key) === index));
             }
+            console.log(keys);
             keys.forEach(key => {
-                localRecord = (local[children][key]) ? local[children][key] : false;
-                loadedRecord = (loaded && loaded[children] && loaded[children][key]) ? loaded[children][key] : false;
+                localRecord = (local[children] && local[children].find(child => child.id == key)) ? local[children].find(child => child.id == key) : false;
+                loadedRecord = (loaded && loaded[children] && loaded[children].find(child => child.id == key)) ? loaded[children].find(child => child.id == key) : false;
                 //console.log(key, tier + 1, localRecord, loadedRecord);
                 this._buildRecord(tier + 1, localRecord, loadedRecord);
             });
@@ -1330,7 +1331,7 @@ class UserDataUtility {
     _escapeHTML(html) { return html.map(line => (jQuery(line).text())); }
 
     _exportJSON(arrayObject) {
-        var data = this.buildExportData([...arrayObject]);
+        var data = this.buildExportData([...arrayObject])[0];
         console.log(arrayObject, data);
         data = [JSON.stringify(data, null, 2)];
         const blob1 = new Blob(data, { type: "text/plain;charset=utf-8" });
@@ -1394,7 +1395,7 @@ class UserDataUtility {
             let reader = new FileReader();
             reader.readAsText(file);
             reader.onload = function() {
-                self.loadedData = this.buildLoadedData(JSON.parse(reader.result));
+                self.loadedData = JSON.parse(reader.result);
                 self.setUpOptionsData();
                 self._buildRecords();
             };
