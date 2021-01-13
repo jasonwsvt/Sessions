@@ -86,7 +86,8 @@ class UserDataUtility {
 
             self.adjustMenuButton.on("click", function (e) {
                 console.log("button clicked");
-                self.adjust.toggleClass("hidden");
+                self.options.addClass("hidden");
+                self.adjust.removeClass("hidden");
                 $(this).blur();
             }); 
 
@@ -96,6 +97,7 @@ class UserDataUtility {
                 $(this).blur();
                 self.adjustMenuButton.html($(this).html() + self._caretDownIcon);
                 self.adjust.addClass("hidden");
+                self.options.removeClass("hidden");
                 self.manage();
             }); 
 
@@ -583,7 +585,7 @@ class UserDataUtility {
         this.currentUser.pushToStorage();
         this.scrollAreaDiv.empty();
         //call buildRecord with data
-        console.log(localData, this.loadedData);
+        //console.log(localData, this.loadedData);
         this._buildRecord(0, localData, this.loadedData);
 
         if (this.loadedData == false) {
@@ -849,7 +851,6 @@ class UserDataUtility {
             if (loaded && Object.keys(loaded).includes(children)) {
                 keys = keys.concat(loaded[children].map(child => child.id)).filter((key, index) => (keys.indexOf(key) === index));
             }
-            console.log(keys);
             keys.forEach(key => {
                 localRecord = (local[children] && local[children].find(child => child.id == key)) ? local[children].find(child => child.id == key) : false;
                 loadedRecord = (loaded && loaded[children] && loaded[children].find(child => child.id == key)) ? loaded[children].find(child => child.id == key) : false;
