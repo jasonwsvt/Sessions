@@ -39,6 +39,12 @@ function isObject(v) {
     return false;
 }
 
+function isNumeric(v) {
+    if (typeof v != "string") return false; // we only process strings!  
+    return !isNaN(v) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+        !isNaN(parseFloat(v)); // ...and ensure strings of whitespace fail
+}
+
 //*******************************************************************
 // params: v - any variable
 // returns: a string representing the type of the variable

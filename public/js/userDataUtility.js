@@ -99,11 +99,6 @@ class UserDataUtility {
                 self.manage();
             }); 
 
-            self.exportButton.on("click", function() {
-                self._exportJSON();
-                $(this).blur();
-            });
-
             self.loadButton.on("click", function() {
                 self._loadJSON();
                 $(this).blur();
@@ -583,7 +578,7 @@ class UserDataUtility {
 
     _buildRecords() {
         const self = this;
-        this.localData = this.currentUser.pullRecords();
+        const localData = this.currentUser.pullRecords();
         //clear scrollAreaDiv
         this.currentUser.pushToStorage();
         this.scrollAreaDiv.empty();
@@ -998,8 +993,8 @@ class UserDataUtility {
     }
 
     localRecordIsNewer(id) {
-        if (!this.loadedRecordExists(id)) { return false; }
-        if (!this.localRecordExists(id)) { return true; }
+        if (!this.loadedRecordExists(id)) { return true; }
+        if (!this.localRecordExists(id)) { return false; }
         const local = this.localRecord(id), loaded = this.loadedRecord(id);
         if ((local.lastEdited > 0 && loaded.lastEdited > 0 && local.lastEdited > loaded.lastEdited)  ||
             (local.creation   > 0 && loaded.creation   > 0 && local.creation   > loaded.creation)    ||
@@ -1008,8 +1003,8 @@ class UserDataUtility {
     }
     
     localRecordIsOlder(id) {
-        if (!this.loadedRecordExists(id)) { return false; }
-        if (!this.localRecordExists(id)) { return true; }
+        if (!this.loadedRecordExists(id)) { return true; }
+        if (!this.localRecordExists(id)) { return false; }
         const local = this.localRecord(id), loaded = this.loadedRecord(id);
         if ((local.lastEdited > 0 && loaded.lastEdited > 0 && local.lastEdited < loaded.lastEdited)  ||
             (local.creation   > 0 && loaded.creation   > 0 && local.creation   < loaded.creation)    ||
@@ -1109,6 +1104,9 @@ class UserDataUtility {
                 name = $(this).find("td").eq(1).text().slice(0, -1);
                 data = self.row(id).data("local_" + name);
                 value = (data) ? data : $(this).find("td").eq(2).text();
+                if (isNumeric(value)) { value = parseInt(value); }
+                if (value == "null") { value = null; }
+                if (value == "false") { value = false; }
                 if ((name == "lines" || !name.endsWith("s"))) { record[name] = value; }
             });
             return record;
@@ -1124,6 +1122,9 @@ class UserDataUtility {
                 name = $(this).find("td").eq(1).text().slice(0, -1);
                 data = self.row(id).data("loaded_" + name);
                 value = (data) ? data : $(this).find("td").eq(4).text();
+                if (isNumeric(value)) { value = parseInt(value); }
+                if (value == "null") { value = null; }
+                if (value == "false") { value = false; }
                 if ((name == "lines" || !name.endsWith("s")) && value) { record[name] = value; }
             });
             return record;
@@ -1326,14 +1327,12 @@ class UserDataUtility {
         return `${year}/${month}/${day} ${hour}:${minute}:${second}${ampm}`;
     }
 
-    _escapeHTML(html) {
-//        return html.map(line => (line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')));
-        return html.map(line => (jQuery(line).text()));
-}
+    _escapeHTML(html) { return html.map(line => (jQuery(line).text())); }
 
     _exportJSON(arrayObject) {
-        const data = [JSON.stringify(arrayObject, null, 2)];
+        var data = this.buildExportData([...arrayObject]);
         console.log(arrayObject, data);
+        data = [JSON.stringify(data, null, 2)];
         const blob1 = new Blob(data, { type: "text/plain;charset=utf-8" });
         const name = this.currentUser.username + ".json";
         console.log(blob1);
@@ -1352,6 +1351,37 @@ class UserDataUtility {
             a[0].click();
             $("body").remove(a);
         }
+    }
+
+    buildExportData(data) {
+        var recordIndex, parentIdKey, parentId, parentIndex, groupName, parentKeys;
+        var reps = 0;
+        data.forEach((record, index) => console.log(index + ":", record));
+        while (reps++ <= data.length) {
+//            data.forEach(p => )
+            //Find the first record where no other record has a key ending with "Id" and a value of the record's id
+//            data.forEach(r => { console.log(r.id, )})
+            recordIndex = data.findIndex(r => !data.find(p => Object.keys(p).find(k => (k.endsWith("Id")) && p[k] == r.id)));
+            console.log("\n" + recordIndex);
+            if (!recordIndex) { break; }
+            parentIdKey = Object.keys(data[recordIndex]).find(key => key.endsWith("Id"));
+            if (parentIdKey) {
+                parentId = data[recordIndex][parentIdKey];
+                parentIndex = data.findIndex(r => (r.id == parentId));
+                groupName = (parentIdKey == "issueId") ? "sessions" : (parentIdKey == "clientId") ? "issues" : "clients";
+                parentKeys = Object.keys(data[parentIndex]);
+                console.log("parentId:", parentId);
+                console.log("parentIndex:", parentIndex);
+                console.log("groupName:", groupName);
+                console.log("parentKeys:", parentKeys);
+                if (!parentKeys.includes(groupName)) { data[parentIndex][groupName] = []; }
+                console.log("Adding", recordIndex, "to", parentIndex);
+                data[parentIndex][groupName].push(data[recordIndex]);
+                data.splice(recordIndex);
+            }
+            console.log(data);
+        }
+        return data;
     }
 
     _loadJSON() {
@@ -1375,24 +1405,6 @@ class UserDataUtility {
         });
         $("#loadFile").on("click", function(e) { e.stopPropagation(); });
         $("#loadFile").trigger("click");
-    }
-
-    buildLoadedData(loaded) {
-        while (true) {
-            record = loaded.find(r => !loaded.find(p => Object.keys(p).find(k => (k.endsWith("Id")))) == r.id);
-            if (!record) { break; }
-            parentIdKey = Object.keys(record).find(key => key.endsWith("Id"));
-            if (parentIdKey) {
-                parentId = record[parentIdKey];
-                parent = loaded.find(r => (Object.keys(r).includes(parentIdKey) && r[parentIdKey] == parentId));
-                groupName = parentIdKey.splice(0,-2) + "s";
-                parentKeys = Object.keys(parent);
-                if (!parentKeys.includes(groupName)) { parent[groupName] = []; }
-                parent[groupName].push(record);
-                loaded.splice(loaded.indexOf(record));
-            }
-        }
-        return loaded;
     }
 
     getOptionValues() {
