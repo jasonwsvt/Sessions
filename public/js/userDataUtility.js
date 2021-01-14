@@ -6,6 +6,7 @@ class UserDataUtility {
     _group = null;
     localData = null;
     loadedData = false;
+    deletedRecords = [];
 
     _buttonIcon    = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-person-lines-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm2 9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/></svg>';
     _fullIcon      = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2z"/></svg>';
@@ -85,14 +86,14 @@ class UserDataUtility {
             });
 
             self.adjustMenuButton.on("click", function (e) {
-                console.log("button clicked");
+                //console.log("button clicked");
                 self.options.addClass("hidden");
                 self.adjust.removeClass("hidden");
                 $(this).blur();
             }); 
 
             self.adjust.find("button").on("click", function (e) {
-                console.log("button clicked");
+                //console.log("button clicked");
                 self.adjust.data("value", $(this).val());
                 $(this).blur();
                 self.adjustMenuButton.html($(this).html() + self._caretDownIcon);
@@ -217,6 +218,10 @@ class UserDataUtility {
 
     setUpOptionsData() {
         const loaded = (this.loadedData != false);
+        console.log(this.adjust.children().eq(5));
+        if (loaded) { this.adjust.children().eq(5).removeClass("hidden"); }
+        else { this.adjust.eq(5).addClass("hidden"); }
+
         this.options.removeData();
 
         this.options.data("default_unselectedClass", "btn-info");
@@ -908,6 +913,44 @@ class UserDataUtility {
         }
     }
 
+    deleteLocalRecords(ids)  { ids.forEach(id => this.deleteLocalRecord(id)); }
+    deleteLocalRecord(id)    {
+        if (this.localRecordExists(id)) {
+            this.deletedRecords.push([id, ...this.localDescendantIdsOf(id)].map(id => [id, false, this.localRecord(id)]));
+            if (this.loadedRecordExists(id)) {
+                this.row(id).find("tr td:nth-of-type(3)").each(field => {
+                    field.empty();
+                });
+                this.row(id).find("tr:first-child td:nth-of-type(4)").empty();
+                this.row(id).find("tr:last-child td:nth-of-type(4)").empty();
+            }
+            else { this.row(id).remove(); }
+        }
+    }
+
+    deleteLoadedRecords(ids) { ids.forEach(id => this.deleteLoadedRecord(id)); }
+    deleteLoadedRecord(id)   {
+        if (this.loadedRecordExists(id)) {
+            this.deletedRecords.push([id, ...this.loadedDescendantIdsOf(id)].map(id => [id, false, this.loadedRecord(id)]));
+            if (this.localRecordExists(id)) {
+                this.row(id).find("tr td:nth-of-type(5)").each(field => {
+                    field.empty();
+                });
+                this.row(id).find("tr:first-child td:nth-of-type(6)").empty();
+                this.row(id).find("tr:last-child td:nth-of-type(6)").empty();
+            }
+            else { this.row(id).remove(); }
+        }
+    }
+
+    undoDelete() {
+        this.deletedRecords.pop().forEach((id, loaded, record) => {
+            if (loaded) {
+
+            }
+        });
+    }
+
     resetRows(ids)        { return ids.forEach(id => this.reset(id)); }
     resetRow(id)          { this.unselectRow(id); this.expandRow(id); }
     classList(id)         { return this.row(id).attr("class").split(" "); }
@@ -1299,20 +1342,22 @@ class UserDataUtility {
             this.updateChildrenSelectStatuses(parentIds);
         }
         else if (adjust == "export") {
-            this._exportJSON((option == "local")    ? this.allLocalRecords
-                           : (option == "loaded")   ? this.allLoadedRecords
-                           : (option == "selected") ? this.allSelectedRowIds.map(id =>
-                                                        (this.localRecordIsSelected(id)
-                                                            ? this.localRecord(id) : this.loadedRecord(id)))
-                           : (option == "newer")    ? this.allIds.map(id =>
-                                                        (!this.loadedRecordExists(id) || this.loadedRecordIsOlder(id))
-                                                            ? this.localRecord(id)
-                                                            : this.loadedRecord(id))
-                           : (option == "older")    ? this.allIds.map(id =>
-                                                        (!this.loadedRecordExists(id) || this.loadedRecordIsNewer(id))
-                                                            ? this.localRecord(id)
-                                                            : this.loadedRecord(id))
-                           : []);
+            console.log(this.allLocalIds, this.allLocalRecords);
+            const records = (option == "local")    ? this.allLocalRecords
+                          : (option == "loaded")   ? this.allLoadedRecords
+                          : (option == "selected") ? this.allSelectedRowIds.map(id =>
+                                                       (this.localRecordIsSelected(id)
+                                                           ? this.localRecord(id) : this.loadedRecord(id)))
+                          : (option == "newer")    ? this.allIds.map(id =>
+                                                       (!this.loadedRecordExists(id) || this.loadedRecordIsOlder(id))
+                                                           ? this.localRecord(id)
+                                                           : this.loadedRecord(id))
+                          : (option == "older")    ? this.allIds.map(id =>
+                                                       (!this.loadedRecordExists(id) || this.loadedRecordIsNewer(id))
+                                                           ? this.localRecord(id)
+                                                           : this.loadedRecord(id))
+                          : [];
+            this._exportJSON(this.buildExportData([...records])[0]);
         }
     }
 
@@ -1331,11 +1376,8 @@ class UserDataUtility {
 
     _escapeHTML(html) { return html.map(line => (jQuery(line).text())); }
 
-    _exportJSON(arrayObject) {
-        var data = this.buildExportData([...arrayObject])[0];
-        console.log(arrayObject, data);
-        data = [JSON.stringify(data, null, 2)];
-        const blob1 = new Blob(data, { type: "text/plain;charset=utf-8" });
+    _exportJSON(data) {
+        const blob1 = new Blob([JSON.stringify(data, null, 2)], { type: "text/plain;charset=utf-8" });
         const name = this.currentUser.username + ".json";
         console.log(blob1);
  
