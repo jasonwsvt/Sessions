@@ -1399,15 +1399,15 @@ class UserDataUtility {
 
     buildExportData(data) {
         var recordIndex, parentIdKey, parentId, parentIndex, groupName, parentKeys;
-        var reps = 0;
-        data.forEach((record, index) => console.log(index + ":", record));
-        while (reps++ <= data.length) {
-//            data.forEach(p => )
+        var reps = data.length;
+        while (reps--) {
+            data.forEach((record, index) => console.log(index + ":", record));
+            //            data.forEach(p => )
             //Find the first record where no other record has a key ending with "Id" and a value of the record's id
 //            data.forEach(r => { console.log(r.id, )})
             recordIndex = data.findIndex(r => !data.find(p => Object.keys(p).find(k => (k.endsWith("Id")) && p[k] == r.id)));
-            console.log("\n" + recordIndex);
             if (!recordIndex) { break; }
+            console.log("\n" + recordIndex);
             parentIdKey = Object.keys(data[recordIndex]).find(key => key.endsWith("Id"));
             if (parentIdKey) {
                 parentId = data[recordIndex][parentIdKey];
