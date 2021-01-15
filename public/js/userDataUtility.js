@@ -411,9 +411,11 @@ class UserDataUtility {
             this.options.data("delete_1_value", "delete selected");
             this.options.data("delete_2_html", "Unselected");
             this.options.data("delete_2_value", "delete unselected");
+            this.options.data("delete_3_html", "Undo");
+            this.options.data("delete_3_value", "delete undo");
         }
         else {
-            this.options.data("delete_indices", 6);
+            this.options.data("delete_indices", 7);
             this.options.data("delete_0_html", "Local");
             this.options.data("delete_0_value", "delete local");
             this.options.data("delete_1_html", "Loaded");
@@ -426,6 +428,8 @@ class UserDataUtility {
             this.options.data("delete_4_value", "delete selected");
             this.options.data("delete_5_html", "Unselected");
             this.options.data("delete_5_value", "delete unselected");
+            this.options.data("delete_5_html", "Undo");
+            this.options.data("delete_5_value", "delete undo");
         }
     }
 
@@ -913,10 +917,17 @@ class UserDataUtility {
         }
     }
 
-    deleteLocalRecords(ids)  { ids.forEach(id => this.deleteLocalRecord(id)); }
+    deleteRecords(localIds = [], loadedIds = [])  {
+        var allLocalIdsToDelete = allLoadedIdsToDelete = [];
+        allLocalIdsToDelete = [...new Set(allLocalIdsToDelete.concat(localIds, localIds.map(id => [id, ...this.localDescendantIdsOf(id)])))];
+        allLoadedIdsToDelete = [...new Set(allLoadedIdsToDelete.concat(loadedIds, loadedIds.map(id => [id, ...this.loadedDescendantIdsOf(id)])))];
+        localIds.forEach(id => this.deleteLocalRecord(id));
+        loadedIds.forEach(id => this.deleteLoadedRecord(id));
+    }
     deleteLocalRecord(id)    {
         if (this.localRecordExists(id)) {
-            this.deletedRecords.push([id, ...this.localDescendantIdsOf(id)].map(id => [id, false, this.localRecord(id)]));
+            const tier = parseInt(this.row(id).find("tr:first-child td:first-child").attr("class").split(" ").find(x => x.startswith("outside")).slice(-1));
+            this.deletedRecords.push([id, ...this.localDescendantIdsOf(id)].map(id => [tier, false, this.localRecord(id)]));
             if (this.loadedRecordExists(id)) {
                 this.row(id).find("tr td:nth-of-type(3)").each(field => {
                     field.empty();
@@ -927,11 +938,9 @@ class UserDataUtility {
             else { this.row(id).remove(); }
         }
     }
-
-    deleteLoadedRecords(ids) { ids.forEach(id => this.deleteLoadedRecord(id)); }
     deleteLoadedRecord(id)   {
         if (this.loadedRecordExists(id)) {
-            this.deletedRecords.push([id, ...this.loadedDescendantIdsOf(id)].map(id => [id, false, this.loadedRecord(id)]));
+            this.deletedRecords.push([id, ...this.loadedDescendantIdsOf(id)].map(id => [tier, false, this.loadedRecord(id)]));
             if (this.localRecordExists(id)) {
                 this.row(id).find("tr td:nth-of-type(5)").each(field => {
                     field.empty();
@@ -942,12 +951,37 @@ class UserDataUtility {
             else { this.row(id).remove(); }
         }
     }
+    deletedRecordArrays(localIds = [], loadedIds = []) {
+        if (!isArray(localIds)) { localIds = [localIds]; }
+        if (!isArray(loadedIds)) { loadedIds = [loadedIds]; }
+        return [localIds.map(id => this.localDeletedRecordArray(id)), loadedIds.map(id => this.loadedDeletedRecordArray(id))];
+    }
+    localDeletedRecordArray(id) {
+        const tier = parseInt(this.row(id).find("tr:first-child td:first-child").attr("class").split(" ").find(x => x.startswith("outside")).slice(-1));
+
+    }
+    loadedDeletedRecordArray(id) {
+        const tier = parseInt(this.row(id).find("tr:first-child td:first-child").attr("class").split(" ").find(x => x.startswith("outside")).slice(-1));
+
+    }
 
     undoDelete() {
-        this.deletedRecords.pop().forEach((id, loaded, record) => {
+        this.deletedRecords.pop().forEach((tier, loaded, record) => {
             if (loaded) {
-
+                loadedRecord = record;
+                if (this.localRecordExists(record.id)) {
+                    localRecord = this.localRecord(record.id);
+                    this.row(record.id).remove();
+                }
             }
+            else {
+                localRecord = record;
+                if (this.loadedRecordExists(record.id)) {
+                    loadedRecord = this.loadedRecord(record.id);
+                    this.row(record.id).remove();
+                }
+            }
+            this._buildRecord(tier, localRecord, loadedRecord);
         });
     }
 
@@ -1342,7 +1376,6 @@ class UserDataUtility {
             this.updateChildrenSelectStatuses(parentIds);
         }
         else if (adjust == "export") {
-            console.log(this.allLocalIds, this.allLocalRecords);
             const records = (option == "local")    ? this.allLocalRecords
                           : (option == "loaded")   ? this.allLoadedRecords
                           : (option == "selected") ? this.allSelectedRowIds.map(id =>
@@ -1357,7 +1390,27 @@ class UserDataUtility {
                                                            ? this.localRecord(id)
                                                            : this.loadedRecord(id))
                           : [];
-            this._exportJSON(this.buildExportData([...records])[0]);
+            this._exportJSON(this.convertTablesToArrayTree([...records])[0]);
+        }
+        else if (adjust == "delete") {
+            if (option == "undo") { this.undoDelete(); }
+            else {
+                const records = (option == "local")    ? this.allLocalRecords
+                              : (option == "loaded")   ? this.allLoadedRecords
+                              : (option == "selected") ? this.allSelectedRowIds.map(id =>
+                                                          (this.localRecordIsSelected(id)
+                                                              ? this.localRecord(id) : this.loadedRecord(id)))
+                              : (option == "newer")    ? this.allIds.map(id =>
+                                                          (!this.loadedRecordExists(id) || this.loadedRecordIsOlder(id))
+                                                              ? this.localRecord(id)
+                                                              : this.loadedRecord(id))
+                              : (option == "older")    ? this.allIds.map(id =>
+                                                          (!this.loadedRecordExists(id) || this.loadedRecordIsNewer(id))
+                                                              ? this.localRecord(id)
+                                                              : this.loadedRecord(id))
+                              : [];
+              this.delete
+            }
         }
     }
 
@@ -1397,33 +1450,30 @@ class UserDataUtility {
         }
     }
 
-    buildExportData(data) {
+    convertTablesToArrayTree(data) {
         var recordIndex, parentIdKey, parentId, parentIndex, groupName, parentKeys;
         var reps = data.length;
         while (reps--) {
-            data.forEach((record, index) => console.log(index + ":", record));
-            //            data.forEach(p => )
+            //data.forEach((record, index) => console.log(reps, index + ":", record));
             //Find the first record where no other record has a key ending with "Id" and a value of the record's id
-//            data.forEach(r => { console.log(r.id, )})
             recordIndex = data.findIndex(r => !data.find(p => Object.keys(p).find(k => (k.endsWith("Id")) && p[k] == r.id)));
             if (!recordIndex) { break; }
-            console.log("\n" + recordIndex);
+            //console.log("\n" + recordIndex);
             parentIdKey = Object.keys(data[recordIndex]).find(key => key.endsWith("Id"));
             if (parentIdKey) {
                 parentId = data[recordIndex][parentIdKey];
                 parentIndex = data.findIndex(r => (r.id == parentId));
                 groupName = (parentIdKey == "issueId") ? "sessions" : (parentIdKey == "clientId") ? "issues" : "clients";
                 parentKeys = Object.keys(data[parentIndex]);
-                console.log("parentId:", parentId);
-                console.log("parentIndex:", parentIndex);
-                console.log("groupName:", groupName);
-                console.log("parentKeys:", parentKeys);
+                //console.log("parentId:", parentId);
+                //console.log("parentIndex:", parentIndex);
+                //console.log("groupName:", groupName);
+                //console.log("parentKeys:", parentKeys);
                 if (!parentKeys.includes(groupName)) { data[parentIndex][groupName] = []; }
-                console.log("Adding", recordIndex, "to", parentIndex);
                 data[parentIndex][groupName].push(data[recordIndex]);
-                data.splice(recordIndex);
+                //console.log("Adding", recordIndex, "to", parentIndex);
+                data.splice(recordIndex, 1);
             }
-            console.log(data);
         }
         return data;
     }
