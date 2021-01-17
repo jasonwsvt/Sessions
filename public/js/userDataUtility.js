@@ -917,17 +917,33 @@ class UserDataUtility {
         }
     }
 
+    allIdsToDelete(localIds, loadedIds) {
+        [localIds, loadedIds].map(v => isNumeric(v) ? [v] : v);
+        localIds = this.greatestLocalAncestorIds(localIds);
+        loadedIds = this.greatestLoadedAncestorIds(loadedIds);
+        localIds = localIds.concat(this.localDescendantIdsOf(localIds));
+        loadedIds = loadedIds.concat(this.loadedDescendantIdsOf(loadedIds));
+        return [localIds, loadedIds];
+    }
     deleteRecords(localIds = [], loadedIds = [])  {
-        var allLocalIdsToDelete = allLoadedIdsToDelete = [];
-        allLocalIdsToDelete = [...new Set(allLocalIdsToDelete.concat(localIds, localIds.map(id => [id, ...this.localDescendantIdsOf(id)])))];
-        allLoadedIdsToDelete = [...new Set(allLoadedIdsToDelete.concat(loadedIds, loadedIds.map(id => [id, ...this.loadedDescendantIdsOf(id)])))];
+        [localIds, loadedIds] = allIdsToDelete(localIds, loadedIds);
+
+        this.deletedRecords.push([localIds.map(id => this.localDeletedRecordArray(id)), loadedIds.map(id => this.loadedDeletedRecordArray(id))]);
+        
         localIds.forEach(id => this.deleteLocalRecord(id));
         loadedIds.forEach(id => this.deleteLoadedRecord(id));
     }
+    localDeletedRecordArray(id) {
+        const tier = parseInt(this.row(id).find("tr:first-child td:first-child").attr("class").split(" ").find(x => x.startswith("outside")).slice(-1));
+        return [tier, this.localRecord(id)];
+    }
+    loadedDeletedRecordArray(id) {
+        const tier = parseInt(this.row(id).find("tr:first-child td:first-child").attr("class").split(" ").find(x => x.startswith("outside")).slice(-1));
+        return [tier, this.loadedRecord(id)];
+    }
+
     deleteLocalRecord(id)    {
         if (this.localRecordExists(id)) {
-            const tier = parseInt(this.row(id).find("tr:first-child td:first-child").attr("class").split(" ").find(x => x.startswith("outside")).slice(-1));
-            this.deletedRecords.push([id, ...this.localDescendantIdsOf(id)].map(id => [tier, false, this.localRecord(id)]));
             if (this.loadedRecordExists(id)) {
                 this.row(id).find("tr td:nth-of-type(3)").each(field => {
                     field.empty();
@@ -950,19 +966,6 @@ class UserDataUtility {
             }
             else { this.row(id).remove(); }
         }
-    }
-    deletedRecordArrays(localIds = [], loadedIds = []) {
-        if (!isArray(localIds)) { localIds = [localIds]; }
-        if (!isArray(loadedIds)) { loadedIds = [loadedIds]; }
-        return [localIds.map(id => this.localDeletedRecordArray(id)), loadedIds.map(id => this.loadedDeletedRecordArray(id))];
-    }
-    localDeletedRecordArray(id) {
-        const tier = parseInt(this.row(id).find("tr:first-child td:first-child").attr("class").split(" ").find(x => x.startswith("outside")).slice(-1));
-
-    }
-    loadedDeletedRecordArray(id) {
-        const tier = parseInt(this.row(id).find("tr:first-child td:first-child").attr("class").split(" ").find(x => x.startswith("outside")).slice(-1));
-
     }
 
     undoDelete() {
