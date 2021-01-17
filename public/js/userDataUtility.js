@@ -917,54 +917,60 @@ class UserDataUtility {
         }
     }
 
-    allIdsToDelete(localIds, loadedIds) {
-        [localIds, loadedIds].map(v => isNumeric(v) ? [v] : v);
+    localDataOf(id) { return this.dataOf(id, this.localData); }
+    loadedDataOf(id) { return this.dataOf(id, this.loadedData); }
+    dataOf(id, data) {
+        const childrenName = Object.keys(data).find(key => key.endsWith("s"));
+        if (data.id == id) { return data; }
+        else if (childrenName) {
+            return data[childrenName].map(child => this.dataOf(id, child)).find(r => r != false) || false;
+        }
+        return false;
+    }
+
+    pathTo(id, data) {
+        const childrenName = Object.keys(data).find(key => key.endsWith("s"));
+        if (data.id == id) { return [id]; }
+        else if (childrenName) {
+            const found = data[childrenName].map(child => this.pathTo(id, child)).find(r => r != false) || false;
+            if (found) { return [id].concat(found); }
+        }
+        return false;
+    }
+
+    localTierOf(id) { return this.pathTo(id, this.localData).length - 1; }
+    loadedTierOf(id) { return this.pathTo(id, this.loadedData).length - 1; }
+    
+    deleteRecords(localIds = [], loadedIds = [])  {
         localIds = this.greatestLocalAncestorIds(localIds);
         loadedIds = this.greatestLoadedAncestorIds(loadedIds);
-        localIds = localIds.concat(this.localDescendantIdsOf(localIds));
-        loadedIds = loadedIds.concat(this.loadedDescendantIdsOf(loadedIds));
-        return [localIds, loadedIds];
-    }
-    deleteRecords(localIds = [], loadedIds = [])  {
-        [localIds, loadedIds] = allIdsToDelete(localIds, loadedIds);
 
         this.deletedRecords.push([localIds.map(id => this.localDeletedRecordArray(id)), loadedIds.map(id => this.loadedDeletedRecordArray(id))]);
         
         localIds.forEach(id => this.deleteLocalRecord(id));
         loadedIds.forEach(id => this.deleteLoadedRecord(id));
     }
-    localDeletedRecordArray(id) {
-        const tier = parseInt(this.row(id).find("tr:first-child td:first-child").attr("class").split(" ").find(x => x.startswith("outside")).slice(-1));
-        return [tier, this.localRecord(id)];
-    }
-    loadedDeletedRecordArray(id) {
-        const tier = parseInt(this.row(id).find("tr:first-child td:first-child").attr("class").split(" ").find(x => x.startswith("outside")).slice(-1));
-        return [tier, this.loadedRecord(id)];
-    }
 
     deleteLocalRecord(id)    {
         if (this.localRecordExists(id)) {
-            if (this.loadedRecordExists(id)) {
-                this.row(id).find("tr td:nth-of-type(3)").each(field => {
-                    field.empty();
-                });
-                this.row(id).find("tr:first-child td:nth-of-type(4)").empty();
-                this.row(id).find("tr:last-child td:nth-of-type(4)").empty();
+            if (this.hasLocalChildren(id)) {
+                this.localChildIdsOf(id).forEach(id => this.deleteLocalRecord(id));
             }
-            else { this.row(id).remove(); }
+            if (!this.loadedRecordExists(id)) {
+                row(id).remove();
+            }
+            else { this._buildRecord(this.loadedTierOf(id), false, this.localRecord(id)); }
         }
     }
     deleteLoadedRecord(id)   {
         if (this.loadedRecordExists(id)) {
-            this.deletedRecords.push([id, ...this.loadedDescendantIdsOf(id)].map(id => [tier, false, this.loadedRecord(id)]));
-            if (this.localRecordExists(id)) {
-                this.row(id).find("tr td:nth-of-type(5)").each(field => {
-                    field.empty();
-                });
-                this.row(id).find("tr:first-child td:nth-of-type(6)").empty();
-                this.row(id).find("tr:last-child td:nth-of-type(6)").empty();
+            if (this.hasLoadedChildren(id)) {
+                this.loadedChildIdsOf(id).forEach(id => this.deleteLoadedRecord(id));
             }
-            else { this.row(id).remove(); }
+            if (!this.localRecordExists(id)) {
+                row(id).remove();
+            }
+            else { this._buildRecord(this.localTierOf(id), false, this.loadedRecord(id)); }
         }
     }
 
