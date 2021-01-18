@@ -917,6 +917,8 @@ class UserDataUtility {
         }
     }
 
+    localDataOfIds(ids) { return ids.map(id => this.localDataOf(id)); }
+    loadedDataOfIds(ids) { return ids.map(id => this.loadedDataOf(id)); }
     localDataOf(id) { return this.dataOf(id, this.localData); }
     loadedDataOf(id) { return this.dataOf(id, this.loadedData); }
     dataOf(id, data) {
@@ -928,14 +930,16 @@ class UserDataUtility {
         return false;
     }
 
+    localPathTo(id) { return this.pathTo(id, this.localData); }
+    loadedPathTo(id) { return this.pathTo(id, this.loadedData); }
     pathTo(id, data) {
         const childrenName = Object.keys(data).find(key => key.endsWith("s"));
-        if (data.id == id) { return [id]; }
-        else if (childrenName) {
-            const found = data[childrenName].map(child => this.pathTo(id, child)).find(r => r != false) || false;
-            if (found) { return [id].concat(found); }
-        }
-        return false;
+        const found = (childrenName)
+                    ? data[childrenName].map(child => this.pathTo(id, child)).find(r => r != false)
+                    : false;
+        return (data.id == id)  ? [id]
+             : (found != false) ? [id].concat(found)
+             : false;
     }
 
     localTierOf(id) { return this.pathTo(id, this.localData).length - 1; }
@@ -956,10 +960,10 @@ class UserDataUtility {
             if (this.hasLocalChildren(id)) {
                 this.localChildIdsOf(id).forEach(id => this.deleteLocalRecord(id));
             }
-            if (!this.loadedRecordExists(id)) {
-                row(id).remove();
+            if (this.loadedRecordExists(id)) {
+                this._buildRecord(this.localTierOf(id), false, this.loadedRecord(id));
             }
-            else { this._buildRecord(this.loadedTierOf(id), false, this.localRecord(id)); }
+            else { row(id).remove(); }
         }
     }
     deleteLoadedRecord(id)   {
@@ -967,10 +971,10 @@ class UserDataUtility {
             if (this.hasLoadedChildren(id)) {
                 this.loadedChildIdsOf(id).forEach(id => this.deleteLoadedRecord(id));
             }
-            if (!this.localRecordExists(id)) {
-                row(id).remove();
+            if (this.localRecordExists(id)) {
+                this._buildRecord(this.loadedTierOf(id), this.localRecord(id), false);
             }
-            else { this._buildRecord(this.localTierOf(id), false, this.loadedRecord(id)); }
+            else { row(id).remove(); }
         }
     }
 
