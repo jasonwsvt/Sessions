@@ -917,11 +917,12 @@ class UserDataUtility {
         }
     }
 
-    localDataOfIds(ids) { return ids.map(id => this.localDataOf(id)); }
-    loadedDataOfIds(ids) { return ids.map(id => this.loadedDataOf(id)); }
-    localDataOf(id) { return this.dataOf(id, this.localData); }
-    loadedDataOf(id) { return this.dataOf(id, this.loadedData); }
-    dataOf(id, data) {
+    localRecordsOf(ids) { return this.recordsOf(ids, this.localDataOf(id)); }
+    loadedRecordsOf(ids) { return this.recordsOf(ids, this.loadedDataOf(id)); }
+    localRecordOf(id) { return this.dataOf(id, this.localData); }
+    loadedRecordOf(id) { return this.dataOf(id, this.loadedData); }
+    recordsOf(ids, data) { return ids.map(id => this.recordOf(id, data)); }
+    recordOf(id, data) {
         const childrenName = Object.keys(data).find(key => key.endsWith("s"));
         if (data.id == id) { return data; }
         else if (childrenName) {
@@ -942,19 +943,35 @@ class UserDataUtility {
              : false;
     }
 
-    localTierOf(id) { return this.pathTo(id, this.localData).length - 1; }
-    loadedTierOf(id) { return this.pathTo(id, this.loadedData).length - 1; }
-    
-    deleteRecords(localIds = [], loadedIds = [])  {
-        localIds = this.greatestLocalAncestorIds(localIds);
-        loadedIds = this.greatestLoadedAncestorIds(loadedIds);
+    localTierOf(id) { return this.tierOf(id, this.localData); }
+    loadedTierOf(id) { return this.tierOf(id, this.loadedData); }
+    tierOf(id, data) { return this.pathTo(id, data).length - 1; }
 
-        this.deletedRecords.push([localIds.map(id => this.localDeletedRecordArray(id)), loadedIds.map(id => this.loadedDeletedRecordArray(id))]);
-        
-        localIds.forEach(id => this.deleteLocalRecord(id));
-        loadedIds.forEach(id => this.deleteLoadedRecord(id));
+    // Returns an array of ids for which the remaining given ids are all their descendants.
+    localMostAncestral(ids) { return this.mostAncestral(ids, this.localData); }
+    loadedMostAncestral(ids) { return this.mostAncestral(ids, this.loadedData); }
+    mostAncestral(ids, data) {
+
+    }
+    
+    deleteRecords(localIds = false, loadedIds = false)  {
+        var localDeletedRecords = loadedDeletedRecords = false;
+        if (isArray(localIds)) {
+            localIds = this.localMostAncestral(localIds);
+            localDeletedRecords = this.localRecordsOf(localIds);
+        }
+        if (isArray(loadedIds)) {
+            loadedIds = this.loadedMostAncestral(loadedIds);
+            loadedDeletedRecords = this.loadedRecordsOf(loadedIds);
+        }
+        this.deletedRecords.push([localDeletedRecords, loadedDeletedRecords]);
+        if (isArray(localIds)) { this.deleteLocalRecords(localIds); }
+        if (isArray(loadedIds)) { this.deleteLoadedRecords(loadedIds); }
+
+        //build record list
     }
 
+    deleteLocalRecords(ids) { ids.forEach(id => this.deleteLocalRecord(id)); }
     deleteLocalRecord(id)    {
         if (this.localRecordExists(id)) {
             if (this.hasLocalChildren(id)) {
@@ -966,6 +983,7 @@ class UserDataUtility {
             else { row(id).remove(); }
         }
     }
+    deleteLoadedRecords(ids) { ids.forEach(id => this.deleteLoadedRecord(id)); }
     deleteLoadedRecord(id)   {
         if (this.loadedRecordExists(id)) {
             if (this.hasLoadedChildren(id)) {
