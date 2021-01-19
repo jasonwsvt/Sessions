@@ -916,6 +916,22 @@ class UserDataUtility {
             }
         }
     }
+    childrenGroupName(data) {
+        const name = Object.keys(data).find(key => key.endsWith("s"));
+        return (name) ? name : false;
+    }
+    get allIds() { return [...new Set(this.allLocalIds.concat(this.allLoadedIds))]; }
+    get allLocalIds() { return this.ids(this.localData); }
+    get allLoadedIds() { return this.ids(this.loadedData); }
+    ids(data) {
+        const childrenName = this.childrenGroupName(data);
+        if (this.childrenGroupName(data)) { return [data.id].concat(data[childrenName].map(d => ids(d))); }
+        else { return data.id; }
+    }
+    get newerLoadedIds() { this.allLoadedIds.filter(id => this.loadedRecordIsNewer(id)); }
+    get olderLoadedIds() { this.allLoadedIds.filter(id => this.loadedRecordIsOlder(id)); }
+    get newerLocalIds() { this.allLoadedIds.filter(id => this.localRecordIsNewer(id)); }
+    get olderLocalIds() { this.allLoadedIds.filter(id => this.localRecordIsOlder(id)); }
 
     localRecordsOf(ids) { return this.recordsOf(ids, this.localDataOf(id)); }
     loadedRecordsOf(ids) { return this.recordsOf(ids, this.loadedDataOf(id)); }
@@ -923,7 +939,7 @@ class UserDataUtility {
     loadedRecordOf(id) { return this.dataOf(id, this.loadedData); }
     recordsOf(ids, data) { return ids.map(id => this.recordOf(id, data)); }
     recordOf(id, data) {
-        const childrenName = Object.keys(data).find(key => key.endsWith("s"));
+        const childrenName = this.childrenGroupName(data);
         if (data.id == id) { return data; }
         else if (childrenName) {
             return data[childrenName].map(child => this.dataOf(id, child)).find(r => r != false) || false;
@@ -934,7 +950,7 @@ class UserDataUtility {
     localPathTo(id) { return this.pathTo(id, this.localData); }
     loadedPathTo(id) { return this.pathTo(id, this.loadedData); }
     pathTo(id, data) {
-        const childrenName = Object.keys(data).find(key => key.endsWith("s"));
+        const childrenName = this.childrenGroupName(data);
         const found = (childrenName)
                     ? data[childrenName].map(child => this.pathTo(id, child)).find(r => r != false)
                     : false;
@@ -951,7 +967,17 @@ class UserDataUtility {
     localMostAncestral(ids) { return this.mostAncestral(ids, this.localData); }
     loadedMostAncestral(ids) { return this.mostAncestral(ids, this.loadedData); }
     mostAncestral(ids, data) {
-
+        //filters a set of ids to only include ids for which no id precedes it in any path
+        ids.map(id => this.pathTo(id, data)).forEach(path => {
+            while (path.length) {
+                id = path.shift();
+                if (ids.includes(id)) {
+                    path.forEach(id => {
+                        if (ids.includes(id)) { ids.splice(ids.indexOf(id), 0); }
+                    });
+                }
+            }
+        });
     }
     
     deleteRecords(localIds = false, loadedIds = false)  {
@@ -1315,12 +1341,10 @@ class UserDataUtility {
     get allIdenticalRecordIds()   { return this.allIds.filter(id => this.rowRecordsAreIdentical(id)); }
     get allUnselectedRowIds()     { return this.allIds.filter(id => !this.rowIsSelected(id)); }
     get allSelectedRowIds()       { return this.allIds.filter(id => this.rowIsSelected(id)); }
-    get allSelectedRecordIds()    { return this.allIds.filter(id => this.localRecordIsSelected(id)); }
-    get allUnselectedRecordIds()  { return this.allIds.filter(id => !this.localRecordIsSelected(id)); }
     get allNewerLoadedRecordIds() { return this.allIds.filter(id => this.loadedRecordIsNewer(id)); }
     get allOlderLoadedRecordIds() { return this.allIds.filter(id => this.loadedRecordIsOlder(id)); }
-    get allNewerLoadedRecordIds() { return this.allIds.filter(id => this.localRecordIsNewer(id)); }
-    get allOlderLoadedRecordIds() { return this.allIds.filter(id => this.localRecordIsOlder(id)); }
+    get allNewerLocalRecordIds()  { return this.allIds.filter(id => this.localRecordIsNewer(id)); }
+    get allOlderLocalRecordIds()  { return this.allIds.filter(id => this.localRecordIsOlder(id)); }
 
     _doAdjustOption() {
         var parentIds;
@@ -1421,7 +1445,8 @@ class UserDataUtility {
                                                            ? this.localRecord(id)
                                                            : this.loadedRecord(id))
                           : [];
-            this._exportJSON(this.convertTablesToArrayTree([...records])[0]);
+            console.log(records);
+            //this._exportJSON(records);
         }
         else if (adjust == "delete") {
             if (option == "undo") { this.undoDelete(); }
