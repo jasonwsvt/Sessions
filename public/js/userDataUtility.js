@@ -967,17 +967,17 @@ class UserDataUtility {
     localMostAncestral(ids) { return this.mostAncestral(ids, this.localData); }
     loadedMostAncestral(ids) { return this.mostAncestral(ids, this.loadedData); }
     mostAncestral(ids, data) {
-        //filters a set of ids to only include ids for which no id precedes it in any path
+        //filters a set of ids to only include those for which none of the others precede it in any path
         ids.map(id => this.pathTo(id, data)).forEach(path => {
             while (path.length) {
-                id = path.shift();
-                if (ids.includes(id)) {
+                if (ids.includes(path.shift())) {
                     path.forEach(id => {
                         if (ids.includes(id)) { ids.splice(ids.indexOf(id), 0); }
                     });
                 }
             }
         });
+        return ids;
     }
     
     deleteRecords(localIds = false, loadedIds = false)  {
