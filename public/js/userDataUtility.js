@@ -939,12 +939,11 @@ class UserDataUtility {
     loadedRecordOf(id) { return this.dataOf(id, this.loadedData); }
     recordsOf(ids, data) { return ids.map(id => this.recordOf(id, data)); }
     recordOf(id, data) {
-        const childrenName = this.childrenGroupName(data);
-        if (data.id == id) { return data; }
-        else if (childrenName) {
-            return data[childrenName].map(child => this.dataOf(id, child)).find(r => r != false) || false;
-        }
-        return false;
+        const path = this.pathTo(id, data);
+        
+        path.forEach(t => { data = data[this.childrenGroupName(data)].find(d => d.id == t); });
+
+        return data;
     }
 
     localPathTo(id) { return this.pathTo(id, this.localData); }
@@ -980,46 +979,42 @@ class UserDataUtility {
         return ids;
     }
     
-    deleteRecords(localIds = false, loadedIds = false)  {
-        var localDeletedRecords = loadedDeletedRecords = false;
-        if (isArray(localIds)) {
-            localIds = this.localMostAncestral(localIds);
-            localDeletedRecords = this.localRecordsOf(localIds);
-        }
-        if (isArray(loadedIds)) {
-            loadedIds = this.loadedMostAncestral(loadedIds);
-            loadedDeletedRecords = this.loadedRecordsOf(loadedIds);
-        }
-        this.deletedRecords.push([localDeletedRecords, loadedDeletedRecords]);
-        if (isArray(localIds)) { this.deleteLocalRecords(localIds); }
-        if (isArray(loadedIds)) { this.deleteLoadedRecords(loadedIds); }
+    deleteRecords(localIds, loadedIds)  {
+        localIds  = (isArray(localIds))  ? this.localMostAncestral(localIds)   : false;
+        loadedIds = (isArray(loadedIds)) ? this.loadedMostAncestral(loadedIds) : false;
 
-        //build record list
+        if (localIds || loadedIds) {
+            const ids = (isArray(localIds) && isArray(loadedIds)) ? [...new Set(localIds.concat(loadedIds))]
+                      : (isArray(localIds))                       ? localIds
+                      : (isArray(loadedIds))                      ? loadedIds
+                      : [];
+        
+            this.deletedRecords.push([this.localRecordsOf(localIds), this.loadedRecordsOf(loadedIds)]);
+
+            ids.forEach(id => {
+                if (localIds.includes(id))  { this.deleteLocalRecord(id, this.localData); }
+                if (loadedIds.includes(id)) { this.deleteLoadedRecord(id, this.loadedData); }
+                this._buildRecord(id);
+            });
+    
+            //build record list
+        }
     }
 
-    deleteLocalRecords(ids) { ids.forEach(id => this.deleteLocalRecord(id)); }
-    deleteLocalRecord(id)    {
-        if (this.localRecordExists(id)) {
-            if (this.hasLocalChildren(id)) {
-                this.localChildIdsOf(id).forEach(id => this.deleteLocalRecord(id));
-            }
-            if (this.loadedRecordExists(id)) {
-                this._buildRecord(this.localTierOf(id), false, this.loadedRecord(id));
-            }
-            else { row(id).remove(); }
-        }
+    deleteLocalRecord(id) {
+        const path = this.pathTo(id, this.localData);
+
+        path.forEach(d => {
+            
+        });
     }
-    deleteLoadedRecords(ids) { ids.forEach(id => this.deleteLoadedRecord(id)); }
-    deleteLoadedRecord(id)   {
-        if (this.loadedRecordExists(id)) {
-            if (this.hasLoadedChildren(id)) {
-                this.loadedChildIdsOf(id).forEach(id => this.deleteLoadedRecord(id));
-            }
-            if (this.localRecordExists(id)) {
-                this._buildRecord(this.loadedTierOf(id), this.localRecord(id), false);
-            }
-            else { row(id).remove(); }
-        }
+
+    deleteLoadedRecord(id, data) {
+        const path = this.pathTo(id, this.loadedData);
+
+        path.forEach(d => {
+
+        });
     }
 
     undoDelete() {
