@@ -4,7 +4,7 @@
 class UserDataUtility {
     _userUtilities = null;
     _group = null;
-    localData = null;
+    localData = false;
     loadedData = false;
     deletedRecords = [];
 
@@ -198,6 +198,8 @@ class UserDataUtility {
         this.actions.data("selectedClass", "btn-primary");
 
         this.loadDiv.append(loadButton);
+        this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 5) + "px");
+        this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
         this.loadButton.prop("data-toggle", "popover");
         if (!window.FileReader) {
             this.loadButton.prop("data-content", "The FileReader API is not supported by your browser.");
@@ -589,20 +591,21 @@ class UserDataUtility {
 
     _buildRecords() {
         const self = this;
-        const localData = this.currentUser.pullRecords();
+        if (!this.localData) { this.localData = this.currentUser.pullRecords(); }
         //clear scrollAreaDiv
         this.currentUser.pushToStorage();
         this.scrollAreaDiv.empty();
         //call buildRecord with data
         //console.log(localData, this.loadedData);
-        this._buildRecord(0, localData, this.loadedData);
-
-        if (this.loadedData == false) {
-            this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 5) + "px");
-            this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
+        this._buildRecord(this.localData.id);
+        if (this.loadedData != false) {
+            if (this.localData.id != this.loadedData.id) {
+                this._buildRecord(this.loadedData.id);
+            }
+            this.loadDiv.addClass("hidden");
         }
         else {
-            this.loadDiv.addClass("hidden");
+            this.loadDiv.removeClass("hidden");
         }
 
         //click event for rowButtons ("row_" + id)
@@ -724,8 +727,11 @@ class UserDataUtility {
         });
     }
 
-    _buildRecord(tier, local, loaded) {
-        var id = local.id, keys = [], localRecord, loadedRecord, parentId;
+    _buildRecord(id) {
+        const local = (this.localRecordExists(id)) ? this.localRecord(id) : false;
+        const loaded = (this.loadedReecordExists(id)) ? this.loadedRecord(id) : false;
+        const tier = this.tierOf(id);
+        var keys = [], localRecord, loadedRecord, parentId;
         const localKeys = (Object.keys(local).length) ? Object.keys(local) : [];
         const loadedKeys = (Object.keys(loaded).length) ? Object.keys(loaded) : [];
         var unsortedKeys = Array.from(new Set([...localKeys, ...loadedKeys]));
@@ -860,12 +866,13 @@ class UserDataUtility {
             if (loaded && Object.keys(loaded).includes(children)) {
                 keys = keys.concat(loaded[children].map(child => child.id)).filter((key, index) => (keys.indexOf(key) === index));
             }
-            keys.forEach(key => {
-                localRecord = (local[children] && local[children].find(child => child.id == key)) ? local[children].find(child => child.id == key) : false;
-                loadedRecord = (loaded && loaded[children] && loaded[children].find(child => child.id == key)) ? loaded[children].find(child => child.id == key) : false;
-                //console.log(key, tier + 1, localRecord, loadedRecord);
-                this._buildRecord(tier + 1, localRecord, loadedRecord);
-            });
+//            keys.forEach(key => {
+//                localRecord = (local[children] && local[children].find(child => child.id == key)) ? local[children].find(child => child.id == key) : false;
+//                loadedRecord = (loaded && loaded[children] && loaded[children].find(child => child.id == key)) ? loaded[children].find(child => child.id == key) : false;
+//                //console.log(key, tier + 1, localRecord, loadedRecord);
+//                this._buildRecord(tier + 1, localRecord, loadedRecord);
+//            });
+            keys.forEach(id => { this._buildRecord(id); });
         }
     }
 
@@ -1005,11 +1012,11 @@ class UserDataUtility {
         const path = this.pathTo(id, this.localData);
 
         path.forEach(d => {
-            
+
         });
     }
 
-    deleteLoadedRecord(id, data) {
+    deleteLoadedRecord(id) {
         const path = this.pathTo(id, this.loadedData);
 
         path.forEach(d => {
