@@ -956,13 +956,18 @@ class UserDataUtility {
     localPathTo(id) { return this.pathTo(id, this.localData); }
     loadedPathTo(id) { return this.pathTo(id, this.loadedData); }
     pathTo(id, data) {
+        if (data.id == id) { return true; }
         const childrenName = this.childrenGroupName(data);
-        const found = (childrenName)
-                    ? data[childrenName].map(child => this.pathTo(id, child)).find(r => r != false)
-                    : false;
-        return (data.id == id)  ? [id]
-             : (found != false) ? [id].concat(found)
-             : false;
+        if (!Object.keys(data).includes(childrenName)) { return false; }
+        var index = 0, child, path, result = false;
+        while (result == false && data[childrenName].length > index) {
+            child = data[childrenName][index];
+            path = pathTo(id, child);
+            if (child.id == id) { result = [index]; }
+            if (Array.isArray(path)) { result = [index, ...path]; }
+            index++;
+        }
+        return result;
     }
 
     localTierOf(id) { return this.tierOf(id, this.localData); }
@@ -1009,38 +1014,54 @@ class UserDataUtility {
     }
 
     deleteLocalRecord(id) {
-        const path = this.pathTo(id, this.localData);
-
-        path.forEach(d => {
-
-        });
+        const path = pathTo(id, this.localData);
+        console.log(id, path, path.length);
+        if (path === true) { this.localData = {}; }
+        else {
+            switch (path.length) {
+                case 1: this.localData.clients.splice(path[0],1); break;
+                case 2: this.localData.clients[path[0]].issues.splice(path[1],1); break;
+                case 3: this.localData.clients[path[0]].issues[path[1]].sessions.splice(path[3],1); break;
+            }
+        }
     }
-
     deleteLoadedRecord(id) {
-        const path = this.pathTo(id, this.loadedData);
-
-        path.forEach(d => {
-
-        });
+        const path = pathTo(id, this.loadedData);
+        console.log(id, path, path.length);
+        if (path === true) { this.loadedData = {}; }
+        else {
+            switch (path.length) {
+                case 1: this.loadedData.clients.splice(path[0],1); break;
+                case 2: this.loadedData.clients[path[0]].issues.splice(path[1],1); break;
+                case 3: this.loadedData.clients[path[0]].issues[path[1]].sessions.splice(path[3],1); break;
+            }
+        }
     }
 
     undoDelete() {
-        this.deletedRecords.pop().forEach((tier, loaded, record) => {
-            if (loaded) {
-                loadedRecord = record;
-                if (this.localRecordExists(record.id)) {
-                    localRecord = this.localRecord(record.id);
-                    this.row(record.id).remove();
-                }
+        var path, parentIdName, parentId, locals, loadeds;
+        [locals, loadeds] = this.deletedRecords.pop();
+        locals.forEach(record => {
+            parentIdName = Object.keys(record).find(key => key.endsWith("id"));
+            parentId = (parentIdName) ? record[parentIdName] : false;
+            path = (parentId) ? this.pathTo(parentId, this.localData) : [];
+            switch (path.length) {
+                case 0: this.localData = record; break;
+                case 1: this.localData.clients.push(record); break;
+                case 2: this.localData.clients[path[0]].issues.push(record); break;
+                case 3: this.localData.clients[path[0]].issues[path[1]].sessions.push(record); break;
             }
-            else {
-                localRecord = record;
-                if (this.loadedRecordExists(record.id)) {
-                    loadedRecord = this.loadedRecord(record.id);
-                    this.row(record.id).remove();
-                }
+        });
+        loadeds.forEach(record => {
+            parentIdName = Object.keys(record).find(key => key.endsWith("id"));
+            parentId = (parentIdName) ? record[parentIdName] : false;
+            path = (parentId) ? this.pathTo(parentId, this.loadedData) : [];
+            switch (path.length) {
+                case 0: this.loadedData = record; break;
+                case 1: this.loadedData.clients.push(record); break;
+                case 2: this.loadedData.clients[path[0]].issues.push(record); break;
+                case 3: this.loadedData.clients[path[0]].issues[path[1]].sessions.push(record); break;
             }
-            this._buildRecord(tier, localRecord, loadedRecord);
         });
     }
 
