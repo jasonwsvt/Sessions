@@ -940,19 +940,22 @@ class UserDataUtility {
     get newerLocalIds() { this.allLoadedIds.filter(id => this.localRecordIsNewer(id)); }
     get olderLocalIds() { this.allLoadedIds.filter(id => this.localRecordIsOlder(id)); }
 
-    localRecordsOf(ids) { return this.recordsOf(ids, this.localDataOf(id)); }
-    loadedRecordsOf(ids) { return this.recordsOf(ids, this.loadedDataOf(id)); }
-    localRecordOf(id) { return this.dataOf(id, this.localData); }
-    loadedRecordOf(id) { return this.dataOf(id, this.loadedData); }
+    localRecordsOf(ids) { return this.recordsOf(ids, this.localData); }
+    loadedRecordsOf(ids) { return this.recordsOf(ids, this.loadedData); }
+    localRecordOf(id) { return this.recordOf(id, this.localData); }
+    loadedRecordOf(id) { return this.recordOf(id, this.loadedData); }
     recordsOf(ids, data) { return ids.map(id => this.recordOf(id, data)); }
     recordOf(id, data) {
         const path = this.pathTo(id, data);
-        
-        path.forEach(t => { data = data[this.childrenGroupName(data)].find(d => d.id == t); });
-
+        if (path != true && path != false) {
+            path.forEach(index => {
+                data = data[this.childrenGroupName(data)][index];
+            });
+        }
         return data;
     }
 
+    //Returns an array of indices, one index for each set of children
     localPathTo(id) { return this.pathTo(id, this.localData); }
     loadedPathTo(id) { return this.pathTo(id, this.loadedData); }
     pathTo(id, data) {
@@ -970,7 +973,11 @@ class UserDataUtility {
         return result;
     }
 
-    localTierOf(id) { return this.tierOf(id, this.localData); }
+    allTierOf(id)    {
+        const local = this.localTierOf(id);
+        return (local) ? local : this.loadedTierOf(id);
+    }
+    localTierOf(id)  { return this.tierOf(id, this.localData); }
     loadedTierOf(id) { return this.tierOf(id, this.loadedData); }
     tierOf(id, data) { return this.pathTo(id, data).length - 1; }
 
@@ -1365,14 +1372,20 @@ class UserDataUtility {
     allDescendantIdsOf(id)    { return [... new Set(this.localDescendantIdsOf(id), this.loadedDescendantIdsOf(id))]; }
     localDescendantIdsOf(id)  { return this.descendantIdsOf(id, this.localData); }
     loadedDescendantIdsOf(id) { return this.descendantIdsOf(id, this.loadedData); }
-    descendantIdsOf(id, data) { return this.ids(this.dataOf(id, data));
+    descendantIdsOf(id, data) {
+        var ids = this.ids(this.dataOf(id, data));
+        ids.splice(ids.indexOf(id), 1);
+        return ids;
     }
 
     //get allLocalIds()             { return this.allIds.filter(id => this.localRecordExists(id)); }
     //get allLoadedIds()            { return this.allIds.filter(id => this.loadedRecordExists(id)) }
-    get allClientRowIds()         { return this.allIds.filter(id => this.row(id).find(".inside1").length); }
-    get allIssueRowIds()          { return this.allIds.filter(id => this.row(id).find(".inside2").length); }
-    get allSessionRowIds()        { return this.allIds.filter(id => this.row(id).find(".inside3").length); }
+    //get allClientRowIds()         { return this.allIds.filter(id => this.row(id).find(".inside1").length); }
+    //get allIssueRowIds()          { return this.allIds.filter(id => this.row(id).find(".inside2").length); }
+    //get allSessionRowIds()        { return this.allIds.filter(id => this.row(id).find(".inside3").length); }
+    get allClientRowIds()         { return this.allIds.filter(id => this.allTierOf(id) == 1); }
+    get allIssueRowIds()          { return this.allIds.filter(id => this.allTierOf(id) == 2); }
+    get allSessionRowIds()        { return this.allIds.filter(id => this.allTierOf(id) == 3); }
     get allHiddenRowIds()         { return this.allIds.filter(id => this.rowIsHidden(id)); }
     get allCollapsedRowIds()      { return this.allIds.filter(id => this.rowIsCollapsed(id)); }
     get allExpandedRowIds()       { return this.allIds.filter(id => this.rowIsExpanded(id)); }
