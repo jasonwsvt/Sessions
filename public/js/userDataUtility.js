@@ -220,7 +220,7 @@ class UserDataUtility {
 
     setUpOptionsData() {
         const loaded = (this.loadedData != false);
-        console.log(this.adjust.children().eq(5));
+        //console.log(this.adjust.children().eq(5));
         if (loaded) { this.adjust.children().eq(5).removeClass("hidden"); }
         else { this.adjust.eq(5).addClass("hidden"); }
 
@@ -229,7 +229,6 @@ class UserDataUtility {
         this.options.data("default_unselectedClass", "btn-info");
         this.options.data("default_selectedClass", "btn-info");
 
-//        this.options.data("sort_default", "sort_1_0_selected");
         this.options.data("sort_indices", 4);
         this.options.data("sort_default", "sort_0_0_selected");
         this.options.data("sort_unselectedClass", "btn-dark");
@@ -634,7 +633,7 @@ class UserDataUtility {
             // If Shift is active, backwards
             // If Control is active, only affect children
 
-            const ids = (e.ctrlKey) ? self.allChildIdsOf(id) : self.allDescendantIdsOf(id);
+            const ids = (e.ctrlKey) ? self.allChildIds(id) : self.allDescendantIds(id);
 
             if (self.rowsAreCollapsed(ids))   {
                 if (e.shiftKey)               { self.expandRows(ids); }
@@ -654,7 +653,7 @@ class UserDataUtility {
         //click event for select local record buttons ("local_" + id)
         this.localSelects.on("click", function (e) {
             const id = $(this).parent().parent().parent().parent().prop("id");
-            const ids = (e.ctrlKey) ? [] : self.localDescendantIdsOf(id);
+            const ids = (e.ctrlKey) ? [] : self.localDescendantIds(id);
             if (self.localRecordIsSelected(id)) {
                 self.unselectLocalRecord(id);
                 if (ids.length) { self.unselectLocalRecords(ids); }
@@ -670,7 +669,7 @@ class UserDataUtility {
         //click event for select loaded record buttons ("loaded_" + id)
         this.loadedSelects.on("click", function (e) {
             const id = $(this).parent().parent().parent().parent().prop("id");
-            const ids = (e.ctrlKey) ? [] : self.localDescendantIdsOf(id);
+            const ids = (e.ctrlKey) ? [] : self.localDescendantIds(id);
             if (self.loadedRecordIsSelected(id)) {
                 self.unselectLoadedRecord(id);
                 if (ids.length) { self.unselectLoadedRecords(ids); }
@@ -686,8 +685,8 @@ class UserDataUtility {
         //click event for select local Children buttons ("local_" + id + "_children")
         this.localChildrenSelects.on("click", function (e) {
             const id = $(this).parent().parent().parent().parent().prop("id");
-            //console.log(id, self.localChildIdsOf(id));
-            const ids = (e.ctrlKey) ? self.localChildIdsOf(id) : self.localDescendantIdsOf(id);
+            //console.log(id, self.localChildIds(id));
+            const ids = (e.ctrlKey) ? self.localChildIds(id) : self.localDescendantIds(id);
             if (self.localChildrenSelectIsSelected(id)) {
                 self.unselectLocalChildrenSelect(id); self.unselectLocalRecords(ids);
             }
@@ -700,7 +699,7 @@ class UserDataUtility {
         //click event for select loaded Children buttons ("loaded_" + id + "_children")
         this.loadedChildrenSelects.on("click", function (e) {
             const id = $(this).parent().parent().parent().parent().prop("id");
-            const ids = (e.ctrlKey) ? self.loadedChildIdsOf(id) : self.loadedDescendantIdsOf(id);
+            const ids = (e.ctrlKey) ? self.loadedChildIds(id) : self.loadedDescendantIds(id);
             if (self.loadedChildrenSelectIsSelected(id)) {
                 self.unselectLoadedChildrenSelect(id); self.unselectLoadedRecords(ids);
             }
@@ -729,12 +728,13 @@ class UserDataUtility {
 
     _buildRecord(id) {
         const local = (this.localRecordExists(id)) ? this.localRecord(id) : false;
-        const loaded = (this.loadedReecordExists(id)) ? this.loadedRecord(id) : false;
-        const tier = this.tierOf(id);
+        const loaded = (this.loadedRecordExists(id)) ? this.loadedRecord(id) : false;
+        const tier = this.rowTier(id);
         var keys = [], localRecord, loadedRecord, parentId;
         const localKeys = (Object.keys(local).length) ? Object.keys(local) : [];
         const loadedKeys = (Object.keys(loaded).length) ? Object.keys(loaded) : [];
-        var unsortedKeys = Array.from(new Set([...localKeys, ...loadedKeys]));
+        var unsortedKeys = [...new Set(localKeys.concat(loadedKeys))];
+        console.log(id, tier, localKeys);
 
         //console.log("local:", local);
         //console.log("localKeys:", localKeys);
@@ -744,29 +744,29 @@ class UserDataUtility {
 
         if (unsortedKeys.find(key => (key.toLowerCase().includes("name")))) {
             keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("name"))));
-            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
+            unsortedKeys.splice(unsortedKeys.index(keys[keys.length - 1]), 1);
         }
         else if (unsortedKeys.find(key => (key == "creation"))) {
             keys.push(unsortedKeys.find(key => (key == "creation")));
-            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
+            unsortedKeys.splice(unsortedKeys.index(keys[keys.length - 1]), 1);
         }
         //console.log("After name", unsortedKeys, keys);
 
         if (unsortedKeys.find(key => (key == "id"))) {
             keys.push(unsortedKeys.find(key => (key == "id")));
-            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
+            unsortedKeys.splice(unsortedKeys.index(keys[keys.length - 1]), 1);
         }
         //console.log("After id", unsortedKeys, keys);
 
         if (unsortedKeys.includes("passwordHash")) {
-            unsortedKeys.splice(unsortedKeys.indexOf("passwordHash"), 1);
+            unsortedKeys.splice(unsortedKeys.index("passwordHash"), 1);
         }
         //console.log("After passwordHash", unsortedKeys, keys);
 
         ["creation", "lastEdited", "lastOpened"].forEach(key => {
             if (unsortedKeys.includes(key)) {
                 keys.push(key);
-                unsortedKeys.splice(unsortedKeys.indexOf(key), 1);
+                unsortedKeys.splice(unsortedKeys.index(key), 1);
             }
         });
         //console.log("After creation, lastEdited, lastOpened, lines", unsortedKeys, keys);
@@ -774,19 +774,19 @@ class UserDataUtility {
         if (unsortedKeys.find(key => (key.toLowerCase().includes("id")))) {
             keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("id"))));
             parentId = local[keys[keys.length - 1]];
-            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
+            unsortedKeys.splice(unsortedKeys.index(keys[keys.length - 1]), 1);
         }
         //console.log("After id", unsortedKeys, keys);
 
         if (unsortedKeys.includes("lines")) {
             keys.push("lines");
-            unsortedKeys.splice(unsortedKeys.indexOf("lines"), 1);
+            unsortedKeys.splice(unsortedKeys.index("lines"), 1);
         }
         //console.log("After creation, lastEdited, lastOpened, lines", unsortedKeys, keys);
 
         if (unsortedKeys.find(key => (isArray(local[key])))) {
             var children = unsortedKeys.find(key => (isArray(local[key])));
-            unsortedKeys.splice(unsortedKeys.indexOf(children), 1);
+            unsortedKeys.splice(unsortedKeys.index(children), 1);
         }
         //console.log("after children", unsortedKeys, keys);
 
@@ -864,7 +864,7 @@ class UserDataUtility {
             keys = local[children].map(child => child.id);
             //console.log(keys);
             if (loaded && Object.keys(loaded).includes(children)) {
-                keys = keys.concat(loaded[children].map(child => child.id)).filter((key, index) => (keys.indexOf(key) === index));
+                keys = keys.concat(loaded[children].map(child => child.id)).filter((key, index) => (keys.index(key) === index));
             }
 //            keys.forEach(key => {
 //                localRecord = (local[children] && local[children].find(child => child.id == key)) ? local[children].find(child => child.id == key) : false;
@@ -880,7 +880,7 @@ class UserDataUtility {
         var sortValues = [], sortedValues, index, loaded, children, child, childData, value, methodRow, methodValue, sortValue, lastDescendantId, rows;
         if (this.hasChildren(id)) {
             //console.log(id, "has children");
-            children = this.allChildIdsOf(id)
+            children = this.allChildIds(id)
             //Determining sort values
             children.forEach(childId => {
                 loaded = this.loadedRecordExists(childId);
@@ -903,10 +903,10 @@ class UserDataUtility {
                 index = id;
                 sortedValues.forEach((item) => {
                     if (this.hasChildren(item.id)) {
-                        lastDescendantId = this.allDescendantIdsOf(item.id).slice(-1)[0];
-                        //console.log(item.id, this.allDescendantIdsOf(item.id), lastDescendantId);
+                        lastDescendantId = this.allDescendantIds(item.id).slice(-1)[0];
+                        //console.log(item.id, this.allDescendantIds(item.id), lastDescendantId);
                         rows = this.row(item.id).nextUntil("#" + lastDescendantId).addBack().add("#" + lastDescendantId).detach();
-                        //console.log("including all the descendants", this.allDescendantIdsOf(item.id));
+                        //console.log("including all the descendants", this.allDescendantIds(item.id));
                         //console.log("moving", item.id, "to", lastDescendantId, "after", index, rows);
                     }
                     else {
@@ -914,7 +914,7 @@ class UserDataUtility {
                         //console.log("moving", item.id, "after", index, rows);
                     }
                     this.row(index).after(rows);
-                    index = (this.hasChildren(item.id)) ? this.allDescendantIdsOf(item.id).slice(-1)[0] : item.id;
+                    index = (this.hasChildren(item.id)) ? this.allDescendantIds(item.id).slice(-1)[0] : item.id;
                 });
                 return sortedValues[(direction == "descending") ? 0 : sortedValues.length - 1].value;
             } else {
@@ -927,26 +927,14 @@ class UserDataUtility {
         const name = Object.keys(data).find(key => key.endsWith("s"));
         return (name) ? name : false;
     }
-    get allIds() { return [...new Set(this.allLocalIds.concat(this.allLoadedIds))]; }
-    get allLocalIds() { return this.ids(this.localData); }
-    get allLoadedIds() { return this.ids(this.loadedData); }
-    ids(data) {
-        const childrenName = this.childrenGroupName(data);
-        if (this.childrenGroupName(data)) { return [data.id].concat(data[childrenName].map(d => ids(d))); }
-        else { return data.id; }
-    }
-    get newerLoadedIds() { this.allLoadedIds.filter(id => this.loadedRecordIsNewer(id)); }
-    get olderLoadedIds() { this.allLoadedIds.filter(id => this.loadedRecordIsOlder(id)); }
-    get newerLocalIds() { this.allLoadedIds.filter(id => this.localRecordIsNewer(id)); }
-    get olderLocalIds() { this.allLoadedIds.filter(id => this.localRecordIsOlder(id)); }
 
-    localRecordsOf(ids) { return this.recordsOf(ids, this.localData); }
-    loadedRecordsOf(ids) { return this.recordsOf(ids, this.loadedData); }
-    localRecordOf(id) { return this.recordOf(id, this.localData); }
-    loadedRecordOf(id) { return this.recordOf(id, this.loadedData); }
-    recordsOf(ids, data) { return ids.map(id => this.recordOf(id, data)); }
-    recordOf(id, data) {
-        const path = this.pathTo(id, data);
+    localRecords(ids) { return this.records(ids, this.localData); }
+    loadedRecords(ids) { return this.records(ids, this.loadedData); }
+    localRecord(id) { return this.record(id, this.localData); }
+    loadedRecord(id) { return this.record(id, this.loadedData); }
+    records(ids, data) { return ids.map(id => this.record(id, data)); }
+    record(id, data) {
+        const path = this.indexPath(id, data);
         if (path != true && path != false) {
             path.forEach(index => {
                 data = data[this.childrenGroupName(data)][index];
@@ -956,16 +944,17 @@ class UserDataUtility {
     }
 
     //Returns an array of indices, one index for each set of children
-    localPathTo(id) { return this.pathTo(id, this.localData); }
-    loadedPathTo(id) { return this.pathTo(id, this.loadedData); }
-    pathTo(id, data) {
+    rowIndexPath(id)    { const p = localIndexPath(id); return (p) ? p : this.loadedIndexPath(id); }
+    localIndexPath(id)  { return this.indexPath(id, this.localData); }
+    loadedIndexPath(id) { return this.indexPath(id, this.loadedData); }
+    indexPath(id, data) {
         if (data.id == id) { return true; }
         const childrenName = this.childrenGroupName(data);
         if (!childrenName) { return false; }
         var index = 0, child, path, result = false;
         while (result == false && data[childrenName].length > index) {
             child = data[childrenName][index];
-            path = pathTo(id, child);
+            path = this.indexPath(id, child);
             if (child.id == id) { result = [index]; }
             if (Array.isArray(path)) { result = [index, ...path]; }
             index++;
@@ -973,24 +962,39 @@ class UserDataUtility {
         return result;
     }
 
-    allTierOf(id)    {
-        const local = this.localTierOf(id);
-        return (local) ? local : this.loadedTierOf(id);
+    rowIdPath(id)    { const p = localIdPath(id); return (p) ? p : this.loadedIdPath(id); }
+    localIdPath(id)  { return this.idPath(id, this.localData); }
+    loadedIdPath(id) { return this.idPath(id, this.loadedData); }
+    idPath(id, data) {
+        if (data.id == id) { return true; }
+        const childrenName = this.childrenGroupName(data);
+        if (!childrenName) { return false; }
+        var index = 0, child, path, result = false;
+        while (result == false && data[childrenName].length > index) {
+            child = data[childrenName][index];
+            path = this.idPath(id, child);
+            if (child.id == id) { result = [id]; }
+            if (Array.isArray(path)) { result = [id, ...path]; }
+            index++;
+        }
+        return result;
     }
-    localTierOf(id)  { return this.tierOf(id, this.localData); }
-    loadedTierOf(id) { return this.tierOf(id, this.loadedData); }
-    tierOf(id, data) { return this.pathTo(id, data).length - 1; }
+
+    rowTier(id)    { const t = this.localTier(id);  return (t) ? t : this.loadedTier(id); }
+    localTier(id)  { return this.tier(id, this.localData); }
+    loadedTier(id) { return this.tier(id, this.loadedData); }
+    tier(id, data) { const t = this.path(id, data); return (t === true) ? 0 : t.length; }
 
     // Returns an array of ids for which the remaining given ids are all their descendants.
     localMostAncestral(ids) { return this.mostAncestral(ids, this.localData); }
     loadedMostAncestral(ids) { return this.mostAncestral(ids, this.loadedData); }
     mostAncestral(ids, data) {
         //filters a set of ids to only include those for which none of the others precede it in any path
-        ids.map(id => this.pathTo(id, data)).forEach(path => {
+        ids.map(id => this.idPath(id, data)).forEach(path => {
             while (path.length) {
                 if (ids.includes(path.shift())) {
                     path.forEach(id => {
-                        if (ids.includes(id)) { ids.splice(ids.indexOf(id), 0); }
+                        if (ids.includes(id)) { ids.splice(ids.index(id), 0); }
                     });
                 }
             }
@@ -1008,7 +1012,7 @@ class UserDataUtility {
                       : (isArray(loadedIds))                      ? loadedIds
                       : [];
         
-            this.deletedRecords.push([this.localRecordsOf(localIds), this.loadedRecordsOf(loadedIds)]);
+            this.deletedRecords.push([this.localRecords(localIds), this.loadedRecords(loadedIds)]);
 
             ids.forEach(id => {
                 if (localIds.includes(id))  { this.deleteLocalRecord(id, this.localData); }
@@ -1021,7 +1025,7 @@ class UserDataUtility {
     }
 
     deleteLocalRecord(id) {
-        const path = pathTo(id, this.localData);
+        const path = this.path(id, this.localData);
         console.log(id, path, path.length);
         if (path === true) { this.localData = {}; }
         else {
@@ -1033,7 +1037,7 @@ class UserDataUtility {
         }
     }
     deleteLoadedRecord(id) {
-        const path = pathTo(id, this.loadedData);
+        const path = this.path(id, this.loadedData);
         console.log(id, path, path.length);
         if (path === true) { this.loadedData = {}; }
         else {
@@ -1051,7 +1055,7 @@ class UserDataUtility {
         locals.forEach(record => {
             parentIdName = Object.keys(record).find(key => key.endsWith("id"));
             parentId = (parentIdName) ? record[parentIdName] : false;
-            path = (parentId) ? this.pathTo(parentId, this.localData) : [];
+            path = (parentId) ? this.path(parentId, this.localData) : [];
             switch (path.length) {
                 case 0: this.localData = record; break;
                 case 1: this.localData.clients.push(record); break;
@@ -1062,7 +1066,7 @@ class UserDataUtility {
         loadeds.forEach(record => {
             parentIdName = Object.keys(record).find(key => key.endsWith("id"));
             parentId = (parentIdName) ? record[parentIdName] : false;
-            path = (parentId) ? this.pathTo(parentId, this.loadedData) : [];
+            path = (parentId) ? this.path(parentId, this.loadedData) : [];
             switch (path.length) {
                 case 0: this.loadedData = record; break;
                 case 1: this.loadedData.clients.push(record); break;
@@ -1101,8 +1105,8 @@ class UserDataUtility {
     loadedRecordExists(id)             { return this.row(id).hasClass("loaded"); }
     localRecordIsSelected(id)          { return this.row(id).hasClass("localSelected"); }
     loadedRecordIsSelected(id)         { return this.row(id).hasClass("loadedSelected"); }
-    localChildrenSelectIsSelected(id)  { return this.localRecordsAreSelected(this.localChildIdsOf(id)); }
-    loadedChildrenSelectIsSelected(id) { return this.loadedRecordsAreSelected(this.loadedChildIdsOf(id)); }
+    localChildrenSelectIsSelected(id)  { return this.localRecordsAreSelected(this.localChildIds(id)); }
+    loadedChildrenSelectIsSelected(id) { return this.loadedRecordsAreSelected(this.loadedChildIds(id)); }
     localRecordsAreSelected(ids)       { return ids.every(id => this.localRecordIsSelected(id)); }
     loadedRecordsAreSelected(ids)      { return ids.every(id => this.loadedRecordIsSelected(id)); }
     localRecordsAreUnselected(ids)     { return ids.every(id => !this.localRecordIsSelected(id)); }
@@ -1114,29 +1118,29 @@ class UserDataUtility {
         if (this.loadedRecordExists(id)) { this.updateLoadedChildrenSelectStatus(id); }
     }
     updateLocalChildrenSelectStatus(id) {
-        const ids = this.localChildIdsOf(id);
+        const ids = this.localChildIds(id);
         this.localChildrenSelect(id).html(
             (this.localRecordsAreSelected(ids)) ? this._fullIcon :
             (this.localRecordsAreUnselected(ids)) ? this._emptyIcon :
             this._partIcon);
     }
     updateLoadedChildrenSelectStatus(id) {
-        const ids = this.loadedChildIdsOf(id);
+        const ids = this.loadedChildIds(id);
         this.loadedChildrenSelect(id).html(
             (this.loadedRecordsAreSelected(ids)) ? this._fullIcon :
             (this.loadedRecordsAreUnselected(ids)) ? this._emptyIcon :
             this._multiIcon);
     }
 
-    selectLocalChildrenSelect(id)    { this.localChildIdsOf(id).forEach(id => this.selectLocalRecord(id)); }
-    selectLoadedChildrenSelect(id)   { this.loadedChildIdsOf(id).forEach(id => this.selectLoadedRecord(id)); }
-    unselectLocalChildrenSelect(id)  { this.localChildIdsOf(id).forEach(id => this.unselectLocalRecord(id)); }
-    unselectLoadedChildrenSelect(id) { this.loadedChildIdsOf(id).forEach(id => this.unselectLoadedRecord(id)); }
+    selectLocalChildrenSelect(id)    { this.localChildIds(id).forEach(id => this.selectLocalRecord(id)); }
+    selectLoadedChildrenSelect(id)   { this.loadedChildIds(id).forEach(id => this.selectLoadedRecord(id)); }
+    unselectLocalChildrenSelect(id)  { this.localChildIds(id).forEach(id => this.unselectLocalRecord(id)); }
+    unselectLoadedChildrenSelect(id) { this.loadedChildIds(id).forEach(id => this.unselectLoadedRecord(id)); }
 
     updateChildrenRowsButtonStatuses(ids) { ids.forEach(id => this.updateChildrenRowsButtonStatus(id)); }
 
     updateChildrenRowsButtonStatus(id) {
-        const ids = this.allChildIdsOf(id);
+        const ids = this.allChildIds(id);
         this.childrenRowsButton(id).html(
             (this.rowsAreHidden(ids)) ? this._hiddenIcon :
             (this.rowsAreCollapsed(ids)) ? this._collapsedIcon :
@@ -1261,7 +1265,7 @@ class UserDataUtility {
         }
     }
    
-    get allLocalRecords() { return this.localRecords(this.allLocalIds); }
+/*    get allLocalRecords() { return this.localRecords(this.allLocalIds); }
     localRecords(ids) { return ids.map(id => this.localRecord(id)); }
     localRecord(id) {
         if (this.localRecordExists(id)) {
@@ -1295,97 +1299,46 @@ class UserDataUtility {
             });
             return record;
         }
-    }
+    } */
 
     //Id collections
-    get allIds()    { return [... new Set(this.localIds, this.loadedIds)]; }
+    get allIds()    { return [...new Set(this.localIds.concat(this.loadedIds))]; }
     get localIds()  { return this.ids(this.localData); }
     get loadedIds() { return this.ids(this.loadedData); }
     ids(data) {
+        if (!data) { return []; }
         const childrenName = this.childrenGroupName(data);
-        return (!childrenName) ? [data.id]
-                               : [data.id].concat(...data[childrenName].map(child => this.ids(child)));
-    }
+        return (childrenName) ? [data.id].concat(data[childrenName].map(child => this.ids(child)))
+                              : data.id;
+        //return (childrenName) ? [data.id].concat(...data[childrenName].map(child => this.ids(child)))
+        //                      : [data.id]
+   }
+    get newerLoadedIds() { this.loadedIds.filter(id => this.loadedRecordIsNewer(id)); }
+    get olderLoadedIds() { this.loadedIds.filter(id => this.loadedRecordIsOlder(id)); }
+    get newerLocalIds()  { this.loadedIds.filter(id => this.localRecordIsNewer(id)); }
+    get olderLocalIds()  { this.loadedIds.filter(id => this.localRecordIsOlder(id)); }
     
-/*    localChildIdsOf(parentId) { return this.allChildIdsOf(parentId).filter(id => this.localRecordExists(id)); }
-    loadedChildIdsOf(parentId) { return this.allChildIdsOf(parentId).filter(id => this.loadedRecordExists(id)); }
-    allChildIdsOf(parentId) {
-        var ids = [];
-        var rows = $("." + this.parentId(parentId));
-        for (var i = 0; i < rows.length; i++) {
-            ids.push(rows.eq(i).attr("id"));
-        }
-        return ids;
-    }*/
-
-    allChildIdsOf(parentId)    { return [... new Set(this.localChildrenSelect(parentId), this.loadedChildIdsOf(parentId))]; }
-    localChildIdsOf(parentId)  { return this.childIdsOf(parentId, this.localData); }
-    loadedChildIdsOf(parentId) { return this.childIdsOf(parentId, this.loadedData); }
-    childIdsOf(parentId, data) {
-        const data = this.dataOf(parentId, data);
+    allChildIds(parentId)    { return [... new Set(this.localChildrenSelect(parentId).concat(this.loadedChildIds(parentId)))]; }
+    localChildIds(parentId)  { return this.childIds(parentId, this.localData); }
+    loadedChildIds(parentId) { return this.childIds(parentId, this.loadedData); }
+    childIds(parentId, data) {
+        data = this.record(parentId, data);
         const childrenName = this.childrenGroupName(data);
         return data[childrenName].map(child => child.id);
     }
 
-/*    allDescendantIdsOf(id) {
-        var ids = [];
-        if (this.hasChildren(id)) {
-            this.allChildIdsOf(id).forEach(childId => {
-                ids.push(childId);
-                if (this.hasChildren(childId)) {
-                    ids = ids.concat(this.allDescendantIdsOf(childId))
-                             .filter((id, index) => ids.indexOf(id) === index);
-                }
-            });
-        }
+    allDescendantIds(id)    { return [... new Set(this.localDescendantIds(id).concat(this.loadedDescendantIds(id)))]; }
+    localDescendantIds(id)  { return this.descendantIds(id, this.localData); }
+    loadedDescendantIds(id) { return this.descendantIds(id, this.loadedData); }
+    descendantIds(id, data) {
+        var ids = this.ids(this.record(id, data));
+        ids.splice(ids.index(id), 1);
         return ids;
     }
 
-    localDescendantIdsOf(id) {
-        var ids = [];
-        if (this.hasLocalChildren(id)) {
-            this.localChildIdsOf(id).forEach(childId => {
-                ids.push(childId);
-                if (this.hasLocalChildren(childId)) {
-                    ids = ids.concat(this.localDescendantIdsOf(childId))
-                    .filter((id, index) => ids.indexOf(id) === index);
-                }
-            });
-        }
-        return ids;
-    }
-
-    loadedDescendantIdsOf(id) {
-        var ids = [];
-        if (this.hasLoadedChildren(id)) {
-            this.loadedChildIdsOf(id).forEach(childId => {
-                ids.push(childId);
-                if (this.hasLoadedChildren(childId)) {
-                    ids = ids.concat(this.loadedDescendantIdsOf(childId))
-                    .filter((id, index) => ids.indexOf(id) === index);
-                }
-            });
-        }
-        return ids;
-    }*/
-
-    allDescendantIdsOf(id)    { return [... new Set(this.localDescendantIdsOf(id), this.loadedDescendantIdsOf(id))]; }
-    localDescendantIdsOf(id)  { return this.descendantIdsOf(id, this.localData); }
-    loadedDescendantIdsOf(id) { return this.descendantIdsOf(id, this.loadedData); }
-    descendantIdsOf(id, data) {
-        var ids = this.ids(this.dataOf(id, data));
-        ids.splice(ids.indexOf(id), 1);
-        return ids;
-    }
-
-    //get allLocalIds()             { return this.allIds.filter(id => this.localRecordExists(id)); }
-    //get allLoadedIds()            { return this.allIds.filter(id => this.loadedRecordExists(id)) }
-    //get allClientRowIds()         { return this.allIds.filter(id => this.row(id).find(".inside1").length); }
-    //get allIssueRowIds()          { return this.allIds.filter(id => this.row(id).find(".inside2").length); }
-    //get allSessionRowIds()        { return this.allIds.filter(id => this.row(id).find(".inside3").length); }
-    get allClientRowIds()         { return this.allIds.filter(id => this.allTierOf(id) == 1); }
-    get allIssueRowIds()          { return this.allIds.filter(id => this.allTierOf(id) == 2); }
-    get allSessionRowIds()        { return this.allIds.filter(id => this.allTierOf(id) == 3); }
+    get allClientRowIds()         { return this.allIds.filter(id => this.rowTier(id) == 1); }
+    get allIssueRowIds()          { return this.allIds.filter(id => this.rowTier(id) == 2); }
+    get allSessionRowIds()        { return this.allIds.filter(id => this.rowTier(id) == 3); }
     get allHiddenRowIds()         { return this.allIds.filter(id => this.rowIsHidden(id)); }
     get allCollapsedRowIds()      { return this.allIds.filter(id => this.rowIsCollapsed(id)); }
     get allExpandedRowIds()       { return this.allIds.filter(id => this.rowIsExpanded(id)); }
