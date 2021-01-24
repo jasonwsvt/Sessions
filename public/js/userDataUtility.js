@@ -958,7 +958,7 @@ class UserDataUtility {
     pathTo(id, data) {
         if (data.id == id) { return true; }
         const childrenName = this.childrenGroupName(data);
-        if (!Object.keys(data).includes(childrenName)) { return false; }
+        if (!childrenName) { return false; }
         var index = 0, child, path, result = false;
         while (result == false && data[childrenName].length > index) {
             child = data[childrenName][index];
@@ -1291,15 +1291,16 @@ class UserDataUtility {
     }
 
     //Id collections
-    get allIds() {
-        var ids = [];
-        for (var i = 0; i < this.rows.length; i++) {
-            ids.push(this.rows.eq(i).prop("id"));
-        }
-        return ids;
+    get allIds()    { return [... new Set(this.localIds, this.loadedIds)]; }
+    get localIds()  { return this.ids(this.localData); }
+    get loadedIds() { return this.ids(this.loadedData); }
+    ids(data) {
+        const childrenName = this.childrenGroupName(data);
+        return (!childrenName) ? [data.id]
+                               : [data.id].concat(...data[childrenName].map(child => this.ids(child)));
     }
-
-    localChildIdsOf(parentId) { return this.allChildIdsOf(parentId).filter(id => this.localRecordExists(id)); }
+    
+/*    localChildIdsOf(parentId) { return this.allChildIdsOf(parentId).filter(id => this.localRecordExists(id)); }
     loadedChildIdsOf(parentId) { return this.allChildIdsOf(parentId).filter(id => this.loadedRecordExists(id)); }
     allChildIdsOf(parentId) {
         var ids = [];
@@ -1308,9 +1309,18 @@ class UserDataUtility {
             ids.push(rows.eq(i).attr("id"));
         }
         return ids;
+    }*/
+
+    allChildIdsOf(parentId)    { return [... new Set(this.localChildrenSelect(parentId), this.loadedChildIdsOf(parentId))]; }
+    localChildIdsOf(parentId)  { return this.childIdsOf(parentId, this.localData); }
+    loadedChildIdsOf(parentId) { return this.childIdsOf(parentId, this.loadedData); }
+    childIdsOf(parentId, data) {
+        const data = this.dataOf(parentId, data);
+        const childrenName = this.childrenGroupName(data);
+        return data[childrenName].map(child => child.id);
     }
 
-    allDescendantIdsOf(id) {
+/*    allDescendantIdsOf(id) {
         var ids = [];
         if (this.hasChildren(id)) {
             this.allChildIdsOf(id).forEach(childId => {
@@ -1350,10 +1360,16 @@ class UserDataUtility {
             });
         }
         return ids;
+    }*/
+
+    allDescendantIdsOf(id)    { return [... new Set(this.localDescendantIdsOf(id), this.loadedDescendantIdsOf(id))]; }
+    localDescendantIdsOf(id)  { return this.descendantIdsOf(id, this.localData); }
+    loadedDescendantIdsOf(id) { return this.descendantIdsOf(id, this.loadedData); }
+    descendantIdsOf(id, data) { return this.ids(this.dataOf(id, data));
     }
 
-    get allLocalIds()             { return this.allIds.filter(id => this.localRecordExists(id)); }
-    get allLoadedIds()            { return this.allIds.filter(id => this.loadedRecordExists(id)) }
+    //get allLocalIds()             { return this.allIds.filter(id => this.localRecordExists(id)); }
+    //get allLoadedIds()            { return this.allIds.filter(id => this.loadedRecordExists(id)) }
     get allClientRowIds()         { return this.allIds.filter(id => this.row(id).find(".inside1").length); }
     get allIssueRowIds()          { return this.allIds.filter(id => this.row(id).find(".inside2").length); }
     get allSessionRowIds()        { return this.allIds.filter(id => this.row(id).find(".inside3").length); }
