@@ -744,29 +744,29 @@ class UserDataUtility {
 
         if (unsortedKeys.find(key => (key.toLowerCase().includes("name")))) {
             keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("name"))));
-            unsortedKeys.splice(unsortedKeys.index(keys[keys.length - 1]), 1);
+            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
         }
         else if (unsortedKeys.find(key => (key == "creation"))) {
             keys.push(unsortedKeys.find(key => (key == "creation")));
-            unsortedKeys.splice(unsortedKeys.index(keys[keys.length - 1]), 1);
+            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
         }
         //console.log("After name", unsortedKeys, keys);
 
         if (unsortedKeys.find(key => (key == "id"))) {
             keys.push(unsortedKeys.find(key => (key == "id")));
-            unsortedKeys.splice(unsortedKeys.index(keys[keys.length - 1]), 1);
+            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
         }
         //console.log("After id", unsortedKeys, keys);
 
         if (unsortedKeys.includes("passwordHash")) {
-            unsortedKeys.splice(unsortedKeys.index("passwordHash"), 1);
+            unsortedKeys.splice(unsortedKeys.indexOf("passwordHash"), 1);
         }
         //console.log("After passwordHash", unsortedKeys, keys);
 
         ["creation", "lastEdited", "lastOpened"].forEach(key => {
             if (unsortedKeys.includes(key)) {
                 keys.push(key);
-                unsortedKeys.splice(unsortedKeys.index(key), 1);
+                unsortedKeys.splice(unsortedKeys.indexOf(key), 1);
             }
         });
         //console.log("After creation, lastEdited, lastOpened, lines", unsortedKeys, keys);
@@ -774,19 +774,19 @@ class UserDataUtility {
         if (unsortedKeys.find(key => (key.toLowerCase().includes("id")))) {
             keys.push(unsortedKeys.find(key => (key.toLowerCase().includes("id"))));
             parentId = local[keys[keys.length - 1]];
-            unsortedKeys.splice(unsortedKeys.index(keys[keys.length - 1]), 1);
+            unsortedKeys.splice(unsortedKeys.indexOf(keys[keys.length - 1]), 1);
         }
         //console.log("After id", unsortedKeys, keys);
 
         if (unsortedKeys.includes("lines")) {
             keys.push("lines");
-            unsortedKeys.splice(unsortedKeys.index("lines"), 1);
+            unsortedKeys.splice(unsortedKeys.indexOf("lines"), 1);
         }
         //console.log("After creation, lastEdited, lastOpened, lines", unsortedKeys, keys);
 
         if (unsortedKeys.find(key => (isArray(local[key])))) {
             var children = unsortedKeys.find(key => (isArray(local[key])));
-            unsortedKeys.splice(unsortedKeys.index(children), 1);
+            unsortedKeys.splice(unsortedKeys.indexOf(children), 1);
         }
         //console.log("after children", unsortedKeys, keys);
 
@@ -864,7 +864,7 @@ class UserDataUtility {
             keys = local[children].map(child => child.id);
             //console.log(keys);
             if (loaded && Object.keys(loaded).includes(children)) {
-                keys = keys.concat(loaded[children].map(child => child.id)).filter((key, index) => (keys.index(key) === index));
+                keys = keys.concat(loaded[children].map(child => child.id)).filter((key, index) => (keys.indexOf(key) === index));
             }
 //            keys.forEach(key => {
 //                localRecord = (local[children] && local[children].find(child => child.id == key)) ? local[children].find(child => child.id == key) : false;
@@ -983,7 +983,7 @@ class UserDataUtility {
     rowTier(id)    { const t = this.localTier(id);  return (t) ? t : this.loadedTier(id); }
     localTier(id)  { return this.tier(id, this.localData); }
     loadedTier(id) { return this.tier(id, this.loadedData); }
-    tier(id, data) { const t = this.path(id, data); return (t === true) ? 0 : t.length; }
+    tier(id, data) { const t = this.indexPath(id, data); return (t === true) ? 0 : t.length; }
 
     // Returns an array of ids for which the remaining given ids are all their descendants.
     localMostAncestral(ids) { return this.mostAncestral(ids, this.localData); }
@@ -994,7 +994,7 @@ class UserDataUtility {
             while (path.length) {
                 if (ids.includes(path.shift())) {
                     path.forEach(id => {
-                        if (ids.includes(id)) { ids.splice(ids.index(id), 0); }
+                        if (ids.includes(id)) { ids.splice(ids.indexOf(id), 0); }
                     });
                 }
             }
@@ -1100,9 +1100,9 @@ class UserDataUtility {
     rowsAreExpanded(ids)  { return ids.every(id => this.rowIsExpanded(id)); }
     rowsAreSelected(ids)  { return ids.every(id => this.rowIsSelected(id)); }
 
-    get loadedRecordsExist()           { return !!$(".loaded").length; }
-    localRecordExists(id)              { return this.row(id).hasClass("local"); }
-    loadedRecordExists(id)             { return this.row(id).hasClass("loaded"); }
+    get loadedRecordsExist()           { return (this.loadedData != false); }
+    localRecordExists(id)              { return !!this.localIndexPath(id); }
+    loadedRecordExists(id)             { return !!this.loadedIndexPath(id); }
     localRecordIsSelected(id)          { return this.row(id).hasClass("localSelected"); }
     loadedRecordIsSelected(id)         { return this.row(id).hasClass("loadedSelected"); }
     localChildrenSelectIsSelected(id)  { return this.localRecordsAreSelected(this.localChildIds(id)); }
@@ -1264,42 +1264,6 @@ class UserDataUtility {
             this.loadedSelect(id).html(this._squareIcon);
         }
     }
-   
-/*    get allLocalRecords() { return this.localRecords(this.allLocalIds); }
-    localRecords(ids) { return ids.map(id => this.localRecord(id)); }
-    localRecord(id) {
-        if (this.localRecordExists(id)) {
-            var record = new Object(), name, value, data, self = this;
-            this.row(id).find("tr").each(function() {
-                name = $(this).find("td").eq(1).text().slice(0, -1);
-                data = self.row(id).data("local_" + name);
-                value = (data) ? data : $(this).find("td").eq(2).text();
-                if (isNumeric(value)) { value = parseInt(value); }
-                if (value == "null") { value = null; }
-                if (value == "false") { value = false; }
-                if ((name == "lines" || !name.endsWith("s"))) { record[name] = value; }
-            });
-            return record;
-        }
-    }
-
-    get allLoadedRecords() { return this.loadedRecords(this.allLoadedIds); }
-    loadedRecords(ids) { return ids.map(id => this.loadedRecord(id)); }
-    loadedRecord(id) {
-        if (this.loadedRecordExists(id)) {
-            var record = new Object(), name, value, data, self = this;
-            this.row(id).find("tr").each(function() {
-                name = $(this).find("td").eq(1).text().slice(0, -1);
-                data = self.row(id).data("loaded_" + name);
-                value = (data) ? data : $(this).find("td").eq(4).text();
-                if (isNumeric(value)) { value = parseInt(value); }
-                if (value == "null") { value = null; }
-                if (value == "false") { value = false; }
-                if ((name == "lines" || !name.endsWith("s")) && value) { record[name] = value; }
-            });
-            return record;
-        }
-    } */
 
     //Id collections
     get allIds()    { return [...new Set(this.localIds.concat(this.loadedIds))]; }
@@ -1332,7 +1296,7 @@ class UserDataUtility {
     loadedDescendantIds(id) { return this.descendantIds(id, this.loadedData); }
     descendantIds(id, data) {
         var ids = this.ids(this.record(id, data));
-        ids.splice(ids.index(id), 1);
+        ids.splice(ids.indexOf(id), 1);
         return ids;
     }
 
