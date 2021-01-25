@@ -198,8 +198,6 @@ class UserDataUtility {
         this.actions.data("selectedClass", "btn-primary");
 
         this.loadDiv.append(loadButton);
-        this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 5) + "px");
-        this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
         this.loadButton.prop("data-toggle", "popover");
         if (!window.FileReader) {
             this.loadButton.prop("data-content", "The FileReader API is not supported by your browser.");
@@ -594,6 +592,8 @@ class UserDataUtility {
         //clear scrollAreaDiv
         this.currentUser.pushToStorage();
         this.scrollAreaDiv.empty();
+        this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 22) + "px");
+        this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
         //call buildRecord with data
         //console.log(localData, this.loadedData);
         this._buildRecord(this.localData.id);
@@ -734,7 +734,7 @@ class UserDataUtility {
         const localKeys = (Object.keys(local).length) ? Object.keys(local) : [];
         const loadedKeys = (Object.keys(loaded).length) ? Object.keys(loaded) : [];
         var unsortedKeys = [...new Set(localKeys.concat(loadedKeys))];
-        console.log(id, tier, localKeys);
+        //console.log(id, tier, local, unsortedKeys);
 
         //console.log("local:", local);
         //console.log("localKeys:", localKeys);
@@ -862,16 +862,10 @@ class UserDataUtility {
         //console.log(local[children]);
         if (children) {
             keys = local[children].map(child => child.id);
-            //console.log(keys);
             if (loaded && Object.keys(loaded).includes(children)) {
                 keys = keys.concat(loaded[children].map(child => child.id)).filter((key, index) => (keys.indexOf(key) === index));
             }
-//            keys.forEach(key => {
-//                localRecord = (local[children] && local[children].find(child => child.id == key)) ? local[children].find(child => child.id == key) : false;
-//                loadedRecord = (loaded && loaded[children] && loaded[children].find(child => child.id == key)) ? loaded[children].find(child => child.id == key) : false;
-//                //console.log(key, tier + 1, localRecord, loadedRecord);
-//                this._buildRecord(tier + 1, localRecord, loadedRecord);
-//            });
+            console.log(id, keys);
             keys.forEach(id => { this._buildRecord(id); });
         }
     }
@@ -930,17 +924,17 @@ class UserDataUtility {
 
     localRecords(ids) { return this.records(ids, this.localData); }
     loadedRecords(ids) { return this.records(ids, this.loadedData); }
+    records(ids, data) { return ids.map(id => this.record(id, data)); }
     localRecord(id) { return this.record(id, this.localData); }
     loadedRecord(id) { return this.record(id, this.loadedData); }
-    records(ids, data) { return ids.map(id => this.record(id, data)); }
     record(id, data) {
         const path = this.indexPath(id, data);
-        if (path != true && path != false) {
-            path.forEach(index => {
-                data = data[this.childrenGroupName(data)][index];
-            });
+        if (path === true) { return data; }
+        if (isArray(path)) {
+            path.forEach(index => { data = data[this.childrenGroupName(data)][index] });
+            return data;
         }
-        return data;
+        return false;
     }
 
     //Returns an array of indices, one index for each set of children
@@ -948,39 +942,46 @@ class UserDataUtility {
     localIndexPath(id)  { return this.indexPath(id, this.localData); }
     loadedIndexPath(id) { return this.indexPath(id, this.loadedData); }
     indexPath(id, data) {
+        var path;
         if (data.id == id) { return true; }
-        const childrenName = this.childrenGroupName(data);
-        if (!childrenName) { return false; }
-        var index = 0, child, path, result = false;
-        while (result == false && data[childrenName].length > index) {
-            child = data[childrenName][index];
-            path = this.indexPath(id, child);
-            if (child.id == id) { result = [index]; }
-            if (Array.isArray(path)) { result = [index, ...path]; }
-            index++;
+        else {
+            const childrenName = this.childrenGroupName(data);
+            if (childrenName) {
+                path = data[childrenName].map((child, index) => {
+                    const p = this.indexPath(id, child);
+                    return (child.id == id) ? [index]
+                         : (isArray(p)) ? [index, ...p]
+                         : false;
+    
+                }).find(p => isArray(p));
+                return (path === undefined) ? false : path;
+            }
+            else { return false; }
         }
-        return result;
     }
 
     rowIdPath(id)    { const p = localIdPath(id); return (p) ? p : this.loadedIdPath(id); }
     localIdPath(id)  { return this.idPath(id, this.localData); }
     loadedIdPath(id) { return this.idPath(id, this.loadedData); }
     idPath(id, data) {
-        if (data.id == id) { return true; }
-        const childrenName = this.childrenGroupName(data);
-        if (!childrenName) { return false; }
-        var index = 0, child, path, result = false;
-        while (result == false && data[childrenName].length > index) {
-            child = data[childrenName][index];
-            path = this.idPath(id, child);
-            if (child.id == id) { result = [id]; }
-            if (Array.isArray(path)) { result = [id, ...path]; }
-            index++;
+        var path = false;
+        if (data.id == id) { return [id]; }
+        else {
+            const childrenName = this.childrenGroupName(data);
+            if (childrenName) {
+                path = data[childrenName].map((child, index) => {
+                    const p = this.idPath(id, child);
+                    return (isArray(p)) ? [data.id, ...p]
+                         : false;
+    
+                }).find(p => isArray(p));
+                return (path === undefined) ? false : path;
+            }
+            else { return false; }
         }
-        return result;
     }
 
-    rowTier(id)    { const t = this.localTier(id);  return (t) ? t : this.loadedTier(id); }
+    rowTier(id)    { const t = this.localTier(id); return (t) ? t : this.loadedTier(id); }
     localTier(id)  { return this.tier(id, this.localData); }
     loadedTier(id) { return this.tier(id, this.loadedData); }
     tier(id, data) { const t = this.indexPath(id, data); return (t === true) ? 0 : t.length; }
@@ -994,7 +995,7 @@ class UserDataUtility {
             while (path.length) {
                 if (ids.includes(path.shift())) {
                     path.forEach(id => {
-                        if (ids.includes(id)) { ids.splice(ids.indexOf(id), 0); }
+                        if (ids.includes(id)) { ids.splice(ids.indexOf(id), 1); }
                     });
                 }
             }
