@@ -1004,9 +1004,10 @@ class UserDataUtility {
     parentIds(ids)        { return [...new Set(ids.map(id => this.parentId(id)))]; }
     get allParentIds()    { return this.parentIds(this.allIds); }
 
-    hasChildren(id)       { return (this.hasLocalChildren(id) || this.hasLoadedChildren(id)); }
-    hasLocalChildren(id)  { return (this.localRecordExists(id) && !!this.childrenGroupName(this.record(id, this.localData))); }
-    hasLoadedChildren(id) { return (this.loadedRecordExists(id) && !!this.childrenGroupName(this.record(id, this.loadedData))); }
+    rowHasChildren(id)    { return (this.hasLocalChildren(id) || this.hasLoadedChildren(id)); }
+    hasLocalChildren(id)  { return this.hasChildren(id, this.localData); }
+    hasLoadedChildren(id) { return this.hasChildren(id, this.loadedData); }
+    hasChildren(id, data) { return (this.recordExists(id, data) && !!childrenGroupName(this.record(id, data)));
 
     //id existance methods
     get loadedRecordsExist() { return (this.loadedData != false); }
@@ -1314,9 +1315,12 @@ class UserDataUtility {
     localChildIds(parentId)  { return this.childIds(parentId, this.localData); }
     loadedChildIds(parentId) { return this.childIds(parentId, this.loadedData); }
     childIds(parentId, data) {
+        if (data == false) { return []; }
         console.log(parentId, data);
         data = this.record(parentId, data);
+        if (data == false) { return []; }
         const childrenName = this.childrenGroupName(data);
+        if (childrenName == false) { return []; }
         console.log(data, childrenName);
         return data[childrenName].map(child => child.id);
     }
