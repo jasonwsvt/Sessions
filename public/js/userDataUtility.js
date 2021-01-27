@@ -131,19 +131,6 @@ class UserDataUtility {
     get messagesDiv()           { return $("#" + this._messagesDivID); }
     get actionDiv()             { return $("#" + this._actionDivID); }
     get rows()                  { return this.scrollAreaDiv.children(); }
-    row(id)                     { return $("#" + id); }
-    rowButton(id)               { return this.row(id).find("tr:first>td:first>span"); }
-    childrenRowsButton(id)      { return this.row(id).find("tr:last>td:first>span"); }
-    localSelect(id)             { return (this.localRecordExists(id)) ? this.row(id).find("tr:first>td:nth-of-type(4)>span") : null; }
-    loadedSelect(id)            { return (this.loadedRecordExists(id)) ? this.row(id).find("tr:first>td:nth-of-type(6)>span") : null; }
-    localChildrenSelect(id)     { return (this.localRecordExists(id)) ? this.row(id).find("tr:last>td:nth-of-type(4)>span") : null; }
-    loadedChildrenSelect(id)    { return (this.loadedRecordExists(id)) ? this.row(id).find("tr:last>td:nth-of-type(6)>span") : null; }
-    get rowButtons()            { return this.scrollAreaDiv.find("tr:first-child>td:first-child>span"); }
-    get childrenRowsButtons()   { return this.scrollAreaDiv.find("tr:last-child>td:first-child>span"); }
-    get localSelects()          { return this.scrollAreaDiv.find(".local tr:first-child>td:nth-of-type(4)>span"); }
-    get loadedSelects()         { return this.scrollAreaDiv.find(".loaded tr:first-child>td:nth-of-type(6)>span"); }
-    get localChildrenSelects()  { return this.scrollAreaDiv.find(".local tr:last-child>td:nth-of-type(4)>span"); }
-    get loadedChildrenSelects() { return this.scrollAreaDiv.find(".loaded tr:last-child>td:nth-of-type(6)>span"); }
 
     build() {
         const loadDiv = "<div id = '" + this._loadDivID + "'></div>";
@@ -651,8 +638,9 @@ class UserDataUtility {
         });
         
         //click event for select local record buttons ("local_" + id)
+        //ctrl additionally selects all descendants.
         this.localSelects.on("click", function (e) {
-            const id = $(this).parent().parent().parent().parent().prop("id");
+            const id = $(this).parent().parent().parent().parent().prop("id").split("_")[1];
             const ids = (e.ctrlKey) ? [] : self.localDescendantIds(id);
             if (self.localRecordIsSelected(id)) {
                 self.unselectLocalRecord(id);
@@ -667,8 +655,9 @@ class UserDataUtility {
         });
 
         //click event for select loaded record buttons ("loaded_" + id)
+        //ctrl additionally selects all descendants.
         this.loadedSelects.on("click", function (e) {
-            const id = $(this).parent().parent().parent().parent().prop("id");
+            const id = $(this).parent().parent().parent().parent().prop("id").split("_")[1];
             const ids = (e.ctrlKey) ? [] : self.localDescendantIds(id);
             if (self.loadedRecordIsSelected(id)) {
                 self.unselectLoadedRecord(id);
@@ -684,7 +673,7 @@ class UserDataUtility {
 
         //click event for select local Children buttons ("local_" + id + "_children")
         this.localChildrenSelects.on("click", function (e) {
-            const id = $(this).parent().parent().parent().parent().prop("id");
+            const id = $(this).parent().parent().parent().parent().prop("id").split("_")[1];
             //console.log(id, self.localChildIds(id));
             const ids = (e.ctrlKey) ? self.localChildIds(id) : self.localDescendantIds(id);
             if (self.localChildrenSelectIsSelected(id)) {
@@ -698,7 +687,7 @@ class UserDataUtility {
 
         //click event for select loaded Children buttons ("loaded_" + id + "_children")
         this.loadedChildrenSelects.on("click", function (e) {
-            const id = $(this).parent().parent().parent().parent().prop("id");
+            const id = $(this).parent().parent().parent().parent().prop("id").split("_")[1];
             const ids = (e.ctrlKey) ? self.loadedChildIds(id) : self.loadedDescendantIds(id);
             if (self.loadedChildrenSelectIsSelected(id)) {
                 self.unselectLoadedChildrenSelect(id); self.unselectLoadedRecords(ids);
@@ -874,7 +863,7 @@ class UserDataUtility {
         var sortValues = [], sortedValues, index, loaded, children, child, childData, value, methodRow, methodValue, sortValue, lastDescendantId, rows;
         if (this.hasChildren(id)) {
             //console.log(id, "has children");
-            children = this.allChildIds(id)
+            children = this.allChildIds(id);
             //Determining sort values
             children.forEach(childId => {
                 loaded = this.loadedRecordExists(childId);
@@ -917,6 +906,8 @@ class UserDataUtility {
             }
         }
     }
+
+    //Array methods
     childrenGroupName(data) {
         const name = Object.keys(data).find(key => key.endsWith("s"));
         return (name) ? name : false;
@@ -1077,16 +1068,33 @@ class UserDataUtility {
         });
     }
 
+    //List display methods
+    row(id)                     { return $("#" + this.rowId(id)); }
+    //Buttons
+    rowButton(id)               { return this.row(id).find("tr:first>td:first>span"); }
+    childrenRowsButton(id)      { return this.row(id).find("tr:last>td:first>span"); }
+    localSelect(id)             { return (this.localRecordExists(id)) ? this.row(id).find("tr:first>td:nth-of-type(4)>span") : null; }
+    loadedSelect(id)            { return (this.loadedRecordExists(id)) ? this.row(id).find("tr:first>td:nth-of-type(6)>span") : null; }
+    localChildrenSelect(id)     { return (this.localRecordExists(id)) ? this.row(id).find("tr:last>td:nth-of-type(4)>span") : null; }
+    loadedChildrenSelect(id)    { return (this.loadedRecordExists(id)) ? this.row(id).find("tr:last>td:nth-of-type(6)>span") : null; }
+    get rowButtons()            { return this.scrollAreaDiv.find("tr:first-child>td:first-child>span"); }
+    get childrenRowsButtons()   { return this.scrollAreaDiv.find("tr:last-child>td:first-child>span"); }
+    get localSelects()          { return this.scrollAreaDiv.find(".local tr:first-child>td:nth-of-type(4)>span"); }
+    get loadedSelects()         { return this.scrollAreaDiv.find(".loaded tr:first-child>td:nth-of-type(6)>span"); }
+    get localChildrenSelects()  { return this.scrollAreaDiv.find(".local tr:last-child>td:nth-of-type(4)>span"); }
+    get loadedChildrenSelects() { return this.scrollAreaDiv.find(".loaded tr:last-child>td:nth-of-type(6)>span"); }
+
     resetRows(ids)        { return ids.forEach(id => this.reset(id)); }
     resetRow(id)          { this.unselectRow(id); this.expandRow(id); }
     classList(id)         { return this.row(id).attr("class").split(" "); }
     parentClass(id)       { return this.classList(id).find(c => c.startsWith("parentId_")); }
     hasParent(id)         { return !!this.parentClass(id); }
     parentId(id)          { return "parentId_" + id.split("_")[1]; }
-    rowId(id)             { return "rowId_" + id.split("_")[1]; }
-    parentRowId(id)       { return (this.parentClass(id)) ? "row_" + this.parentClass(id).split("_")[1] : null; }
-    parentRowIds(ids)     { return [...new Set(ids.filter(id => this.hasParent(id)).map(id => this.parentRowId(id)))]; }
+    rowId(id)             { return "row_" + id.split("_")[1]; }
+
     get allParentRowIds() { return this.parentRowIds(this.allIds); }
+    parentRowIds(ids)     { return [...new Set(ids.filter(id => this.hasParent(id)).map(id => this.parentRowId(id)))]; }
+    parentRowId(id)       { const p = this.parentClass(id); return (p) ? "row_" + p.split("_")[1] : null; }
 
     hasChildren(id)          { return (this.hasLocalChildren(id) || this.hasLoadedChildren(id)); }
     hasLocalChildren(id)     { return (this.localRecordExists(id) && !!$("." + this.parentId(id)).length); }
@@ -1209,12 +1217,12 @@ class UserDataUtility {
     selectLocalRecords(ids)    { ids.forEach(id => this.selectLocalRecord(id)); }
     selectLoadedRecords(ids)   { ids.forEach(id => this.selectLoadedRecord(id)); }
 
-    unhideRows(ids)            { console.trace();  console.log("unnecessary call"); ids.forEach(id => this.unhideRow(id)); }
-    uncollapseRows(ids)        { console.trace();  console.log("unnecessary call"); ids.forEach(id => this.uncollapseRow(id)); }
-    unexpandRows(ids)          { console.trace();  console.log("unnecessary call"); ids.forEach(id => this.unexpandRow(id)); }
-    unselectRows(ids)          { console.trace();  console.log("unnecessary call"); ids.forEach(id => this.unselectRow(id)); }
-    unselectLocalRecords(ids)  { console.trace();  console.log("unnecessary call"); ids.forEach(id => this.unselectLocalRecord(id)); }
-    unselectLoadedRecords(ids) { console.trace();  console.log("unnecessary call"); ids.forEach(id => this.unselectLoadedRecord(id)); }
+    unhideRows(ids)            { console.trace();  console.log("unnecessary call"); /* ids.forEach(id => this.unhideRow(id)); */ }
+    uncollapseRows(ids)        { console.trace();  console.log("unnecessary call"); /* ids.forEach(id => this.uncollapseRow(id)); */ }
+    unexpandRows(ids)          { console.trace();  console.log("unnecessary call"); /* ids.forEach(id => this.unexpandRow(id)); */ }
+    unselectRows(ids)          { console.trace();  console.log("unnecessary call"); /* ids.forEach(id => this.unselectRow(id)); */ }
+    unselectLocalRecords(ids)  { console.trace();  console.log("unnecessary call"); /* ids.forEach(id => this.unselectLocalRecord(id)); */ }
+    unselectLoadedRecords(ids) { console.trace();  console.log("unnecessary call"); /* ids.forEach(id => this.unselectLoadedRecord(id)); */ }
 
     hideRow(id)         {
         this.row(id).addClass("hidden");
@@ -1287,8 +1295,10 @@ class UserDataUtility {
     localChildIds(parentId)  { return this.childIds(parentId, this.localData); }
     loadedChildIds(parentId) { return this.childIds(parentId, this.loadedData); }
     childIds(parentId, data) {
+        console.log(parentId, data);
         data = this.record(parentId, data);
         const childrenName = this.childrenGroupName(data);
+        console.log(data, childrenName);
         return data[childrenName].map(child => child.id);
     }
 
