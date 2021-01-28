@@ -610,8 +610,7 @@ class UserDataUtility {
                 if (e.shiftKey)            { self.hideRow(id); }
                 else                       { self.collapseRow(id); }
             }
-            console.log(id, self.parentId(id));
-            if (self.hasParent(id)) { self.updateChildrenRowsButtonStatus(self.parentId(id)); }
+            if (self.rowHasParent(id)) { self.updateChildrenRowsButtonStatus(self.rowParentId(id)); }
         });
 
         //click event for childrenRowsButton buttons (id + "_children")
@@ -635,7 +634,7 @@ class UserDataUtility {
                 if (e.shiftKey)               { self.hideRows(ids); }
                 else                          { self.collapseRows(ids); }
             }
-            self.updateChildrenRowsButtonStatuses(self.parentIds(ids));
+            self.updateChildrenRowsButtonStatuses(self.rowParentIds(ids));
         });
         
         //click event for select local record buttons ("local_" + id)
@@ -654,7 +653,7 @@ class UserDataUtility {
             }
             ids = [id, ...ids];
             //console.log(ids);
-            self.updateChildrenSelectStatuses(self.parentIds(ids));
+            self.updateChildrenSelectStatuses(self.rowParentIds(ids));
         });
 
         //click event for select loaded record buttons ("loaded_" + id)
@@ -671,7 +670,7 @@ class UserDataUtility {
                 if (ids.length) { self.selectLoadedRecords(ids); }
             }
             ids = [id, ...ids];
-            self.updateChildrenSelectStatuses(self.parentIds(ids));
+            self.updateChildrenSelectStatuses(self.rowParentIds(ids));
         });
 
         //click event for select local Children buttons ("local_" + id + "_children")
@@ -685,7 +684,7 @@ class UserDataUtility {
             else {
                 self.selectLocalChildrenSelect(id);   self.selectLocalRecords(ids);
             }
-            self.updateChildrenSelectStatuses(self.allParentRowIds);
+            self.updateChildrenSelectStatuses(self.rowParentIds(ids));
         });
 
         //click event for select loaded Children buttons ("loaded_" + id + "_children")
@@ -698,7 +697,7 @@ class UserDataUtility {
             else {
                 self.selectLoadedChildrenSelect(id);   self.selectLoadedRecords(ids);
             }
-            self.updateChildrenSelectStatuses(self.allParentRowIds);
+            self.updateChildrenSelectStatuses(self.rowParentIds(ids));
         });
 
         [this.rowButtons, this.childrenRowsButtons, this.localSelects, this.loadedSelects, this.localChildrenSelects, this.loadedChildrenSelects].forEach(c => {
@@ -974,7 +973,7 @@ class UserDataUtility {
         }
     }
 
-    rowTier(id)    { const t = this.localTier(id); return (t) ? t : this.loadedTier(id); }
+    rowTier(id)    { const t = this.localTier(id); return (isInteger(t)) ? t : this.loadedTier(id); }
     localTier(id)  { return this.tier(id, this.localData); }
     loadedTier(id) { return this.tier(id, this.loadedData); }
     tier(id, data) { const t = this.indexPath(id, data); return (t === true) ? 0 : t.length; }
@@ -996,26 +995,33 @@ class UserDataUtility {
         return ids;
     }
 
-    hasParent(id, data)   { const t = this.tier(id, data);  return (isArray(t) && t.length > 1); }
+    hasParent(id, data)   { const t = this.tier(id, data); return isInteger(t); }
     localHasParent(id)    { return this.hasParent(id, this.localData); }
     loadedHasParent(id)   { return this.hasParent(id, this.loadedData); }
+    rowHasParent(id)      { return (this.localRecordExists(id)) ? this.localHasParent(id) : this.loadedHasParent(id); }
 
     parentId(id, data)    { return (this.hasParent(id, data)) ? this.idPath(id, data).slice(-2, 1) : null; }
     localParentId(id)     { return this.parentId(id, this.localData); }
     loadedParentId(id)    { return this.parentId(id, this.loadedData); }
+    rowParentId(id)       { return (this.localRecordExists(id)) ? this.localParentId(id) : this.loadedParentId(id); }
+
     parentIds(ids, data)  { return [...new Set(ids.map(id => this.parentId(id, data)))]; }
     localParentIds(ids)   { return this.parentIds(ids, this.localData); }
     loadedParentIds(ids)  { return this.parentIds(ids, this.loadedData); }
+    rowParentIds(ids)     { return [...new Set(ids.map(id => this.rowParentId(id)))]; }
+    get allRowParentIds() { return this.rowParentIds(this.allIds); }
     
-    rowHasChildren(id)    { return (this.hasLocalChildren(id) || this.hasLoadedChildren(id)); }
+    rowHasChildren(id)    { return (this.localRecordExists(id)) ? this.hasLocalChildren(id) : this.hasLoadedChildren(id); }
     hasLocalChildren(id)  { return this.hasChildren(id, this.localData); }
     hasLoadedChildren(id) { return this.hasChildren(id, this.loadedData); }
     hasChildren(id, data) { return (this.recordExists(id, data) && !!childrenGroupName(this.record(id, data))); }
 
     //id existance methods
     get loadedRecordsExist() { return (this.loadedData != false); }
-    localRecordExists(id)    { return !!this.localIndexPath(id); }
-    loadedRecordExists(id)   { return !!this.loadedIndexPath(id); }
+    recordExists(id, data)   { return isInteger(this.tier(id, data)); }
+    localRecordExists(id)    { return this.recordExists(id, this.localData); }
+    loadedRecordExists(id)   { return this.recordExists(id, this.loadedData); }
+    rowRecordExists(id)      { return (this.localRecordExists(id) || this.loadedRecordExists(id)); }
 
     //deletion methods
     deleteRecords(localIds, loadedIds)  {
@@ -1213,16 +1219,16 @@ class UserDataUtility {
     updateLocalChildrenSelectStatus(id) {
         const ids = this.localChildIds(id);
         this.localChildrenSelect(id).html(
-            (this.localRecordsAreSelected(ids)) ? this._fullIcon
+            (this.localRecordsAreSelected(ids))   ? this._fullIcon
           : (this.localRecordsAreUnselected(ids)) ? this._emptyIcon
-          : this._multiIcon); //changed from _partIcon
+          :                                         this._multiIcon); //changed from _partIcon
     }
     updateLoadedChildrenSelectStatus(id) {
         const ids = this.loadedChildIds(id);
         this.loadedChildrenSelect(id).html(
-            (this.loadedRecordsAreSelected(ids)) ? this._fullIcon :
-            (this.loadedRecordsAreUnselected(ids)) ? this._emptyIcon :
-            this._multiIcon);
+            (this.loadedRecordsAreSelected(ids))   ? this._fullIcon
+          : (this.loadedRecordsAreUnselected(ids)) ? this._emptyIcon
+          :                                          this._multiIcon);
     }
 
     selectLocalChildrenSelect(id)    { this.localChildIds(id).forEach(id => this.selectLocalRecord(id)); }
@@ -1234,9 +1240,10 @@ class UserDataUtility {
     updateChildrenRowsButtonStatus(id) {
         const ids = this.allChildIds(id);
         this.childrenRowsButton(id).html(
-            (this.rowsAreHidden(ids)) ? this._hiddenIcon :
-            (this.rowsAreCollapsed(ids)) ? this._collapsedIcon :
-            (this.rowsAreExpanded(ids)) ? this._expandedIcon : this._multiIcon);
+            (this.rowsAreHidden(ids))    ? this._hiddenIcon
+          : (this.rowsAreCollapsed(ids)) ? this._collapsedIcon
+          : (this.rowsAreExpanded(ids))  ? this._expandedIcon
+          :                                this._multiIcon);
     }
 
     //row record comparison methods
@@ -1314,17 +1321,18 @@ class UserDataUtility {
     get newerLocalIds()  { this.loadedIds.filter(id => this.localRecordIsNewer(id)); }
     get olderLocalIds()  { this.loadedIds.filter(id => this.localRecordIsOlder(id)); }
     
-    allChildIds(parentId)    { return [... new Set(this.localChildrenSelect(parentId).concat(this.loadedChildIds(parentId)))]; }
+    allChildIds(parentId)    { return [... new Set(this.localChildIds(parentId).concat(this.loadedChildIds(parentId)))]; }
     localChildIds(parentId)  { return this.childIds(parentId, this.localData); }
     loadedChildIds(parentId) { return this.childIds(parentId, this.loadedData); }
     childIds(parentId, data) {
         if (data == false) { return []; }
-        console.log(parentId, data);
+        if (parentId == null) { console.trace(); }
+        //console.log(parentId, data);
         data = this.record(parentId, data);
         if (data == false) { return []; }
         const childrenName = this.childrenGroupName(data);
         if (childrenName == false) { return []; }
-        console.log(data, childrenName);
+        //console.log(data, childrenName);
         return data[childrenName].map(child => child.id);
     }
 
@@ -1382,39 +1390,39 @@ class UserDataUtility {
                 case "collapse": this.collapseRows(ids); break;
                 case "hide":     this.hideRows(ids);     break;
             }
-            this.updateChildrenRowsButtonStatuses(this.parentIds(ids));
+            this.updateChildrenRowsButtonStatuses(this.rowParentIds(ids));
         }
         else if (adjust == "select") {
             switch (option) {
                 case "local":
                     this.selectLocalRecords(this.allLocalIds);
-                    parentIds = this.parentIds(this.allLocalIds);
+                    parentIds = this.localParentIds(this.allLocalIds);
                     break;
                 case "loaded":
                     this.selectLoadedRecords(this.allLoadedIds);
-                    parentIds = this.parentIds(this.allLoadedIds);
+                    parentIds = this.loadedParentIds(this.allLoadedIds);
                     break;
                 case "older":
                     this.allIds.forEach(id => {
                         if (!this.loadedRecordExists(id) || this.loadedRecordIsNewer(id)) { this.selectLocalRecord(id); }
                         else { this.selectLoadedRecord(id); }
                     });
-                    parentIds = this.allParentRowIds;
+                    parentIds = this.allRowParentIds;
                     break;
                 case "newer":
                     this.allIds.forEach(id => {
                         if (!this.loadedRecordExists(id) || this.loadedRecordIsOlder(id)) { this.selectLocalRecord(id); }
                         else { this.selectLoadedRecord(id); }
                     });
-                    parentIds = this.allParentRowIds;
+                    parentIds = this.allRowParentIds;
                     break;
                 case "different":
                     this.selectLoadedRecords(this.allDifferentRecordIds);
-                    parentIds = this.allParentRowIds;
+                    parentIds = this.allRowParentIds;
                     break;
                 case "identical":
                     this.selectLoadedRecords(this.allIdenticalRecordIds);
-                    parentIds = this.allParentRowIds;
+                    parentIds = this.allRowParentIds;
                     break;
                 case "unselected":
                     if (this.loadedRecordsExist) {
@@ -1430,7 +1438,7 @@ class UserDataUtility {
                         this.unselectRows(selectedRows);
                         this.selectLocalRecords(unselectedRows);
                     }
-                    parentIds = this.allParentRowIds;
+                    parentIds = this.allRowParentIds;
                     break;
                 case "none": this.unselectRows(this.allIds); break;
             }
