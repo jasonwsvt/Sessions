@@ -1,19 +1,24 @@
+//a DataTree is an object with three characteristic parameters:
+// 1) one called "id" that signifies the id,
+// 2) one ending with "Id" that signifies the parent id (except for the initial record), and
+// 3) one ending in "s" that signifies the array of children (except for the terminal records).
 class DataTree {
-    data = {};
+    data;
     
-    constructor() {
-
+    constructor(data = {}) {
+        this.data = data;
     }
 
     //Returns an array of indices, one index for each set of children
-    indexPath(id) {
+    indexPath(id) { return this._indexPath(id, this.data); }
+    _indexPath(id, data) {
         var path;
         if (data.id == id) { return []; }
         else {
             const childrenName = this.childrenGroupName(data);
             if (childrenName) {
                 path = data[childrenName].map((child, index) => {
-                    const p = this.indexPath(id, child);
+                    const p = this._indexPath(id, child);
                     return (child.id == id) ? [index]
                          : (isArray(p)) ? [index, ...p]
                          : false;
@@ -25,14 +30,16 @@ class DataTree {
         }
     }
 
-    idPath(id) {
+
+    idPath(id) { return this._idPath(id, this.data); }
+    _idPath(id, data) {
         var path = false;
         if (data.id == id) { return [id]; }
         else {
             const childrenName = this.childrenGroupName(data);
             if (childrenName) {
                 path = data[childrenName].map((child) => {
-                    const p = this.idPath(id, child);
+                    const p = this._idPath(id, child);
                     return (isArray(p)) ? [data.id, ...p]
                          : false;
     
@@ -47,13 +54,15 @@ class DataTree {
 
     exists(id)            { return isInteger(this.tier(id)); }
 
+    keys(id)              { return Object.keys(this.record(id)); }
+
     hasParent(id)         { const t = this.tier(id); return (isInteger(t) && t > 0); }
     parentId(id)          { return (this.hasParent(id)) ? this.idPath(id).slice(-2, -1)[0] : null; }
     parentIds(ids)        { return [...new Set(ids.map(id => this.parentId(id)))].filter(id => isInteger(id)); }
-    parentIdName(id)      { return Object.keys(this.record(id)).find(key => key.endsWith("Id")); }
+    parentIdName(id)      { return this.key(id).find(key => key.endsWith("Id")); }
 
     hasChildren(id)       { return (this.recordExists(id) && !!childrenGroupName(this.record(id))); }
-    childrenGroupName(id) { return ["clients", "issues", "sessions", false][this.tier(id)]; }
+    childrenGroupName(id) { return this.keys(id).find(key => key.endsWith("s")); }
 
     records(ids)          { return ids.map(id => this.record(id)); }
     record(id) {
@@ -86,9 +95,8 @@ class DataTree {
     //ID retrieval methods
     _ids(data) {
         if (!isObject(data)) { return []; }
-        var ids;
         const childrenName = this.childrenGroupName(data);
-        return (childrenName) ? [data.id].concat(...data[childrenName].map(child => this.ids(child)))
+        return (childrenName) ? [data.id].concat(...data[childrenName].map(child => this._ids(child)))
                               : [data.id];
     }
 
@@ -102,11 +110,7 @@ class DataTree {
         return data[childrenName].map(child => child.id);
     }
 
-    descendantIds(id) {
-        var ids = this._ids(this.record(id, data));
-        ids.splice(ids.indexOf(id), 1);
-        return ids;
-    }
+    descendantIds(id) { return this._ids(this.record(id, data)).splice(ids.indexOf(id), 1); }
 
     //deletion methods
     delete(ids)  {
@@ -116,44 +120,45 @@ class DataTree {
             this.deleted.push(this.records(ids));
 
             ids.forEach(id => {
-                path = this.path(id);
+                path = this.indexPath(id);
+                group = this.idPath(parentId).map(id => this.childrenGroupName(id));
                 console.log(id, path, path.length);
                 if (path === true) { data = {}; }
                 else {
                     switch (path.length) {
-                        case 1: data.clients.splice(path[0],1); break;
-                        case 2: data.clients[path[0]].issues.splice(path[1],1); break;
-                        case 3: data.clients[path[0]].issues[path[1]].sessions.splice(path[3],1); break;
+                        case 1: this.data[group[0]].splice(path[0],1); break;
+                        case 2: this.data[group[0]][path[0]][group[1]].splice(path[1],1); break;
+                        case 3: this.data[group[0]][path[0]][group[1]][path[1]][group[2]].splice(path[3],1); break;
                     }
                 }
             });
         }
     }
 
-    undoDelete() {
-        records = this.deleted.pop();
-        records.forEach(record => { this.insert(record); });
-    }
+    undoDelete() { this.deleted.pop().forEach(record => { this.insert(record); }); }
 
     //Assign external data tree
-    set(data) {
-        if (Object.keys(this.data).length) { this.delete(this.data.id); }
-        this.data = data;
-    }
+    set(data) { if (Object.keys(this.data).length) { this.delete(this.data.id); } this.data = data; }
 
+    //Add a child to an existing parent.
+    //Record must have a parentId, and a record with that ID must exist in the tree.
     insert(record) {
         var parentIdName; parentId, path, childrenNames;
         parentIdName = record[Object.keys(record).find(key => key.endsWith("Id"))];
         if (parentIdName) {
             parentId = record[parentIdName];
             path = this.indexPath(parentId);
-            childrenNames = this.idPath(parentId).map(id => this.childrenGroupName(id));
+            group = this.idPath(parentId).map(id => this.childrenGroupName(id));
             switch (path.length) {
-                case 0: this.data = record; break;
-                case 1: this.data[childrenNames[0]].push(record); break;
-                case 2: this.data[childrenNames[0]][path[0]][childrenNames[1]].push(record); break;
-                case 3: this.data[childrenNames[0]][path[0]][childrenNames[1]][path[1]][childrenNames[2]].push(record); break;
+                case 1: this.data[group[0]].push(record); break;
+                case 2: this.data[group[0]][path[0]][group[1]].push(record); break;
+                case 3: this.data[group[0]][path[0]][group[1]][path[1]][group[2]].push(record); break;
             }
         }
     }
+
+    //Add a child to an existing parent.
+    //The parent is specified by the first parameter.
+    //The parentId parameter is added to the record before calling the insert method.
+    addChild(parentId, record) { record[this.parentIdName(parentId)] = parentId; this.insert(record); }
 }
