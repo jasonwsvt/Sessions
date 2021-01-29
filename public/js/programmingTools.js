@@ -1,8 +1,10 @@
 var isFunction         = (v) => { return v && {}.toString.call(v) === '[object Function]'; }
 var isString           = (v) => { return (typeof v == "string"); }
 var isArray            = (v) => { return Array.isArray(v); }
-var isArrayOfObjects   = (v) => { return (isArray(v) && v.forEach(x => isObject(x))); }
-var isArrayOfStrings   = (v) => { return (isArray(v) && v.forEach(x => isString(x))); }
+var isArrayOfObjects   = (v) => { return (isArray(v) && v.every(x => isObject(x))); }
+var isArrayOfStrings   = (v) => { return (isArray(v) && v.every(x => isString(x))); }
+var isArrayOfIntegers  = (v) => { return (isArray(v) && v.every(x => isInteger(x))); }
+var isArrayOfDataTrees = (v) => { return (isArray(v) && v.every(x => isDataTree(x))); }
 var isUndefined        = (v) => { return v == undefined; }
 var isNull             = (v) => { return v == null; }
 var isNumber           = (v) => { return (typeof v === 'number' && isFinite(v)); }
@@ -13,9 +15,8 @@ var isSecondsFromEpoch = (v) => { return (isInteger(v) && v > 1600000000000); }
 var isDataTree = (v) => {
     const keys = Object.keys(v);
     return (isObject(v) &&
-            keys.find(key => key.endsWith("id")) &&
-            keys.includes("id") &&
-            keys.find(key => key.endsWith("s")));
+        keys.includes("id") &&
+        (keys.find(key => key.endsWith("id")) || keys.find(key => key.endsWith("s"))));
 }
 
 function isObject(v) {
@@ -61,3 +62,7 @@ function varErr(v, f, vName) {
         console.log(v);
     }
 }
+
+function throwWarning(f,v) { if (!f(v)) { console.log("Warning: failed test", f.name, v); }}
+
+function throwError(f, v) { if (!f(v)) { throw new Error("Failed test", f.name, v); }}
