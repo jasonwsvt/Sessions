@@ -15,7 +15,7 @@ class DataTree {
         var path;
         if (data.id == id) { return []; }
         else {
-            const childrenName = this.childrenGroupName(data);
+            const childrenName = this._dataChildrenName(data);
             if (childrenName) {
                 path = data[childrenName].map((child, index) => {
                     const p = this._indexPath(id, child);
@@ -36,7 +36,7 @@ class DataTree {
         var path = false;
         if (data.id == id) { return [id]; }
         else {
-            const childrenName = this.childrenGroupName(data);
+            const childrenName = this._dataChildrenName(data);
             if (childrenName) {
                 path = data[childrenName].map((child) => {
                     const p = this._idPath(id, child);
@@ -50,29 +50,31 @@ class DataTree {
         }
     }
 
-    tier(id)              { const t = this.indexPath(id); return (t === true) ? 0 : t.length; }
+    tier(id)                { const t = this.indexPath(id); return (t === true) ? 0 : t.length; }
 
-    exists(id)            { return isInteger(this.tier(id)); }
+    exists(id)              { return isInteger(this.tier(id)); }
 
-    keys(id)              { return Object.keys(this.record(id)); }
+    keys(id)                { return this._dataKeys(this.record(id)); }
+    _dataKeys(data)         { return Object.keys(data); }
 
-    hasParent(id)         { const t = this.tier(id); return (isInteger(t) && t > 0); }
-    parentId(id)          { return (this.hasParent(id)) ? this.idPath(id).slice(-2, -1)[0] : null; }
-    parentIds(ids)        { return [...new Set(ids.map(id => this.parentId(id)))].filter(id => isInteger(id)); }
-    parentIdName(id)      { return this.key(id).find(key => key.endsWith("Id")); }
+    hasParent(id)           { const t = this.tier(id); return (isInteger(t) && t > 0); }
+    parentId(id)            { return (this.hasParent(id)) ? this.idPath(id).slice(-2, -1)[0] : null; }
+    parentIds(ids)          { return [...new Set(ids.map(id => this.parentId(id)))].filter(id => isInteger(id)); }
+    parentIdName(id)        { return this.keys(id).find(key => key.endsWith("Id")); }
+    _dataParentIdName(data) { return this._dataKeys(data).find(key => key.endsWith("Id")); }
 
-    hasChildren(id)       { return (this.recordExists(id) && !!childrenGroupName(this.record(id))); }
-    childrenGroupName(id) { return this.keys(id).find(key => key.endsWith("s")); }
+    hasChildren(id)         { return (this.recordExists(id) && !!childrenName(id)); }
+    childrenName(id)        { return this.keys(id).find(key => key.endsWith("s")); }
+    _dataChildrenName(data) { return this._dataKeys(data).find(key => key.endsWith("s")); }
 
-    records(ids)          { return ids.map(id => this.record(id)); }
-    record(id) {
-        const index = this.indexPath(id);
-        const group = this.idPath(id).map(id => this.childrenGroupName(id));
+    records(ids)            { return ids.map(id => this.record(id)); }
+    record(id)              { return this._record(id, this.data); }
+    _record(id, data) {
+        const path = this.indexPath(id, data);
+        if (path === true) { return data; }
         if (isArray(path)) {
-            if (path.length == 0) { return this.data; }
-            if (path.length == 1) { return this.data[group[0]][index[0]]; }
-            if (path.length == 2) { return this.data[group[0]][index[0]][group[1]][index[1]]; }
-            if (path.length == 3) { return this.data[group[0]][index[0]][group[1]][index[1]][group[2]][index[2]]; }
+            path.forEach(index => { data = data[this.dataChildrenName(data)][index] });
+            return data;
         }
         return false;
     }
@@ -93,21 +95,19 @@ class DataTree {
     }
 
     //ID retrieval methods
+    get ids() { return this._ids(this.data); }
     _ids(data) {
         if (!isObject(data)) { return []; }
-        const childrenName = this.childrenGroupName(data);
+        const childrenName = this._dataChildrenName(data);
         return (childrenName) ? [data.id].concat(...data[childrenName].map(child => this._ids(child)))
                               : [data.id];
     }
 
-    get ids() { return this._ids(this.data); }
-
     childIds(id) {
-        if (!this.exists(id)) { return null; }
-        const childrenName = this.childrenGroupName(id);
-        if (!childrenName) { return []; }
-        data = this.record(id);
-        return data[childrenName].map(child => child.id);
+        const record = this.record(id);
+        if (record == false) { return null; }
+        const group = this.dataChildrenName(record);
+        return (group) ? record[group].map(child => child.id) : [];
     }
 
     descendantIds(id) { return this._ids(this.record(id, data)).splice(ids.indexOf(id), 1); }
@@ -121,7 +121,7 @@ class DataTree {
 
             ids.forEach(id => {
                 path = this.indexPath(id);
-                group = this.idPath(parentId).map(id => this.childrenGroupName(id));
+                group = this.idPath(parentId).map(id => this.childrenName(id));
                 console.log(id, path, path.length);
                 if (path === true) { data = {}; }
                 else {
@@ -148,7 +148,7 @@ class DataTree {
         if (parentIdName) {
             parentId = record[parentIdName];
             path = this.indexPath(parentId);
-            group = this.idPath(parentId).map(id => this.childrenGroupName(id));
+            group = this.idPath(parentId).map(id => this.childrenName(id));
             switch (path.length) {
                 case 1: this.data[group[0]].push(record); break;
                 case 2: this.data[group[0]][path[0]][group[1]].push(record); break;
@@ -161,4 +161,59 @@ class DataTree {
     //The parent is specified by the first parameter.
     //The parentId parameter is added to the record before calling the insert method.
     addChild(parentId, record) { record[this.parentIdName(parentId)] = parentId; this.insert(record); }
+
+    testing() {
+        this.data = {
+            "username": "jason",
+            "id": 473992495658025,
+            "lastEdited": 1610557142,
+            "lastOpened": 1610668775,
+            "hidden": false,
+            "email": "",
+            "rememberMe": false,
+            "practitioner": false,
+            "storagePermanence": false,
+            "pushToStorageFrequency": 5,
+            "useServerStorage": false,
+            "pushToServerFrequency": false,
+            "clients": [
+                {
+                    "name": "Self",
+                    "id": 242409687387783,
+                    "lastEdited": null,
+                    "lastOpened": 1610668775,
+                    "userId": 473992495658025,
+                    "issues": [
+                        {
+                            "name": "New Issue",
+                            "id": 183289269562362,
+                            "lastEdited": null,
+                            "lastOpened": 1610668775,
+                            "clientId": 242409687387783,
+                            "sessions": [
+                                {
+                                    "creation": 1610578708,
+                                    "id": 783632042579983,
+                                    "lastEdited": 1610668330,
+                                    "lastOpened": 1610668775,
+                                    "issueId": 183289269562362,
+                                    "lines": [
+                                        "<div><h2 id=\"cursor\">|</h2></div>"
+                                    ]
+                                },
+                                {
+                                    "creation": 1610557182,
+                                    "id": 860738253562629,
+                                    "lastEdited": null,
+                                    "lastOpened": 1610668775,
+                                    "issueId": 183289269562362,
+                                    "lines": []
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
 }
