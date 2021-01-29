@@ -1,32 +1,14 @@
-const { modelNames } = require("mongoose");
-
 class DataTree {
-    data = [];
+    data = {};
     
     constructor() {
 
     }
 
-    childrenGroupName(data) {
-        const name = Object.keys(data).find(key => key.endsWith("s"));
-        return (name && name != "lines") ? name : false;
-    }
-
-    records(ids, data) { return ids.map(id => this.record(id, data)); }
-    record(id, data) {
-        const path = this.indexPath(id, data);
-        if (path === true) { return data; }
-        if (isArray(path)) {
-            path.forEach(index => { data = data[this.childrenGroupName(data)][index] });
-            return data;
-        }
-        return false;
-    }
-
     //Returns an array of indices, one index for each set of children
-    indexPath(id, data) {
+    indexPath(id) {
         var path;
-        if (data.id == id) { return true; }
+        if (data.id == id) { return []; }
         else {
             const childrenName = this.childrenGroupName(data);
             if (childrenName) {
@@ -43,13 +25,13 @@ class DataTree {
         }
     }
 
-    idPath(id, data) {
+    idPath(id) {
         var path = false;
         if (data.id == id) { return [id]; }
         else {
             const childrenName = this.childrenGroupName(data);
             if (childrenName) {
-                path = data[childrenName].map((child, index) => {
+                path = data[childrenName].map((child) => {
                     const p = this.idPath(id, child);
                     return (isArray(p)) ? [data.id, ...p]
                          : false;
@@ -61,12 +43,35 @@ class DataTree {
         }
     }
 
-    tier(id, data) { const t = this.indexPath(id, data); return (t === true) ? 0 : t.length; }
+    tier(id)              { const t = this.indexPath(id); return (t === true) ? 0 : t.length; }
+
+    exists(id)            { return isInteger(this.tier(id)); }
+
+    hasParent(id)         { const t = this.tier(id); return (isInteger(t) && t > 0); }
+    parentId(id)          { return (this.hasParent(id)) ? this.idPath(id).slice(-2, -1)[0] : null; }
+    parentIds(ids)        { return [...new Set(ids.map(id => this.parentId(id)))].filter(id => isInteger(id)); }
+    parentIdName(id)      { return Object.keys(this.record(id)).find(key => key.endsWith("Id")); }
+
+    hasChildren(id)       { return (this.recordExists(id) && !!childrenGroupName(this.record(id))); }
+    childrenGroupName(id) { return ["clients", "issues", "sessions", false][this.tier(id)]; }
+
+    records(ids)          { return ids.map(id => this.record(id)); }
+    record(id) {
+        const index = this.indexPath(id);
+        const group = this.idPath(id).map(id => this.childrenGroupName(id));
+        if (isArray(path)) {
+            if (path.length == 0) { return this.data; }
+            if (path.length == 1) { return this.data[group[0]][index[0]]; }
+            if (path.length == 2) { return this.data[group[0]][index[0]][group[1]][index[1]]; }
+            if (path.length == 3) { return this.data[group[0]][index[0]][group[1]][index[1]][group[2]][index[2]]; }
+        }
+        return false;
+    }
 
     // Returns an array of ids for which the remaining given ids are all their descendants.
-    mostAncestral(ids, data) {
+    mostAncestral(ids) {
         //filters a set of ids to only include those for which none of the others precede it in any path
-        ids.map(id => this.idPath(id, data)).forEach(path => {
+        ids.map(id => this.idPath(id)).forEach(path => {
             while (path.length) {
                 if (ids.includes(path.shift())) {
                     path.forEach(id => {
@@ -78,74 +83,77 @@ class DataTree {
         return ids;
     }
 
-    hasParent(id, data)   { const t = this.tier(id, data); return (isInteger(t) && t > 0); }
-
-    parentId(id, data)    { return (this.hasParent(id, data)) ? this.idPath(id, data).slice(-2, -1)[0] : null; }
-
-    parentIds(ids, data)  { return [...new Set(ids.map(id => this.parentId(id, data)))].filter(id => isInteger(id)); }
-    get allRowParentIds() { return this.parentIds(this.allIds); }
-    
-    hasChildren(id, data) { return (this.recordExists(id, data) && !!childrenGroupName(this.record(id, data))); }
-
-    //id existance methods
-    get loadedRecordsExist() { return (this.loadedData != false); }
-    recordExists(id, data)   { return isInteger(this.tier(id, data)); }
-
-    //deletion methods
-    deleteRecords(localIds, loadedIds)  {
-        localIds  = (isArray(localIds))  ? this.localMostAncestral(localIds)   : false;
-        loadedIds = (isArray(loadedIds)) ? this.loadedMostAncestral(loadedIds) : false;
-
-        if (localIds || loadedIds) {
-            const ids = (isArray(localIds) && isArray(loadedIds)) ? [...new Set(localIds.concat(loadedIds))]
-                      : (isArray(localIds))                       ? localIds
-                      : (isArray(loadedIds))                      ? loadedIds
-                      : [];
-        
-            this.deletedRecords.push([this.localRecords(localIds), this.loadedRecords(loadedIds)]);
-
-            ids.forEach(id => {
-                if (localIds.includes(id))  { this.deleteLocalRecord(id, this.localData); }
-                if (loadedIds.includes(id)) { this.deleteLoadedRecord(id, this.loadedData); }
-                this._buildRecord(id);
-            });
-    
-            //build record list
-        }
+    //ID retrieval methods
+    _ids(data) {
+        if (!isObject(data)) { return []; }
+        var ids;
+        const childrenName = this.childrenGroupName(data);
+        return (childrenName) ? [data.id].concat(...data[childrenName].map(child => this.ids(child)))
+                              : [data.id];
     }
 
-    delete(id) {
-        const path = this.path(id, this.localData);
-        console.log(id, path, path.length);
-        if (path === true) { this.localData = {}; }
-        else {
-            switch (path.length) {
-                case 1: this.localData.clients.splice(path[0],1); break;
-                case 2: this.localData.clients[path[0]].issues.splice(path[1],1); break;
-                case 3: this.localData.clients[path[0]].issues[path[1]].sessions.splice(path[3],1); break;
-            }
+    get ids() { return this._ids(this.data); }
+
+    childIds(id) {
+        if (!this.exists(id)) { return null; }
+        const childrenName = this.childrenGroupName(id);
+        if (!childrenName) { return []; }
+        data = this.record(id);
+        return data[childrenName].map(child => child.id);
+    }
+
+    descendantIds(id) {
+        var ids = this._ids(this.record(id, data));
+        ids.splice(ids.indexOf(id), 1);
+        return ids;
+    }
+
+    //deletion methods
+    delete(ids)  {
+        var path;
+        ids = this.mostAncestral(ids);
+        if (isArray(ids) && ids.length > 0) {
+            this.deleted.push(this.records(ids));
+
+            ids.forEach(id => {
+                path = this.path(id);
+                console.log(id, path, path.length);
+                if (path === true) { data = {}; }
+                else {
+                    switch (path.length) {
+                        case 1: data.clients.splice(path[0],1); break;
+                        case 2: data.clients[path[0]].issues.splice(path[1],1); break;
+                        case 3: data.clients[path[0]].issues[path[1]].sessions.splice(path[3],1); break;
+                    }
+                }
+            });
         }
     }
 
     undoDelete() {
-        var path, parentIdName, childrenNames; parentId, records;
-        records = this.deletedRecords.pop();
-        records.forEach(record => {
-            id = record.id;
-            parentIdName = this.parentIdName(record);
-            parentId = (parentIdName) ? record[parentIdName] : false;
-            indexPath = this.indexPath(parentId);
-            idPath = this.idPath(parentId);
-            switch (path.length) {
-                case 0: this.localData = record; break;
-                case 1: this.localData[this.childrenName()].push(record); break;
-                case 2: this.localData.clients[path[0]].issues.push(record); break;
-                case 3: this.localData.clients[path[0]].issues[path[1]].sessions.push(record); break;
-            }
-        });
+        records = this.deleted.pop();
+        records.forEach(record => { this.insert(record); });
     }
 
-    parentIdName(id) { return Object.keys(this.record(id)).find(key => key.endsWith("Id")); }
+    //Assign external data tree
+    set(data) {
+        if (Object.keys(this.data).length) { this.delete(this.data.id); }
+        this.data = data;
+    }
 
-    childrenName(id) { return ["clients", "issues", "sessions", false][this.tier(id)]; }
+    insert(record) {
+        var parentIdName; parentId, path, childrenNames;
+        parentIdName = record[Object.keys(record).find(key => key.endsWith("Id"))];
+        if (parentIdName) {
+            parentId = record[parentIdName];
+            path = this.indexPath(parentId);
+            childrenNames = this.idPath(parentId).map(id => this.childrenGroupName(id));
+            switch (path.length) {
+                case 0: this.data = record; break;
+                case 1: this.data[childrenNames[0]].push(record); break;
+                case 2: this.data[childrenNames[0]][path[0]][childrenNames[1]].push(record); break;
+                case 3: this.data[childrenNames[0]][path[0]][childrenNames[1]][path[1]][childrenNames[2]].push(record); break;
+            }
+        }
+    }
 }
