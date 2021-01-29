@@ -1088,7 +1088,7 @@ class UserDataUtility {
         loadeds.forEach(record => {
             parentIdName = Object.keys(record).find(key => key.endsWith("id"));
             parentId = (parentIdName) ? record[parentIdName] : false;
-            path = (parentId) ? this.path(parentId, this.loadedData) : [];
+            path = (parentId) ? this.indexPath(parentId, this.loadedData) : [];
             switch (path.length) {
                 case 0: this.loadedData = record; break;
                 case 1: this.loadedData.clients.push(record); break;
