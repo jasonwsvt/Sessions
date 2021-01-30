@@ -217,7 +217,7 @@ class DataTree {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
         const internalIds = this.ids;
         const externalIds = dataTree.ids;
-        return [...new Set(internalIds.concat(externalIds))].filter(id => internalIds.contains(id) && externalIds.contains(id));
+        return [...new Set(internalIds.concat(externalIds))].filter(id => internalIds.includes(id) && externalIds.includes(id));
     }
 
     //returns a list of ids that exist in the given data but don't exist in the local data.
@@ -225,7 +225,7 @@ class DataTree {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
         const internalIds = this.ids;
         const externalIds = dataTree.ids;
-        return [...new Set(internalIds.concat(externalIds))].filter(id => !(internalIds.contains(id) || externalIds.contains(id)));
+        return [...new Set(internalIds.concat(externalIds))].filter(id => !(internalIds.includes(id) && externalIds.includes(id)));
     }
 
     //Compares given data to internal record of the same id, and returns if the given record is newer.
@@ -239,13 +239,10 @@ class DataTree {
         return false;
     }
 
-    //Calls isNewer for every given id in the given dataTree, and returns if all calls returned true
-    areNewer(ids, dataTree) {
-        throwError(isArrayOfIntegers, ids);
+    //Calls isNewer for every given id in the given dataTree, and returns all the ids that returned true
+    newerIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        if (!this.exist(ids)) { throw new Error("Given ids don't exist internally."); }
-        if (!dataTree.exist(ids)) { throw new Error("Given ids don't exist in given dataTree."); }
-        return ids.every(id => this.isNewer(dataTree.record(id)));
+        return this.sharedIds(dataTree).filter(id => this.isNewer(dataTree.record(id)));
     }
 
     //Compares given data to internal record of the same id, and returns if the given record is older.
@@ -260,12 +257,12 @@ class DataTree {
     }
 
     //Calls isOlder for every given id in the given dataTree, and returns if all calls returned true
-    areOlder(ids, dataTree) {
+    olderIds(dataTree) {
         throwError(isArrayOfIntegers, ids);
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
         if (!this.exist(ids)) { throw new Error("Given ids don't exist internally."); }
         if (!dataTree.exist(ids)) { throw new Error("Given ids don't exist in given dataTree."); }
-        return ids.every(id => this.isOlder(dataTree.record(id)));
+        return this.sharedIds(dataTree).filter(id => this.isOlder(dataTree.record(id)));
     }
 
     //Compares given data to internal record of the same id, and returns if the given record is identical.
@@ -345,6 +342,61 @@ class DataTree {
                                     "creation": 1610557182,
                                     "id": 860738253562629,
                                     "lastEdited": null,
+                                    "lastOpened": 1610668775,
+                                    "issueId": 183289269562362,
+                                    "lines": []
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+
+    testing2() {
+        this._data = {
+            "username": "jason",
+            "id": 473992495658025,
+            "lastEdited": 1610557142,
+            "lastOpened": 1610668775,
+            "hidden": false,
+            "email": "",
+            "rememberMe": false,
+            "practitioner": false,
+            "storagePermanence": false,
+            "pushToStorageFrequency": 5,
+            "useServerStorage": false,
+            "pushToServerFrequency": false,
+            "clients": [
+                {
+                    "name": "Self",
+                    "id": 242409687387783,
+                    "lastEdited": null,
+                    "lastOpened": 1610678775,
+                    "userId": 473992495658025,
+                    "issues": [
+                        {
+                            "name": "New Issue",
+                            "id": 183289269562362,
+                            "lastEdited": null,
+                            "lastOpened": 1610678775,
+                            "clientId": 242409687387783,
+                            "sessions": [
+                                {
+                                    "creation": 1610578708,
+                                    "id": 783632042579983,
+                                    "lastEdited": 1610679330,
+                                    "lastOpened": 1610678775,
+                                    "issueId": 183289269562362,
+                                    "lines": [
+                                        "<div><h2 id=\"cursor\">|</h2></div>"
+                                    ]
+                                },
+                                {
+                                    "creation": 1610557182,
+                                    "id": 860738253562629,
+                                    "lastEdited": 1610669775,
                                     "lastOpened": 1610668775,
                                     "issueId": 183289269562362,
                                     "lines": []
