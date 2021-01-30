@@ -244,6 +244,38 @@ class DataTree {
         record[this.parentIdName(parentId)] = parentId; this.insert(record);
     }
 
+    //returns a list of ids that exist in both the given data and the local data.
+    sharedIds(data) {}
+
+    //returns a list of ids that exist in the given data but don't exist in the local data.
+    unsharedIds(data) {}
+
+    //returns a list of ids that are shared between and newer than the records in the given dataTree
+    isNewer(data) {}
+
+    //returns a list of ids that are shared between and newer than the records in the given dataTree
+    areNewer(data) {}
+
+    //returns a list of ids that are shared between and older than the records in the given dataTree
+    isOlder(data) {}
+
+    //returns a list of ids that are shared between and older than the records in the given dataTree
+    areOlder(data) {}
+
+    //returns a list of ids that are shared between and identical to records in the given dataTree
+    isIdentical(data) {}
+
+    //returns a list of ids that are shared between and identical to records in the given dataTree
+    areIdentical(data) {}
+
+    //returns a list of ids that are shared between and different from the records in the given dataTree
+    isDifferent(data) {}
+
+    //returns a list of ids that are shared between and different from the records in the given dataTree
+    areDifferent(data) {}
+
+
+
     testing() {
         this._data = {
             "username": "jason",
