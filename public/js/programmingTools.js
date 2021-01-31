@@ -16,7 +16,7 @@ var isDataTree = (v) => {
     const keys = Object.keys(v);
     return (isObject(v) &&
         keys.includes("id") &&
-        (keys.find(key => key.endsWith("id")) || keys.find(key => key.endsWith("s"))));
+        (keys.find(key => key.endsWith("Id")) || keys.find(key => key.endsWith("s"))));
 }
 
 function isObject(v) {
