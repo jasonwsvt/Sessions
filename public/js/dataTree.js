@@ -54,25 +54,12 @@ class DataTree {
         }
     }
 
-    tier(id) {
-        throwError(isInteger, id);
-        const t = this.indexPath(id); return (t === true) ? 0 : t.length;
-    }
-
+    tier(id)   { throwError(isInteger, id); const t = this.indexPath(id); return (t === true) ? 0 : t.length; }
     exists(id) { return isInteger(this.tier(id)); }
-    exist(ids) {
-        throwError(isArrayOfIntegers, ids);
-        return ids.every(id => this.exists(id));
-    }
+    exist(ids) { throwError(isArrayOfIntegers, ids); return ids.every(id => this.exists(id)); }
 
-    keys(id) {
-        throwError(isInteger, id);
-        return (this.exists(id)) ? this._dataKeys(this.record(id)) : undefined;
-    }
-    _dataKeys(data) {
-        throwError(isDataTree, data);
-        return Object.keys(data);
-    }
+    keys(id) { throwError(isInteger, id); return (this.exists(id)) ? this._dataKeys(this.record(id)) : undefined; }
+    _dataKeys(dataTree) { throwError(isDataTree, dataTree); return Object.keys(dataTree); }
 
     hasParent(id) { return this.tier(id); }
     parentId(id) { return (this.hasParent(id)) ? this.idPath(id).slice(-2, -1)[0] : null; }
@@ -80,9 +67,10 @@ class DataTree {
         throwError(isArrayOfIntegers, ids);
         return [...new Set(ids.map(id => this.parentId(id)))]; //.filter(id => isInteger(id));
     }
-    parentIdName(id) { return this._dataParentIdName(this.record(id)); }
-    _dataParentIdName(data) {
-        const name = this._dataKeys(data).find(key => key.endsWith("Id"));
+    parentIdName(id) { return (this.exists(id)) ? this._dataParentIdName(this.record(id)) : undefined; }
+    _dataParentIdName(dataTree) {
+        throwError(isDataTree, dataTree);
+        const name = this._dataKeys(dataTree).find(key => key.endsWith("Id"));
         return (isString(name)) ? name : undefined;
     }
 
@@ -151,7 +139,7 @@ class DataTree {
     //deletion methods
     delete(ids)  {
         throwError(isArrayOfIntegers, ids);
-        var path;
+        var path, group;
         ids = this.mostAncestral(ids);
         if (isArray(ids) && ids.length > 0) {
             this.deleted.push(this.records(ids));
@@ -184,12 +172,12 @@ class DataTree {
         this._data = data;
     }
 
-    //Add a child to an existing parent.
     //Record must have a parentId, and a record with that ID must exist in the tree.
+    merge(records) { throwError(isArrayOfDataTrees, records); records.forEach(record => this.insert(record)); }
     insert(record) {
         throwError(isDataTree, record);
         var parentIdName; parentId, path, childrenNames;
-        parentIdName = record[Object.keys(record).find(key => key.endsWith("Id"))];
+        parentIdName = this._dataParentIdName(record);
         if (parentIdName) {
             parentId = record[parentIdName];
             path = this.indexPath(parentId);
@@ -202,65 +190,82 @@ class DataTree {
         }
     }
 
-    //Add a child to an existing parent.
-    //The parent is specified by the first parameter.
+    //Add a child to an existing parent with the id given by parentId.
     //The parentId parameter is added to the record before calling the insert method.
+    //If another parentId paremeter is found it's removed.
+    addChildren(parentId, records) { throwError(isArrayOfDataTrees, records); records.forEach(record => this.addChild(parentId, record)); }
     addChild(parentId, record) {
         throwError(isInteger, parentId);
-        throwError(this.exists, parentId);
+        if (!this.exists(parentId)) { throw new Error("Parent ID", parentId, "does not exist."); }
         throwError(isDataTree, record);
-        record[this.parentIdName(parentId)] = parentId; this.insert(record);
+        const parentIdName = this.childrenName(parentId).splice(0, -1) + "Id";
+        if (record[parentIdName] != parentId) {
+            const oldParentIdName = this._dataParentIdName(record);
+            if (oldParentIdName != parentIdName) { delete record[oldParentIdName]; }
+            record[parentIdName] = parentId;
+        }
+        //record[this._dataParentIdName(record)] = parentId;
+        this.insert(record);
     }
 
     //returns a list of ids that exist in both the given data and the local data.
-    sharedIds(dataTree) {
+    commonIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        const internalIds = this.ids;
-        const externalIds = dataTree.ids;
-        return [...new Set(internalIds.concat(externalIds))].filter(id => internalIds.includes(id) && externalIds.includes(id));
+        const i = this.ids;
+        const e = dataTree.ids;
+        return [...new Set(i.concat(e))].filter(id => i.includes(id) && e.includes(id));
+    }
+
+    //returns a list of ids that don't exist in both the given data and the local data.
+    unsharedIds(dataTree) {
+        if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
+        const i = this.ids;
+        const e = dataTree.ids;
+        return [...new Set(i.concat(e))].filter(id => !(e.includes(id) && i.includes(id)));
     }
 
     //returns a list of ids that exist in the given data but don't exist in the local data.
-    unsharedIds(dataTree) {
+    absentIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        const internalIds = this.ids;
-        const externalIds = dataTree.ids;
-        return [...new Set(internalIds.concat(externalIds))].filter(id =>
-            (externalIds.includes(id) && !internalIds.includes(id)));
+        const i = this.ids;
+        const e = dataTree.ids;
+        return [...new Set(i.concat(e))].filter(id => e.includes(id) && !i.includes(id));
     }
 
+    //If the id doesn't exist locally, returns true.
     //Compares given data to internal record of the same id, and returns if the given record is newer.
-    isNewer(external) {
-        throwError(isDataTree, external);
-        if (!this.exists(external.id)) { return false; }
-        const internal = this.record(external.id);
-        if ((internal.lastEdited > 0 && external.lastEdited > 0 && internal.lastEdited > external.lastEdited)  ||
-            (internal.creation   > 0 && external.creation   > 0 && internal.creation   > external.creation)    ||
-            (internal.lastOpened > 0 && external.lastOpened > 0 && internal.lastOpened > external.lastOpened)) { return true; }
+    isNewer(e) {
+        throwError(isDataTree, e);
+        if (!this.exists(e.id)) { return true; }
+        const i = this.record(e.id);
+        if ((e.lastEdited > 0 && i.lastEdited > 0 && e.lastEdited > i.lastEdited)  ||
+            (e.creation   > 0 && i.creation   > 0 && e.creation   > i.creation)    ||
+            (e.lastOpened > 0 && i.lastOpened > 0 && e.lastOpened > i.lastOpened)) { return true; }
         return false;
     }
 
     //Calls isNewer for every given id in the given dataTree, and returns all the ids that returned true
     newerIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        return this.sharedIds(dataTree).filter(id => this.isNewer(dataTree.record(id)));
+        return this.commonIds(dataTree).filter(id => this.isNewer(dataTree.record(id)));
     }
 
+    //If the id doesn't exist locally, returns true.
     //Compares given data to internal record of the same id, and returns if the given record is older.
-    isOlder(external) {
-        throwError(isDataTree, external);
-        if (!this.exists(external.id)) { return false; }
-        const internal = this.record(external.id);
-        if ((internal.lastEdited > 0 && external.lastEdited > 0 && internal.lastEdited < external.lastEdited)  ||
-            (internal.creation   > 0 && external.creation   > 0 && internal.creation   < external.creation)    ||
-            (internal.lastOpened > 0 && external.lastOpened > 0 && internal.lastOpened < external.lastOpened)) { return true; }
+    isOlder(e) {
+        throwError(isDataTree, e);
+        if (!this.exists(e.id)) { return true; }
+        const i = this.record(e.id);
+        if ((e.lastEdited > 0 && i.lastEdited > 0 && e.lastEdited < i.lastEdited)  ||
+            (e.creation   > 0 && i.creation   > 0 && e.creation   < i.creation)    ||
+            (e.lastOpened > 0 && i.lastOpened > 0 && e.lastOpened < i.lastOpened)) { return true; }
         return false;
     }
 
     //Calls isOlder for every given id in the given dataTree, and returns if all calls returned true
     olderIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        return this.sharedIds(dataTree).filter(id => this.isOlder(dataTree.record(id)));
+        return this.commonIds(dataTree).filter(id => this.isOlder(dataTree.record(id)));
     }
 
     //Compares given data to internal record of the same id, and returns if the given record is identical.
@@ -280,13 +285,13 @@ class DataTree {
     //Calls isIdentical for every given id in the given dataTree, and returns if all calls returned true
     identicalIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        return this.sharedIds(dataTree).filter(id => this.isIdentical(dataTree.record(id)));
+        return this.commonIds(dataTree).filter(id => this.isIdentical(dataTree.record(id)));
     }
 
     //Calls !isIdentical for every given id in the given dataTree, and returns if all calls returned true
     differentIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        return this.sharedIds(dataTree).filter(id => !this.isIdentical(dataTree.record(id)));
+        return this.commonIds(dataTree).filter(id => !this.isIdentical(dataTree.record(id)));
     }
 
 
