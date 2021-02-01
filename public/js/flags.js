@@ -1,12 +1,12 @@
 class Flags {
-    _flags = [];
-    _flagMethods
+    _flagsArray = [];
+    _methodsArray = [];
 
-    //e.g. If add = "addFlag", this.addFlag will be the method to add a flag.
+    //e.g. If add = "addFlag", for example, this.addFlag will be the method to add a flag.
     constructor(add = "add", del = "delete") {
+        if (!isString(add) || !isString(del)) { throw new Error("Parameters must be strings."); }
         this[add] = this._addNewFlag;
         this[del] = this._deleteExistingFlag;
-        
     }
 
     //flag must be a string.
@@ -28,82 +28,88 @@ class Flags {
 
         values = [flag, flagged, unflag, isFlagged, areFlagged, toggleFlagged, flagMultiple, unflagMultiple];
 
-        if (flag           != false) { this[flag]           = (value)  => { this._flag(flag, value);            } }
+        if (flag           != false) { this[flag]           = (value)  => { this._flagOne(flag, value);         } }
         if (unflag         != false) { this[unflag]         = (value)  => { this._unflag(flag, value);          } }
-        if (flagged        != false) { this[flagged]        = ()       => { this._flagged(flag);                } }
+        if (flagged        != false) { this[flagged]        = ()       => { this._flaggedArray(flag);           } }
         if (isFlagged      != false) { this[isFlagged]      = (value)  => { this._isFlagged(flag, value);       } }
         if (areFlagged     != false) { this[areFlagged]     = (values) => { this._areFlagged(flag, values);     } }
         if (toggleFlagged  != false) { this[toggleFlagged]  = (value)  => { this._toggleFlagged(flag, value);   } }
         if (flagMultiple   != false) { this[flagMultiple]   = (values) => { this._flagMultiple(flag, values);   } }
         if (unflagMultiple != false) { this[unflagMultiple] = (values) => { this._unflagMultiple(flag, values); } }
 
-        this._methods[flag] = values.filter(m => m != false);
+        this._methodsArray[flag] = values.filter(m => m != false);
         this[flag + "Methods"] = () => this._flagMethods(flag);
-        this._flags[flag] = [];
+        this._flagsArray[flag] = [];
     }
 
-    flags() { return Object.keys(this._flags); }
+    flags() { return Object.keys(this._flagsArray); }
 
-    _flagMethods(flag) { return this._methods[flag]; }
+    _flagMethods(flag) { return this._methodsArray[flag]; }
 
-    _flagExists(flag) { return this.flags.contains(flag); }
+    _flagExists(flag) { return this.flags().includes(flag); }
 
     _deleteExistingFlag(flag) {
-        this._throwErrorOnNotFlagExists(flag);
-        delete this._flags[flag];
+        this._throwErrorOnDNE(flag);
+        delete this._flagsArray[flag];
     }
 
-    _flag(flag, value) {
-        this._throwErrorOnNotFlagExists(flag);
+    _flagOne(flag, value) {
+        this._throwErrorOnDNE(flag);
         if (!this._isFlagged(flag, value)) {
-            this._flags[flag].push(value);
+            this._flagsArray[flag].push(value);
         }
     }
 
-    _flagMultiple(flag, values) {
-        this._throwErrorOnNotFlagExists(flag);
-        values.forEach(value => this._flag(flag, value));
+    _flagMultiple(flag, ...values) {
+        this._throwErrorOnDNE(flag);
+        if (values.length == 1 && isArray(values[0])) { values = values[0]; }
+        values.forEach(value => this._flagOne(flag, value));
     }
 
     _unflag(flag, value) {
-        this._throwErrorOnNotFlagExists(flag);
+        this._throwErrorOnDNE(flag);
         if (this._isFlagged(flag, value)) {
-            this._flags[flag].splice(this._flags.indexOf(value), 1);
+            this._flagsArray[flag].splice(this._flagsArray.indexOf(value), 1);
         }
     }
 
-    _unflagMultiple(flag, values) {
-        this._throwErrorOnNotFlagExists(flag);
+    _unflagMultiple(flag, ...values) {
+        this._throwErrorOnDNE(flag);
+        if (values.length == 1 && isArray(values[0])) { values = values[0]; }
         values.forEach(value => this._unflag(flag, value));
     }
 
-    _flagged(flag) {
-        this._throwErrorOnNotFlagExists(flag);
-        return this._flags[flag];
+    _flaggedArray(flag) {
+        this._throwErrorOnDNE(flag);
+        console.log("Array value inside class:", this._flagsArray[flag]);
+        return this._flagsArray[flag];
     }
 
     _isFlagged(flag, value) {
-        this._throwErrorOnNotFlagExists(flag);
-        return this._flags[flag].contains(value);
-
+        this._throwErrorOnDNE(flag);
+        return this._flagsArray[flag].includes(value);
     }
 
-    _areFlagged(flag, values) {
-        this._throwErrorOnNotFlagExists(flag);
-        return values.forEach(value => this._isFlagged(flag, value));
+    _areFlagged(flag, ...values) {
+        this._throwErrorOnDNE(flag);
+        if (values.length == 1 && isArray(values[0])) { values = values[0]; }
+        return values.every(value => this._isFlagged(flag, value));
     }
 
-    _toggleFlagged(flag, value) {
-        this._throwErrorOnNotFlagExists(flag);
-        if (this._isFlagged(flag, value)) {
-            this._unflag(flag, value);
-        }
-        else {
-            this._flag(flag, value);
-        }
+    _toggleFlagged(flag, ...values) {
+        this._throwErrorOnDNE(flag);
+        if (values.length == 1 && isArray(values[0])) { values = values[0]; }
+        values.forEach(value => {
+            if (this._isFlagged(flag, value)) {
+                this._unflag(flag, value);
+            }
+            else {
+                this._flag(flag, value);
+            }
+        });
     }
 
-    _throwErrorOnNotFlagExists(flag) {
+    _throwErrorOnDNE(flag) {
         if (!this._flagExists(flag)) { throw new Error("Flag", flag, "doesn't exist."); }
     }
 
