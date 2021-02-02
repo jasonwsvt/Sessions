@@ -28,25 +28,24 @@ class Flags {
 
         values = [flag, flagged, unflag, isFlagged, areFlagged, toggleFlagged, flagMultiple, unflagMultiple];
 
-        if (flag           != false) { this[flag]           = (value)     => { this._flagOne(flag, value);            } }
-        if (unflag         != false) { this[unflag]         = (value)     => { this._unflag(flag, value);             } }
-        if (toggleFlagged  != false) { this[toggleFlagged]  = (...values) => { this._toggleFlagged(flag, values);     } }
-        if (flagMultiple   != false) { this[flagMultiple]   = (...values) => { this._flagMultiple(flag, values);      } }
-        if (unflagMultiple != false) { this[unflagMultiple] = (...values) => { this._unflagMultiple(flag, values);    } }
-        if (isFlagged      != false) { this[isFlagged]      = (value)     => { return this._isFlagged(flag, value);   } }
-        if (areFlagged     != false) { this[areFlagged]     = (...values) => { return this._areFlagged(flag, values); } }
-        if (flagged        != false) { this[flagged]        = ()          => { return this._flaggedArray(flag);       } }
+                                       this[flag]             = (value)     => this._flagOne(flag, value);
+        if (unflag         != false) { this[unflag]           = (value)     => this._unflag(flag, value);          }
+        if (toggleFlagged  != false) { this[toggleFlagged]    = (...values) => this._toggleFlagged(flag, values);  }
+        if (flagMultiple   != false) { this[flagMultiple]     = (...values) => this._flagMultiple(flag, values);   }
+        if (unflagMultiple != false) { this[unflagMultiple]   = (...values) => this._unflagMultiple(flag, values); }
+        if (isFlagged      != false) { this[isFlagged]        = (value)     => this._isFlagged(flag, value);       }
+        if (areFlagged     != false) { this[areFlagged]       = (...values) => this._areFlagged(flag, values);     }
+        if (flagged        != false) { this[flagged]          = ()          => this._flaggedArray(flag);           }
 
         this._methods[flag] = values.filter(m => m != false);
-        this[flag + "Methods"] = () => this._flagMethods(flag);
+                                       this[flag + "Methods"] = ()          => this._flagMethods(flag);
         this._flags[flag] = [];
     }
 
     flags() { return Object.keys(this._flags); }
+    _flagExists(flag) { return this.flags().includes(flag); }
 
     _flagMethods(flag) { return this._methods[flag]; }
-
-    _flagExists(flag) { return this.flags().includes(flag); }
 
     _deleteExistingFlag(flag) {
         this._throwErrorOnDNE(flag);
