@@ -66,3 +66,20 @@ function varErr(v, f, vName) {
 function throwWarning(f,v) { if (!f(v)) { console.log("Warning: failed test", f.name, v); }}
 
 function throwError(f, v) { if (!f(v)) { throw new Error("Failed test", f.name, v); }}
+
+function makeArray(values) {
+    while (isArray(values) && values.length == 1 && isArray(values[0])) { values = values[0]; }
+    if (!isArray(values)) { values = [values]; }
+    return values;
+}
+
+//returns one single-level array of arguments, regardless of whether the arguments were given in an array
+function arrayFromArguments() {
+    var args = [...arguments];
+    if (!args.every(item => !isArray(item))) {
+        var a = [];
+        args.forEach(arg => { a = (isArray(arg)) ? a.concat(...arg) : a.concat(arg); });
+        args = a;
+    }
+    return args;
+}

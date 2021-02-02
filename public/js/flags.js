@@ -1,6 +1,5 @@
 class Flags {
     _flags = [];
-    _methods = [];
 
     //e.g. If add = "addFlag", for example, this.addFlag will be the method to add a flag.
     constructor(add = "add", del = "delete") {
@@ -10,101 +9,89 @@ class Flags {
     }
 
     //flag must be a string.
-    //All others default to true.  They can be specified, or set to false.
-    //If any of the others are set to false, that method will not be offered.
-    //For all others that are set to true, they will be formatted in a standard way, based on the value of flag.
-    _addNewFlag(flag, flagged = true, unflag = true, isFlagged = true, areFlagged = true, toggleFlagged = true, flagMultiple = true, unflagMultiple = true) {
-        var values = [flag, flagged, unflag, isFlagged, areFlagged, toggleFlagged, flagMultiple, unflagMultiple];
-        if (!isString(flag) || !values.every(value => isString(value) || isBoolean(value))) { return; }
+    //All others default to true.  They can be specified to a unique string value, or set to false.
+    //If any stay set to true, they will be formatted in a standard way, based on the value of flag.
+    //If any are set to false, that method will not be offered.
+    //If any are set to a string, another For all others that are set to true, they will be formatted in a standard way, based on the value of flag.
+    _addNewFlag(name, list = true, unflag = true, includes = true, toggle = true, clear = true, isEmpty = true) {
+        var methods = {
+            "flag":     name,     //flag          (select)
+            "list":     list,     //flagged       (selected)
+            "unflag":   unflag,   //unflag        (unselect)
+            "includes": includes, //isFlagged     (isSelected)
+            "toggle":   toggle,   //toggleFlagged (toggleSelected)
+            "clear":    clear,    //empty         (emptySelect)
+            "isEmpty":  isEmpty}; //isEmpty       (selectIsEmpty)
 
-        if (flagMultiple   == true)  { flagMultiple = flag + "Multiple";     }
-        if (flagged        == true)  { flagged = flag + "ed";                }
-        const Flagged = flagged.charAt(0).toUpperCase() + flagged.slice(1);
-        if (unflag         == true)  { unflag = "un" + flag;                 }
-        if (unflagMultiple == true)  { unflagMultiple = unflag + "Multiple"; }
-        if (isFlagged      == true)  { isFlagged = "is" + Flagged;           }
-        if (areFlagged     == true)  { areFlagged = "are" + Flagged;         }
-        if (toggleFlagged  == true)  { toggleFlagged = "toggle" + Flagged;   }
+        if (!isString(name) ||
+            !Object.values(methods).every(value => isString(value) || isBoolean(value)) ||
+            [...new Set(Object.values(methods))].length == Object.values(methods).length) { return; }
 
-        values = [flag, flagged, unflag, isFlagged, areFlagged, toggleFlagged, flagMultiple, unflagMultiple];
+        if (list     == true)  { list     = name + "ed";        }
+        const Flagged = list.charAt(0).toUpperCase() + list.slice(1);
+        if (unflag   == true)  { unflag   = "un" + name;        }
+        if (includes == true)  { includes = "is" + Flagged;     }
+        if (toggle   == true)  { toggle   = "toggle" + Flagged; }
+        if (clear    == true)  { clear    = "clear" + Flagged; }
+        if (isEmpty  == true)  { isEmpty  = name + "IsEmpty"; }
 
-                                       this[flag]             = (value)     => this._flagOne(flag, value);
-        if (unflag         != false) { this[unflag]           = (value)     => this._unflag(flag, value);          }
-        if (toggleFlagged  != false) { this[toggleFlagged]    = (...values) => this._toggleFlagged(flag, values);  }
-        if (flagMultiple   != false) { this[flagMultiple]     = (...values) => this._flagMultiple(flag, values);   }
-        if (unflagMultiple != false) { this[unflagMultiple]   = (...values) => this._unflagMultiple(flag, values); }
-        if (isFlagged      != false) { this[isFlagged]        = (value)     => this._isFlagged(flag, value);       }
-        if (areFlagged     != false) { this[areFlagged]       = (...values) => this._areFlagged(flag, values);     }
-        if (flagged        != false) { this[flagged]          = ()          => this._flaggedArray(flag);           }
+        const flagMethods = name + "Methods";
+        const flagMethod  = name + "Method";
 
-        this._methods[flag] = values.filter(m => m != false);
-                                       this[flag + "Methods"] = ()          => this._flagMethods(flag);
-        this._flags[flag] = [];
+        var methods = { "flag"       : name,
+                        "list"       : list,
+                        "unflag"     : unflag,
+                        "includes"   : includes,
+                        "toggle"     : toggle,
+                        "clear"      : clear,
+                        "isEmpty"    : isEmpty,
+                        "flagMethods": flagMethods,
+                        "flagMethod" : flagMethod};
+
+        Object.keys(methods).forEach(method => { if (methods[method] == false) { delete methods[method]; }});
+
+        this._flags.push({"name": name, "flag": new Flag(), "methods": methods});
+
+                                 this[name]     = (values) => this._flag(name).add(values);
+        if (unflag   != false) { this[unflag]   = (values) => this._flag(name).remove(values);   }
+        if (toggle   != false) { this[toggle]   = (values) => this._flag(name).toggle(values);   }
+        if (includes != false) { this[includes] = (values) => this._flag(name).includes(values); }
+        if (list     != false) { this[list]     = ()       => this._flag(name).list();           }
+        if (clear    != false) { this[clear]    = ()       => this._flag(name).clear();          }
+        if (isEmpty  != false) { this[isEmpty]  = ()       => this._flag(name).isEmpty();        }
+
+                                 this[flagMethods] = ()    => this._methods(name);
+                                 this[flagMethod]  = (key) => this._method(name, key);
     }
 
-    flags() { return Object.keys(this._flags); }
-    _flagExists(flag) { return this.flags().includes(flag); }
+    _deleteExistingFlag(name) { delete this._flags[this._flags.findIndex(flag => flag.name = name)]; }
 
-    _flagMethods(flag) { return this._methods[flag]; }
+    _obj(name)     { return (this.exists(name)) ? this._flags.find(flag => flag.name == name) : undefined; }
+    _flag(name)    { return (this.exists(name)) ? this._obj(name).flag : undefined; }
+    _methods(name) { return (this.exists(name)) ? Object.values(this._obj(name).methods) : undefined; }
+    list()         { return this._flags.map(o => o.name); }
+    exists(name)   { return this.list().includes(name); }
+    empty()        { this._flags = []; }
 
-    _deleteExistingFlag(flag) {
-        this._throwErrorOnDNE(flag);
-        delete this._flags[flag];
+    _method(name, key) {
+        return (this.exists(name) && Object.keys(this._obj(name).methods).includes(key))
+            ? this._obj(name).methods[key] : false;
     }
 
-    _flagOne(flag, value) {
-        this._throwErrorOnDNE(flag);
-        if (!this._isFlagged(flag, value)) {
-            this._flags[flag].push(value);
-        }
+
+    //Highlight selected, mark selected for deletion, mark
+    _flagFlagged(flag1, flag2) {
+        //Find all values for flag2.
+        //Add them to the list for flag1.
     }
 
-    _flagMultiple(flag, values) {
-        this._throwErrorOnDNE(flag);
-        if (values.length == 1 && isArray(values[0])) { values = values[0]; }
-        values.forEach(value => this._flagOne(flag, value));
+    _unflagFlagged(flag1, flag2) {
+        //Remove all values in flag2 from flag1
+
     }
 
-    _unflag(flag, value) {
-        this._throwErrorOnDNE(flag);
-        if (this._isFlagged(flag, value)) {
-            this._flags[flag].splice(this._flags.indexOf(value), 1);
-        }
-    }
-
-    _unflagMultiple(flag, values) {
-        this._throwErrorOnDNE(flag);
-        if (values.length == 1 && isArray(values[0])) { values = values[0]; }
-        values.forEach(value => this._unflag(flag, value));
-    }
-
-    _flaggedArray(flag) {
-        this._throwErrorOnDNE(flag);
-        return this._flags[flag];
-    }
-
-    _isFlagged(flag, value) {
-        this._throwErrorOnDNE(flag);
-        return this._flags[flag].includes(value);
-    }
-
-    _areFlagged(flag, values) {
-        this._throwErrorOnDNE(flag);
-        if (values.length == 1 && isArray(values[0])) { values = values[0]; }
-        return values.every(value => this._isFlagged(flag, value));
-    }
-
-    _toggleFlagged(flag, values) {
-        this._throwErrorOnDNE(flag);
-        if (values.length == 1 && isArray(values[0])) { values = values[0]; }
-        values.forEach(value => {
-            if (this._isFlagged(flag, value)) { this._unflag(flag, value); }
-            else                              { this._flag(flag, value); }
-        });
-    }
-
-    _throwErrorOnDNE(flag) {
-        if (!this._flagExists(flag)) { throw new Error("Flag", flag, "doesn't exist."); }
+    _throwErrorOnDNE(name) {
+        if (!this.exists(name)) { throw new Error("Flag", name, "doesn't exist."); }
     }
 
 }

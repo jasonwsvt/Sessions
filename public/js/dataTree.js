@@ -2,11 +2,13 @@
 // 1) one called "id" that signifies the id,
 // 2) one ending with "Id" that signifies the parent id (except for the initial record), and
 // 3) one ending in "s" that signifies the array of children (except for the terminal records).
-class DataTree {
+class DataTree extends Flags {
     _data;
     
     constructor(data = {}) {
+        super("addFlag", "deleteFlag");
         this._data = data;
+        this.addFlag("select");
     }
 
     //Returns an array of indices, one index for each set of children
@@ -359,6 +361,12 @@ class DataTree {
         throwError(isArrayOfDataTrees, dataTree);
         this.mergeIds(this.absentIds(dataTree), dataTree);
     }
+    mergeFlagged(flag, dataTree) {
+        if (!dataTree.flags().includes(flag)) { throw new Error("Flag doesn't exist (" + flag + ")."); }
+        if (!Object.keys(dataTree[flag + "Methods"]()).includes("flagged")) { throw new Error("Flagged method doesn't exist for flag (" + flag + ")."); }
+        this.mergeIds(dataTree[flag + "Method"]("flagged"), dataTree);
+    }
+    mergeSelected(dataTree) { this.mergeFlagged("select", dataTree); }
 
 
     testing() {
