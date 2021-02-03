@@ -6,7 +6,7 @@ class DataTree extends Flags {
     _data;
     
     constructor(data = {}) {
-        super("addFlag", "deleteFlag");
+        super("addFlag", false, false, false, false, false);
         this._data = data;
         this.addFlag("select");
     }
@@ -41,7 +41,7 @@ class DataTree extends Flags {
             (keys.find(key => key.endsWith("Id")) || keys.find(key => key.endsWith("s"))));
     }
     isEmpty() { return !this.isDataTree(this._data); }
-    empty() { this.data = {}; }
+    clear() { this.data = {}; }
 
     idPath(id) { return this._idPath(id, this._data); }
     _idPath(id, data) {
@@ -109,7 +109,6 @@ class DataTree extends Flags {
             path.forEach(index => { data = data[this._dataChildrenName(data)][index] });
             return data;
         }
-        return false;
     }
 
     // Returns an array of ids for which the remaining given ids are all their descendants.
@@ -338,35 +337,41 @@ class DataTree extends Flags {
 
     mergeIds(ids, dataTree)  {
         throwError(isArrayOfIntegers, ids);
-        throwError(isArrayOfDataTrees, dataTree);
-        this.merge(dataTree.records(ids));
+        throwError(isDataTree, dataTree);
+        this.merge(dataTree.mostAncestral(dataTree.records(ids)));
     }
 
     mergeNewer(dataTree) {
-        throwError(isArrayOfDataTrees, dataTree);
+        throwError(isDataTree, dataTree);
         this.mergeIds(dataTree.newerIds(this), dataTree);
     }
 
     mergeOlder(dataTree) {
-        throwError(isArrayOfDataTrees, dataTree);
+        throwError(isDataTree, dataTree);
         this.mergeIds(dataTree.newerIds(this), dataTree);
     }
 
     mergeDifferent(dataTree) {
-        throwError(isArrayOfDataTrees, dataTree);
-        this.mergeIds(dataTree.differentIds(this), dataTree);
+        throwError(isDataTree, dataTree);
+        this.mergeIds(this.differentIds(dataTree), dataTree);
     }
 
     mergeAbsent(dataTree) {
-        throwError(isArrayOfDataTrees, dataTree);
+        throwError(isDataTree, dataTree);
         this.mergeIds(this.absentIds(dataTree), dataTree);
     }
-    mergeFlagged(flag, dataTree) {
-        if (!dataTree.flags().includes(flag)) { throw new Error("Flag doesn't exist (" + flag + ")."); }
-        if (!Object.keys(dataTree[flag + "Methods"]()).includes("flagged")) { throw new Error("Flagged method doesn't exist for flag (" + flag + ")."); }
-        this.mergeIds(dataTree[flag + "Method"]("flagged"), dataTree);
+
+    _mergeFlagged(flag, dataTree) {
+        if (!dataTree.flags().has(flag)) {
+            throw new Error("Flag doesn't exist (" + flag + ").");
+        }
+        if (!Object.keys(dataTree[flag + "Methods"]()).includes("list")) {
+            throw new Error("List method doesn't exist for " + flag + ".");
+        }
+        this.mergeIds(dataTree[flag + "Method"]("list"), dataTree);
     }
-    mergeSelected(dataTree) { this.mergeFlagged("select", dataTree); }
+
+    mergeSelected(dataTree) { this._mergeFlagged("select", dataTree); }
 
 
     testing() {

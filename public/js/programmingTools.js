@@ -5,6 +5,7 @@ var isArrayOfObjects   = (v) => { return (isArray(v) && v.every(x => isObject(x)
 var isArrayOfStrings   = (v) => { return (isArray(v) && v.every(x => isString(x))); }
 var isArrayOfIntegers  = (v) => { return (isArray(v) && v.every(x => isInteger(x))); }
 var isArrayOfDataTrees = (v) => { return (isArray(v) && v.every(x => isDataTree(x))); }
+var isSingleLevelArray = (v) => { return (isArray(v) && v.every(x => !isArray(x))); }
 var isUndefined        = (v) => { return v == undefined; }
 var isNull             = (v) => { return v == null; }
 var isNumber           = (v) => { return (typeof v === 'number' && isFinite(v)); }
@@ -74,12 +75,12 @@ function makeArray(values) {
 }
 
 //returns one single-level array of arguments, regardless of whether the arguments were given in an array
-function arrayFromArguments() {
-    var args = [...arguments];
-    if (!args.every(item => !isArray(item))) {
-        var a = [];
-        args.forEach(arg => { a = (isArray(arg)) ? a.concat(...arg) : a.concat(arg); });
-        args = a;
+function argsList() {
+    var args = [...arguments[0]], num = 0, index;
+    while(true) {
+        index = args.findIndex(arg => isArray(arg));
+        if (index < 0 || num++ > 10) { break; }
+        args = [].concat.apply([], args);
     }
     return args;
 }

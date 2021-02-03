@@ -1,42 +1,12 @@
 class Flag {
-    _values = []; 
+    _values; 
 
-    constructor() { }
-
-    //Arguments can be 1, 2, 3 or [1, 2, 3]
-    add() {
-        arrayFromArguments(...arguments)
-            .filter(value => !this.includes(value))
-            .forEach(value => this._values.push(value));
-    }
-
-    //Arguments can be 1, 2, 3 or [1, 2, 3]
-    remove() {
-        arrayFromArguments(...arguments)
-            .filter(value => this.includes(value))
-            .forEach(value => this._values.splice(this._values.indexOf(value), 1));
-    }
-
-    //Arguments can be 1, 2, 3 or [1, 2, 3]
-    toggle() {
-        arrayFromArguments(...arguments)
-            .forEach(value => this.includes(value)
-            ? this.remove(value) : this.add(value));
-    }
-
-    includes() {
-        return arrayFromArguments(...arguments).every(value => this._values.includes(value));
-    }
-
-    list() {
-        return this._values;
-    }
-
-    clear() {
-        this._values = [];
-    }
-
-    isEmpty() {
-        return this._values.length == 0;
-    }
+    constructor() { this._values = new Set(); }
+    add()         { argsList(arguments).forEach(v => this._values.add(v)); }
+    remove()      { argsList(arguments).forEach(v => this._values.delete(v)); }
+    toggle()      { argsList(arguments).forEach(v => this._values.has(v) ? this.delete(v) : this.add(v)); }
+    has()         { return argsList(arguments).every(v => this._values(v)); }
+    list()        { return Array.from(this._values); }
+    clear()       { this._values.clear(); }
+    isEmpty()     { return this._values.size == 0; }
 }
