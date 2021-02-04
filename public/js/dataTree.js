@@ -6,7 +6,7 @@ class DataTree extends Flags {
     _data;
     
     constructor(data = {}) {
-        super("addFlag", false, false, false, false, false);
+        super("addFlag", false, false, "flagExists", false, false);
         this._data = data;
         this.addFlag("select");
     }
@@ -362,7 +362,7 @@ class DataTree extends Flags {
     }
 
     _mergeFlagged(flag, dataTree) {
-        if (!dataTree.flags().has(flag)) {
+        if (!dataTree.flagExists(flag)) {
             throw new Error("Flag doesn't exist (" + flag + ").");
         }
         if (!Object.keys(dataTree[flag + "Methods"]()).includes("list")) {

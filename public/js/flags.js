@@ -1,5 +1,7 @@
 class Flags {
-    _flags = [];
+//    _flags = [];
+    _flags = new Map();
+    _methods = new Map();
 
     //e.g. If add = "addFlag", for example, this.addFlag will be the method to add a flag.
     //All parameters can be a unique string value, or set to true or false.
@@ -35,17 +37,22 @@ class Flags {
     _addNewFlag(name, list = true, remove = true, has = true, toggle = true, clear = true, isEmpty = true) {
         if (!isString(name)) { return; }
 
-        var methods = { "add"     : name,     //flag          (select)
-                        "list"    : list,     //flagged       (selected)
-                        "remove"  : remove,   //unflag        (unselect)
-                        "has"     : has,      //isFlagged     (isSelected)
-                        "toggle"  : toggle,   //toggleFlagged (toggleSelected)
-                        "clear"   : clear,    //empty         (emptySelect)
-                        "isEmpty" : isEmpty}; //isEmpty       (selectIsEmpty)
+        var methods = new Map();
+        methods.set("add",     name);    //flag          (select)
+        methods.set("list",    list);    //flagged       (selected)
+        methods.set("remove",  remove);  //unflag        (unselect)
+        methods.set("has",     has);     //isFlagged     (isSelected)
+        methods.set("toggle",  toggle);  //toggleFlagged (toggleSelected)
+        methods.set("clear",   clear);   //empty         (emptySelect)
+        methods.set("isEmpty", isEmpty); //isEmpty       (selectIsEmpty)
 
-        if (Object.values(methods).find(value => !isString(value) && !isBoolean(value)) ||
-            this._list().find(flag => Object.values(methods).find(method => this._methods(flag).includes(method))) ||
-            [...new Set(Object.values(methods))].length == Object.values(methods).length) { return; }
+        const afmv = Array.from(methods.values());
+        if (afmv.find(value => !isString(value) && !isBoolean(value)))
+            { throw new Error("A value is not valid.");}
+        if (this._list().find(flag => afmv.find(method => this._valueExists(flag, method))))
+            { throw new Error("A method exists already."); }
+        if (afmv.find((v1, i1) => find((v2, i2) => i1 != i2 && isString(v1) && v1 == v2)))
+            { throw new Error("Not all method names are unique."); }
 
         if (list     == true)  { list     = name + "ed";        }
         const Flagged = list.charAt(0).toUpperCase() + list.slice(1);
@@ -57,19 +64,22 @@ class Flags {
         const flagMethods = name + "Methods";
         const flagMethod  = name + "Method";
 
-        var methods = { "add"     : name,
-                        "list"    : list,
-                        "remove"  : remove,
-                        "has"     : has,
-                        "toggle"  : toggle,
-                        "clear"   : clear,
-                        "isEmpty" : isEmpty,
-                        "methods" : flagMethods,
-                        "method"  : flagMethod};
+        methods.clear();
+        methods.set("add",     name);
+        methods.set("list",    list);
+        methods.set("remove",  remove);
+        methods.set("has",     has);
+        methods.set("toggle",  toggle);
+        methods.set("clear",   clear);
+        methods.set("isEmpty", isEmpty);
+        methods.set("methods", flagMethods);
+        methods.set("method",  flagMethod);
 
         Object.keys(methods).forEach(method => { if (methods[method] == false) { delete methods[method]; }});
 
-        this._flags.push({"name": name, "flag": new Flag(), "methods": methods});
+        this._flags.set(name, new Flag());
+        this._methods.set(name, methods);
+//        this._flags.push({"name": name, "flag": new Flag(), "methods": methods});
 
                                 this[name]        = (...args) => this._flag(name).add(args);
         if (list    != false) { this[list]        = ()        => this._flag(name).list();       }
@@ -78,33 +88,21 @@ class Flags {
         if (toggle  != false) { this[toggle]      = (...args) => this._flag(name).toggle(args); }
         if (clear   != false) { this[clear]       = ()        => this._flag(name).clear();      }
         if (isEmpty != false) { this[isEmpty]     = ()        => this._flag(name).isEmpty();    }
-                                this[flagMethods] = ()        => this._methods(name);
+                                this[flagMethods] = ()        => this._values(name);
                                 this[flagMethod]  = (key)     => this._method(name, key);
     }
 
-    _deleteExistingFlag(name) { this._flags.splice(this._flags.findIndex(flag => flag.name = name), 1); }
+    _deleteExistingFlag(name) { this._flags.delete(name); this._methods.delete(name); }
 
-    _obj(name)     { return (this._exists(name)) ? this._flags.find(flag => flag.name == name) : undefined; }
-    _flag(name)    { return (this._exists(name)) ? this._obj(name).flag                        : undefined; }
-    _methods(name) { return (this._exists(name)) ? Object.values(this._obj(name).methods)      : undefined; }
-    _method(name, key) {
-        return (this._exists(name) && Object.keys(this._obj(name).methods).includes(key))
-            ? this._obj(name).methods[key] : false;
-    }
+    _exists(name)             { return this._flags.has(name); } //this._list().includes(name); }
+    _flag(name)               { return this._flags.get(name); }
 
-    _list()         { return this._flags.map(o => o.name); }
-    _exists(name)   { return this._list().includes(name); }
-    _empty()        { this._flags = []; }
+    _values(name)             { return (this._exists(name)) ? [...this._methods.get(name).values()] : undefined; }
+    _keyExists(name, key)     { return (this._exists(name) && this._methods.get(name).has(key)); }
+    _valueExists(name, value) { return (this._exists(name) && this._values(name).includes(value)); }
+    _method(name, key)        { return (this._exists(name)) ? this._methods.get(name).get(key)      : undefined; }
+    
+    _list()         { return [...this._flags.keys()]; }
+    _empty()        { this._flags.clear(); }
     _clear(...args) { this._list().forEach(name => this._flag(name).remove(argsList(args))); }
-
-    //Highlight selected, mark selected for deletion
-    _flagFlagged(flag1, flag2) {
-        //Find all values for flag2.
-        //Add them to the list for flag1.
-    }
-
-    _unflagFlagged(flag1, flag2) {
-        //Remove all values in flag2 from flag1
-
-    }
 }
