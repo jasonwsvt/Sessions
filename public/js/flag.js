@@ -4,7 +4,7 @@ class Flag {
     constructor() { this._values = new Set(); }
     add()         { argsList(arguments).forEach(v => this._values.add(v)); }
     remove()      { argsList(arguments).forEach(v => this._values.delete(v)); }
-    toggle()      { argsList(arguments).forEach(v => this._values.has(v) ? this.delete(v) : this.add(v)); }
+    toggle()      { argsList(arguments).forEach(v => this._values.has(v) ? this._values.delete(v) : this._values.add(v)); }
     has()         { return argsList(arguments).every(v => this._values(v)); }
     list()        { return Array.from(this._values); }
     clear()       { this._values.clear(); }

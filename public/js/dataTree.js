@@ -222,30 +222,25 @@ class DataTree extends Flags {
 
     //returns a list of ids that exist in both the given data and the local data.
     commonIds(dataTree) {
-        const ids = this.uniqueIds(dataTree);
-        const i = this.ids;
-        const e = dataTree.ids;
-        return ids.filter(id => i.includes(id) && e.includes(id));
+        return this.unionIds(dataTree).filter(id => this.ids.includes(id) && dataTree.ids.includes(id));
     }
 
     //returns a list of ids that don't exist in both the given data and the local data.
-    unsharedIds(dataTree) {
-        const ids = this.uniqueIds(dataTree);
-        const i = this.ids;
-        const e = dataTree.ids;
-        return ids.filter(id => !(e.includes(id) && i.includes(id)));
+    exclusiveIds(dataTree) {
+        return this.unionIds(dataTree).filter(id => !(dataTree.ids.includes(id) && this.ids.includes(id)));
     }
 
     //returns a list of ids that exist in the given data but don't exist in the local data.
     absentIds(dataTree) {
-        const ids = this.uniqueIds(dataTree);
-        const i = this.ids;
-        const e = dataTree.ids;
-        return ids.filter(id => e.includes(id) && !i.includes(id));
+        return this.unionIds(dataTree).filter(id => dataTree.ids.includes(id) && !this.ids.includes(id));
     }
 
-    //returns a list of unique ids that exist in both the given data and the local data.
+    //returns a list of ids that exist in the local data but don't exist in the given data.
     uniqueIds(dataTree) {
+        return this.unionIds(dataTree).filter(id => this.ids.includes(id) && !dataTree.ids.includes(id));
+    }
+
+    unionIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
         return [...new Set(this.ids.concat(dataTree.ids))];
     }

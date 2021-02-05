@@ -92,17 +92,18 @@ class Flags {
                                 this[flagMethod]  = (key)     => this._method(name, key);
     }
 
+    //Flags methods
     _deleteExistingFlag(name) { this._flags.delete(name); this._methods.delete(name); }
-
+    _list()                   { return [...this._flags.keys()]; }
+    _empty()                  { this._flags.clear(); this._methods.clear(); }
+    _clear(...args)            { this._list().forEach(name => this._flag(name).remove(argsList(args))); }
     _exists(name)             { return this._flags.has(name); } //this._list().includes(name); }
-    _flag(name)               { return this._flags.get(name); }
 
+    //Flag methods
+    _flag(name)               { return this._flags.get(name); }
     _values(name)             { return (this._exists(name)) ? [...this._methods.get(name).values()] : undefined; }
     _keyExists(name, key)     { return (this._exists(name) && this._methods.get(name).has(key)); }
     _valueExists(name, value) { return (this._exists(name) && this._values(name).includes(value)); }
     _method(name, key)        { return (this._exists(name)) ? this._methods.get(name).get(key)      : undefined; }
     
-    _list()         { return [...this._flags.keys()]; }
-    _empty()        { this._flags.clear(); }
-    _clear(...args) { this._list().forEach(name => this._flag(name).remove(argsList(args))); }
 }
