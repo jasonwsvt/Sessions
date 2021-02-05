@@ -1,23 +1,20 @@
 class List {
     _count;
-    _requireUnique;
-    _validationFunc;
     _sortFunc;
-    constructor(unique = false, validation = false, sort = false, has = false) {
-        this._requireUnique = unique;
-        if (validation != false) { this._validationFunc = validation; }
-        if (sort != false) { this._sortFunc = sort; }
+    constructor(validate = false, has = false) {
+        if (validation != false) { this._validate = validate; }
+        if (has != false) { this.has = has; }
         this._count = -1;
     }
 
-    //sets whether to allow duplicates
-    unique(bool) { if (isBoolean(bool)) {this._requireUnique = bool; }}
-
     //sets the single parameter function to call with the value to verify validity
-    validation(func) { this._validationFunc = validation; }
-
+    _validate(value) { return true; }
     //sets the two parameter function to call for sorting
-    sort(func) { }
+    _sort(func) { }
+
+
+
+    has(value) { return this.values.find(v => v == value);  }
 
     // returns an array of all values
     values() { return Object.keys(this).filter(isInteger).map(key => this[key]); }
