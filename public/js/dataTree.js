@@ -32,14 +32,13 @@ class DataTree extends Flags {
     isDataTree(data, parentId) {
         const keys = Object.keys(data);
         return (isObject(data) &&
-            keys.includes("id") &&
-            (!keys.includes("parentId") || data.parentId == parentId) &&
-            (!keys.includes("children") || data.children.every(child => this.isDataTree(child, id))));
+            "id" in data &&
+            (!"parentId" in data || data.parentId == parentId) &&
+            (!"children" in data || data.children.every(child => this.isDataTree(child, id))));
     }
 
 
     //Record creation, reading, updating, deletion
-    add(parentId, record) { record.parentId = parentId; this.insert(record); }
     update(id, record) { record.id = id; this.insert(record); }
 
     //If record.id exists in tree and has a parent, the replacement record will take the old record's parentId.
@@ -286,56 +285,38 @@ class DataTree extends Flags {
             : [data.id];
     }
 
-    //Calls isNewer for every record and returns whether or not they're all newer.
-    areNewer(records) {
-        throwError(isArrayOfDataTrees, records);
-        return records.every(record => this.isNewer(record));
-    }
-
-    //If the id doesn't exist locally, returns true.
-    //Compares given data to internal record of the same id, and returns if the local record is newer.
-    isNewer(e) {
-        throwError(isDataTree, e);
-        if (!this.has(e.id)) { return undefined; }
-        const i = this.record(e.id);
-        return ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited > e.lastEdited)  ||
-                (i.creation   > 0 && e.creation   > 0 && i.creation   > e.creation)    ||
-                (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened > e.lastOpened));
-    }
-
     //Calls isNewer for every given id in the given dataTree, and returns all the ids that returned true
     newerIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        return this.commonIds(dataTree).filter(id => this.isNewer(dataTree.record(id)));
-    }
-
-    //If the id doesn't exist locally, returns undefined.
-    //Compares given data to internal record of the same id, and returns if the local record is older.
-    //Calls isOlder for every record and returns whether or not they're all older.
-    _older() {
-        const records = smoothArray(arguments);
-        throwError(isArrayOfDataTrees, records);
-        return records.every(record => {
-            if (!this.has(e.id)) { return undefined; }
+        return this.commonIds(dataTree).filter(id => {
+            if (!this.has(id)) { return undefined; }
             const i = this.record(e.id);
-            return ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited < e.lastEdited)  ||
-                    (i.creation   > 0 && e.creation   > 0 && i.creation   < e.creation)    ||
-                    (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened < e.lastOpened));
+            const e = dataTree.record(id);
+            return ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited > e.lastEdited)  ||
+                    (i.creation   > 0 && e.creation   > 0 && i.creation   > e.creation)    ||
+                    (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened > e.lastOpened));
         });
     }
 
     //Calls _older for every given id in the given dataTree, and returns if all calls returned true
     olderIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        return this.commonIds(dataTree).filter(id => this._older(dataTree.record(id)));
+        return this.commonIds(dataTree).filter(id => {
+            if (!this.has(e.id)) { return undefined; }
+            const i = this.record(e.id);
+            const e = dataTree.record(id);
+            return ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited < e.lastEdited)  ||
+                    (i.creation   > 0 && e.creation   > 0 && i.creation   < e.creation)    ||
+                    (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened < e.lastOpened));
+        });
     }
 
-    //Compares given data to internal record of the same id, and returns if the given record is identical.
-    _identical() {
-        const records = smoothArray(arguments);
-        throwError(isArrayOfDataTrees, records);
-        return records.every(external => {
-            const internal = this.record(external.id);
+    //Returns all ids in dataTree that are common and identical to ones in this.
+    identicalIds(dataTree) {
+        if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
+        return this.commonIds(dataTree).filter(id => {
+            const internal = this.record(id);
+            const external = dataTree.record(id);
             if (internal.length !== external.length) { return false; }
             const externalKeys = Object.keys(external);
             Object.keys(internal).forEach(key => {
@@ -346,21 +327,11 @@ class DataTree extends Flags {
         });
     }
 
-    //Calls isIdentical for every given id in the given dataTree, and returns if all calls returned true
-    identicalIds(dataTree) {
-        if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        return this.commonIds(dataTree).filter(id => this._identical(dataTree.record(id)));
-    }
-
-    //Calls !isIdentical for every record and returns whether or not they're all different.
-    _different(records) {
-        throwError(isArrayOfDataTrees, records);
-        return records.every(record => !this.isIdentical(record));
-    }
-    //Calls !isIdentical for every given id in the given dataTree, and returns if all calls returned true
+    //Returns all ids in dataTree that are common and not indentical to ones in this.
     differentIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        return this.commonIds(dataTree).filter(id => !this._identical(dataTree.record(id)));
+        const identical = this.identicalIds();
+        return this.commonIds(dataTree).filter(id => !identical.includes(id));
     }
 
     merge(records) {
