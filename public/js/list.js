@@ -1,49 +1,56 @@
 class List {
-    _count;
-    _sortFunc;
+    _list = [];
+    _count = -1;
+    
     constructor(validate = false, has = false) {
         if (validation != false) { this._validate = validate; }
         if (has != false) { this.has = has; }
-        this._count = -1;
     }
 
     //sets the single parameter function to call with the value to verify validity
     _validate(value) { return true; }
     //sets the two parameter function to call for sorting
-    _sort(func) { }
 
-
-
-    has(value) { return this.values.find(v => v == value);  }
+    //whether or not the key exists
+    _has = (value, item) => { return value == item; }
+    has(value) { return this.values().find(item => this._has(value, item));  }
 
     // returns an array of all values
-    values() { return Object.keys(this).filter(isInteger).map(key => this[key]); }
+    values()    { return this._keys().map(key => this[key]); }
+    _keys()      { return Object.keys(this).filter(isInteger); }
+    _key(value) { return this._keys().find(key => this[key] == value); }
+    _index(key) { return this._keys().indexOf(key); }
 
     // returns the number of keys
     size() { return this.values().length; }
 
-    push(value) { this[++count] = value; return count; }
+    push(value) {
+        if (this._validate(value)) {
+            this[++count] = value;
+            this._list.push(count); 
+            return count;
+        } else { console.log("Failed to add", value, "."); return; }
+    }
+    unshift(value) {
+        if (this._validate(value)) {
+            this[++count] = value;
+            this._list.unshift(value); 
+            return count;
+        } else { console.log("Failed to add", value, "."); return; }
+    }
     pop() {
-        const key = Object.keys(this).pop()
-        const value = this[key];
+        const key = this._list.pop(); 
+        const value = this[key]; 
         delete this[key];
         return value;
     }
-    shift(value) {
-        const key = Object.keys(this).shift()
-        const value = this[key];
+    shift() {
+        const key = this._list.shift();
+        const value = this[key]; 
         delete this[key];
         return value;
     }
-    unshift() { this[++count] = value; return count; }
 
     //remove the key
-    delete(value)
-
-    //whether or not the key exists
-    has(value) { return this.values().find(this._hasFunc); }
-
-    //returns the value for the given key
-    get(value)
-
+    delete(value) { key = this._key(value); this._list.splice(this._index(key), 1); delete this[key]; }
 }

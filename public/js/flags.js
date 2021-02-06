@@ -96,7 +96,7 @@ class Flags {
     _deleteExistingFlag(name) { this._flags.delete(name); this._methods.delete(name); }
     _list()                   { return [...this._flags.keys()]; }
     _empty()                  { this._flags.clear(); this._methods.clear(); }
-    _clear(...args)            { this._list().forEach(name => this._flag(name).remove(argsList(args))); }
+    _clear(...args)            { this._list().forEach(name => this._flag(name).remove(smoothArray(args))); }
     _exists(name)             { return this._flags.has(name); } //this._list().includes(name); }
 
     //Flag methods

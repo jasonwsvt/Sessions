@@ -75,7 +75,7 @@ function makeArray(values) {
 }
 
 //returns one single-level array of arguments, regardless of whether the arguments were given in an array
-function argsList() {
+function smoothArray() {
     var args = [...arguments[0]], num = 0, index;
     while(true) {
         index = args.findIndex(arg => isArray(arg));
