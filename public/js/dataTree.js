@@ -12,27 +12,27 @@ class DataTree extends Flags {
     }
 
     //DataTree methods
+    size() { return this.ids().length(); }
+    isEmpty() { return this._data == {}; }
+    clear() { this._data = {}; }
+
     export() { return this._data; }
-    import(data) {
-        throwError(isDataTree, data);
-        if (Object.keys(this._data).length) { this.clear(); }
-        this._data = data;
-    }
     exportJSON() { return JSON.stringify(this._data); }
-    importJSON(data) { if (isDataTree(data)) { this._data = data; } }
     exportToSessionStorage(name) { sessionStorage.setItem(name, this.exportJSON()); }
     exportToLocalStorage(name) { localStorage.setItem(name, this.exportJSON()); }
+
+    import(data) { throwError(isDataTree, data); this._data = data; }
+    importJSON(json) { this.import(JSON.parse(json)); }
     importFromSessionStorage(name) { this.importJSON(sessionStorage.getItem(name)); }
     importFromLocalStorage(name) { this.importJSON(localStorage.getItem(name)); }
-    size() { return ids().length(); }
-    isDataTree(data) {
+
+    isDataTree(data, parentId) {
         const keys = Object.keys(data);
         return (isObject(data) &&
             keys.includes("id") &&
-            (keys.find(key => key.endsWith("Id")) || keys.find(key => key.endsWith("s"))));
+            (!keys.includes("parentId") || data.parentId == parentId) &&
+            (!keys.includes("children") || data.children.every(child => this.isDataTree(child, id))));
     }
-    isEmpty() { return this._data == {}; }
-    clear() { this._data = {}; }
 
 
     //Record creation, reading, updating, deletion
@@ -113,6 +113,7 @@ class DataTree extends Flags {
         return ids;
     }
     
+
     descendantIds(id) { return this._ids(this.record(id, data)).splice(ids.indexOf(id), 1); }
 
     unionIds(dataTree) {
@@ -120,47 +121,26 @@ class DataTree extends Flags {
         return [...new Set(this.ids().concat(dataTree.ids()))];
     }
 
-    //returns a list of ids that exist in both the given data and the local data.
-    commonIds(dataTree) {
-        return this.unionIds(dataTree).filter(id => this.ids().includes(id) && dataTree.ids().includes(id));
+    compareIds(dataTree, inSet1, inSet2) {
+        const set1 = this.ids();
+        const set2 = dataTree.ids();
+        return this.unionIds(dataTree).filter(id => set1.includes(id) == inSet1 && set2.includes(id) == inSet2);
     }
-
-    //returns a list of ids that don't exist in both the given data and the local data.
-    exclusiveIds(dataTree) {
-        return this.unionIds(dataTree).filter(id => !(dataTree.ids().includes(id) && this.ids().includes(id)));
-    }
-
-    //returns a list of ids that exist in the given data but don't exist in the local data.
-    absentIds(dataTree) {
-        return this.unionIds(dataTree).filter(id => dataTree.ids().includes(id) && !this.ids().includes(id));
-    }
-
-    //returns a list of ids that exist in the local data but don't exist in the given data.
-    uniqueIds(dataTree) {
-        return this.unionIds(dataTree).filter(id => this.ids().includes(id) && !dataTree.ids().includes(id));
-    }
+    commonIds(dataTree)    { return this.compareIds(dataTree, true,  true); }
+    uniqueIds(dataTree)    { return this.compareIds(dataTree, true,  false); }
+    absentIds(dataTree)    { return this.compareIds(dataTree, false, true); }
+    exclusiveIds(dataTree) { return this.uniqueIds(dataTree).concat(this.absentIds(dataTree)); }
 
 
     //Methods for editing and deleting record parameters
-    editParameter(id, name, value) {
+    edit(id, names, values) {
         throwError(isInteger, id);
-        throwError(isString(name));
-        const path = this.indexPath(id);
-        const group = this.idPath(id).map(id => this.childrenName(id));
-        switch (path.length) {
-            case 1: this._data[group[0]][path[0]][name] = value; break;
-            case 2: this._data[group[0]][path[0]][group[1]][path[1]][name] = value; break;
-            case 3: this._data[group[0]][path[0]][group[1]][path[1]][group[2]][path[2]][name] = value; break;
-        }
-    }
-
-    editParameters(id, names, values) {
-        throwError(isInteger, id);
-        throwError(isArrayOfStrings(names));
+        if (!isArray(names)) { names = [names]; }
+        if (!isARray(values)) { values = [values]; }
         if (names.length != values.length) { throw new Error("names and values must be arrays of the same length"); }
-        var name, value;
         const path = this.indexPath(id);
         const group = this.idPath(id).map(id => this.childrenName(id));
+        var name, value;
         for (i = 0; index < names.length; i++) {
             name = names[i];
             value = values[i]
@@ -171,10 +151,6 @@ class DataTree extends Flags {
             }
         }
     }
-
-    deleteParameter(id, key) {}
-    deleteParameters(id, keys) {}
-
 
     //Methods for two DataTrees
 
