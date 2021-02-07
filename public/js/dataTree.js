@@ -1,9 +1,6 @@
 //a DataTree is an object with three characteristic parameters:
 // 1) .id that signifies the id,
 // 2) .children, if it exists, is an array of DataTrees, and
-
-const e = require("express");
-
 // 3) .parentId, if it exists, signifies that it is a child.
 class DataTree extends Flags {
     _data;
@@ -32,9 +29,9 @@ class DataTree extends Flags {
     isDataTree(data, parentId) {
         const keys = Object.keys(data);
         return (isObject(data) &&
-            "id" in data &&
-            (!"parentId" in data || data.parentId == parentId) &&
-            (!"children" in data || data.children.every(child => this.isDataTree(child, id))));
+            data.hasOwnProperty("id") &&
+            (!data.hasOwnProperty("parentId") || data.parentId == parentId) &&
+            (!data.hasOwnProperty("children") || data.children.every(child => this.isDataTree(child, id))));
     }
 
 
@@ -46,28 +43,9 @@ class DataTree extends Flags {
     insert(record) {
         throwError(isDataTree, record);
         if (this.has(record.id) && this.hasParent(id)) {
-            record.parentId = this.parentId(id);
-            const path = this.indexPath(record.parentId);
-            switch (path.length) {
-                case 1:
-                    if (!children in this._data) {
-                        this._data.children = [];
-                    }
-                    this._data.children.push(record);
-                    break;
-                case 2:
-                    if (!children in this._data.children[path[0]]) {
-                        this._data.children[path[0]].children = [];
-                    }
-                    this._data.children[path[0]].children.push(record);
-                    break;
-                case 3:
-                    if (!children in this._data.children[path[0]].children[path[1]]) {
-                        this._data.children[path[0]].children[path[1]].children = [];
-                    }
-                    this._data.children[path[0]].children[path[1]].children.push(record);
-                    break;
-            }
+            parent = this.record(record.parentId);
+            if (!parent.hasOwnProperty("children")) { parent.children = [record]; }
+            else { parent.children.push(record); }
         }
         else { this.import(record); }
     }
@@ -80,24 +58,7 @@ class DataTree extends Flags {
         if (names.length != values.length) { throw new Error("names and values must be arrays of the same length"); }
         const path = this.indexPath(id);
         var name, value;
-        for (i = 0; i < names.length; i++) {
-            name = names[i];
-            value = values[i];
-            if (value == undefined) {
-                switch (path.length) {
-                    case 1: delete this._data.children[path[0]][name]; break;
-                    case 2: delete this._data.children[path[0]].children[path[1]][name]; break;
-                    case 3: delete this._data.children[path[0]].children[path[1]].children[path[2]][name]; break;
-                }
-            }
-            else {
-                switch (path.length) {
-                    case 1: this._data.children[path[0]][name] = value; break;
-                    case 2: this._data.children[path[0]].children[path[1]][name] = value; break;
-                    case 3: this._data.children[path[0]].children[path[1]].children[path[2]][name] = value; break;
-                }
-            }
-        }
+        names.forEach((name, index) => { this.record(id)[name] = values[index]; });
     }
 
     delete()  {
@@ -107,18 +68,11 @@ class DataTree extends Flags {
         var path, group;
         ids = this.mostAncestral(ids);
         this.deleted.push(this.records(ids));
-
+        if (ids.length == 1 && this.tier(ids[0]) == 0) { this.data = {}; return; }
         ids.forEach(id => {
-            path = this.indexPath(id);
-            console.log(id, path, path.length);
-            if (path === true) { data = {}; }
-            else {
-                switch (path.length) {
-                    case 1: this._data.children.splice(path[0],1); break;
-                    case 2: this._data.children[path[0]].children.splice(path[1],1); break;
-                    case 3: this._data.children[path[0]].children[path[1]].children.splice(path[3],1); break;
-                }
-            }
+            const parentId = this.parentId(id);
+            const index = this.indexPath(id).splice(-1, 1);
+            this.record(parentId).children.splice(index, 1);
         });
     }
 
@@ -198,6 +152,8 @@ class DataTree extends Flags {
 
     descendantIds(id) { return this._ids(this.record(id, data)).splice(ids.indexOf(id), 1); }
 
+
+    //Methods for two DataTrees
     unionIds(dataTree) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
         return [...new Set(this.ids().concat(dataTree.ids()))];
@@ -212,78 +168,6 @@ class DataTree extends Flags {
     uniqueIds(dataTree)    { return this.compareIds(dataTree, true,  false); }
     absentIds(dataTree)    { return this.compareIds(dataTree, false, true); }
     exclusiveIds(dataTree) { return this.uniqueIds(dataTree).concat(this.absentIds(dataTree)); }
-
-    //Methods for two DataTrees
-
-
-
-    //Private methods
-    //Returns an array of indices, one index for each set of children
-    _indexPath(id, data) {
-        throwError(isInteger, id);
-        throwError(isDataTree, data);
-        var path;
-        if (data.id == id) { return []; }
-        else {
-            if (this._dataHasChildren(data)) {
-                path = data.children.map((child, index) => {
-                    const p = this._indexPath(id, child);
-                    return (child.id == id) ? [index]
-                         : (isArray(p)) ? [index, ...p]
-                         : false;
-    
-                }).find(p => isArray(p));
-                return (path === undefined) ? false : path;
-            }
-            else { return false; }
-        }
-    }
-
-    _idPath(id, data) {
-        throwError(isInteger, id);
-        throwError(isDataTree, data);
-        var path = false;
-        if (data.id == id) { return [id]; }
-        else {
-            if (this._dataHasChildren(data)) {
-                path = data.children.map((child) => {
-                    const p = this._idPath(id, child);
-                    return (isArray(p)) ? [data.id, ...p]
-                         : false;
-    
-                }).find(p => isArray(p));
-                return (path === undefined) ? false : path;
-            }
-            else { return false; }
-        }
-    }
-
-    _dataKeys(dataTree) { throwError(isDataTree, dataTree); return Object.keys(dataTree); }
-
-    _dataHasChildren(data) {
-        throwError(isDataTree, data);
-        return (children in data && isArray(data.children) && data.children.length); 
-    }
-
-    //Find the id in the given data and return the data for the record
-    _record(id, data) {
-        throwError(isInteger, id);
-        throwError(isDataTree, data);
-        const path = this.indexPath(id, data);
-        if (path === true) { return data; }
-        if (isArray(path)) {
-            path.forEach(index => { data = data.children[index] });
-            return data;
-        }
-    }
-
-    //Return all the ids found in the given data
-    _ids(data) {
-        throwError(isDataTree, data);
-        return (this._dataHasChildren(data))
-            ? [data.id].concat(...data.children.map(child => this._ids(child)))
-            : [data.id];
-    }
 
     //Calls isNewer for every given id in the given dataTree, and returns all the ids that returned true
     newerIds(dataTree) {
@@ -333,7 +217,7 @@ class DataTree extends Flags {
         const identical = this.identicalIds();
         return this.commonIds(dataTree).filter(id => !identical.includes(id));
     }
-
+    
     merge(records) {
         throwError(isArrayOfDataTrees, records);
         records.forEach(record => this.insert(record));
@@ -365,7 +249,8 @@ class DataTree extends Flags {
         this.mergeIds(this.absentIds(dataTree), dataTree);
     }
 
-    _mergeFlagged(flag, dataTree) {
+    //Merge this.data and dataTree based on the internal flagged (e.g. selected) list
+    mergeFlagged(flag, dataTree) {
         if (!dataTree.flagExists(flag)) {
             throw new Error("Flag doesn't exist (" + flag + ").");
         }
@@ -375,7 +260,80 @@ class DataTree extends Flags {
         this.mergeIds(dataTree[flag + "Method"]("list"), dataTree);
     }
 
-    mergeSelected(dataTree) { this._mergeFlagged("select", dataTree); }
+    //Merge this.data and dataTree based on the internal selected list.
+    mergeSelected(dataTree) { this.mergeFlagged("select", dataTree); }   
+
+
+
+    //Private methods
+    //Returns an array of indices, one index for each set of children
+    _indexPath(id, data) {
+        throwError(isInteger, id);
+        throwError(isDataTree, data);
+        var path;
+        if (data.id == id) { return []; }
+        else {
+            if (this._dataHasChildren(data)) {
+                path = data.children.map((child, index) => {
+                    const p = this._indexPath(id, child);
+                    return (child.id == id) ? [index]
+                         : (isArray(p)) ? [index, ...p]
+                         : false;
+    
+                }).find(p => isArray(p));
+                return (path === undefined) ? false : path;
+            }
+            else { return false; }
+        }
+    }
+
+    _idPath(id, data) {
+        throwError(isInteger, id);
+        throwError(isDataTree, data);
+        var path = false;
+        if (data.id == id) { return [id]; }
+        else {
+            if (this._dataHasChildren(data)) {
+                path = data.children.map((child) => {
+                    const p = this._idPath(id, child);
+                    return (isArray(p)) ? [data.id, ...p]
+                         : false;
+    
+                }).find(p => isArray(p));
+                return (path === undefined) ? false : path;
+            }
+            else { return false; }
+        }
+    }
+
+    _dataKeys(dataTree) { throwError(isDataTree, dataTree); return Object.keys(dataTree); }
+
+    _dataHasChildren(data) {
+        throwError(isDataTree, data);
+        return (data.hasOwnProperty("children") && isArray(data.children) && data.children.length); 
+    }
+
+    //Find the id in the given data and return the data for the record
+    _record(id, data) {
+        throwError(isInteger, id);
+        throwError(isDataTree, data);
+        const path = this.indexPath(id, data);
+        if (path === true) { return data; }
+        if (isArray(path)) {
+            path.forEach(index => { data = data.children[index] });
+            return data;
+        }
+    }
+
+    //Return all the ids found in the given data
+    _ids(data) {
+        throwError(isDataTree, data);
+        return (this._dataHasChildren(data))
+            ? [data.id].concat(...data.children.map(child => this._ids(child)))
+            : [data.id];
+    }
+
+
 
 
     testing() {
