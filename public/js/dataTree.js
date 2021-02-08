@@ -3,7 +3,9 @@
 // 2) .children, if it exists, is an array of DataTrees, and
 // 3) .parentId, if it exists, signifies that it is a child.
 class DataTree extends Flags {
-    _data;
+    _data = {};
+    _indexPaths = [];
+    _idPaths = [];
     
     constructor(data = {}) {
         super("addFlag", false, false, "flagExists", false, false);
@@ -90,8 +92,25 @@ class DataTree extends Flags {
     record(id)    { return this._record(id, this._data); }
     has()         { return smoothArray(arguments).every(id => isInteger(this.tier(id))); }
     keys(id)      { throwError(isInteger, id); return (this.has(id)) ? this._dataKeys(this.record(id)) : undefined; }
-    indexPath(id) { return this._indexPath(id, this._data); }
-    idPath(id)    { return this._idPath(id, this._data); }
+
+    indexPath(id) {
+        var path = this._indexPaths.find(path => path.id == id);
+        if (!path) {
+            path = this._indexPath(id, this._data);
+            if (path) { this._indexPaths.push({ id: id, path: path }); }
+        }
+        return path;
+    }
+
+    idPath(id)    {
+        var path = this._idPaths.find(path => path.id == id);
+        if (!path) {
+            path = this._idPath(id, this._data);
+            if (path) { this._idPaths.push({ id: id, path: path }); }
+        }
+        return path;
+    }
+
     tier(id)      { const t = this._indexPath(id, this._data); return (t === true) ? 0 : t.length; }
 
     //Parent methods
@@ -266,7 +285,7 @@ class DataTree extends Flags {
 
 
     //Private methods
-    //Returns an array of indices, one index for each set of children
+    //Returns an array of indices, one index for each array of children
     _indexPath(id, data) {
         throwError(isInteger, id);
         throwError(isDataTree, data);
@@ -287,6 +306,7 @@ class DataTree extends Flags {
         }
     }
 
+    //Returns an array of indices, each index containing a child id
     _idPath(id, data) {
         throwError(isInteger, id);
         throwError(isDataTree, data);

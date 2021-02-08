@@ -1,23 +1,24 @@
 class List {
-    _list = [];
+    _keys = [];
+    _values = [];
     _count = -1;
     
-    constructor(validate = false, has = false) {
-        if (validation != false) { this._validate = validate; }
+    constructor(keys = false, validate = false, has = false) {
+        this._keys = (keys == false) ? false : [];
+        if (validate != false) { this._validate = validate; }
         if (has != false) { this.has = has; }
     }
 
-    //sets the single parameter function to call with the value to verify validity
-    _validate(value) { return true; }
-    //sets the two parameter function to call for sorting
+    //Returns whether or not value is valid
+    _validate = (value, values) => { return true; }
 
-    //whether or not the key exists
-    _has = (value, item) => { return value == item; }
+    //returns whether or not the key exists
+    _has = (value, values) => { return values.find(item => item == value); }
     has(value) { return this.values().find(item => this._has(value, item));  }
 
     // returns an array of all values
     values()    { return this._keys().map(key => this[key]); }
-    _keys()      { return Object.keys(this).filter(isInteger); }
+    _keys()     { return Object.keys(this).filter(isInteger); }
     _key(value) { return this._keys().find(key => this[key] == value); }
     _index(key) { return this._keys().indexOf(key); }
 
