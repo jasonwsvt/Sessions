@@ -10,30 +10,46 @@
 class List {
     _keyItems;
     _items = [];
-    _count = -1;
-    set = null;
+    add = null;
     validate = null;
     index = null;
-
     
     constructor(auto = true, validate, index) {
         if (validate != undefined) {
             this._validate = validate;
             if (auto == true) {
                 //Automatic keys and value validation
-                this.set = (value) => {
+                this.add = (value) => {
                     if (this._validate(value, this._items)) {
-                        this._items.push(value);
-                        return this._items.length - 1;
+                        const key = this._items.length;
+                        this._items[key] = value;
+                        return key;
+                    }
+                }
+                this.remove = (value) => {
+                    const i = this.key(value);
+                    if (i != -1) {
+                        delete this._items[i];
+                        return true; }
+                    else {
+                        return false;
                     }
                 }
             }
             else {
                 //Manual keys and value validation
-                this.set = (key, value) => {
+                this.add = (key, value) => {
                     if (isString(key) && !Object.keys(this._items).includes(key) && this._validate(value, this._items)) {
                         this._items[key] = value;
                         return key;
+                    }
+                }
+                this.remove = (key) => {
+                    if (this.has(key)) {
+                        delete this._items[key];
+                        return true; }
+                    else {
+                        return false;
                     }
                 }
             }
@@ -41,33 +57,55 @@ class List {
         else {
             if (auto == true) {
                 //Automatic keys and no value validation
-                this.set = (value) => {
-                    this._items[this._items.length] = value;
-                    return this._items.length - 1;
+                this.add = (value) => {
+                    const key = this._items.length;
+                    this._items[key] = value;
+                    return key;
+            }
+                this.remove = (value) => {
+                    const i = this.key(value);
+                    if (i != -1) {
+                        delete this._items[i];
+                        return true; }
+                    else {
+                        return false;
+                    }
                 }
             }
             else {
                 //Manual keys and no value validation
-                this.set = (key, value) => {
+                this.add = (key, value) => {
                     if (isString(key) && !Object.keys(this._items).includes(key)) {
                         this._items[key] = value;
                         return key;
                     }
                 }
+                this.remove = (key) => {
+                    if (this.has(key)) {
+                        delete this._items[key];
+                        return true; }
+                    else {
+                        return false;
+                    }
+                }
             }
         }
         if (index == undefined) {
-            this.index = (value) => {
-                return this.values().findIndex(key => this._items[key] == value);
+            this._index = (value, values) => {
+                return values.findIndex(key => this._items[key] == value);
             }
         }
     }
 
+
     keys   = ()      => { return Object.keys(this._items); }
+    has    = (key)   => { return this.keys().includes(key); }
+    value  = (key)   => { return (this.has(key)) ? this.values()[this._items.indexOf(key)] : undefined; }
+    
     values = ()      => { return Object.values(this._items); }
-    remove = (key)   => { delete this._items[key]; }
-    value  = (key)   => { return this.values[this._items.indexOf(key)]; }
-    has    = (key)   => { return this.keys.includes(key); }
-    key    = (value) => { return this.keys[this.index(value)]; }
-    find   = (value) => { return this.index(value) != -1; }
+    find   = (value) => { return this._index(value, this.values()) != -1; }
+    key    = (value) => { const i = this._index(value, this.values()); return (i != -1) ? this.keys()[i] : undefined; }
+    
+
 }
+    
