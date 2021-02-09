@@ -1,17 +1,18 @@
-var isFunction         = (v) => { return v && {}.toString.call(v) === '[object Function]'; }
-var isString           = (v) => { return (typeof v == "string"); }
-var isArray            = (v) => { return Array.isArray(v); }
-var isArrayOfObjects   = (v) => { return (isArray(v) && v.every(x => isObject(x))); }
-var isArrayOfStrings   = (v) => { return (isArray(v) && v.every(x => isString(x))); }
-var isArrayOfIntegers  = (v) => { return (isArray(v) && v.every(x => isInteger(x))); }
-var isArrayOfDataTrees = (v) => { return (isArray(v) && v.every(x => isDataTree(x))); }
-var isSingleLevelArray = (v) => { return (isArray(v) && v.every(x => !isArray(x))); }
-var isUndefined        = (v) => { return v == undefined; }
-var isNull             = (v) => { return v == null; }
-var isNumber           = (v) => { return (typeof v === 'number' && isFinite(v)); }
-var isInteger          = (v) => { return !isNaN(v) && parseInt(Number(v)) == v && !isNaN(parseInt(v, 10)); }
-var isBoolean          = (v) => { return (v === true || v === false); }
-var isSecondsFromEpoch = (v) => { return (isInteger(v) && v > 1600000000000); }
+var isFunction         = (v) => v && {}.toString.call(v) === '[object Function]';
+var isString           = (v) => typeof v == "string";
+var isArray            = (v) => Array.isArray(v);
+var isArrayOfObjects   = (v) => isArray(v) && v.every(x => isObject(x));
+var isArrayOfStrings   = (v) => isArray(v) && v.every(x => isString(x));
+var isArrayOfIntegers  = (v) => isArray(v) && v.every(x => isInteger(x));
+var isArrayOfDataTrees = (v) => isArray(v) && v.every(x => isDataTree(x));
+var isSingleLevelArray = (v) => isArray(v) && v.every(x => !isArray(x));
+var isUndefined        = (v) => v == undefined;
+var isNull             = (v) => v == null;
+var isNumber           = (v) => typeof v === 'number' && isFinite(v);
+var isAlphanumeric     = (v) => isNumber(v) || isString(v);
+var isInteger          = (v) => !isNaN(v) && parseInt(Number(v)) == v && !isNaN(parseInt(v, 10));
+var isBoolean          = (v) => v === true || v === false;
+var isSecondsFromEpoch = (v) => isInteger(v) && v > 1600000000000;
 
 var isDataTree = (v) => {
     const keys = Object.keys(v);

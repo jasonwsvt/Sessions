@@ -2,15 +2,14 @@
 // 1) .id that signifies the id,
 // 2) .children, if it exists, is an array of DataTrees, and
 // 3) .parentId, if it exists, signifies that it is a child.
-class DataTree extends Flags {
+class DataTree {
     _data = {};
     _indexPaths = [];
     _idPaths = [];
+    _select = new Flag("select");
     
-    constructor(data = {}) {
-        super("addFlag", false, false, "flagExists", false, false);
-        if (isDataTree(data)) { this._data = data; }
-        this.addFlag("select");
+    constructor(data) {
+        if (this.isDataTree(data)) { this._data = data; }
     }
 
     //DataTree methods
@@ -38,8 +37,6 @@ class DataTree extends Flags {
 
 
     //Record creation, reading, updating, deletion
-    update(id, record) { record.id = id; this.insert(record); }
-
     //If record.id exists in tree and has a parent, the replacement record will take the old record's parentId.
     //If record.id doesn't exist, or record.id doesn't have a parent, the record will take the root.
     insert(record) {
@@ -52,14 +49,14 @@ class DataTree extends Flags {
         else { this.import(record); }
     }
 
+    update(id, record) { record.id = id; this.insert(record); }
+
     //To delete a parameter, value must be undefined
     edit(id, names, values) {
         throwError(isInteger, id);
         if (!isArray(names)) { names = [names]; }
-        if (!isARray(values)) { values = [values]; }
+        if (!isArray(values)) { values = [values]; }
         if (names.length != values.length) { throw new Error("names and values must be arrays of the same length"); }
-        const path = this.indexPath(id);
-        var name, value;
         names.forEach((name, index) => { this.record(id)[name] = values[index]; });
     }
 
@@ -67,15 +64,10 @@ class DataTree extends Flags {
         const ids = smoothArray(arguments);
         throwError(isArrayOfIntegers, ids);
         if (ids.length == 0) { return; }
-        var path, group;
         ids = this.mostAncestral(ids);
         this.deleted.push(this.records(ids));
         if (ids.length == 1 && this.tier(ids[0]) == 0) { this.data = {}; return; }
-        ids.forEach(id => {
-            const parentId = this.parentId(id);
-            const index = this.indexPath(id).splice(-1, 1);
-            this.record(parentId).children.splice(index, 1);
-        });
+        ids.forEach(id => this.record(this.parentId(id)).children.splice(this.indexPath(id).splice(-1, 1), 1));
     }
 
     //Undo last deletion in deletion stack
@@ -280,7 +272,7 @@ class DataTree extends Flags {
     }
 
     //Merge this.data and dataTree based on the internal selected list.
-    mergeSelected(dataTree) { this.mergeFlagged("select", dataTree); }   
+    mergeSelected(dataTree) { this.mergeIds(dataTree.select.values(), dataTree); }
 
 
 

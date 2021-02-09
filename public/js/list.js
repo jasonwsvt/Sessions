@@ -1,40 +1,41 @@
-//Keys can either be false (default)) automatically generated, or
-//                   true) any integer or alphanumeric string starting with an alphabetic character
-//_keyItems is the number of values in the key.
-//_validate(keys, values, input) returns whether or not the input is valid
-//_key(keys, values, input) returns the value of the key
-//_value(keys, values, input) returns the key of the value
-//_has(keys, values, input) returns whether or not the List has the input in the keys
-//_find(keys, values, input) returns whether or not the List has the input in the values
+//Key can be:
+//     1) false (default): automatically generated,
+//     2) true:            any integer or alphanumeric string, or
+//     3) function:        use another function to validate keys
+//_validateValue(value, items) returns whether or not the input is valid
 //By default, List is set up with automatically generated keys
 class List {
-    _keyItems;
     _items = [];
     add = null;
-    validate = null;
+    _validateValue = null;
     index = null;
     
-    constructor(auto = true, validate, index) {
-        if (validate != undefined) {
-            this._validate = validate;
-            if (auto == true) {
+    constructor(key = true, validateValue, index) {
+        if (validateValue != undefined) {
+            this._validateValue = validateValue;
+            if (key == false) {
                 //Automatic keys and value validation
                 this.add = (value) => {
-                    if (this._validate(value, this._items)) {
+                    if (this._validateValue(value, this._items)) {
                         const key = parseInt(this._items.length);
                         this._items.push({ "key": key, "value": value });
                         return key;
                     }
                 }
+                this.toggle = (value) => {
+                    if (this.hasValue(value)) { this.dropValue(value); } else { this.add(value); }
+                }
             }
             else {
+                this._validateKey = (key != true) ? key
+                    : (key, items) => (isAlphanumeric(key)) && !items.find(item => item.key == key);
                 //Manual keys and value validation
                 this.add = (key, value) => {
                     console.log(key, "is string:", isString(key));
                     console.log(key, "is number:", isNumber(key));
                     console.log(key, "is unique:", !this._items.find(item => item.key == key));
-                    console.log(value, "is valid:", this._validate(value, this._items));
-                    if ((isString(key) || isNumber(key)) && !this._items.find(item => item.key == key) && this._validate(value, this._items)) {
+                    console.log(value, "is valid:", this._validateValue(value, this._items));
+                    if (this._validateKey(key, this._items) && this._validateValue(value, this._items)) {
                         this._items.push({ "key": key, "value": value });
                         return key;
                     }
@@ -42,7 +43,7 @@ class List {
             }
         }
         else {
-            if (auto == true) {
+            if (key == false) {
                 //Automatic keys and no value validation
                 this.add = (value) => {
                     const key = this._items.length;
@@ -51,9 +52,11 @@ class List {
                 }
             }
             else {
+                this._validateKey = (key != true) ? key
+                    : (key, items) => (isAlphanumeric(key)) && !items.find(item => item.key == key);
                 //Manual keys and no value validation
                 this.add = (key, value) => {
-                    if ((isString(key) || isNumber(key)) && !this._items.find(item => item.key == key)) {
+                    if (this._validateKey(key, this._items)) {
                         this._items.push({ "key": key, "value": value });
                         return key;
                     }
@@ -77,7 +80,8 @@ class List {
 //            console.log("before", this.keys(), this.values());
             this._items.splice(this._items.findIndex(item => item.key == key), 1);
 //            console.log("after", this.keys(), this.values());
-            return true; }
+            return true;
+        }
         else {
             return false;
         }
@@ -96,5 +100,9 @@ class List {
         return (len != this._items.length);
     }
     dropValues = (values) => { values.forEach(value => this.dropValue(value)); } 
+
+    clear     = ()      => { this._items = []; }
+    size      = ()      => { return this._items.length; }
+    isEmpty   = ()      => { return !this._items.length; }
 }
     
