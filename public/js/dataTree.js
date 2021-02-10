@@ -52,7 +52,7 @@ class DataTree {
         //console.log("Parent record:", this.record(record.parentId))
         if (record.hasOwnProperty("parentId") && this.has(record.parentId)) {
             parent = this.record(record.parentId);
-            console.log(record, record.parentId, parent, this.record(record.parentId));
+            //console.log(record, record.parentId, parent, this.record(record.parentId));
             if (!parent.hasOwnProperty("children")) { parent.children = [record]; }
             else { parent.children.push(record); }
         }
@@ -74,15 +74,13 @@ class DataTree {
         var ids = smoothArray(args);
         throwError(isArrayOfIntegers, ids);
         if (ids.length == 0) { return; }
-        console.log(ids);
-        ids.forEach(id => console.log(id, this.parentId(id), this.tier(ids[0]), this.indexPath(id).splice(-1, 1)[0]));
+        if (this.parentId(ids[0]) == null) { console.trace(); } else { console.log(ids[0]); }
         ids = this.mostAncestral(ids);
-        console.log(ids);
+        if (this.parentId(ids[0]) == null) { console.trace(); } else { console.log(ids[0]); }
         this._deleted.push(this.records(ids));
-        if (ids.length == 1 && this.tier(ids[0]) == 0) { this.data = {}; return; }
+        if (this.tier(ids[0]) == 0) { this.data = {}; return; }
         ids.forEach(id => {
             const parentId = this.parentId(id);
-            console.log(id, parentId, this.indexPath(parentId))
             const index = this.indexPath(parentId).splice(-1, 1)[0];
             this.record(parentId).children.splice(index, 1)
         });
@@ -105,15 +103,21 @@ class DataTree {
 
     indexPath(id) {
         var path = this._indexPaths.find(path => path.id == id);
+        path = (path) ? path.path : false;
+        console.log(id, path);
         if (!path) {
             path = this._indexPath(id, this._data);
             if (path) { this._indexPaths.push({ id: id, path: path }); }
         }
+        console.log(path);
         return path;
     }
 
     idPath(id)    {
         var path = this._idPaths.find(path => path.id == id);
+        //console.log(path);
+        path = (path) ? path.path : false;
+        //console.log(path);
         if (!path) {
             path = this._idPath(id, this._data);
             if (path) { this._idPaths.push({ id: id, path: path }); }
@@ -324,8 +328,8 @@ class DataTree {
 
     //Find the id in the given data and return the data for the record
     _record(id, data) {
-        console.log(id, data);
-        if (this._dataHasChildren(id)) { data.children.map((child) => console.log(id, this._record(id, child))); }
+        //console.log(id, data);
+        //if (this._dataHasChildren(id)) { data.children.map((child) => console.log(id, this._record(id, child))); }
         return (data.id == id) ? data
              : (this._dataHasChildren(data)) ? data.children.map((child) => this._record(id, child)).find(child => child != undefined)
              : undefined;
