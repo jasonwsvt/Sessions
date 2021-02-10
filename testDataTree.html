@@ -5,22 +5,32 @@
 <script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\dataTree.js"></script>
 <script type="text/javascript">
 d = new DataTree();
-console.log("isEmpty:", d.isEmpty());
-console.log("Size:", d.size());
-console.log("Ids:", d.ids());
-console.log("Export:", d.export());
-d.import(d.testing());
-console.log("Export after import:", d.export());
-console.log("Size:", d.size());
-console.log("isEmpty:", d.isEmpty());
-console.log("Ids:", d.ids());
-console.log("isDataTree", d.isDataTree(d.export()));
-d.ids().forEach(id => console.log("d.record(", id, "):", d.record(id)));
-d.ids().forEach(id => console.log("d.has(", id, "):", d.has(id)));
-console.log("Record for bad id:", d.record("sdf"));
-console.log("Record for bad id:", d.record(5));
-console.log("data.has(5):", d.has(5));
-console.log("d.has('sdf'):", d.has("sdf"));
+d.import({ id: 1 });
+//console.log("Size:", d.size())
+//console.log("Record of 1:", d.record(1))
+d.addChild(1, { id: 2 })
+d.addChild(2, { id: 3 })
+d.addChild(2, { id: 4 })
+d.addChild(2, { id: 5 })
+d.addChild(1, { id: 6 })
+d.addChild(1, { id: 7 })
+d.addChild(2, { id: 8 })
+d.addChild(3, { id: 9 })
+console.log("Size:", d.size())
+console.log("Record of 1:", d.record(1))
+console.log("Record of 2:", d.record(2))
+console.log("Record of 3:", d.record(3))
+console.log("Record of 4:", d.record(4))
+console.log("Record of 5:", d.record(5))
+console.log("Record of 6:", d.record(6))
+d.addChild(6, { id: 7 })
+d.addChild(6, { id: 8 })
+d.addChild(6, { id: 9 })
+console.log(d.size())
+console.log("Record of 1:", d.record(1))
+console.log("Record of 2:", d.record(2))
+console.log("Record of 3:", d.record(3))
+console.log(d.delete(8))
 
 </script>
 </body>
