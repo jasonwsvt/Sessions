@@ -10,10 +10,10 @@ class List {
     _validateValue = null;
     index = null;
     
-    constructor(key = true, validateValue, index) {
+    constructor(validateValue, validateKey = true, index) {
         if (validateValue != undefined) {
             this._validateValue = validateValue;
-            if (key == false) {
+            if (validateKey == false) {
                 //Automatic keys and value validation
                 this.add = (value) => {
                     if (this._validateValue(value, this._items)) {
@@ -27,7 +27,7 @@ class List {
                 }
             }
             else {
-                this._validateKey = (key != true) ? key
+                this._validateKey = (validateKey != true) ? validateKey
                     : (key, items) => (isAlphanumeric(key)) && !items.find(item => item.key == key);
                 //Manual keys and value validation
                 this.add = (key, value) => {
@@ -43,7 +43,7 @@ class List {
             }
         }
         else {
-            if (key == false) {
+            if (validateKey == false) {
                 //Automatic keys and no value validation
                 this.add = (value) => {
                     const key = this._items.length;
@@ -52,7 +52,7 @@ class List {
                 }
             }
             else {
-                this._validateKey = (key != true) ? key
+                this._validateKey = (validateKey != true) ? validateKey
                     : (key, items) => (isAlphanumeric(key)) && !items.find(item => item.key == key);
                 //Manual keys and no value validation
                 this.add = (key, value) => {
@@ -64,12 +64,9 @@ class List {
             }
         }
         if (index == undefined) {
-            this._index = (value, items) => {
-                return items.findIndex(item => item.value == value);
-            }
+            this._index = (value, items) => items.findIndex(item => item.value == value);
         }
     }
-
 
     keys     = ()      => { return this._items.map(item => item.key); }
     hasKey   = (key)   => { return !!this._items.find(item => item.key == key); }

@@ -1,0 +1,27 @@
+<html>
+<body>
+<script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\programmingTools.js"></script>
+<script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\list.js"></script>
+<script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\dataTree.js"></script>
+<script type="text/javascript">
+d = new DataTree();
+console.log("isEmpty:", d.isEmpty());
+console.log("Size:", d.size());
+console.log("Ids:", d.ids());
+console.log("Export:", d.export());
+d.import(d.testing());
+console.log("Export after import:", d.export());
+console.log("Size:", d.size());
+console.log("isEmpty:", d.isEmpty());
+console.log("Ids:", d.ids());
+console.log("isDataTree", d.isDataTree(d.export()));
+d.ids().forEach(id => console.log("d.record(", id, "):", d.record(id)));
+d.ids().forEach(id => console.log("d.has(", id, "):", d.has(id)));
+console.log("Record for bad id:", d.record("sdf"));
+console.log("Record for bad id:", d.record(5));
+console.log("data.has(5):", d.has(5));
+console.log("d.has('sdf'):", d.has("sdf"));
+
+</script>
+</body>
+</html>

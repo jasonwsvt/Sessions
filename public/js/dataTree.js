@@ -6,15 +6,15 @@ class DataTree {
     _data = {};
     _indexPaths = [];
     _idPaths = [];
-    _select = new Flag("select");
+    _select = new List((value, items) => (isInteger(value)) && !items.find(item => item.value == value));
     
     constructor(data) {
         if (this.isDataTree(data)) { this._data = data; }
     }
 
     //DataTree methods
-    size() { return this.ids().length(); }
-    isEmpty() { return this._data == {}; }
+    size() { const ids = this.ids(); return (isArray(ids)) ? this.ids().length : 0; }
+    isEmpty() { return Object.keys(this._data) == 0; }
     clear() { this._data = {}; }
 
     export() { return this._data; }
@@ -22,17 +22,16 @@ class DataTree {
     exportToSessionStorage(name) { sessionStorage.setItem(name, this.exportJSON()); }
     exportToLocalStorage(name) { localStorage.setItem(name, this.exportJSON()); }
 
-    import(data) { throwError(isDataTree, data); this._data = data; }
+    import(data) { if (this.isDataTree(data)) { this._data = data; } }
     importJSON(json) { this.import(JSON.parse(json)); }
     importFromSessionStorage(name) { this.importJSON(sessionStorage.getItem(name)); }
     importFromLocalStorage(name) { this.importJSON(localStorage.getItem(name)); }
 
     isDataTree(data, parentId) {
-        const keys = Object.keys(data);
-        return (isObject(data) &&
-            data.hasOwnProperty("id") &&
-            (!data.hasOwnProperty("parentId") || data.parentId == parentId) &&
-            (!data.hasOwnProperty("children") || data.children.every(child => this.isDataTree(child, id))));
+        if (!isObject(data)) { return false; }
+        return (data.hasOwnProperty("id") &&
+              (!data.hasOwnProperty("parentId") || data.parentId == parentId) &&
+              (!data.hasOwnProperty("children") || data.children.every(child => this.isDataTree(child, data.id))));
     }
 
 
@@ -40,7 +39,6 @@ class DataTree {
     //If record.id exists in tree and has a parent, the replacement record will take the old record's parentId.
     //If record.id doesn't exist, or record.id doesn't have a parent, the record will take the root.
     insert(record) {
-        throwError(isDataTree, record);
         if (this.has(record.id) && this.hasParent(id)) {
             parent = this.record(record.parentId);
             if (!parent.hasOwnProperty("children")) { parent.children = [record]; }
@@ -76,13 +74,13 @@ class DataTree {
         this.deleted.pop().forEach(record => { this.insert(record); });
     }
 
-    records() {
-        const ids = smoothArray(arguments);
+    records(...ids) {
+        ids = smoothArray(ids);
         throwError(isArrayOfIntegers, ids);
         return ids.map(id => this._record(id, this._data));
     }
     record(id)    { return this._record(id, this._data); }
-    has()         { return smoothArray(arguments).every(id => isInteger(this.tier(id))); }
+    has(...ids)   { return smoothArray(ids).every(id => isInteger(this.tier(id))); }
     keys(id)      { throwError(isInteger, id); return (this.has(id)) ? this._dataKeys(this.record(id)) : undefined; }
 
     indexPath(id) {
@@ -130,7 +128,6 @@ class DataTree {
     addChild(parentId, record) {
         throwError(isInteger, parentId);
         if (!this.has(parentId)) { throw new Error("Parent ID", parentId, "does not exist."); }
-        throwError(isDataTree, record);
         record.parentId = parentId;
         this.insert(record);
     }
@@ -236,29 +233,13 @@ class DataTree {
 
     mergeIds(ids, dataTree)  {
         throwError(isArrayOfIntegers, ids);
-        throwError(isDataTree, dataTree);
         this.merge(dataTree.mostAncestral(dataTree.records(ids)));
     }
 
-    mergeNewer(dataTree) {
-        throwError(isDataTree, dataTree);
-        this.mergeIds(dataTree.newerIds(this), dataTree);
-    }
-
-    mergeOlder(dataTree) {
-        throwError(isDataTree, dataTree);
-        this.mergeIds(dataTree.olderIds(this), dataTree);
-    }
-
-    mergeDifferent(dataTree) {
-        throwError(isDataTree, dataTree);
-        this.mergeIds(this.differentIds(dataTree), dataTree);
-    }
-
-    mergeAbsent(dataTree) {
-        throwError(isDataTree, dataTree);
-        this.mergeIds(this.absentIds(dataTree), dataTree);
-    }
+    mergeNewer(dataTree)     { this.mergeIds(dataTree.newerIds(this), dataTree); }
+    mergeOlder(dataTree)     { this.mergeIds(dataTree.olderIds(this), dataTree); }
+    mergeDifferent(dataTree) { this.mergeIds(this.differentIds(dataTree), dataTree); }
+    mergeAbsent(dataTree)    { this.mergeIds(this.absentIds(dataTree), dataTree); }
 
     //Merge this.data and dataTree based on the internal flagged (e.g. selected) list
     mergeFlagged(flag, dataTree) {
@@ -279,8 +260,6 @@ class DataTree {
     //Private methods
     //Returns an array of indices, one index for each array of children
     _indexPath(id, data) {
-        throwError(isInteger, id);
-        throwError(isDataTree, data);
         var path;
         if (data.id == id) { return []; }
         else {
@@ -300,8 +279,6 @@ class DataTree {
 
     //Returns an array of indices, each index containing a child id
     _idPath(id, data) {
-        throwError(isInteger, id);
-        throwError(isDataTree, data);
         var path = false;
         if (data.id == id) { return [id]; }
         else {
@@ -318,17 +295,14 @@ class DataTree {
         }
     }
 
-    _dataKeys(dataTree) { throwError(isDataTree, dataTree); return Object.keys(dataTree); }
+    _dataKeys(dataTree) { return Object.keys(dataTree); }
 
     _dataHasChildren(data) {
-        throwError(isDataTree, data);
         return (data.hasOwnProperty("children") && isArray(data.children) && data.children.length); 
     }
 
     //Find the id in the given data and return the data for the record
     _record(id, data) {
-        throwError(isInteger, id);
-        throwError(isDataTree, data);
         const path = this.indexPath(id, data);
         if (path === true) { return data; }
         if (isArray(path)) {
@@ -339,10 +313,12 @@ class DataTree {
 
     //Return all the ids found in the given data
     _ids(data) {
-        throwError(isDataTree, data);
-        return (this._dataHasChildren(data))
-            ? [data.id].concat(...data.children.map(child => this._ids(child)))
-            : [data.id];
+//        console.log([data.id].concat(...data.children.map(child => this._ids(child))));
+        return (data.hasOwnProperty("id"))
+             ? (data.hasOwnProperty("children"))
+                ? [data.id].concat(...data.children.map(child => this._ids(child)))
+                : [data.id]
+             : null;
     }
 
 
@@ -362,27 +338,27 @@ class DataTree {
             "pushToStorageFrequency": 5,
             "useServerStorage": false,
             "pushToServerFrequency": false,
-            "clients": [
+            "children": [
                 {
                     "name": "Self",
                     "id": 242409687387783,
                     "lastEdited": null,
                     "lastOpened": 1610668775,
-                    "userId": 473992495658025,
-                    "issues": [
+                    "parentId": 473992495658025,
+                    "children": [
                         {
                             "name": "New Issue",
                             "id": 183289269562362,
                             "lastEdited": null,
                             "lastOpened": 1610668775,
-                            "clientId": 242409687387783,
-                            "sessions": [
+                            "parentId": 242409687387783,
+                            "children": [
                                 {
                                     "creation": 1610578708,
                                     "id": 783632042579983,
                                     "lastEdited": 1610668330,
                                     "lastOpened": 1610668775,
-                                    "issueId": 183289269562362,
+                                    "parentId": 183289269562362,
                                     "lines": [
                                         "<div><h2 id=\"cursor\">|</h2></div>"
                                     ]
@@ -392,40 +368,40 @@ class DataTree {
                                     "id": 860738253562629,
                                     "lastEdited": null,
                                     "lastOpened": 1610668775,
-                                    "issueId": 183289269562362,
+                                    "parentId": 183289269562362,
                                     "lines": []
                                 }
                             ]
-                        }
-                    ]
-                },
-                {
-                    "name": "New Issue 2",
-                    "id": 183289260562362,
-                    "lastEdited": null,
-                    "lastOpened": 1610668775,
-                    "clientId": 242409687387783,
-                    "sessions": [
-                        {
-                            "creation": 1610578708,
-                            "id": 783632042579083,
-                            "lastEdited": 1610668330,
-                            "lastOpened": 1610668775,
-                            "issueId": 183289260562362,
-                            "lines": [
-                                "<div><h2 id=\"cursor\">|</h2></div>"
-                            ]
                         },
                         {
-                            "creation": 1610557182,
-                            "id": 860708253562629,
+                            "name": "New Issue 2",
+                            "id": 183289260562362,
                             "lastEdited": null,
                             "lastOpened": 1610668775,
-                            "issueId": 183289260562362,
-                            "lines": []
-                        }
+                            "parentId": 242409687387783,
+                            "children": [
+                                {
+                                    "creation": 1610578708,
+                                    "id": 783632042579083,
+                                    "lastEdited": 1610668330,
+                                    "lastOpened": 1610668775,
+                                    "parentId": 183289260562362,
+                                    "lines": [
+                                        "<div><h2 id=\"cursor\">|</h2></div>"
+                                    ]
+                                },
+                                {
+                                    "creation": 1610557182,
+                                    "id": 860708253562629,
+                                    "lastEdited": null,
+                                    "lastOpened": 1610668775,
+                                    "parentId": 183289260562362,
+                                    "lines": []
+                                }
+                            ]
+                        }        
                     ]
-                }
+                },
             ]
         }
     }
@@ -444,27 +420,27 @@ class DataTree {
             "pushToStorageFrequency": 5,
             "useServerStorage": false,
             "pushToServerFrequency": false,
-            "clients": [
+            "children": [
                 {
                     "name": "Self",
                     "id": 242409687387783,
                     "lastEdited": null,
                     "lastOpened": 1610678775,
-                    "userId": 473992495658025,
-                    "issues": [
+                    "parentId": 473992495658025,
+                    "children": [
                         {
                             "name": "New Issue",
                             "id": 183289269562362,
                             "lastEdited": null,
                             "lastOpened": 1610678775,
-                            "clientId": 242409687387783,
-                            "sessions": [
+                            "parentId": 242409687387783,
+                            "children": [
                                 {
                                     "creation": 1610578708,
                                     "id": 783632042579983,
                                     "lastEdited": 1610679330,
                                     "lastOpened": 1610678775,
-                                    "issueId": 183289269562362,
+                                    "parentId": 183289269562362,
                                     "lines": [
                                         "<div><h2 id=\"cursor\">|</h2></div>"
                                     ]
@@ -474,7 +450,7 @@ class DataTree {
                                     "id": 860738253562629,
                                     "lastEdited": 1610669775,
                                     "lastOpened": 1610668775,
-                                    "issueId": 183289269562362,
+                                    "parentId": 183289269562362,
                                     "lines": []
                                 }
                             ]
