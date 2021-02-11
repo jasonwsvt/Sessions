@@ -74,22 +74,24 @@ class DataTree {
         var ids = smoothArray(args);
         throwError(isArrayOfIntegers, ids);
         if (ids.length == 0) { return; }
-        if (this.parentId(ids[0]) == null) { console.trace(); } else { console.log(ids[0]); }
         ids = this.mostAncestral(ids);
-        if (this.parentId(ids[0]) == null) { console.trace(); } else { console.log(ids[0]); }
         this._deleted.push(this.records(ids));
-        if (this.tier(ids[0]) == 0) { this.data = {}; return; }
+        //console.log(this._deleted);
+        if (this.tier(ids[0]) == 0) { this.clear(); return true; }
         ids.forEach(id => {
             const parentId = this.parentId(id);
-            const index = this.indexPath(parentId).splice(-1, 1)[0];
-            this.record(parentId).children.splice(index, 1)
+            const index = this.indexPath(id).splice(-1, 1)[0];
+            //console.log(parentId, index);
+            this.record(parentId).children.splice(index, 1);
+            //console.log(this.record(parentId));
         });
+        return true;
     }
 
     //Undo last deletion in deletion stack
     undoDelete() {
-        if (!isArrayOfDataTrees(this.deleted)) { return; }
-        this.deleted.pop().forEach(record => { this.insert(record); });
+        if (!isArrayOfDataTrees(this._deleted)) { return; }
+        this._deleted.pop().forEach(record => { this.insert(record); });
     }
 
     records(...ids) {
@@ -104,12 +106,12 @@ class DataTree {
     indexPath(id) {
         var path = this._indexPaths.find(path => path.id == id);
         path = (path) ? path.path : false;
-        console.log(id, path);
+        //console.log(id, path);
         if (!path) {
             path = this._indexPath(id, this._data);
             if (path) { this._indexPaths.push({ id: id, path: path }); }
         }
-        console.log(path);
+        //console.log(path);
         return path;
     }
 
@@ -130,8 +132,8 @@ class DataTree {
     //Parent methods
     hasParent(id) { return !!this.tier(id); }
     parentId(id)  { const p = this.idPath(id); return (p.length > 1) ? p.slice(-2, -1)[0] : null; }
-    parentIds() {
-        const ids = smoothArray(arguments);
+    parentIds(...ids) {
+        ids = smoothArray(ids);
         throwError(isArrayOfIntegers, ids);
         return [...new Set(ids.map(id => this.parentId(id)))];
     }
@@ -161,19 +163,27 @@ class DataTree {
     ids() { return this._ids(this._data); }
     tierIds(tier) { throwError(isInteger, tier); this.ids().filter(id => this.tier(id) == tier); }
 
-    mostAncestral() {
-        const ids = smoothArray(arguments);
+    mostAncestral(...ids) {
+        ids = smoothArray(ids);
+        //ids.forEach(id => console.log(this.parentId(id)))
         throwError(isArrayOfIntegers, ids);
         //filters a set of ids to only include those for which none of the others precede it in any path
-        ids.map(id => this.idPath(id)).forEach(path => {
-            while (path.length) {
-                if (ids.includes(path.shift())) {
-                    path.forEach(id => {
-                        if (ids.includes(id)) { ids.splice(ids.indexOf(id), 1); }
-                    });
+        ids.map(id => {
+            var path = this.idPath(id);
+            var id =  this.parentId(path[path.length-1]);
+            //console.log(id, path, this.parentId(id));
+            path.forEach(path => {
+                while (path.length) {
+                    if (ids.includes(path.shift())) {
+                        path.forEach(id => {
+                            if (ids.includes(id)) { ids.splice(ids.indexOf(id), 1); }
+                        });
+                    }
                 }
-            }
+            });
+            //console.log(id, path, this.parentId(id));
         });
+//        ids.forEach(id => console.log(id, this.parentId(id)))
         return ids;
     }
     
