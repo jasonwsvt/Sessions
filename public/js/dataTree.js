@@ -188,25 +188,11 @@ class DataTree {
 
     mostAncestral(...ids) {
         ids = smoothArray(ids);
-        //ids.forEach(id => console.log(this.parentId(id)))
+        //ids.forEach(id => console.log(id, this.idPath(id)))
         throwError(isArrayOfIntegers, ids);
         //filters a set of ids to only include those for which none of the others precede it in any path
-        ids.map(id => {
-            var path = this.idPath(id);
-            var id =  this.parentId(path[path.length-1]);
-            //console.log(id, path, this.parentId(id));
-            path.forEach(path => {
-                while (path.length) {
-                    if (ids.includes(path.shift())) {
-                        path.forEach(id => {
-                            if (ids.includes(id)) { ids.splice(ids.indexOf(id), 1); }
-                        });
-                    }
-                }
-            });
-            //console.log(id, path, this.parentId(id));
-        });
-//        ids.forEach(id => console.log(id, this.parentId(id)))
+        ids = ids.filter(id => !this.hasParent(id) || !this.idPath(this.parentId(id)).find(ancestor => ids.includes(ancestor)));
+        //ids.forEach(id => console.log(id, this.idPath(id)))
         return ids;
     }
     

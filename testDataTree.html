@@ -51,6 +51,9 @@ console.log("Tier 4 Ids:", d.tierIds(4));
 [0,1,2,3].forEach(tier => d.tierIds(tier).forEach(id => { console.log("Id:", id, "Tier:", tier, "Path:", d.idPath(id), "Descendants:", d.descendantIds(id))}))
 d.ids().forEach(id => console.log(id, "ParentId:", d.parentId(id), "ChildIds:", d.childIds(id)))
 console.log(d.export())
+console.log(d.mostAncestral(9, 3))
+console.log(d.mostAncestral(2, 3, 4, 5, 6, 7))
+console.log(d.mostAncestral(2, 3, 4, 5, 6, 7, 8, 9,1))
 
 </script>
 </body>
