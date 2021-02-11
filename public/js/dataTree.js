@@ -38,6 +38,9 @@ class DataTree {
               (!data.hasOwnProperty("children") || data.children.every(child => this.isDataTree(child, data.id))));
     }
 
+    isArrayOfDataTrees(data) {
+        return (isArray(data) && data.every(item => this.isDataTree(item)));
+    }
 
     //Record creation, reading, updating, deletion
     //If record.id exists in tree and has a parent, the replacement record will take the old record's parentId.
@@ -56,23 +59,18 @@ class DataTree {
             if (!parent.hasOwnProperty("children")) { parent.children = [record]; }
             else { parent.children.push(record); }
         }
-        else { this.import(record); console.log("No parentId.  Importing.")}
+        else {
+            console.log("No parentId.  Importing.");
+            this.import(record);
+        }
     }
 
     update(id, record) { record.id = id; this.insert(record); }
 
-    //To delete a parameter, value must be undefined
-    edit(id, names, values) {
-        throwError(isInteger, id);
-        if (!isArray(names)) { names = [names]; }
-        if (!isArray(values)) { values = [values]; }
-        if (names.length != values.length) { throw new Error("names and values must be arrays of the same length"); }
-        names.forEach((name, index) => { this.record(id)[name] = values[index]; });
-    }
-
     delete(...args)  {
         var ids = smoothArray(args);
         throwError(isArrayOfIntegers, ids);
+        ids = ids.filter(id => this.has(id));
         if (ids.length == 0) { return; }
         ids = this.mostAncestral(ids);
         this._deleted.push(this.records(ids));
@@ -90,18 +88,24 @@ class DataTree {
 
     //Undo last deletion in deletion stack
     undoDelete() {
-        if (!isArrayOfDataTrees(this._deleted)) { return; }
-        this._deleted.pop().forEach(record => { this.insert(record); });
+        if (isArray(this._deleted) && this._deleted.length > 0) {
+            if (!this.isArrayOfDataTrees(this._deleted[this._deleted.length - 1])) { return; }
+            console.log(this._deleted);
+            this._deleted.pop().forEach(record => { this.insert(record); });
+        }
     }
 
     records(...ids) {
-        ids = smoothArray(ids);
+        ids = (ids == undefined) ? this.ids()
+            : (isArray(ids)) ? smoothArray(ids)
+            : undefined;
         throwError(isArrayOfIntegers, ids);
         return ids.map(id => this._record(id, this._data));
     }
     record(id)    { return this._record(id, this._data); }
     has(...ids)   { return smoothArray(ids).every(id => isInteger(this.tier(id)));  }
     keys(id)      { throwError(isInteger, id); return (this.has(id)) ? this._dataKeys(this.record(id)) : undefined; }
+    values(id)    { throwError(isInteger, id); return (this.has(id)) ? this._dataValues(this.record(id)) : undefined; }
 
     indexPath(id) {
         var path = this._indexPaths.find(path => path.id == id);
@@ -131,7 +135,11 @@ class DataTree {
 
     //Parent methods
     hasParent(id) { return !!this.tier(id); }
-    parentId(id)  { const p = this.idPath(id); return (p.length > 1) ? p.slice(-2, -1)[0] : null; }
+    parentId(id)  {
+        if (!this.has(id)) { return undefined; }
+        const p = this.idPath(id);
+        return (p.length > 1) ? p.slice(-2, -1)[0] : null;
+    }
     parentIds(...ids) {
         ids = smoothArray(ids);
         throwError(isArrayOfIntegers, ids);
@@ -161,7 +169,10 @@ class DataTree {
 
     //Id methods
     ids() { return this._ids(this._data); }
-    tierIds(tier) { throwError(isInteger, tier); this.ids().filter(id => this.tier(id) == tier); }
+    tierIds(tier) {
+        throwError(isInteger, tier);
+        return this.ids().filter(id => this.tier(id) == tier);
+    }
 
     mostAncestral(...ids) {
         ids = smoothArray(ids);
@@ -193,7 +204,11 @@ class DataTree {
         return record.children.map(child => child.id);
     }
 
-    descendantIds(id) { return this._ids(this.record(id, data)).splice(ids.indexOf(id), 1); }
+    descendantIds(id) {
+        var ids = this._ids(this.record(id));
+        ids.splice(ids.indexOf(id), 1);
+        return ids;
+    }
 
 
     //Methods for two DataTrees
@@ -331,6 +346,7 @@ class DataTree {
     }
 
     _dataKeys(dataTree) { return Object.keys(dataTree); }
+    _dataValues(dataTree) { return Object.values(dataTree); }
 
     _dataHasChildren(data) {
         return (data.hasOwnProperty("children") && isArray(data.children) && data.children.length); 

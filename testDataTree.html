@@ -26,15 +26,30 @@ console.log("Record of 6:", d.record(6))
 d.addChild(6, { id: 7 })
 d.addChild(6, { id: 8 })
 d.addChild(6, { id: 9 })
-console.log(d.size())
+console.log("Size:", d.size())
 console.log("Record of 1:", d.record(1))
 console.log("Record of 2:", d.record(2))
 console.log("Record of 3:", d.record(3))
 console.log("Record of 8:", d.record(8))
-console.log(d.delete(8))
-console.log("Record of 8 after deletion:", d.record(8))
-console.log(d.delete(8));
-
+console.log("Ids before deletion of 9, 8, 5:", d.ids())
+console.log(d.delete(9,8,5))
+console.log("Ids after deletion of 9, 8, 5:", d.ids())
+console.log("Size:", d.size())
+console.log("Attempt to delete nonexistant 8:", d.delete(8));
+d.undoDelete();
+console.log("Ids after undoDelete:", d.ids())
+console.log("Size:", d.size())
+console.log("Keys of 8", d.keys(8))
+console.log("Values of 8", d.values(8))
+console.log("parentId of 8", d.parentId(8))
+console.log("Tier of 8:", d.tier(8))
+console.log("Tier 0 Ids:", d.tierIds(0));
+console.log("Tier 1 Ids:", d.tierIds(1));
+console.log("Tier 2 Ids:", d.tierIds(2));
+console.log("Tier 3 Ids:", d.tierIds(3));
+console.log("Tier 4 Ids:", d.tierIds(4));
+[0,1,2,3].forEach(tier => d.tierIds(tier).forEach(id => { console.log("Id:", id, "Tier:", tier, "Path:", d.idPath(id), "Descendants:", d.descendantIds(id))}))
+d.ids().forEach(id => console.log(id, "ParentId:", d.parentId(id), "ChildIds:", d.childIds(id)))
 </script>
 </body>
 </html>
