@@ -60,6 +60,12 @@ d2 = new DataTree(d.testing())
 d.ids().forEach(id => console.log(d.record(id), d2.record(id)))
 console.log(d2.newerIds(d));
 console.log(d.newerIds(d2));
+console.log(d2.olderIds(d));
+console.log(d.olderIds(d2));
+console.log(d2.differentIds(d));
+console.log(d.differentIds(d2));
+console.log(d2.absentIds(d));
+console.log(d.absentIds(d2));
 
 </script>
 </body>

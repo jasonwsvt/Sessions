@@ -212,48 +212,49 @@ class DataTree {
         return [...new Set(this.ids().concat(dataTree.ids()))];
     }
 
-    compareIds(dataTree, inSet1, inSet2) {
+    compareIds(dataTree, inSet1, inSet2, ids) {
+        if (ids == undefined) { ids = this.unionIds(dataTree); }
         const set1 = this.ids();
         const set2 = dataTree.ids();
-        return this.unionIds(dataTree).filter(id => set1.includes(id) == inSet1 && set2.includes(id) == inSet2);
+        return ids.filter(id => set1.includes(id) == inSet1 && set2.includes(id) == inSet2);
     }
-    commonIds(dataTree)    { return this.compareIds(dataTree, true,  true); }
-    uniqueIds(dataTree)    { return this.compareIds(dataTree, true,  false); }
-    absentIds(dataTree)    { return this.compareIds(dataTree, false, true); }
-    exclusiveIds(dataTree) { return this.uniqueIds(dataTree).concat(this.absentIds(dataTree)); }
+    commonIds(dataTree, ids)    { return this.compareIds(dataTree, true,  true, ids); }
+    uniqueIds(dataTree, ids)    { return this.compareIds(dataTree, true,  false, ids); }
+    absentIds(dataTree, ids)    { return this.compareIds(dataTree, false, true, ids); }
+    exclusiveIds(dataTree, ids) { return this.uniqueIds(dataTree, ids).concat(this.absentIds(dataTree, ids)); }
+
+    dataCompareIds(dataTree, compareFunc, ids) {
+        if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
+        if (ids == undefined) { ids = this.unionIds(dataTree); }
+        if (!isArrayOfIntegers(ids) || !this.isDataTree(dataTree)) { return; }
+        return ids.filter(id => compareFunc(this._record(id), dataTree.record(id)));
+    }
 
     //Calls isNewer for every given id in the given dataTree, and returns all the ids that returned true
-    newerIds(dataTree) {
-        if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        return this.commonIds(dataTree).filter(id => {
-            if (!this.has(id)) { return undefined; }
-            const i = this._record(id);
-            const e = dataTree.record(id);
-            return ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited > e.lastEdited)  ||
-                    (i.creation   > 0 && e.creation   > 0 && i.creation   > e.creation)    ||
-                    (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened > e.lastOpened));
-        });
+    newerIds(dataTree, ids) {
+        const func = (i, e) => ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited > e.lastEdited)  ||
+                                (i.creation   > 0 && e.creation   > 0 && i.creation   > e.creation)    ||
+                                (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened > e.lastOpened));
+        const commonIds = this.commonIds(dataTree, ids);
+        const newerIds = this.dataCompareIds(dataTree, func, commonIds);
+        const absentIds = this.absentIds(dataTree, ids);
+        return newerIds.concat(absentIds);
     }
 
     //Calls _older for every given id in the given dataTree, and returns if all calls returned true
-    olderIds(dataTree) {
-        if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        return this.commonIds(dataTree).filter(id => {
-            if (!this.has(e.id)) { return undefined; }
-            const i = this._record(e.id);
-            const e = dataTree.record(id);
-            return ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited < e.lastEdited)  ||
-                    (i.creation   > 0 && e.creation   > 0 && i.creation   < e.creation)    ||
-                    (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened < e.lastOpened));
-        });
+    olderIds(dataTree, ids) {
+        const func = (i, e) => ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited < e.lastEdited)  ||
+                                (i.creation   > 0 && e.creation   > 0 && i.creation   < e.creation)    ||
+                                (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened < e.lastOpened));
+        const commonIds = this.commonIds(dataTree, ids);
+        const olderIds = this.dataCompareIds(dataTree, func, commonIds);
+        const absentIds = this.absentIds(dataTree, ids);
+        return olderIds.concat(absentIds);
     }
 
     //Returns all ids in dataTree that are common and identical to ones in this.
-    identicalIds(dataTree) {
-        if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        return this.commonIds(dataTree).filter(id => {
-            const internal = this._record(id);
-            const external = dataTree.record(id);
+    identicalIds(dataTree, ids) {
+        const func = (internal, external) => {
             if (internal.length !== external.length) { return false; }
             const externalKeys = Object.keys(external);
             Object.keys(internal).forEach(key => {
@@ -261,14 +262,16 @@ class DataTree {
                 if (internal[key] != external[key]) { return false; }
             });
             return true;
-        });
+        }
+        const commonIds = this.commonIds(dataTree, ids);
+        return this.dataCompareIds(dataTree, func, commonIds);
     }
 
     //Returns all ids in dataTree that are common and not indentical to ones in this.
-    differentIds(dataTree) {
+    differentIds(dataTree, ids) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        const identical = this.identicalIds();
-        return this.commonIds(dataTree).filter(id => !identical.includes(id));
+        const identical = this.identicalIds(dataTree, ids);
+        return this.commonIds(dataTree, ids).filter(id => !identical.includes(id));
     }
     
     merge(records) {
