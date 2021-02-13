@@ -45,13 +45,20 @@ class DataTree {
     //If record.id doesn't exist, or record.id doesn't have a parent, the record will take the root.
     insert(record) {
         if (isObject(record) && !record.hasOwnProperty("id")) { record.id = this._newId(); }
-        if (!this.isDataTree(record) || this.has(record.id)) { return; }
+        if (!this.isDataTree(record)) { return; }
         if (!record.hasOwnProperty("creation")) { record.creation = this._now(); }
         else { record.lastEdited = this._now(); }
         if (record.hasOwnProperty("parentId") && this.has(record.parentId)) {
             parent = this._record(record.parentId);
-            if (!parent.hasOwnProperty("children")) { parent.children = [record]; }
-            else { parent.children.push(record); }
+            if (this.has(record.id) && !this.childIds(parent.id).includes(record.id)) { return; }
+            if (!parent.hasOwnProperty("children")) {                              //Parent has no children
+                parent.children = [record]; }
+            else if (!this.has(record.id)) {                                       //id doesn't exist
+                parent.children.push(record); }
+            else {
+                const index = parent.children.findIndex(r => r.id = record.id);
+                parent.children[index] = record;
+            }
         }
         else {
             this.import(record);
@@ -69,34 +76,6 @@ class DataTree {
             const record = this._record(id);
             keys.forEach((key, index) => record[key] = values[index]);
             record.lastEdited = this._now();
-        }
-    }
-
-    delete(...args)  {
-        var ids = smoothArray(args);
-        throwError(isArrayOfIntegers, ids);
-        ids = ids.filter(id => this.has(id));
-        if (ids.length == 0) { return; }
-        ids = this.mostAncestral(ids);
-        this._deleted.push(this.records(ids));
-        //console.log(this._deleted);
-        if (this.tier(ids[0]) == 0) { this.clear(); return true; }
-        ids.forEach(id => {
-            const parentId = this.parentId(id);
-            const index = this.indexPath(id).splice(-1, 1)[0];
-            //console.log(parentId, index);
-            this._record(parentId).children.splice(index, 1);
-            //console.log(this._record(parentId));
-        });
-        return true;
-    }
-
-    //Undo last deletion in deletion stack
-    undoDelete() {
-        if (isArray(this._deleted) && this._deleted.length > 0) {
-            if (!this.isArrayOfDataTrees(this._deleted[this._deleted.length - 1])) { return; }
-            console.log(this._deleted);
-            this._deleted.pop().forEach(record => { this.insert(record); });
         }
     }
 
@@ -206,6 +185,28 @@ class DataTree {
         return ids;
     }
 
+    select(...ids) {
+        ids = smoothArray(ids);
+        if (!isArrayOfIntegers(ids)) { return; }
+        console.log("Selecting", ...ids)
+        ids.filter(id => this.has(id)).forEach(id => this._select.add(id));
+    }
+    //Newer, Older, Unique all refer to this.  Different is the same either way.  Selected refers to dataTree.
+    selectNewer(dataTree)     { this.select(this.newerIds(dataTree)); }     //Select ids that are newer in this
+    selectOlder(dataTree)     { this.select(this.olderIds(dataTree)); }     //Select ids that are older in this
+    selectDifferent(dataTree) { this.select(this.differentIds(dataTree)); } //Select ids that are different
+    selectUnique(dataTree)    { this.select(this.uniqueIds(dataTree)); }    //Select ids that are unique to this
+    selectSelected(dataTree)  { this.select(dataTree.selected()); }         //Select ids that are selected in dataTree
+
+    selected() {
+        return this._select.values();
+    }
+
+    unselect(...ids) {
+        ids = smoothArray(ids);
+        if (!isArrayOfIntegers(ids)) { return; }
+        ids.forEach(id => this._select.dropValue(id));
+    }
 
     //Methods for two DataTrees
     unionIds(dataTree) {
@@ -238,20 +239,22 @@ class DataTree {
         return ids.filter(id => compareFunc(this._record(id), dataTree.record(id)));
     }
 
+    //Returns all ids absent from the given dataTree and all common ids that are newer in the local dataTree.
     newerIds(dataTree, ids) {
         const func = (i, e) =>
-            (i == undefined) ? true
-          : (e == undefined) ? false
+            (i == undefined) ? false
+          : (e == undefined) ? true
           : ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited > e.lastEdited)  ||
              (i.creation   > 0 && e.creation   > 0 && i.creation   > e.creation)    ||
              (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened > e.lastOpened));
         return this.dataCompareIds(dataTree, func, ids);
     }
 
+    //Returns all ids absent from the given dataTree and all common ids that are older in the local dataTree.
     olderIds(dataTree, ids) {
         const func = (i, e) =>
-            (i == undefined) ? true
-          : (e == undefined) ? false
+            (i == undefined) ? false
+          : (e == undefined) ? true
           : ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited < e.lastEdited)  ||
              (i.creation   > 0 && e.creation   > 0 && i.creation   < e.creation)    ||
              (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened < e.lastOpened));
@@ -286,33 +289,58 @@ class DataTree {
     
     merge(...records) {
         records = smoothArray(records);
-        throwError(isArrayOfDataTrees, records);
+        if (!isArray(records) && records.every(record => this.isDataTree(record))) { return; }
         records.forEach(record => this.insert(record));
     }
 
     mergeIds(ids, dataTree)  {
+        if (isInteger(ids)) { ids = [ids]; }
         if (!isArrayOfIntegers(ids)) { return; }
+        console.log("Merging", ids, dataTree);
         this.merge(dataTree.records(dataTree.mostAncestral(ids)));
     }
 
+    //Newer, Older, Unique, and Selected, all refer to dataTree.  Different is the same either way.
     mergeNewer(dataTree)     { this.mergeIds(dataTree.newerIds(this), dataTree); }
     mergeOlder(dataTree)     { this.mergeIds(dataTree.olderIds(this), dataTree); }
-    mergeDifferent(dataTree) { this.mergeIds(this.differentIds(dataTree), dataTree); }
-    mergeAbsent(dataTree)    { this.mergeIds(this.absentIds(dataTree), dataTree); }
+    mergeDifferent(dataTree) { this.mergeIds(dataTree.differentIds(this), dataTree); }
+    mergeUnique(dataTree)    { this.mergeIds(dataTree.uniqueIds(this), dataTree); }
+    mergeSelected(dataTree)  { this.mergeIds(dataTree.selected(), dataTree); }
 
-    //Merge this._data and dataTree based on the internal flagged (e.g. selected) list
-    mergeFlagged(flag, dataTree) {
-        if (!dataTree.flagExists(flag)) {
-            throw new Error("Flag doesn't exist (" + flag + ").");
-        }
-        if (!Object.keys(dataTree[flag + "Methods"]()).includes("list")) {
-            throw new Error("List method doesn't exist for " + flag + ".");
-        }
-        this.mergeIds(dataTree[flag + "Method"]("list"), dataTree);
+    delete(...ids)  {
+        var ids = smoothArray(ids);
+        throwError(isArrayOfIntegers, ids);
+        ids = ids.filter(id => this.has(id));
+        if (ids.length == 0) { return; }
+        ids = this.mostAncestral(ids);
+        this._deleted.push(this.records(ids));
+        //console.log(this._deleted);
+        if (this.tier(ids[0]) == 0) { this.clear(); return true; }
+        ids.forEach(id => {
+            const parentId = this.parentId(id);
+            const index = this.indexPath(id).splice(-1, 1)[0];
+            //console.log(parentId, index);
+            this._record(parentId).children.splice(index, 1);
+            //console.log(this._record(parentId));
+        });
+        return true;
     }
 
-    //Merge this._data and dataTree based on the internal selected list.
-    mergeSelected(dataTree) { this.mergeIds(dataTree.select.values(), dataTree); }
+    //Newer, Older, Unique, Selected all refer to this.  Different is the same either way.
+    deleteNewer(dataTree)     { this.delete(this.newerIds(dataTree)); }
+    deleteOlder(dataTree)     { this.delete(this.olderIds(dataTree)); }
+    deleteDifferent(dataTree) { this.delete(this.differentIds(dataTree)); }
+    deleteUnique(dataTree)    { this.delete(this.uniqueIds(dataTree)); }
+    deleteSelected()          { this.delete(this.selected()); }
+
+    //Undo last deletion in deletion stack
+    undoDelete() {
+        if (isArray(this._deleted) && this._deleted.length > 0) {
+            if (!this.isArrayOfDataTrees(this._deleted[this._deleted.length - 1])) { return; }
+            console.log(this._deleted);
+            this._deleted.pop().forEach(record => { this.insert(record); });
+        }
+    }
 
 
 

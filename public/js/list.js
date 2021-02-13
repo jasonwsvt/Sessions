@@ -10,12 +10,13 @@ class List {
     _validateValue = null;
     index = null;
     
-    constructor(validateValue, validateKey = true, index) {
+    constructor(validateValue, validateKey = false, index) {
         if (validateValue != undefined) {
             this._validateValue = validateValue;
             if (validateKey == false) {
                 //Automatic keys and value validation
                 this.add = (value) => {
+                    console.log(value);
                     if (this._validateValue(value, this._items)) {
                         const key = parseInt(this._items.length);
                         this._items.push({ "key": key, "value": value });
@@ -31,14 +32,16 @@ class List {
                     : (key, items) => (isAlphanumeric(key)) && !items.find(item => item.key == key);
                 //Manual keys and value validation
                 this.add = (key, value) => {
-                    console.log(key, "is string:", isString(key));
-                    console.log(key, "is number:", isNumber(key));
-                    console.log(key, "is unique:", !this._items.find(item => item.key == key));
-                    console.log(value, "is valid:", this._validateValue(value, this._items));
+                    //console.log(key, "is string:", isString(key));
+                    //console.log(key, "is number:", isNumber(key));
+                    //console.log(key, "is unique:", !this._items.find(item => item.key == key));
+                    //console.log(value, "is valid:", this._validateValue(value, this._items));
                     if (this._validateKey(key, this._items) && this._validateValue(value, this._items)) {
+                        console.log(key, "is valid")
                         this._items.push({ "key": key, "value": value });
                         return key;
                     }
+                    else { console.log("is not valid")}
                 }
             }
         }

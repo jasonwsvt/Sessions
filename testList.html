@@ -4,19 +4,22 @@
 <script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\list.js"></script>
 <script type="text/javascript">
 //list = new List();
-//list = new List(true, (value, items) => isInteger(value) && !items.find(item => item.value == value));
-list = new List(false, (value, items) => (isInteger(value) || isString(value)) && !items.find(item => item.value == value));
-console.log("Add 5, 1:", list.add(5, 1));
-console.log("Add 7, 2:", list.add("7", 2));
-console.log("Add 3, d:", list.add(3, "d"));
-console.log("Add 4, dsf:", list.add(4, "dsf"));
-console.log("Add 354, 5:", list.add("354", 5));
-console.log("Add sdfsd, 5:", list.add("sdfsd", 5));
-console.log("Add sdfsd, 9:", list.add("sdfsd", 9));
-console.log("Add d, 34:", list.add("d", 34));
-console.log("Add m, 324:", list.add("m", 324));
-console.log("Add sdfsd, 45:", list.add("sdfsd", 45));
-console.log("Add E, 4367:", list.add("E", 4367));
+//list = new List((value, items) => isInteger(value) && !items.find(item => item.value == value), false);
+list = new List((value, items) => {
+    console.log(value, isInteger(value));
+    console.log(items, !items.find(item => item.value == value));
+    return (isInteger(value)) && !items.find(item => item.value == value); });
+console.log("Add 1:", list.add(1));
+console.log("Add 2:", list.add(2));
+console.log("Add 3:", list.add(3));
+console.log("Add f:", list.add("f"));
+console.log("Add 5:", list.add("5"));
+console.log("Add sdf5:", list.add("sdf5"));
+console.log("Add sdf9:", list.add("sdf9"));
+console.log("Add 34:", list.add(34));
+console.log("Add 324:", list.add(324));
+console.log("Add sdf45:", list.add("sdf45"));
+console.log("Add 4367:", list.add(4367));
 console.log("Keys:", list.keys());
 console.log("Values:", list.values());
 console.log("DropKey d:", list.dropKey("d"));
