@@ -209,15 +209,21 @@ class DataTree {
 
     //Methods for two DataTrees
     unionIds(dataTree) {
-        if (!dataTree instanceof DataTree) { throw new Error("dataTree of incorrect format."); }
-        return [...new Set(this.ids().concat(this._dataIds(dataTree)))];
+        if (!dataTree instanceof DataTree) { throw new Error("Expecting dataTree."); }
+        //console.log(this.ids());
+        //console.log(this._dataIds(dataTree));
+        return [...new Set(this.ids().concat(dataTree.ids()))];
     }
 
     compareIds(dataTree, inSet1, inSet2, ids) {
-        if (!dataTree instanceof DataTree) { throw new Error("dataTree of incorrect format."); }
+        if (!dataTree instanceof DataTree) { throw new Error("Expecting dataTree"); }
         if (ids == undefined) { ids = this.unionIds(dataTree); }
         const set1 = this.ids();
         const set2 = dataTree.ids();
+        //console.log("unionIds:", ids);
+        //console.log("In", set1, ":", inSet1)
+        //console.log("In", set2, ":", inSet2);
+        //ids.forEach(id => { console.log(id, set1.includes(id) == inSet1, set2.includes(id) == inSet2)})
         return ids.filter(id => set1.includes(id) == inSet1 && set2.includes(id) == inSet2);
     }
     commonIds(dataTree, ids)    { return this.compareIds(dataTree, true,  true, ids); }
@@ -228,11 +234,10 @@ class DataTree {
     dataCompareIds(dataTree, compareFunc, ids) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
         if (ids == undefined) { ids = this.unionIds(dataTree); }
-        if (!isArrayOfIntegers(ids) || !this.isDataTree(dataTree)) { return; }
+        if (!isArrayOfIntegers(ids)) { return; }
         return ids.filter(id => compareFunc(this._record(id), dataTree.record(id)));
     }
 
-    //Calls isNewer for every given id in the given dataTree, and returns all the ids that returned true
     newerIds(dataTree, ids) {
         const func = (i, e) =>
             (i == undefined) ? true
@@ -243,7 +248,6 @@ class DataTree {
         return this.dataCompareIds(dataTree, func, ids);
     }
 
-    //Calls _older for every given id in the given dataTree, and returns if all calls returned true
     olderIds(dataTree, ids) {
         const func = (i, e) =>
             (i == undefined) ? true
@@ -280,14 +284,15 @@ class DataTree {
         return this.dataCompareIds(dataTree, func, ids);
     }
     
-    merge(records) {
+    merge(...records) {
+        records = smoothArray(records);
         throwError(isArrayOfDataTrees, records);
         records.forEach(record => this.insert(record));
     }
 
     mergeIds(ids, dataTree)  {
-        throwError(isArrayOfIntegers, ids);
-        this.merge(dataTree.mostAncestral(dataTree.records(ids)));
+        if (!isArrayOfIntegers(ids)) { return; }
+        this.merge(dataTree.records(dataTree.mostAncestral(ids)));
     }
 
     mergeNewer(dataTree)     { this.mergeIds(dataTree.newerIds(this), dataTree); }

@@ -62,6 +62,14 @@ console.log("d2.addChild(5):", d2.addChild(5));
 console.log("d.addChild(5):", d.addChild(5));
 console.log("d.addChild(8):", d.addChild(8));
 d.ids().forEach(id => console.log(d.record(id), d2.record(id)))
+console.log("d2.commonIds(d):", d2.commonIds(d));
+console.log("d.commonIds(d2):", d.commonIds(d2));
+console.log("d2.uniqueIds(d):", d2.uniqueIds(d));
+console.log("d.uniqueIds(d2):", d.uniqueIds(d2));
+console.log("d2.exclusiveIds(d):", d2.exclusiveIds(d));
+console.log("d.exclusiveIds(d2):", d.exclusiveIds(d2));
+console.log("d2.absentIds(d):", d2.absentIds(d));
+console.log("d.absentIds(d2):", d.absentIds(d2));
 console.log("d2.newerIds(d):", d2.newerIds(d));
 console.log("d.newerIds(d2):", d.newerIds(d2));
 console.log("d2.olderIds(d):", d2.olderIds(d));
@@ -70,14 +78,6 @@ console.log("d2.identicalIds(d):", d2.identicalIds(d));
 console.log("d.identicalIds(d2):", d.identicalIds(d2));
 console.log("d2.differentIds(d):", d2.differentIds(d));
 console.log("d.differentIds(d2):", d.differentIds(d2));
-console.log("d2.commonIds(d):", d2.commonIds(d));
-console.log("d.commonIds(d2):", d.commonIds(d2));
-console.log("d2.uniqueIds(d):", d2.uniqueIds(d));
-console.log("d.uniqueIds(d2):", d.uniqueIds(d2));
-console.log("d2.absentIds(d):", d2.absentIds(d));
-console.log("d.absentIds(d2):", d.absentIds(d2));
-console.log("d2.exclusiveIds(d):", d2.exclusiveIds(d));
-console.log("d.exclusiveIds(d2):", d.exclusiveIds(d2));
 
 </script>
 </body>
