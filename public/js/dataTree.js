@@ -44,6 +44,7 @@ class DataTree {
     //If record.id exists in tree and has a parent, the replacement record will take the old record's parentId.
     //If record.id doesn't exist, or record.id doesn't have a parent, the record will take the root.
     insert(record) {
+        //console.log("got here", record.id)
         if (isObject(record) && !record.hasOwnProperty("id")) { record.id = this._newId(); }
         if (!this.isDataTree(record)) { return; }
         if (!record.hasOwnProperty("creation")) { record.creation = this._now(); }
@@ -61,6 +62,7 @@ class DataTree {
             }
         }
         else {
+            //console.log("got here")
             this.import(record);
         }
     }
@@ -185,24 +187,24 @@ class DataTree {
         return ids;
     }
 
-    select(...ids) {
+    selectIds(...ids) {
         ids = smoothArray(ids);
         if (!isArrayOfIntegers(ids)) { return; }
         console.log("Selecting", ...ids)
         ids.filter(id => this.has(id)).forEach(id => this._select.add(id));
     }
     //Newer, Older, Unique all refer to this.  Different is the same either way.  Selected refers to dataTree.
-    selectNewer(dataTree)     { this.select(this.newerIds(dataTree)); }     //Select ids that are newer in this
-    selectOlder(dataTree)     { this.select(this.olderIds(dataTree)); }     //Select ids that are older in this
-    selectDifferent(dataTree) { this.select(this.differentIds(dataTree)); } //Select ids that are different
-    selectUnique(dataTree)    { this.select(this.uniqueIds(dataTree)); }    //Select ids that are unique to this
-    selectSelected(dataTree)  { this.select(dataTree.selected()); }         //Select ids that are selected in dataTree
+    selectNewer(dataTree)     { this.selectIds(this.newerIds(dataTree)); }     //Select ids that are newer in this
+    selectOlder(dataTree)     { this.selectIds(this.olderIds(dataTree)); }     //Select ids that are older in this
+    selectDifferent(dataTree) { this.selectIds(this.differentIds(dataTree)); } //Select ids that are different
+    selectUnique(dataTree)    { this.selectIds(this.uniqueIds(dataTree)); }    //Select ids that are unique to this
+    selectSelected(dataTree)  { this.selectIds(dataTree.selected()); }         //Select ids that are selected in dataTree
 
     selected() {
         return this._select.values();
     }
 
-    unselect(...ids) {
+    unselectIds(...ids) {
         ids = smoothArray(ids);
         if (!isArrayOfIntegers(ids)) { return; }
         ids.forEach(id => this._select.dropValue(id));
@@ -239,27 +241,42 @@ class DataTree {
         return ids.filter(id => compareFunc(this._record(id), dataTree.record(id)));
     }
 
-    //Returns all ids absent from the given dataTree and all common ids that are newer in the local dataTree.
-    newerIds(dataTree, ids) {
-        const func = (i, e) =>
-            (i == undefined) ? false
-          : (e == undefined) ? true
-          : ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited > e.lastEdited)  ||
-             (i.creation   > 0 && e.creation   > 0 && i.creation   > e.creation)    ||
-             (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened > e.lastOpened));
+    newerIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, "gt"); }
+    mostRecentlyCreated(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "gt", true,  false, false); }
+    mostRecentlyEdited(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, "gt", false, true,  false); }
+    mostRecentlyOpened(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, "gt", false, false, true); }
+    olderIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, "lt"); }
+    leastRecentlyCreated(dataTree, ids) { return this.compareIdTimestamps(dataTree, ids, "lt", true,  false, false); }
+    leastRecentlyEdited(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "lt", false, true,  false); }
+    leastRecentlyOpened(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "lt", false, false, true); }
+
+    //symbol        lt, gt, lte, gte, ne, e  defaults to "e"
+    //creation      true or false            defaults to true
+    //edited        true or false            defaults to true
+    //opened        true or false            defaults to true
+    //ifNotExistsI  true or false            defaults to false
+    //ifNotExistsE  true or false            defaults to true
+    compareIdTimestamps(dataTree, ids, symbol = "e", creation = true, edited = true, opened = true, ifNotExistsI = false, ifNotExistsE = true) {
+        if ([ifNotExistsI, ifNotExistsE, creation, edited, opened].find(arg => !isBoolean(arg)) ||
+            !["lt", "gt", "lte", "gte", "ne", "e"].includes(symbol)) { return; }
+        const func = (i, e) => {
+            if (i == undefined) { return ifNotExistsI; }
+            if (e == undefined) { return ifNotExistsE; }
+            const values = [];
+            if (creation && isInteger(i.creation) && isInteger(e.creation)) { values.push([i.creation, e.creation]); }
+            if (edited   && isInteger(i.edited)   && isInteger(e.edited))   { values.push([i.edited,   e.edited  ]); }
+            if (opened   && isInteger(i.opened)   && isInteger(e.opened))   { values.push([i.opened,   e.opened  ]); }
+            if (values.length == 0) { return; }
+            return !!values.find(value => (symbol == "lt"  && value[0] <  value[1]) ||
+                                          (symbol == "lte" && value[0] <= value[1]) ||
+                                          (symbol == "gt"  && value[0] >  value[1]) ||
+                                          (symbol == "gte" && value[0] >= value[1]) ||
+                                          (symbol == "ne"  && value[0] != value[1]) ||
+                                          (symbol == "e"   && value[0] == value[1]));
+        }
         return this.dataCompareIds(dataTree, func, ids);
     }
 
-    //Returns all ids absent from the given dataTree and all common ids that are older in the local dataTree.
-    olderIds(dataTree, ids) {
-        const func = (i, e) =>
-            (i == undefined) ? false
-          : (e == undefined) ? true
-          : ((i.lastEdited > 0 && e.lastEdited > 0 && i.lastEdited < e.lastEdited)  ||
-             (i.creation   > 0 && e.creation   > 0 && i.creation   < e.creation)    ||
-             (i.lastOpened > 0 && e.lastOpened > 0 && i.lastOpened < e.lastOpened));
-        return this.dataCompareIds(dataTree, func, ids);
-    }
 
     //Returns all ids in dataTree that are common and identical to ones in this.
     identicalIds(dataTree, ids) {
@@ -287,7 +304,7 @@ class DataTree {
         return this.dataCompareIds(dataTree, func, ids);
     }
     
-    merge(...records) {
+    mergeRecords(...records) {
         records = smoothArray(records);
         if (!isArray(records) && records.every(record => this.isDataTree(record))) { return; }
         records.forEach(record => this.insert(record));
@@ -296,8 +313,8 @@ class DataTree {
     mergeIds(ids, dataTree)  {
         if (isInteger(ids)) { ids = [ids]; }
         if (!isArrayOfIntegers(ids)) { return; }
-        console.log("Merging", ids, dataTree);
-        this.merge(dataTree.records(dataTree.mostAncestral(ids)));
+        console.log("Merging", ids, "of dataTree with", this.ids());
+        this.mergeRecords(dataTree.records(dataTree.mostAncestral(ids)));
     }
 
     //Newer, Older, Unique, and Selected, all refer to dataTree.  Different is the same either way.

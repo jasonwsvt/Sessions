@@ -81,18 +81,22 @@ console.log("d.newerIds(d2):", ...d.newerIds(d2));
 //console.log("d.identicalIds(d2):", ...d.identicalIds(d2));
 //console.log("d2.differentIds(d):", ...d2.differentIds(d));
 //console.log("d.differentIds(d2):", ...d.differentIds(d2));
-console.log("d.select(d.newerIds(d2)):", d2.select(d2.newerIds(d)));
+console.log("d.selectIds(d.newerIds(d2)):", d2.selectIds(d.newerIds(d2)));
 console.log("d.selected():", d2.selected())
 console.log("d.ids() before merge:", ...d.ids())
 console.log("d2.ids() before merge:", ...d2.ids())
-console.log("d.record(1).creation before merge:", d.record(1).creation)
+console.log("d.record(1) before merge:", d.record(1))
+d2.edit(1, "name", "test")
+console.log("d2.record(1) before merge:", d2.record(1))
 //d2.mergeNewer(d)
 d.mergeSelected(d2)
 console.log("d.ids() after merge:", ...d.ids())
 console.log("d2.ids() after merge:", ...d2.ids())
-console.log("d.record(1).creation after merge:", d.record(1).creation)
-
-
+console.log("d.record(1) after merge:", d.record(1))
+console.log("storing in session storage as test", d.exportToSessionStorage("test"));
+d3 = new DataTree();
+d3.importFromSessionStorage("test");
+console.log(d3.export());
 </script>
 </body>
 </html>
