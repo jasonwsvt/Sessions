@@ -159,7 +159,7 @@ class DataTree {
     }
 
     //Id methods
-    ids() { return this._dataIds(this._data); }
+    ids(data = this._data) { return this._dataIds(data); }
     tierIds(tier) {
         throwError(isInteger, tier);
         return this.ids().filter(id => this.tier(id) == tier);
@@ -180,6 +180,16 @@ class DataTree {
         const record = this._record(id);
         return record.children.map(child => child.id);
     }
+
+    sortedChildIds(id, method)                         { return this.childIds(id).sort(method); }
+    childIdsSortedByCreation(id)                       { return this.sortedChildIds(id, (a, b) => a.creation   < b.creation); }
+    childIdsSortedByLastEdited(id)                     { return this.sortedChildIds(id, (a, b) => a.lastEdited < b.lastEdited); }
+    childIdsSortedByLastOpened(id)                     { return this.sortedChildIds(id, (a, b) => a.lastOpened < b.lastOpened); }
+    childIdsSortedByCreationReversed(id)               { return this.sortedChildIds(id, (a, b) => a.creation   > b.creation); }
+    childIdsSortedByLastEditedReversed(id)             { return this.sortedChildIds(id, (a, b) => a.lastEdited > b.lastEdited); }
+    childIdsSortedByLastOpenedReversed(id)             { return this.sortedChildIds(id, (a, b) => a.lastOpened > b.lastOpened); }
+    childIdsSortedAlphabeticallyByKey(id, key)         { return this.sortedChildIds(id, (a, b) => a[key].localeCompare(b[key])); }
+    childIdsSortedAlphabeticallyByKeyReversed(id, key) { return this.sortedChildIds(id, (a, b) => a[key].localeCompare(b[key])); }
 
     descendantIds(id) {
         var ids = this._dataIds(this._record(id));

@@ -4,8 +4,8 @@
 class UserDataUtility {
     _userUtilities = null;
     _group = null;
-    localData = false;
-    loadedData = false;
+    localData;
+    loadedData;
     deletedRecords = [];
 
     _buttonIcon    = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-person-lines-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm2 9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/></svg>';
@@ -577,20 +577,20 @@ class UserDataUtility {
 
     _buildRecords() {
         const self = this;
-        if (!this.localData) { this.localData.set(this.currentUser.pullRecords()); }
-        //clear scrollAreaDiv
         this.currentUser.pushToStorage();
+        if (this.localData.isEmpty()) { this.localData.import(this.currentUser.pullRecords()); }
+        //clear scrollAreaDiv
         this.scrollAreaDiv.empty();
         this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 22) + "px");
         this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
         //call buildRecord with data
         //console.log(localData, this.loadedData);
-        this._buildRecord(this.localData.id);
-        if (this.loadedData != false) {
-            if (this.localData.id != this.loadedData.id) {
+        this._buildRecord(this.localData.export());
+        if (!this.loadedData.isEmpty()) {
+            this.loadDiv.addClass("hidden");
+            if (this.localData.export().id != this.loadedData.export().id) {
                 this._buildRecord(this.loadedData.id);
             }
-            this.loadDiv.addClass("hidden");
         }
         else {
             this.loadDiv.removeClass("hidden");
@@ -643,63 +643,49 @@ class UserDataUtility {
         //ctrl additionally selects all descendants.
         this.localSelects.on("click", function (e) {
             const id = parseInt($(this).parent().parent().parent().parent().prop("id").split("_")[1]);
-            var ids = (e.ctrlKey) ? [] : self.localDescendantIds(id);
+            var ids = (e.ctrlKey) ? [id] : self.localData.ids(self.localData.record(id));
             //console.log(ids);
-            if (self.localRecordIsSelected(id)) {
-                self.unselectLocalRecord(id);
-                if (ids.length) { self.unselectLocalRecords(ids); }
-            }
-            else {
-                self.selectLocalRecord(id);
-                if (ids.length) { self.selectLocalRecords(ids); }
-            }
-            ids = [id, ...ids];
+            if (self.localData.isSelected(id)) { self.unselectLocalRecords(ids); }
+            else {                               self.selectLocalRecords(ids);   }
             //console.log(ids);
-            self.updateChildrenSelectStatuses(self.rowParentIds(ids));
+            self.updateChildrenSelectStatuses(self.localData.parentIds(ids));
         });
 
         //click event for select loaded record buttons ("loaded_" + id)
         //ctrl additionally selects all descendants.
         this.loadedSelects.on("click", function (e) {
             const id = parseInt($(this).parent().parent().parent().parent().prop("id").split("_")[1]);
-            var ids = (e.ctrlKey) ? [] : self.localDescendantIds(id);
-            if (self.loadedRecordIsSelected(id)) {
-                self.unselectLoadedRecord(id);
-                if (ids.length) { self.unselectLoadedRecords(ids); }
-            }
-            else {
-                self.selectLoadedRecord(id);
-                if (ids.length) { self.selectLoadedRecords(ids); }
-            }
-            ids = [id, ...ids];
-            self.updateChildrenSelectStatuses(self.rowParentIds(ids));
+            var ids = (e.ctrlKey) ? [id] : self.loadedData.ids(self.loadedData.record(id));
+            if (self.loadedData.isSelected(id)) { self.unselectLoadedRecords(ids); }
+            else {                                self.selectLoadedRecords(ids); }
+            self.updateChildrenSelectStatuses(self.loadedData.parentIds(ids));
         });
 
         //click event for select local Children buttons ("local_" + id + "_children")
         this.localChildrenSelects.on("click", function (e) {
             const id = parseInt($(this).parent().parent().parent().parent().prop("id").split("_")[1]);
             //console.log(id, self.localChildIds(id));
-            const ids = (e.ctrlKey) ? self.localChildIds(id) : self.localDescendantIds(id);
+            const ids = (e.ctrlKey) ? self.localData.childIds(id) : self.localData.descendantIds(id);
             if (self.localChildrenSelectIsSelected(id)) {
                 self.unselectLocalChildrenSelect(id); self.unselectLocalRecords(ids);
             }
             else {
                 self.selectLocalChildrenSelect(id);   self.selectLocalRecords(ids);
             }
-            self.updateChildrenSelectStatuses(self.rowParentIds(ids));
+            self.updateChildrenSelectStatuses(self.localData.parentIds(ids));
         });
 
         //click event for select loaded Children buttons ("loaded_" + id + "_children")
         this.loadedChildrenSelects.on("click", function (e) {
             const id = parseInt($(this).parent().parent().parent().parent().prop("id").split("_")[1]);
-            const ids = (e.ctrlKey) ? self.loadedChildIds(id) : self.loadedDescendantIds(id);
+            const ids = (e.ctrlKey) ? self.loadedData.childIds(id) : self.loadedData.descendantIds(id);
             if (self.loadedChildrenSelectIsSelected(id)) {
                 self.unselectLoadedChildrenSelect(id); self.unselectLoadedRecords(ids);
             }
             else {
                 self.selectLoadedChildrenSelect(id);   self.selectLoadedRecords(ids);
             }
-            self.updateChildrenSelectStatuses(self.rowParentIds(ids));
+            self.updateChildrenSelectStatuses(self.loadedData.parentIds(ids));
         });
 
         [this.rowButtons, this.childrenRowsButtons, this.localSelects, this.loadedSelects, this.localChildrenSelects, this.loadedChildrenSelects].forEach(c => {
@@ -720,10 +706,10 @@ class UserDataUtility {
     }
 
     _buildRecord(id) {
-        const local = (this.localData.exists(id)) ? this.localData.record(id) : false;
-        const loaded = (this.loadedData.exists(id)) ? this.loadedData.record(id) : false;
-        const tier = this.rowTier(id);
-        var keys = [], localRecord, loadedRecord, parentId;
+        const local = (this.localData.has(id)) ? this.localData.record(id) : false;
+        const loaded = (this.loadedData.has(id)) ? this.loadedData.record(id) : false;
+        const tier = (this.localData.has(id)) ? this.localData.rowTier(id) : this.loadedData.rowTier(id);
+        var keys = [];
         const localKeys = (Object.keys(local).length) ? Object.keys(local) : [];
         const loadedKeys = (Object.keys(loaded).length) ? Object.keys(loaded) : [];
         var unsortedKeys = [...new Set(localKeys.concat(loadedKeys))];
