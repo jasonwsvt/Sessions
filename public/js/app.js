@@ -1,11 +1,17 @@
 class App {
-    data = new DataTree();
-    utilities = new Utilities(this);
-    //editor = new Editor(this);
-    //buttons = new Buttons(this);
+    data = null;
+    utilities = null;
+    //editor = null;
+    //buttons = null;
 
     constructor() {
-        //this.editor.load();
+        this.data = new DataTree();
+        this.utilities = new Utilities(this);
+        //this.editor = new Editor(this);
+        //this.buttons = new Buttons(this);
+
+        this.utilities.init();
+        //this.editor.init();
     }
 }
 

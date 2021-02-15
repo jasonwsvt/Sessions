@@ -1,51 +1,65 @@
 class UserUtilities {
-    _login     = new UserLoginUtility(this);
-    _new       = new NewUserUtility(this);
-    //_settings  = new UserSettingsUtility(this);
-    //_data      = new UserDataUtility(this);
-    _utilities = null;
-    _divID     = null;
+    login     = null;
+    new       = null;
+    //settings  = null;
+    //data      = null;
+    _divID    = "userUtilities";
+    utilities = null;
 
     constructor (utilities) {
-        this._utilities = utilities;
-        this._divID = "userUtilities";
+        this.utilities = utilities;
+        this.login     = new UserLoginUtility(this);
+        this.new       = new NewUserUtility(this);
+        //this.settings  = new UserSettingsUtility(this);
+        //this.data      = new UserDataUtility(this);
 
-        this._build();
-    }
-
-    get div()       { return $("#" + this._divID); }
-    get utilities() { return this._utilities; }
-    get login()     { return this._login; }
-    get new()       { return this._new; }
-    //get settings()  { return this._settings; }
-    //get data()      { return this._data; }
-
-    _build() {
         this.div.addClass("btn-group");
         this.div.attr("role", "group");
-        this._login.build();
-        this._new.build();
-        //this._settings.build();
-        //this._data.build();
-    }    
+    }
+
+    get app()       { return this.utilities.app; }
+    get div()       { return $("#" + this._divID); }
+    get group() {
+        console.log(this.app)
+        return this.app.data.record(this.app.data.idPath(this.current.id)[0]).children;
+    }
+
+    get current() {
+        const data = this.app.data;
+        if (!data.isEmpty()) {
+            const mostRecentlyOpened = data.sortByLastOpened(data.tierIds(3))[0];
+            const mostRecentlyCreated = data.sortByCreation(data.tierIds(3))[0];
+            const path = data.idPath((mostRecentlyOpened) ? mostRecentlyOpened : mostRecentlyCreated);
+            return data.record(path[0]);
+        }
+    }
+
+    init() {
+        this.new.init();
+        this.login.init();
+        //this.settings.init();
+        //this.data.init();
+        this.reset();
+    }
 
     reset() {
-        this._login.reset();
-        //this._settings.reset();
-        //this._data.reset();
+        this.new.reset();
+        this.login.reset();
+        //this.settings.reset();
+        //this.data.reset();
     }
 
     manage() {
-        this._login.manage();
-        this._new.manage();
-        //this._settings.manage();
-        //this._data.manage();
+        //this.settings.manage();
+        //this.data.manage();
+        this.login.manage();
+        this.new.manage();
     }
 
-    closeMenus(except) {
-        this._login.close(except);
-        //this._new.close(except);
-        //this._settings.close(except);
-        //this._data.close(except);
+    close(except) {
+        //this.settings.close(except);
+        //this.data.close(except);
+        this.login.close(except);
+        this.new.close(except);
     }
 }

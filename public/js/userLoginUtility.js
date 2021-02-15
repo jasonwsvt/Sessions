@@ -19,23 +19,16 @@ class UserLoginUtility {
     _loginID = "loginDivButton";
     _forgotID = "loginDivForgotPasswordButton";
 
-    constructor (userUtilities, group) {
+    constructor (userUtilities) {
         const self = this;
         this._userUtilities = userUtilities;
-        this._group = group;
-        this._type = "user";
-        this._utilityID = "userUtility";
+        this._utilityID = "loginUtility";
 
-        //Check to see if a user qualifies for automatic login
-        if      (rememberMeUserId)      { this.loadFrom(localStorage, rememberMeUserId); }
-        else if (defaultSessionUser)    { this.loadFrom(sessionStorage, defaultSessionUser.id); }
-        else if (noPasswordSessionUser) { this.loadFrom(sessionStorage, noPasswordSessionUser.id); }
-        else if (defaultBrowserUser)    { this.loadFrom(localStorage, defaultBrowserUser.id); }
-        else if (noPasswordBrowserUser) { this.loadFrom(localStorage, noPasswordBrowserUser.id); }
+        this._build();
 
         $(document).ready(function() {
             self.button.on("click", function (e) {
-                self.utilities.closeAllUtilityMenus(self._buttonID);
+                self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     this.blur();
@@ -66,12 +59,11 @@ class UserLoginUtility {
     get userUtilities()     { return this._userUtilities; }
     get utilities()         { return this._userUtilities.utilities; }
     get app()               { return this.utilities.app; }
-    get group()             { return this._group(); }
-    get current()           { return this.group.current; }
+    get group()             { return this.userUtilities.group; }
+    get current()           { return this.userUtilities.current; }
     get lines()             { return this.app.editor.lines; }
     get buttons()           { return this.app.buttons; }
     get storagePermanence() { return this.current.storagePermanence; }
-//    get userUtilitiesDiv()  { return $("#" + this._utilityID); }
 
     get button()            { return $("#" + this._buttonID); }
     get div()               { return $("#" + this._divID); }
@@ -83,7 +75,7 @@ class UserLoginUtility {
     get login()             { return $("#" + this._loginID); }
     get forgot()            { return $("#" + this._forgotID); }
 
-    build() {
+    _build() {
         const loginIcon = this._loginIcon;
 //console.log("build login menu");
 //console.trace();
@@ -95,7 +87,6 @@ class UserLoginUtility {
         const password = "<input id = '" + this._passwordID + "' type = 'password' placeholder = 'password' size = '30'>";
         const messages = "<div id = '" + this._messagesDivID + "'></div>";
         const action = "<button id = '" + this._loginID + "' type = 'button'>Log in</button>";
-
         this.userUtilities.div.append(button + div);
         this.div.addClass("container");
         this.div.append(browserUsers);
@@ -107,7 +98,24 @@ class UserLoginUtility {
    
         this.div.css("left", String(this.userUtilities.div.position().left) + "px");
         this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
-        this.reset();
+    }
+
+    init() {
+        //Check to see if a user qualifies for automatic login
+        const sessionKeys = Object.keys(sessionStorage);
+        const browserKeys = Object.keys(localStorage);
+        const rememberMeUserId = false;
+        const defaultSessionUser = false;
+        const noPasswordSessionUser = false;
+        const defaultBrowserUser = browserKeys.find(user => !JSON.parse(localStorage.getItem("user")).hasOwnProperty("password"));
+        const noPasswordBrowserUser = false;
+
+        if      (rememberMeUserId)      {  }
+        else if (defaultSessionUser)    {  }
+        else if (noPasswordSessionUser) {  }
+        else if (defaultBrowserUser)    { this.data.importJSON(localStorage.getItem(defaultBrowserUser)); }
+        else if (noPasswordBrowserUser) {  }
+        
     }
 
     manage() {
@@ -123,7 +131,7 @@ class UserLoginUtility {
         this._selectedUserContainer = "";
         this.username.val("");
         this.password.val("");
-        this._propagateUserNameButtons();
+        //this._propagateUserNameButtons();
     }
 
     _propagateUserNameButtons() {

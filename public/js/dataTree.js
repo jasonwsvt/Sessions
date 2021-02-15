@@ -150,11 +150,21 @@ class DataTree {
     addChildren(parentId, records) {
         records.forEach(record => this.addChild(parentId, record));
     }
+    
     addChild(parentId, record = {}) {
         if (!isInteger(parentId) || !this.has(parentId)) { return; }
         if (!record.hasOwnProperty("id")) { record.id = this._newId(); }
         if (!this.isDataTree(record)) { return; }
         record.parentId = parentId;
+        this.insert(record);
+        return record.id;
+    }
+
+    addSibling(siblingId, record = {}) {
+        if (!isInteger(siblingId) || !this.has(siblingId) || this.tier(siblingId) == 0) { return; }
+        if (!record.hasOwnProperty("id")) { record.id = this._newId(); }
+        if (!this.isDataTree(record)) { return; }
+        record.parentId = this.record(siblingId).parentId;
         this.insert(record);
         return record.id;
     }
@@ -182,12 +192,12 @@ class DataTree {
         return record.children.map(child => child.id);
     }
 
-    sortedChildIds(id, method)                          { return this.childIds(id).sort(method); }
-    childIdsSortedAlphabeticallyByKey(id, key)          { return this.sortedChildIds(id, (a, b) => a[key].localeCompare(b[key])); }
-    childIdsSortedByKeyWithNumericValue(id, key)        { return this.sortedChildIds(id, (a, b) => a[key] < b[key]); }
-    childIdsSortedByCreation(id)                        { return this.childIdsSortedByKeyWithNumericValue(id, "creation"); }
-    childIdsSortedByLastEdited(id)                      { return this.childIdsSortedByKeyWithNumericValue(id, "lastEdited"); }
-    childIdsSortedByLastOpened(id)                      { return this.childIdsSortedByKeyWithNumericValue(id, "lastOpened"); }
+    sort(ids, method)                 { return ids.sort(method); }
+    sortAlphabeticallyByKey(ids, key) { return this.sort(ids, (a, b) => a[key].localeCompare(b[key])); }
+    sortNumericallyByKey(ids, key)    { return this.sort(ids, (a, b) => a[key] < b[key]); }
+    sortByCreation(ids)               { return this.sortNumericallyByKey(ids, "creation"); }
+    sortByLastEdited(ids)             { return this.sortNumericallyByKey(ids, "lastEdited"); }
+    sortByLastOpened(ids)             { return this.sortNumericallyByKey(ids, "lastOpened"); }
 
     descendantIds(id) {
         var ids = this._dataIds(this._record(id));
@@ -430,7 +440,7 @@ class DataTree {
              ? (data.hasOwnProperty("children"))
                 ? [data.id].concat(...data.children.map(child => this._dataIds(child)))
                 : [data.id]
-             : null;
+             : [];
     }
 
     _now() { return Math.round(Date.now() / 1000); }
