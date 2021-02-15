@@ -1,7 +1,7 @@
 /* utilities class links to sessions class
 */
 
-class UserLoginUtility extends StorageUtility {
+class UserLoginUtility {
     _userUtilities = null;
     _utilityID = null;
     _type = null;
@@ -20,12 +20,18 @@ class UserLoginUtility extends StorageUtility {
     _forgotID = "loginDivForgotPasswordButton";
 
     constructor (userUtilities, group) {
-        super();
         const self = this;
         this._userUtilities = userUtilities;
         this._group = group;
         this._type = "user";
         this._utilityID = "userUtility";
+
+        //Check to see if a user qualifies for automatic login
+        if      (rememberMeUserId)      { this.loadFrom(localStorage, rememberMeUserId); }
+        else if (defaultSessionUser)    { this.loadFrom(sessionStorage, defaultSessionUser.id); }
+        else if (noPasswordSessionUser) { this.loadFrom(sessionStorage, noPasswordSessionUser.id); }
+        else if (defaultBrowserUser)    { this.loadFrom(localStorage, defaultBrowserUser.id); }
+        else if (noPasswordBrowserUser) { this.loadFrom(localStorage, noPasswordBrowserUser.id); }
 
         $(document).ready(function() {
             self.button.on("click", function (e) {

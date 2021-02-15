@@ -65,6 +65,7 @@ class DataTree {
             //console.log("got here")
             this.import(record);
         }
+        return record.id;
     }
 
     update(id, record) {
@@ -183,7 +184,7 @@ class DataTree {
 
     sortedChildIds(id, method)                          { return this.childIds(id).sort(method); }
     childIdsSortedAlphabeticallyByKey(id, key)          { return this.sortedChildIds(id, (a, b) => a[key].localeCompare(b[key])); }
-    childIdsSortedByKeyWithNumericValue(id, key)        { return this.sortedChildIds(id, (a, b) => a[key]   < b[key]); }
+    childIdsSortedByKeyWithNumericValue(id, key)        { return this.sortedChildIds(id, (a, b) => a[key] < b[key]); }
     childIdsSortedByCreation(id)                        { return this.childIdsSortedByKeyWithNumericValue(id, "creation"); }
     childIdsSortedByLastEdited(id)                      { return this.childIdsSortedByKeyWithNumericValue(id, "lastEdited"); }
     childIdsSortedByLastOpened(id)                      { return this.childIdsSortedByKeyWithNumericValue(id, "lastOpened"); }
@@ -248,15 +249,6 @@ class DataTree {
         return ids.filter(id => compareFunc(this._record(id), dataTree.record(id)));
     }
 
-    newerIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, "gt"); }
-    mostRecentlyCreated(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "gt", true,  false, false); }
-    mostRecentlyEdited(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, "gt", false, true,  false); }
-    mostRecentlyOpened(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, "gt", false, false, true); }
-    olderIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, "lt"); }
-    leastRecentlyCreated(dataTree, ids) { return this.compareIdTimestamps(dataTree, ids, "lt", true,  false, false); }
-    leastRecentlyEdited(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "lt", false, true,  false); }
-    leastRecentlyOpened(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "lt", false, false, true); }
-
     //symbol        lt, gt, lte, gte, ne, e  defaults to "e"
     //creation      true or false            defaults to true
     //edited        true or false            defaults to true
@@ -265,24 +257,33 @@ class DataTree {
     //ifNotExistsE  true or false            defaults to true
     compareIdTimestamps(dataTree, ids, symbol = "e", creation = true, edited = true, opened = true, ifNotExistsI = false, ifNotExistsE = true) {
         if ([ifNotExistsI, ifNotExistsE, creation, edited, opened].find(arg => !isBoolean(arg)) ||
-            !["lt", "gt", "lte", "gte", "ne", "e"].includes(symbol)) { return; }
+            !["<", ">", "<=", ">=", "!=", "e"].includes(symbol)) { return; }
         const func = (i, e) => {
             if (i == undefined) { return ifNotExistsI; }
             if (e == undefined) { return ifNotExistsE; }
             const values = [];
-            if (creation && isInteger(i.creation) && isInteger(e.creation)) { values.push([i.creation, e.creation]); }
-            if (edited   && isInteger(i.edited)   && isInteger(e.edited))   { values.push([i.edited,   e.edited  ]); }
-            if (opened   && isInteger(i.opened)   && isInteger(e.opened))   { values.push([i.opened,   e.opened  ]); }
+            if (creation && isInteger(i.creation)   && isInteger(e.creation))   { values.push([i.creation,   e.creation  ]); }
+            if (edited   && isInteger(i.lastEdited) && isInteger(e.lastEdited)) { values.push([i.lastEdited, e.lastEdited]); }
+            if (opened   && isInteger(i.lastOpened) && isInteger(e.lastOpened)) { values.push([i.lastOpened, e.lastOpened]); }
             if (values.length == 0) { return; }
-            return !!values.find(value => (symbol == "lt"  && value[0] <  value[1]) ||
-                                          (symbol == "lte" && value[0] <= value[1]) ||
-                                          (symbol == "gt"  && value[0] >  value[1]) ||
-                                          (symbol == "gte" && value[0] >= value[1]) ||
-                                          (symbol == "ne"  && value[0] != value[1]) ||
-                                          (symbol == "e"   && value[0] == value[1]));
+            return !!values.find(value => (symbol == "<"  && value[0] <  value[1]) ||
+                                          (symbol == "<=" && value[0] <= value[1]) ||
+                                          (symbol == ">"  && value[0] >  value[1]) ||
+                                          (symbol == ">=" && value[0] >= value[1]) ||
+                                          (symbol == "!=" && value[0] != value[1]) ||
+                                          (symbol == "==" && value[0] == value[1]));
         }
         return this.dataCompareIds(dataTree, func, ids);
     }
+
+    newerIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, ">"); }
+    mostRecentlyCreated(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, ">", true,  false, false); }
+    mostRecentlyEdited(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, ">", false, true,  false); }
+    mostRecentlyOpened(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, ">", false, false, true); }
+    olderIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, "<"); }
+    leastRecentlyCreated(dataTree, ids) { return this.compareIdTimestamps(dataTree, ids, "<", true,  false, false); }
+    leastRecentlyEdited(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "<", false, true,  false); }
+    leastRecentlyOpened(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "<", false, false, true); }
 
 
     //Returns all ids in dataTree that are common and identical to ones in this.

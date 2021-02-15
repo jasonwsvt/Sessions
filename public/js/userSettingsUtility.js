@@ -1,7 +1,7 @@
 /* utilities class links to sessions class
 */
 
-class UserSettingsUtility extends StorageUtility {
+class UserSettingsUtility {
     _userUtilities = null;
     _utilityID = null;
     _type = null;
@@ -30,7 +30,6 @@ class UserSettingsUtility extends StorageUtility {
     _pushToServerFrequencyID = "pushToServerFrequency";
 
     constructor (userUtilities, group) {
-        super();
         const self = this;
         this._userUtilities = userUtilities;
         this._group = group;

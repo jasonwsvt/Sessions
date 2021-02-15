@@ -1,7 +1,7 @@
 /* utilities class links to sessions class
 */
 
-class NewUserUtility extends StorageUtility {
+class NewUserUtility {
     _userUtilities = null;
     _utilityID = null;
     _type = null;
@@ -13,12 +13,16 @@ class NewUserUtility extends StorageUtility {
     _buttonID = "newAccountButton";
 
     constructor (userUtilities, group) {
-        super();
         const self = this;
         this._userUtilities = userUtilities;
         this._group = group;
         this._type = "user";
         this._utilityID = "userUtility";
+
+        if (this.app.data.isEmpty()) {
+            const data = this.app.data;
+            data.addChild(data.addChild(data.addChild(data.insert({ name: "New User" }), { name: "Self" }), { name: "New Issue" }));
+        }
 
         $(document).ready(function() {
             self.button.on("click", function (e) {
