@@ -109,11 +109,10 @@ class UserLoginUtility {
         const noPasswordBrowserUser = false;
 
         if      (rememberMeUserId)      {  }
-        else if (defaultSessionUser)    {  }
+        else if (defaultSessionUser)    { this.data.importJSON(sessionStorage.getItem(defaultBrowserUser)); }
         else if (noPasswordSessionUser) {  }
         else if (defaultBrowserUser)    { this.data.importJSON(localStorage.getItem(defaultBrowserUser)); }
         else if (noPasswordBrowserUser) {  }
-        
     }
 
     manage() {
