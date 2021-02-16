@@ -77,8 +77,6 @@ class UserLoginUtility {
 
     _build() {
         const loginIcon = this._loginIcon;
-//console.log("build login menu");
-//console.trace();
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + loginIcon + "</button>";
         const div = "<div id = '" + this._divID + "' class = 'hidden userMenu'></div>";
         const browserUsers = "<div id = '" + this._browserUsersID + "'></div>";
@@ -105,9 +103,9 @@ class UserLoginUtility {
         const sessionKeys = Object.keys(sessionStorage);
         const browserKeys = Object.keys(localStorage);
         const rememberMeUserId = false;
-        const defaultSessionUser = false;
+        const defaultSessionUser = browserKeys.find(user => !JSON.parse(sessionStorage.getItem(user)).hasOwnProperty("password"));
         const noPasswordSessionUser = false;
-        const defaultBrowserUser = browserKeys.find(user => !JSON.parse(localStorage.getItem("user")).hasOwnProperty("password"));
+        const defaultBrowserUser = browserKeys.find(user => !JSON.parse(localStorage.getItem(user)).hasOwnProperty("password"));
         const noPasswordBrowserUser = false;
 
         if      (rememberMeUserId)      {  }

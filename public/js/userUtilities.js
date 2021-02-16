@@ -1,10 +1,10 @@
 class UserUtilities {
+    utilities = null;
+    settings  = null;
+    data      = null;
     login     = null;
     new       = null;
-    //settings  = null;
-    //data      = null;
     _divID    = "userUtilities";
-    utilities = null;
 
     constructor (utilities) {
         this.utilities = utilities;
@@ -23,10 +23,8 @@ class UserUtilities {
     get current() { return this.app.data.record(this.app.data.tierIds(0)[0]); }
 
     init() {
-        this.new.init();
         this.login.init();
-        //this.settings.init();
-        //this.data.init();
+        this.new.init();
         this.reset();
     }
 
