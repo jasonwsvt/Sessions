@@ -55,7 +55,7 @@ class UserDataUtility {
 
         $(document).ready(function() {
             self.button.on("click", function(e) {
-                self.utilities.closeAllUtilityMenus(self._buttonID);
+                self.utilities.closeUtilityMenus(self._buttonID);
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     this.blur();

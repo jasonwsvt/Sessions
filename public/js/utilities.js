@@ -27,8 +27,8 @@ class Utilities {
     init() {
         this.user.init();
 
-        //this.user.reset();
-        //this.manage(0);
+        this.user.reset();
+        this.manage(0);
     }
 
     manage(tier) {

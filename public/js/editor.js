@@ -1,22 +1,29 @@
 class Editor {
-    _app = null;
-    _cursor = null;
-    _lines = null;
+    app = null;
+    cursor = null;
+    lines = null;
 
     constructor(app) {
         const self = this;
-        this._app = app;
-        this._lines = new Lines(this);
-        this._cursor = new Cursor(this);
+        this.app = app;
+        this.lines = new Lines(this);
+        this.cursor = new Cursor(this);
+        $(document).ready(function() {
+            console.log(self.lines.div);
+            $(document).on("keyup", function(e) {
+                self.session.lines = self.lines.linesArray;
+            });
+        });
     }
 
-    get app()             { return this._app; }
-    get lines()           { return this._lines; }
-    get cursor()          { return this._cursor; }
     get buttons()         { return this.app.buttons; }
     get session()         {
-        //              users user    clients  client  issues   issue   sessions session
-        return this.app.users.current.children.current.children.current.children.current;
+        const data = this.app.data;
+        if (!data.isEmpty()) {
+            const mostRecentlyOpened = data.sortByLastOpened(data.tierIds(3))[0];
+            const mostRecentlyCreated = data.sortByCreation(data.tierIds(3))[0];
+            return data.record(mostRecentlyOpened ? mostRecentlyOpened : mostRecentlyCreated);
+        }
     }
     get lineHeight()      { return this.lines.div.children().eq(0).height(); }
     get height()          { return parseInt(this.lines.div.css("height")); }

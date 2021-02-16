@@ -5,16 +5,15 @@
 class Lines {
     _containerID = "lines";
     _lineCode = "<div></div>";
-    _editor = null;
+    editor = null;
 
     constructor(editor) {
         const self = this;
-        this._editor = editor;
+        this.editor = editor;
     }
 
     get ID()              { return this._containerID; }
     get div()             { return $("#" + this._containerID); }
-    get editor()          { return this._editor; }
     get session()         { return this.editor.session; }
     get app()             { return this.editor.app; }
     get buttons()         { return this.app.buttons; }
@@ -93,7 +92,7 @@ class Lines {
 //        console.trace();
         const self = this;
 //        if (this.session) { this.session.lines = this.linesArray; }
-        const lines = this.session.lines;
+        const lines = isArrayOfStrings(this.session.lines) ? this.session.lines : [];
 //        console.log("lines load: " + this.session, this.session.lines);
         this.div.empty();
         if (lines.length) {

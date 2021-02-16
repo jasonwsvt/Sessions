@@ -36,9 +36,11 @@ class UserSettingsUtility {
         this._type = "user";
         this._utilityID = "userUtility";
 
+        this._build();
+
         $(document).ready(function() {
             self.button.on("click", function (e) {
-                self.utilities.closeAllUtilityMenus(self._buttonID);
+                self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     this.blur();
@@ -95,8 +97,8 @@ class UserSettingsUtility {
     get userUtilities()          { return this._userUtilities; }
     get utilities()              { return this._userUtilities.utilities; }
     get app()                    { return this.utilities.app; }
-    get group()                  { return this._group(); }
-    get current()                { return this.group.current; }
+    get group()                  { return this.userUtilities.group; }
+    get current()                { return this.userUtilities.current; }
     get lines()                  { return this.app.editor.lines; }
     get buttons()                { return this.app.buttons; }
     get storagePermanence()      { return this.current.storagePermanence; }
@@ -122,7 +124,7 @@ class UserSettingsUtility {
     get pushToStorageFrequency() { return $("#" + this._pushToStorageFrequencyID); }
     get pushToServerFrequency()  { return $("#" + this._pushToServerFrequencyID); }
 
-    build() {
+    _build() {
         const prefix = "<div class = 'row'><div class = 'col-3'>";
         const infix = "</div><div class = 'col-3' style = 'text-align: center'>";
         const postfix = "</div>";
@@ -164,7 +166,6 @@ class UserSettingsUtility {
         this.storage.append("<option value = 'false'>Session</option>");
         this.pushToStorageFrequency.html([5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
-        this.reset();
     }
 
     reset() {
@@ -173,16 +174,16 @@ class UserSettingsUtility {
         this.currentPassword.val("");
         this.newPassword1.val("");
         this.newPassword2.val("");
-        this.email.val(this.current.email);
-        this.pushToStorageFrequency.val(String(this.current.pushToStorageFrequency));
-        this.hidden.prop("checked", this.current.hidden);
-        this.rememberMe.prop("checked", this.current.rememberMe);
+        this.email.val((isString(this.current.email)) ? this.current.email : "");
+        this.pushToStorageFrequency.val(String((this.current.saveFrequency != undefined) ? this.current.saveFrequency : false));
+        this.hidden.prop("checked", this.current.hidden == true);
+        this.rememberMe.prop("checked", this.current.rememberMe == true);
     }
 
     manage() {
         var fields = [this.username, this.email, this.currentPassword, this.newPassword1, this.newPassword2];
 
-        if (this.current.passwordHash == "" || this.current.passwordVerified) {
+        if (!this.current.hasOwnProperty("password") || this.current.password == "" || this.current.passwordVerified) {
             fields.forEach(field => {
                 if (field.hasClass("hidden")) { field.removeClass("hidden"); }
             });
@@ -335,8 +336,8 @@ class UserSettingsUtility {
         const fieldVal = this.username.val();
         const server = this.current.useServerStorage;
         const valid = /^[a-z0-9_\-.]{5,20}$/;
-        const containerDup = this.cUserNameExists(fieldVal);
-        const localDup = this.lUserNameExists(fieldVal);
+        //const containerDup = this.cUserNameExists(fieldVal);
+        //const localDup = this.lUserNameExists(fieldVal);
         const serverDup = false;
 
         if (current == fieldVal)                        { return "Unchanged"; }
@@ -353,7 +354,7 @@ class UserSettingsUtility {
     get curPWState() { //Empty, Invalid, Insecure, Strong
         const fieldVal = this.currentPassword.val();
         const hashed = this.hashedPassword(fieldVal);
-        const current = this.current.passwordHash;
+        const current = isString(this.current.password) ? this.current.password : "";
         const strongComplexity = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#$%^&*()_+\-|~=`{}\[\]:\";\'<>?,.\/])(?=.{8,127})/;
         const strongLength = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{20,127})/;
 
@@ -385,9 +386,8 @@ class UserSettingsUtility {
 
     get emailState() { //Unchanged, Invalid, Emptied, Filled, Changed
         const fieldVal = this.email.val();
-        const current = this.current.email;
+        const current = isString(this.current.email) ? this.current.email : "";
         const valid = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
-
         if (fieldVal == current)                           { return "Unchanged"; }
         if (!valid.test(fieldVal) && fieldVal.length != 0) { return "Invalid"; }
         if (current.length == 0 && fieldVal.length != 0)   { return "Filled"; }
@@ -421,7 +421,7 @@ class UserSettingsUtility {
                     case "add password": 
                     case "change password":
                         funcs.push(() => {
-                            this.current.passwordHash = this._newPasswordHash;
+                            this.current.password = this._newPassword;
                         });
                         break;
                     case "set email address":
@@ -455,7 +455,7 @@ class UserSettingsUtility {
                     cl = "btn-warning";
                     func = () => {
                         this.currentPassword.val("");
-                        this.current.passwordHash = "";
+                        this.current.password = "";
                     };
                     break;
                 case "Add server storage":                              

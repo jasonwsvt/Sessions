@@ -37,7 +37,7 @@ class Utility {
 
         $(document).ready(function() {
             self.pickerButton.on("click", function (e) {
-                self.utilities.closeAllUtilityMenus(self._pickerButtonID);
+                self.utilities.close(self._pickerButtonID);
                 if (self.entries > 1) {
                     if (self.pickerDiv.hasClass("hidden")) {
                         if (self.entries > 1) {
@@ -54,7 +54,7 @@ class Utility {
                         self.pickerSearchInput.focus();
                         }
                     else {
-                        self.closeMenus();
+                        self.close();
                     }
                 }
                 e.stopPropagation();
@@ -98,7 +98,7 @@ class Utility {
 
             if (self._naming) {
                 self.renameButton.on("click", function (e) {
-                    self.utilities.closeAllUtilityMenus(self._renameButtonID);
+                    self.utilities.close(self._renameButtonID);
                     if (self.renameDiv.hasClass("hidden")) {
                         self.renameDiv.removeClass("hidden");
                         this.blur();
@@ -109,7 +109,7 @@ class Utility {
                         self.renameInput.focus();
                     }
                     else {
-                        self.closeMenus();
+                        self.close();
                     }
                     e.stopPropagation();
                 });
@@ -120,13 +120,13 @@ class Utility {
                         self.renameDiv.removeClass("utilityMenu");
                         self.current.name = this.value;
                         self.utilities.manage(self._type);
-                        self.closeMenus();
+                        self.close();
                     }
                     e.stopPropagation();
                 });
 
                 self.addButton.on("click", function (e) {
-                    self.utilities.closeAllUtilityMenus(self._addButtonID);
+                    self.utilities.close(self._addButtonID);
                     if (self.addDiv.hasClass("hidden")) {
                         self.addDiv.removeClass("hidden");
                         this.blur();
@@ -136,7 +136,7 @@ class Utility {
                         self.addInput.focus();
                     }
                     else {
-                        self.closeMenus();
+                        self.close();
                     }
                     e.stopPropagation();
                 });
@@ -174,8 +174,8 @@ class Utility {
     get current() {
         const data = this.app.data;
         if (!data.isEmpty()) {
-            const mostRecentlyOpened = data.sortByLastOpened(data.tierIds(tier))[0];
-            const mostRecentlyCreated = data.sortByCreation(data.tierIds(tier))[0];
+            const mostRecentlyOpened = data.sortByLastOpened(data.tierIds(this._tier))[0];
+            const mostRecentlyCreated = data.sortByCreation(data.tierIds(this._tier))[0];
             const path = data.idPath((mostRecentlyOpened) ? mostRecentlyOpened : mostRecentlyCreated);
             return data.record(path[this._tier]);
         }
@@ -247,7 +247,6 @@ class Utility {
         this.div.append(pickerButton + pickerDiv);
         this.pickerDiv.append(pickerSearchInput + pickerSort + pickerScrollDiv);
         this.pickerSort.append(pickerSort1 + pickerSort2 + pickerSort3 + pickerSort4);
-        console.log(this._divID);
 
         if (this._naming) {
             this.div.append(renameButton + renameDiv);
@@ -265,7 +264,7 @@ class Utility {
 //        console.log("Group:", this.group);
 //        console.log("Current:", this.current);
 //        console.log("Current name:", this.current.name);
-        pickerButtonText = this.current.name;
+        pickerButtonText = (this._naming) ? this.current.name : this.parseDate(this.current.creation);
         if (this.entries > 1) { pickerButtonText += " " + this._caretDownIcon; }
         this.pickerButton.html(pickerButtonText);
 
@@ -275,7 +274,7 @@ class Utility {
             this.pickerScrollDiv.find("button").on("click", function (e) {
                 self.group.findById(this.value).setAsCurrent();
                 self.editor.load();
-                self.closeMenus();
+                self.close();
                 self.utilities.manage(self._type);
                 e.stopPropagation();
             });
@@ -329,6 +328,19 @@ class Utility {
         code += "</div>";
 
         this.pickerScrollDiv.html(code);
+    }
+
+    parseDate(ts) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const d = new Date(ts * 1000);
+        const year   = String(d.getFullYear());
+        const month  = String(d.getMonth()+1).padStart(2, '0');
+        const day    = String(d.getDate()).padStart(2, '0');
+        const hour   = String((d.getHours() > 12) ? d.getHours() - 12 : d.getHours()).padStart(2, '0');
+        const minute = String(d.getMinutes()).padStart(2, '0');
+        const second = String(d.getSeconds()).padStart(2, '0');
+        const ampm   = String((d.getHours() > 12) ? "PM" : "AM");
+        return `${year}/${month}/${day} ${hour}:${minute}:${second}${ampm}`;
     }
 
     close(except) {

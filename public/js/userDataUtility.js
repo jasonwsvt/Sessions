@@ -57,7 +57,7 @@ class UserDataUtility {
 
         $(document).ready(function() {
             self.button.on("click", function(e) {
-                self.utilities.closeAllUtilityMenus(self._buttonID);
+                self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     this.blur();
@@ -114,9 +114,7 @@ class UserDataUtility {
     get userUtilities()         { return this._userUtilities; }
     get utilities()             { return this.userUtilities.utilities; }
     get app()                   { return this.utilities.app; }
-    get currentUser()           { return this.app.users.currentUser; }
-    get lines()                 { return this.app.editor.lines; }
-    get buttons()               { return this.app.buttons; }
+    get currentUser()           { return this.userUtilities.current; }
      
     get button()                { return $("#" + this._buttonID); }
     get div()                   { return $("#" + this._divID); }
@@ -423,7 +421,7 @@ class UserDataUtility {
 
     reset() {
         //clear loaded data
-        this.loadedData.empty();
+        this.loadedData.clear();
         this.loadDiv.removeClass("hidden");
 
         //set adjust default to sort

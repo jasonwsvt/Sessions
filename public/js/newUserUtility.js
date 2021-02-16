@@ -51,8 +51,6 @@ class NewUserUtility {
     }
 
     init() {
-        console.log(this._userUtilities);
-        console.log(this.utilities);
         const data = this.app.data;
         if (data.isEmpty()) {
             data.addChild(data.addChild(data.addChild(data.insert({ username: "newuser" }), { name: "Self" }), { name: "New Issue" }));

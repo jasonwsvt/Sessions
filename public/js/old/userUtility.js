@@ -57,7 +57,7 @@ class UserUtility extends StorageUtility {
 
         $(document).ready(function() {
             self.settingsButton.on("click", function (e) {
-                self.utilities.closeAllUtilityMenus(self._settingsButtonID);
+                self.utilities.close(self._settingsButtonID);
                 if (self.settingsDiv.hasClass("hidden")) {
                     self.settingsDiv.removeClass("hidden");
                     this.blur();
@@ -110,7 +110,7 @@ class UserUtility extends StorageUtility {
             });
 
             self.loginButton.on("click", function (e) {
-                self.utilities.closeAllUtilityMenus(self._loginButtonID);
+                self.utilities.close(self._loginButtonID);
                 if (self.loginDiv.hasClass("hidden")) {
                     self.loginDiv.removeClass("hidden");
                     this.blur();
@@ -138,7 +138,7 @@ class UserUtility extends StorageUtility {
 
             self.newAccountButton.on("click", function (e) {
                 console.log("newAccountButton");
-                self.utilities.closeAllUtilityMenus(self._newAccountButtonID);
+                self.utilities.close(self._newAccountButtonID);
                 self.group.new();
                 self._reset();
                 self.settingsButton.trigger('click');
@@ -765,7 +765,7 @@ class UserUtility extends StorageUtility {
                                     `${seconds / 3600} hours`;
     }
 
-    closeMenus(except) {
+    close(except) {
         if (except != this._settingsButtonID)   { this._closeSettingsMenu(); }
         if (except != this._loginButtonID)      { this._closeLoginMenu(); }
 //        if (except != this._newAccountButtonID) { this._closeNewAccountMenu(); }

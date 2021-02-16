@@ -8,31 +8,19 @@ class UserUtilities {
 
     constructor (utilities) {
         this.utilities = utilities;
+        this.settings  = new UserSettingsUtility(this);
+        this.data      = new UserDataUtility(this);
         this.login     = new UserLoginUtility(this);
         this.new       = new NewUserUtility(this);
-        //this.settings  = new UserSettingsUtility(this);
-        //this.data      = new UserDataUtility(this);
 
         this.div.addClass("btn-group");
         this.div.attr("role", "group");
     }
 
-    get app()       { return this.utilities.app; }
-    get div()       { return $("#" + this._divID); }
-    get group() {
-        console.log(this.app)
-        return this.app.data.record(this.app.data.idPath(this.current.id)[0]).children;
-    }
-
-    get current() {
-        const data = this.app.data;
-        if (!data.isEmpty()) {
-            const mostRecentlyOpened = data.sortByLastOpened(data.tierIds(3))[0];
-            const mostRecentlyCreated = data.sortByCreation(data.tierIds(3))[0];
-            const path = data.idPath((mostRecentlyOpened) ? mostRecentlyOpened : mostRecentlyCreated);
-            return data.record(path[0]);
-        }
-    }
+    get app()     { return this.utilities.app; }
+    get div()     { return $("#" + this._divID); }
+    get group()   { return this.app.data.record(this.app.data.idPath(this.current.id)[0]).children; }
+    get current() { return this.app.data.record(this.app.data.tierIds(0)[0]); }
 
     init() {
         this.new.init();
@@ -45,20 +33,20 @@ class UserUtilities {
     reset() {
         this.new.reset();
         this.login.reset();
-        //this.settings.reset();
-        //this.data.reset();
+        this.settings.reset();
+        this.data.reset();
     }
 
     manage() {
-        //this.settings.manage();
-        //this.data.manage();
+        this.settings.manage();
+        this.data.manage();
         this.login.manage();
         this.new.manage();
     }
 
     close(except) {
-        //this.settings.close(except);
-        //this.data.close(except);
+        this.settings.close(except);
+        this.data.close(except);
         this.login.close(except);
         this.new.close(except);
     }
