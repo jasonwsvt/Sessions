@@ -1,5 +1,5 @@
 class Utility {
-    _utilities = null;
+    utilities = null;
     _app = null;
     _group = null;
     _type = null;
@@ -28,7 +28,7 @@ class Utility {
 
     constructor (utilities, tier, naming = true) {
         const self = this;
-        this._utilities = utilities;
+        this.utilities = utilities;
         this._tier = tier;
         this._naming = naming;
 
@@ -119,7 +119,7 @@ class Utility {
                         self.renameDiv.addClass("hidden");
                         self.renameDiv.removeClass("utilityMenu");
                         self.current.name = this.value;
-                        self.utilities.manage(self._type);
+                        self.utilities.manage(self._tier);
                         self.close();
                     }
                     e.stopPropagation();
@@ -154,6 +154,7 @@ class Utility {
             else {
                 self.addButton.on("click", function (e) {
                     self.editor.load(self.data.addSibling(self.current.id));
+                    console.log(self.data)
                     self.utilities.manage(self._tier);
                     self.close();
                     this.blur();
@@ -164,20 +165,19 @@ class Utility {
     }
 
     get div()               { return $("#" + this._divID); }
-    get utilities()         { return this._utilities; }
     get app()               { return this.utilities.app; }
+    get data()              { return this.app.data; }
     get group()             {
         const data = this.app.data;
         const path = data.idPath(this.current.id);
         return data.record(path[this._tier - 1]).children;
     }
     get current() {
-        const data = this.app.data;
-        if (!data.isEmpty()) {
-            const mostRecentlyOpened = data.sortByLastOpened(data.tierIds(this._tier))[0];
-            const mostRecentlyCreated = data.sortByCreation(data.tierIds(this._tier))[0];
-            const path = data.idPath((mostRecentlyOpened) ? mostRecentlyOpened : mostRecentlyCreated);
-            return data.record(path[this._tier]);
+        if (!this.data.isEmpty()) {
+            const mostRecentlyOpened = this.data.sortByLastOpened(this.data.tierIds(this._tier))[0];
+            const mostRecentlyCreated = this.data.sortByCreation(this.data.tierIds(this._tier))[0];
+            const path = this.data.idPath((mostRecentlyOpened) ? mostRecentlyOpened : mostRecentlyCreated);
+            return this.data.record(path[this._tier]);
         }
     }
     get editor()            { return this.app.editor; }
@@ -196,12 +196,10 @@ class Utility {
     get addInput()          { return $("#" + this._addInputID); }
     row(i)                  { return this.pickerScrollDiv.find(".row").eq(i); }
     button(i)               { return this.pickerScrollDiv.find("button").eq(i); }
+    get type()              { return this._tier == 1 ? "client" : this._tier == 2 ? "issue" : "session"; }
 
     _init() {
-        const type = (this._tier == 1) ? "client"
-                   : (this._tier == 2) ? "issue"
-                   : (this._tier == 3) ? "session"
-                   : null;
+        const type = this.type;
 
         this._divID = type + "Utility";
         this._pickerButtonID = type + "PickerButton";
@@ -222,7 +220,7 @@ class Utility {
         const plusIcon = this._plusIcon;
         const pencilIcon = this._pencilIcon;
         const searchIcon = this._searchIcon;
-        const type = this._type;
+        const type = this.type;
 
         const pickerButton = "<button id = '" + this._pickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const pickerDiv = "<div id = '" + this._pickerDivID + "' class = 'hidden'></div>";
