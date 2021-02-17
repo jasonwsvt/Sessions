@@ -20,13 +20,12 @@ class UserUtilities {
 
     get app()     { return this.utilities.app; }
     get div()     { return $("#" + this._divID); }
-//    get group()   { return this.app.data.record(this.app.data.idPath(this.current.id)[0]).children; }
     get current() { return this.app.data.record(this.app.data.tierIds(0)[0]); }
 
     init() {
         this.login.init();
         this.new.init();
-        this.reset();
+//        this.reset();
     }
 
     reset() {

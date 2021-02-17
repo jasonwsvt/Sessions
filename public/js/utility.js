@@ -167,21 +167,10 @@ class Utility {
     get div()               { return $("#" + this._divID); }
     get app()               { return this.utilities.app; }
     get data()              { return this.app.data; }
-    get group()             {
-        const data = this.app.data;
-        const path = data.idPath(this.current.id);
-        return data.record(path[this._tier - 1]).children;
-    }
-    get current() {
-        if (!this.data.isEmpty()) {
-            const mostRecentlyOpened = this.data.sortByLastOpened(this.data.tierIds(this._tier))[0];
-            const mostRecentlyCreated = this.data.sortByCreation(this.data.tierIds(this._tier))[0];
-            const path = this.data.idPath((mostRecentlyOpened) ? mostRecentlyOpened : mostRecentlyCreated);
-            return this.data.record(path[this._tier]);
-        }
-    }
+    get currentId()         { return this.app.editor.current; }
+    get current()           { return this.data.record(this.data.idPath(this.currentId)[this._tier]); }
     get editor()            { return this.app.editor; }
-    get entries()           { return this.group.entries; }
+    get entries()           { return this.data.siblings(this.currentId); }
     get pickerButton()      { return $("#" + this._pickerButtonID); }
     get pickerDiv()         { return $("#" + this._pickerDivID); }
     get pickerSearch()      { return $("#" + this._pickerSearchID); }
@@ -270,10 +259,9 @@ class Utility {
             this.pickerButtons();
 
             this.pickerScrollDiv.find("button").on("click", function (e) {
-                self.group.findById(this.value).setAsCurrent();
-                self.editor.load();
+                self.editor.load(this.value);
                 self.close();
-                self.utilities.manage(self._type);
+                self.utilities.manage(self._tier);
                 e.stopPropagation();
             });
 

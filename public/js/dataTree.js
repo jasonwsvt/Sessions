@@ -168,6 +168,8 @@ class DataTree {
         this.insert(record);
         return record.id;
     }
+    
+    siblings(id) { return (this.tier(id) == 0) ? 1 : this._record(this.parentId(id), this._data).children.length; }
 
     hasKey(id, key) { return this.has(id) && this.record(id).hasOwnProperty(key); }
     getKey(id, key) {

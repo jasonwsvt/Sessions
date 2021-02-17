@@ -12,6 +12,8 @@ class App {
 
         this.utilities.init();
         this.editor.init();
+        this.utilities.user.reset();
+        this.utilities.manage(0);
     }
 }
 
