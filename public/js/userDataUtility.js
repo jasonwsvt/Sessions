@@ -114,7 +114,7 @@ class UserDataUtility {
     get userUtilities()         { return this._userUtilities; }
     get utilities()             { return this.userUtilities.utilities; }
     get app()                   { return this.utilities.app; }
-    get currentUser()           { return this.userUtilities.current; }
+    get current()               { return this.userUtilities.current; }
      
     get button()                { return $("#" + this._buttonID); }
     get div()                   { return $("#" + this._divID); }
@@ -575,8 +575,7 @@ class UserDataUtility {
 
     _buildRecords() {
         const self = this;
-        this.currentUser.pushToStorage();
-        if (this.localData.isEmpty()) { this.localData.import(this.currentUser.pullRecords()); }
+        if (this.localData.isEmpty()) { this.localData.import(this.app.data.export()); }
         //clear scrollAreaDiv
         this.scrollAreaDiv.empty();
         this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 22) + "px");
@@ -1279,7 +1278,7 @@ class UserDataUtility {
 
     _exportJSON(data) {
         const blob1 = new Blob([JSON.stringify(data, null, 2)], { type: "text/plain;charset=utf-8" });
-        const name = this.currentUser.username + ".json";
+        const name = this.current.username + ".json";
         console.log(blob1);
  
         //Check the Browser.

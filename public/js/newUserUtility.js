@@ -33,7 +33,6 @@ class NewUserUtility {
     get userUtilities()     { return this._userUtilities; }
     get utilities()         { return this._userUtilities.utilities; }
     get app()               { return this.utilities.app; }
-    get group()             { return this.userUtilities.group; }
     get current()           { return this.userUtilities.current; }
     get lines()             { return this.app.editor.lines; }
     get buttons()           { return this.app.buttons; }
@@ -58,7 +57,7 @@ class NewUserUtility {
     }
 
     manage() {
-        this.button.prop("disabled", (this.current.username == "newuser"));
+        this.button.prop("disabled", (this.current.username == this.userUtilities.defaultUsername));
     }
 
     reset() {

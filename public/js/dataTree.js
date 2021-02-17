@@ -556,9 +556,9 @@ class DataTree {
             "rememberMe": false,
             "practitioner": false,
             "storagePermanence": false,
-            "pushToStorageFrequency": 5,
+            "backupFrequency": 5,
             "useServerStorage": false,
-            "pushToServerFrequency": false,
+            "serverBackupFrequency": false,
             "children": [
                 {
                     "name": "Self",

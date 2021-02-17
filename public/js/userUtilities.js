@@ -1,10 +1,11 @@
 class UserUtilities {
-    utilities = null;
-    settings  = null;
-    data      = null;
-    login     = null;
-    new       = null;
-    _divID    = "userUtilities";
+    utilities       = null;
+    settings        = null;
+    data            = null;
+    login           = null;
+    new             = null;
+    _divID          = "userUtilities";
+    defaultUserName = "newuser"
 
     constructor (utilities) {
         this.utilities = utilities;
@@ -19,7 +20,7 @@ class UserUtilities {
 
     get app()     { return this.utilities.app; }
     get div()     { return $("#" + this._divID); }
-    get group()   { return this.app.data.record(this.app.data.idPath(this.current.id)[0]).children; }
+//    get group()   { return this.app.data.record(this.app.data.idPath(this.current.id)[0]).children; }
     get current() { return this.app.data.record(this.app.data.tierIds(0)[0]); }
 
     init() {

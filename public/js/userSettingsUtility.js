@@ -3,7 +3,6 @@
 
 class UserSettingsUtility {
     _userUtilities = null;
-    _utilityID = null;
     _type = null;
     _selectedUser = null;
 
@@ -26,8 +25,8 @@ class UserSettingsUtility {
     _messagesDivID = "settingsDivMessages";
     _actionDivID = "settingsDivAction";
     _optionsDivID = "settingsDivOptions";
-    _pushToStorageFrequencyID = "pushToStorageFrequency";
-    _pushToServerFrequencyID = "pushToServerFrequency";
+    _backupFrequencyID = "backupFrequency";
+    _serverBackupFrequencyID = "serverBackupFrequency";
 
     constructor (userUtilities, group) {
         const self = this;
@@ -80,15 +79,15 @@ class UserSettingsUtility {
                 self.manage();
             });
 
-            self.pushToStorageFrequency.on("change", function (e) {
+            self.backupFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
-                self.current.pushToStorageFrequency = (val == "false") ? false : parseInt(val);
+                self.current.backupFrequency = (val == "false") ? false : parseInt(val);
                 self.manageForm();
             });
 
-            self.pushToServerFrequency.on("change", function (e) {
+            self.serverBackupFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
-                self.current.pushToServerFrequency = (val == "false") ? false : parseInt(val);
+                self.current.serverBackupFrequency = (val == "false") ? false : parseInt(val);
                 self.manageForm();
             });
         }); 
@@ -97,12 +96,11 @@ class UserSettingsUtility {
     get userUtilities()          { return this._userUtilities; }
     get utilities()              { return this._userUtilities.utilities; }
     get app()                    { return this.utilities.app; }
-    get group()                  { return this.userUtilities.group; }
-    get current()                { return this.userUtilities.current; }
+//    get group()                  { return this.userUtilities.group; }
     get lines()                  { return this.app.editor.lines; }
     get buttons()                { return this.app.buttons; }
-    get storagePermanence()      { return this.current.storagePermanence; }
-    get div()                    { return $("#" + this._utilityID); }
+    get current()                { return this.userUtilities.current; }
+    setKey(key, value)           { this.app.data.setKey(this.currentId, key, value); }
 
     get button()                 { return $("#" + this._buttonID); }
     get div()                    { return $("#" + this._divID); }
@@ -114,15 +112,14 @@ class UserSettingsUtility {
     get currentPassword()        { return $("#" + this._currentPasswordID); }
     get newPassword1()           { return $("#" + this._newPassword1ID); }
     get newPassword2()           { return $("#" + this._newPassword2ID); }
-    get email()                  { return $("#" + this._emailID); }
     get rememberMe()             { return $("#" + this._rememberMeID); }
     get hidden()                 { return $("#" + this._hiddenID); }
     get storage()                { return $("#" + this._storageID); }
     get messagesDiv()            { return $("#" + this._messagesDivID); }
     get actionDiv()              { return $("#" + this._actionDivID); }
     get optionsDiv()             { return $("#" + this._optionsDivID); }
-    get pushToStorageFrequency() { return $("#" + this._pushToStorageFrequencyID); }
-    get pushToServerFrequency()  { return $("#" + this._pushToServerFrequencyID); }
+    get backupFrequency() { return $("#" + this._backupFrequencyID); }
+    get serverBackupFrequency()  { return $("#" + this._serverBackupFrequencyID); }
 
     _build() {
         const prefix = "<div class = 'row'><div class = 'col-3'>";
@@ -140,9 +137,9 @@ class UserSettingsUtility {
         const storage = "<select id = '" + this._storageID + "'></select>"; 
         const storagePermanenceLabel = "<label style = 'text-align: right'>Storage permanence:</label>";
 
-        const pushToStorageFrequencyLabel = "<label style = 'text-align: right'>Storage frequency:</label>";
-        const pushToStorageFrequency = "<select id = '" + this._pushToStorageFrequencyID + "'></select>";
-        const pushToServerFrequency = "<select id = '" + this._pushToServerFrequencyID + "'></select>";
+        const backupFrequencyLabel = "<label style = 'text-align: right'>Storage frequency:</label>";
+        const backupFrequency = "<select id = '" + this._backupFrequencyID + "'></select>";
+        const serverBackupFrequency = "<select id = '" + this._serverBackupFrequencyID + "'></select>";
 
         const messagesDiv = "<div id = '" + this._messagesDivID + "'></div>";
         const actionDiv = "<div id = '" + this._actionDivID + "'></div>";
@@ -155,7 +152,7 @@ class UserSettingsUtility {
         this.div.append(newPassword2);
         this.div.append(email);
         this.div.append(prefix + hidden     + infix + storagePermanenceLabel      + infix + storage                + infix + "Server"              + postfix);
-        this.div.append(prefix + rememberMe + infix + pushToStorageFrequencyLabel + infix + pushToStorageFrequency + infix + pushToServerFrequency + postfix);
+        this.div.append(prefix + rememberMe + infix + backupFrequencyLabel + infix + backupFrequency + infix + serverBackupFrequency + postfix);
         this.div.append(messagesDiv);
         this.div.append(actionDiv);
         this.div.append(optionsDiv);
@@ -164,7 +161,7 @@ class UserSettingsUtility {
         this.div.css("top", String(this.button.position().top + 32) + "px");
         this.storage.append("<option value = 'true'>Browser</option>");
         this.storage.append("<option value = 'false'>Session</option>");
-        this.pushToStorageFrequency.html([5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
+        this.backupFrequency.html([false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
     }
 
@@ -175,7 +172,7 @@ class UserSettingsUtility {
         this.newPassword1.val("");
         this.newPassword2.val("");
         this.email.val((isString(this.current.email)) ? this.current.email : "");
-        this.pushToStorageFrequency.val(String((this.current.saveFrequency != undefined) ? this.current.saveFrequency : false));
+        this.backupFrequency.val(String((this.current.saveFrequency != undefined) ? this.current.saveFrequency : false));
         this.hidden.prop("checked", this.current.hidden == true);
         this.rememberMe.prop("checked", this.current.rememberMe == true);
     }
@@ -205,7 +202,7 @@ class UserSettingsUtility {
     manageForm() {
         var messages = [], actions = [], options = [];
         const uname = this.unameState;
-        const isDefault = (uname == this.group.defaultName);
+        const isDefault = (uname == this.userUtilities.defaultUserName);
         const curPW = this.curPWState;
         const newPW = this.newPWState;
         const email = this.emailState;
@@ -218,21 +215,21 @@ class UserSettingsUtility {
         else {
             //SetUp
             if (!server) {
-                this.pushToServerFrequency.html("<option>Disabled</option>");
-                this.pushToServerFrequency.prop("disabled", true);
+                this.serverBackupFrequency.html("<option>Disabled</option>");
+                this.serverBackupFrequency.prop("disabled", true);
             }
             else {
-                this.pushToServerFrequency.html([false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
+                this.serverBackupFrequency.html([false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
                     .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
-                this.pushToServerFrequency.val(String(this.current.pushToServerFrequency));
+                this.serverBackupFrequency.val(String(this.current.serverBackupFrequency));
             }
             this.storage.prop("disabled", (uname == "Local duplicate"));
             this.rememberMe.prop("disabled", !this.ableToSetRememberMe);
-            if (this.current.hidden && this.current.username == this.group.defaultName) {
-                this.current.hidden = false;
+            if (this.current.hidden == true && this.current.username == this.userUtilities.defaultUserName) {
+                this.setKey("hidden", false);
             }
             this.hidden.prop("checked", this.current.hidden);
-            this.hidden.prop("disabled", this.current.username == this.group.defaultName)
+            this.hidden.prop("disabled", this.current.username == this.userUtilities.defaultUserName)
 
             //Messages
             if (uname == "Invalid")          { messages.push("Usernames must contain only alphanumeric characters and ., -, and _.")}
@@ -326,7 +323,7 @@ class UserSettingsUtility {
     }
 
     get ableToSetRememberMe() {
-        return (this.current.username != this.group.defaultName &&
+        return (this.current.username != this.userUtilities.defaultUserName &&
                 this.storagePermanence &&
                 (!this.rememberMeExists || this.rememberMe == this.current.id));
     }
@@ -414,22 +411,22 @@ class UserSettingsUtility {
                     case "set username":
                     case "change username":      
                         funcs.push(() => {
-                            this.current.username = this.username.val();
+                            this.setKey("username", this.username.val());
                             this.button.html(this.current.username);
                         });
                         break;
                     case "add password": 
                     case "change password":
                         funcs.push(() => {
-                            this.current.password = this._newPassword;
+                            this.setKey("password", this._newPassword);
                         });
                         break;
                     case "set email address":
                     case "change email address": 
-                        funcs.push(() => { this.current.email = this.email.val(); });
+                        funcs.push(() => { this.setKey("email", this.email.val()); });
                         break;
                     case "remove email address": 
-                        funcs.push(() => { this.current.email = ""; });
+                        funcs.push(() => { this.setKey("email", ""); });
                         break;
                     default: console.log(action + " is not supported.");
                 }
@@ -455,19 +452,19 @@ class UserSettingsUtility {
                     cl = "btn-warning";
                     func = () => {
                         this.currentPassword.val("");
-                        this.current.password = "";
+                        this.setKey("password", "");
                     };
                     break;
                 case "Add server storage":                              
                     cl = "btn-success";
                     func = () => {
-                        this.current.useServerStorage = true;
+                        this.setKey("useServerStorage", true);
                     };
                     break;
                 case "Remove server storage":
                     cl = "btn-danger";
                     func = () => {
-                        this.current.useServerStorage = false;
+                        this.setKey("useServerStorage", false);
                     };
                     break; //If no local storage, download all data to session Storage?
                 default: console.log(option + "is not supported.");
