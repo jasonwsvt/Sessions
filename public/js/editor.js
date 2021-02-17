@@ -16,15 +16,14 @@ class Editor {
         });
     }
 
-    get buttons()         { return this.app.buttons; }
-    get session()         {
-        const data = this.app.data;
-        if (!data.isEmpty()) {
-            const mostRecentlyOpened = data.sortByLastOpened(data.tierIds(3))[0];
-            const mostRecentlyCreated = data.sortByCreation(data.tierIds(3))[0];
-            return data.record(mostRecentlyOpened ? mostRecentlyOpened : mostRecentlyCreated);
-        }
+    init() {
+        const mostRecentlyCreated = this.app.data.sortByCreation(this.app.data.tierIds(3)).slice(-1, 1)[0];
+        const mostRecentlyOpened = this.app.data.sortByLastOpened(this.app.data.tierIds(3)).slice(-1, 1)[0];
+        this.load(mostRecentlyOpened ? mostRecentlyOpened : mostRecentlyCreated);
     }
+
+    get buttons()         { return this.app.buttons; }
+    get session()         { return this.app.data.record(this.current); }
     get lineHeight()      { return this.lines.div.children().eq(0).height(); }
     get height()          { return parseInt(this.lines.div.css("height")); }
     set height(height)    { this.lines.div.css("height", String(height) + "px"); }
@@ -46,7 +45,8 @@ class Editor {
         }
     }
 
-    load() {
+    load(id) {
+        this.current = id;
         this.lines.load();
         this.cursor.checkForCursor();
     }

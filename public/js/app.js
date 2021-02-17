@@ -11,7 +11,7 @@ class App {
         this.buttons = new Buttons(this);
 
         this.utilities.init();
-        this.editor.load();
+        this.editor.init();
     }
 }
 

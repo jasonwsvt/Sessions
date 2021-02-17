@@ -150,7 +150,7 @@ class DataTree {
     addChildren(parentId, records) {
         records.forEach(record => this.addChild(parentId, record));
     }
-    
+
     addChild(parentId, record = {}) {
         if (!isInteger(parentId) || !this.has(parentId)) { return; }
         if (!record.hasOwnProperty("id")) { record.id = this._newId(); }
@@ -167,6 +167,28 @@ class DataTree {
         record.parentId = this.record(siblingId).parentId;
         this.insert(record);
         return record.id;
+    }
+
+    hasKey(id, key) { return this.has(id) && this.record(id).hasOwnProperty(key); }
+    getKey(id, key) {
+        if (this.hasKey(id, key)) {
+            this.record(id).lastOpened = this.now();
+            return this.record(id)[key];
+        }
+    }
+    setKey(id, key, value) {
+        if (this.hasKey(id, key)) {
+            this.record(id)[key] = value;
+            this.record(id).lastEdited = this.now();
+            return true;
+        }
+    }
+    deleteKey(id, key) {
+        if (this.hasKey(id, key)) {
+            delete this.record(id)[key];
+            this.record(id).lastEdited = this.now();
+            return true;
+        }
     }
 
     //Id methods
