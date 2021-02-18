@@ -119,7 +119,7 @@ class Utility {
                     if (e.key == "Enter") {
                         self.renameDiv.addClass("hidden");
                         self.renameDiv.removeClass("utilityMenu");
-                        self.name = this.value;
+                        self.data.setKey(self.current.id, "name", this.value);
                         self.utilities.manage(self._tier);
                         self.close();
                     }
@@ -145,7 +145,7 @@ class Utility {
                 self.addInput.on("keypress", function (e) {
                     var id;
                     if (e.key == "Enter") {
-                        if (self.data.find("name", this.value)) { console.log(this.value, self.data.find("name", this.value)); }
+                        if (!!self.data.find("name", this.value).length) { console.log(this.value, self.data.find("name", this.value)); }
                         if (self._tier == 1) {
                             id = self.data.addChild(self.data.addChild(self.data.addSibling(self.current.id, { name: this.value }), { name: "New Issue" }));
                         }
@@ -155,7 +155,7 @@ class Utility {
                         if (self._tier == 3) {
                             id = self.data.addSibling(self.current.id);
                         }
-                        console.log(self.current.id, id, self.data.exportPrettyJSON());
+                        //console.log(self.current.id, id, self.data.exportPrettyJSON());
                         self.editor.load(id);
                         self.utilities.manage(self._tier);
                         self.close();
@@ -185,7 +185,7 @@ class Utility {
     get siblingIds()        { return this.data.childIds(this.data.parentId(this.current.id)); }
     get sessionId()         { return this.app.editor.current; }
     get current()           { return this.data.record(this.data.idPath(this.sessionId)[this._tier]); }
-    get name()              { return this._naming ? this.current.name : this.parseDate(this.current.creation); }
+    get name()              { if (this.current == undefined) { console.log(this.data.exportPrettyJSON()); } return this._naming ? this.current.name : this.parseDate(this.current.creation); }
     get default()           { return (this._tier == 1) ? "New Client" : "New Issue"; }
     get entries()           { return this.data.siblings(this.data.idPath(this.sessionId)[this._tier]); }
     get pickerButton()      { return $("#" + this._pickerButtonID); }
@@ -278,7 +278,23 @@ class Utility {
             this.pickerButtons();
 
             this.pickerScrollDiv.find("button").on("click", function (e) {
-                self.editor.load(this.value);
+                var id;
+                if (self._tier == 3) { id = this.value; }
+                else {
+                    const tier3Ids = self.data.tierIds(3);
+                    const idDescendants = self.data.descendantIds(self.current.id);
+                    var ids = idDescendants.filter(id => tier3Ids.includes(id));
+                    const lastEdited = self.data.sortByLastEdited(ids).slice(-1, 1)[0];
+                    const creation   = self.data.sortByCreation(ids).slice(-1, 1)[0];
+                    id = lastEdited ? lastEdited : creation;
+                    console.log(self.current.id, tier3Ids, idDescendants, ids, lastEdited, creation, id)
+                }
+                if (id == undefined) {
+                    console.log(self.data.exportPrettyJSON());
+                    console.log(self.sessionId, self.current);
+                }
+                self.editor.load(id);
+                console.log(self.sessionId, self.current);
                 self.close();
                 self.utilities.manage(self._tier);
                 e.stopPropagation();

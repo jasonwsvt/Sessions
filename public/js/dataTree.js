@@ -49,7 +49,7 @@ class DataTree {
         if (isObject(record) && !record.hasOwnProperty("id")) { record.id = this._newId(); }
         if (!this.isDataTree(record)) { return; }
         if (!record.hasOwnProperty("creation")) { record.creation = this._now(); }
-        else { record.lastEdited = this._now(); }
+        if (!record.hasOwnProperty("lastEdited")) { record.lastEdited = this._now(); }
         if (record.hasOwnProperty("parentId") && this.has(record.parentId)) {
             parent = this._record(record.parentId);
             if (this.has(record.id) && !this.childIds(parent.id).includes(record.id)) { return; } //id exists but not replacing it
@@ -69,7 +69,7 @@ class DataTree {
     }
 
     update(id, record) {
-        if (this.has(id)) { record.id = id; record.lastEdited = this.now(); this.insert(record); }
+        if (this.has(id)) { record.id = id; record.lastEdited = this._now(); this.insert(record); }
     }
 
     edit(id, keys, values) {
@@ -86,21 +86,21 @@ class DataTree {
     hasKey(id, key) { return this.has(id) && this._record(id).hasOwnProperty(key); }
     getKey(id, key) {
         if (this.hasKey(id, key)) {
-            this.record(id).lastOpened = this.now();
+            this.record(id).lastOpened = this._now();
             return this.record(id)[key];
         }
     }
     setKey(id, key, value) {
         if (this.hasKey(id, key)) {
             this.record(id)[key] = value;
-            this.record(id).lastEdited = this.now();
+            this.record(id).lastEdited = this._now();
             return true;
         }
     }
     deleteKey(id, key) {
         if (this.hasKey(id, key)) {
             delete this.record(id)[key];
-            this.record(id).lastEdited = this.now();
+            this.record(id).lastEdited = this._now();
             return true;
         }
     }
@@ -150,7 +150,10 @@ class DataTree {
         return path;
     }
 
-    tier(id)      { const t = this._indexPath(id, this._data); return (t === true) ? 0 : t.length; }
+    tier(id)       { const t = this._indexPath(id, this._data); return (t === true) ? 0 : t.length; }
+    creation(id)   { return this._record(id).creation; }
+    lastEdited(id) { return this._record(id).lastEdited; }
+    lastOpened(id) { return this._record(id).lastOpened; }
 
     //Parent methods
     hasParent(id) { return !!this.tier(id); }
@@ -309,9 +312,9 @@ class DataTree {
             if (i == undefined) { return ifNotExistsI; }
             if (e == undefined) { return ifNotExistsE; }
             const values = [];
-            if (creation && isInteger(i.creation)   && isInteger(e.creation))   { values.push([i.creation,   e.creation  ]); }
-            if (edited   && isInteger(i.lastEdited) && isInteger(e.lastEdited)) { values.push([i.lastEdited, e.lastEdited]); }
             if (opened   && isInteger(i.lastOpened) && isInteger(e.lastOpened)) { values.push([i.lastOpened, e.lastOpened]); }
+            if (edited   && isInteger(i.lastEdited) && isInteger(e.lastEdited)) { values.push([i.lastEdited, e.lastEdited]); }
+            if (creation && isInteger(i.creation)   && isInteger(e.creation))   { values.push([i.creation,   e.creation  ]); }
             if (values.length == 0) { return; }
             return !!values.find(value => (symbol == "<"  && value[0] <  value[1]) ||
                                           (symbol == "<=" && value[0] <= value[1]) ||
@@ -486,67 +489,93 @@ class DataTree {
 
     testing() {
         return {
-            "id": 1,
-            "creation": 1613096338,
-            "children":
-            [
+            "username": "newuser",
+            "id": 555186077026119,
+            "creation": 1613682513,
+            "lastEdited": 1613682513,
+            "children": [
                 {
-                    "id": 2,
-                    "parentId": 1,
-                    "creation": 1613095743,
-                    "children":
-                    [
+                    "name": "Self",
+                    "id": 829240261997762,
+                    "parentId": 555186077026119,
+                    "creation": 1613682513,
+                    "lastEdited": 1613682513,
+                    "children": [
                         {
-                            "id": 3,
-                            "parentId": 2,
-                            "creation": 1613095743,
-                            "children":
-                            [
+                            "name": "New",
+                            "id": 790975876190617,
+                            "parentId": 829240261997762,
+                            "creation": 1613682513,
+                            "lastEdited": 1613682518,
+                            "children": [
                                 {
-                                    "id": 9,
-                                    "parentId": 3,
-                                    "creation": 1613095743,
-                                    "lastEdited": 1613095743
+                                    "id": 240693585791438,
+                                    "parentId": 790975876190617,
+                                    "creation": 1613682513,
+                                    "lastEdited": 1613682513,
+                                    "lastOpened": 1613682524,
+                                    "lines": [
+                                        "<div><h2 id=\"cursor\">|</h2></div>"
+                                    ]
                                 }
                             ],
-                            "lastOpened": 1613095743
-                        },
-                        {
-                            "id": 4,
-                            "parentId": 2,
-                            "creation": 1613095743,
-                            "lastOpened": 1613095743
-                        },
-                        {
-                            "id": 8,
-                            "parentId": 2,
-                            "creation": 1613095743,
-                            "lastOpened": 1613095743,
-                            "lastEdited": 1613095743
-                        },
-                        {
-                            "id": 5,
-                            "parentId": 2,
-                            "creation": 1613095743,
-                            "lastOpened": 1613095743,
-                            "lastEdited": 1613095743
+                            "lastOpened": 1613682521
                         }
                     ],
-                    "lastOpened": 1613095743
+                    "lastOpened": 1613682524
                 },
                 {
-                    "id": 6,
-                    "parentId": 1,
-                    "creation": 1613095743,
-                    "lastOpened": 1613095743
-                },
-                {
-                    "id": 7,
-                    "parentId": 1,
-                    "creation": 1613095743
+                    "name": "Test client",
+                    "id": 396281549040763,
+                    "parentId": 555186077026119,
+                    "creation": 1613682524,
+                    "lastEdited": 1613682524,
+                    "children": [
+                        {
+                            "name": "New",
+                            "id": 649166345020170,
+                            "parentId": 396281549040763,
+                            "creation": 1613682524,
+                            "lastEdited": 1613682532,
+                            "children": [
+                                {
+                                    "id": 7015795721364,
+                                    "parentId": 649166345020170,
+                                    "creation": 1613682524,
+                                    "lastEdited": 1613682524,
+                                    "lastOpened": 1613682546,
+                                    "lines": [
+                                        "<div><h2 id=\"cursor\">|</h2></div>"
+                                    ]
+                                }
+                            ],
+                            "lastOpened": 1613682546
+                        },
+                        {
+                            "name": "Test issue",
+                            "id": 692861448382300,
+                            "parentId": 396281549040763,
+                            "creation": 1613682546,
+                            "lastEdited": 1613682546,
+                            "children": [
+                                {
+                                    "id": 775444920217077,
+                                    "parentId": 692861448382300,
+                                    "creation": 1613682546,
+                                    "lastEdited": 1613682546,
+                                    "lastOpened": 1613682572,
+                                    "lines": [
+                                        "<div><h2 id=\"cursor\">|</h2></div>"
+                                    ]
+                                }
+                            ],
+                            "lastOpened": 1613682572
+                        }
+                    ],
+                    "lastOpened": 1613682574
                 }
             ],
-            "lastOpened": 1613095743
+            "lastOpened": 1613682513
         }
     }
 

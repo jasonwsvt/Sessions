@@ -5,105 +5,28 @@
 <script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\dataTree.js"></script>
 <script type="text/javascript">
 d = new DataTree();
-d.insert({ id: 1 });
-//console.log("Size:", d.size())
-//console.log("Record of 1:", d.record(1))
-//d.addChild(1, { id: 2 })
-//d.addChild(2, { id: 3 })
-//d.addChild(2, { id: 4 })
-//d.addChild(2, { id: 5 })
-//d.addChild(1, { id: 6 })
-//d.addChild(1, { id: 7 })
-//d.addChild(2, { id: 8 })
-//d.addChild(3, { id: 9 })
-//console.log("Size:", d.size())
-//console.log("Record of 1:", d.record(1))
-//console.log("Record of 2:", d.record(2))
-//console.log("Record of 3:", d.record(3))
-//console.log("Record of 4:", d.record(4))
-//console.log("Record of 5:", d.record(5))
-//console.log("Record of 6:", d.record(6))
-//d.addChild(6, { id: 7 })
-//d.addChild(6, { id: 8 })
-//d.addChild(6, { id: 9 })
-//console.log("Size:", d.size())
-//console.log("Record of 1:", d.record(1))
-//console.log("Record of 2:", d.record(2))
-//console.log("Record of 3:", d.record(3))
-//console.log("Record of 8:", d.record(8))
-//console.log("Ids before deletion of 9, 8, 5:", d.ids())
-//console.log(d.delete(9,8,5))
-//console.log("Ids after deletion of 9, 8, 5:", d.ids())
-//console.log("Size:", d.size())
-//console.log("Attempt to delete nonexistant 8:", d.delete(8));
-//d.undoDelete();
-//console.log("Ids after undoDelete:", d.ids())
-//console.log("Size:", d.size())
-//console.log("Keys of 8", d.keys(8))
-//console.log("Values of 8", d.values(8))
-//console.log("parentId of 8", d.parentId(8))
-//console.log("Tier of 8:", d.tier(8))
-//console.log("Tier 0 Ids:", d.tierIds(0));
-//console.log("Tier 1 Ids:", d.tierIds(1));
-//console.log("Tier 2 Ids:", d.tierIds(2));
-//console.log("Tier 3 Ids:", d.tierIds(3));
-//console.log("Tier 4 Ids:", d.tierIds(4));
-//[0,1,2,3].forEach(tier => d.tierIds(tier).forEach(id => { console.log("Id:", id, "Tier:", tier, "Path:", d.idPath(id), "Descendants:", d.descendantIds(id))}))
-//d.ids().forEach(id => console.log(id, "ParentId:", d.parentId(id), "ChildIds:", d.childIds(id)))
-////console.log(JSON.stringify(d.export(), null, 2))
-//console.log(d.mostAncestral(9, 3))
-//console.log(d.mostAncestral(2, 3, 4, 5, 6, 7))
-//console.log(d.mostAncestral(2, 3, 4, 5, 6, 7, 8, 9,1))
-//console.log(d.mostAncestral(9, 8, 7, 6, 5, 4, 3, 2,1))
-
-d2 = new DataTree(d.testing())
-d2.edit(2, "name", "test")
-d2new1 = d2.addChild(1);
-dnew1 = d.addChild(1);
-//dnew2 = d.addChild(8);
-console.log("d2.addChild(1):", d2new1);
-console.log("d.addChild(1):", dnew1);
-//console.log("d.addChild(8):", dnew2);
-d.ids().forEach(id => console.log(d.record(id), d2.record(id)))
-//console.log("d2.commonIds(d):", ...d2.commonIds(d));
-//console.log("d.commonIds(d2):", ...d.commonIds(d2));
-//console.log("d2.uniqueIds(d):", ...d2.uniqueIds(d));
-//console.log("d.uniqueIds(d2):", ...d.uniqueIds(d2));
-//console.log("d2.exclusiveIds(d):", ...d2.exclusiveIds(d));
-//console.log("d.exclusiveIds(d2):", ...d.exclusiveIds(d2));
-//console.log("d2.absentIds(d):", ...d2.absentIds(d));
-//console.log("d.absentIds(d2):", ...d.absentIds(d2));
-console.log("d2.newerIds(d):", ...d2.newerIds(d));
-console.log("d.newerIds(d2):", ...d.newerIds(d2));
-//console.log("d2.olderIds(d):", ...d2.olderIds(d));
-//console.log("d.olderIds(d2):", ...d.olderIds(d2));
-//console.log("d2.identicalIds(d):", ...d2.identicalIds(d));
-//console.log("d.identicalIds(d2):", ...d.identicalIds(d2));
-//console.log("d2.differentIds(d):", ...d2.differentIds(d));
-//console.log("d.differentIds(d2):", ...d.differentIds(d2));
-console.log("d.selectIds(d.newerIds(d2)):", d2.selectIds(d.newerIds(d2)));
-console.log("d.selected():", d2.selected())
-console.log("d.ids() before merge:", ...d.ids())
-console.log("d2.ids() before merge:", ...d2.ids())
-console.log("d.record(1) before merge:", d.record(1))
-d2.edit(1, "name", "test")
-console.log("d2.record(1) before merge:", d2.record(1))
-//d2.mergeNewer(d)
-d.mergeSelected(d2)
-console.log("d.ids() after merge:", ...d.ids())
-console.log("d2.ids() after merge:", ...d2.ids())
-console.log("d.record(1) after merge:", d.record(1))
-console.log("storing in session storage as test", d.exportToSessionStorage("test"));
-d3 = new DataTree();
-d3.importFromSessionStorage("test");
-console.log(d3.export());
-d.addChild(d.addChild(d.addChild(d.insert({ name: "New User" }), { name: "Self" }), { name: "New Issue" }));
-console.log(d.export())
-console.log(d.tierIds(0))
-console.log(d.exportPrettyJSON())
-//id = d.addSibling(d.tierIds(1)[0], { name: "New Client" })
-id = d.addChild(d.addChild(d.addSibling(d.tierIds(1)[0], { name: "New Client" }), { name: "New Issue" }));
-console.log(d.exportPrettyJSON())
+d.import(d.testing());
+console.log(d.exportPrettyJSON());
+function sort(id) {
+    const tier3Ids = d.tierIds(3);
+    const recordIds = d.ids(d.record(id));
+    const ids = recordIds.filter(id => tier3Ids.includes(id));
+    const lastEdited = d.sortByLastEdited(ids).slice(-1, 1)[0];
+    const lastOpened = d.sortByLastOpened(ids).slice(-1, 1)[0];
+    const creation   = d.sortByCreation(ids).slice(-1, 1)[0];
+    console.log("\n\nId:", id)
+    console.log("Tier:", d.tier(id))
+    id = lastOpened;
+    console.log("tier3Ids:", tier3Ids)
+    console.log("recordIds:", recordIds)
+    console.log("ids:", ids)
+    ids.forEach(id => { console.log(id, d.creation(id), d.lastEdited(id), d.lastOpened(id)); })
+    console.log("lastEdited:", lastEdited)
+    console.log("lastOpened:", lastOpened)
+    console.log("creation:", creation)
+    console.log("id:", id)
+}
+d.ids().forEach(id => sort(id));
 </script>
 </body>
 </html>
