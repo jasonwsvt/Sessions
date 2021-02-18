@@ -4,6 +4,7 @@ class Utility {
     _group = null;
     _type = null;
     _naming = null;
+    _sortMethod = "name";
 
     _caretDownIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-down-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>";
     _caretUpIcon = "<svg width='1em' height='1em' viewBox='0 0 16 16' class='bi bi-caret-up-fill' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/></svg>";
@@ -167,9 +168,12 @@ class Utility {
     get div()               { return $("#" + this._divID); }
     get app()               { return this.utilities.app; }
     get data()              { return this.app.data; }
+    get editor()            { return this.app.editor; }
+    get siblingIds()        { return this.data.childIds(this.data.parentId(this.currentId)); }
     get currentId()         { return this.app.editor.current; }
     get current()           { return this.data.record(this.data.idPath(this.currentId)[this._tier]); }
-    get editor()            { return this.app.editor; }
+    get name()              { return this._naming ? this.current.name : this.parseDate(this.current.creation); }
+    get default()           { return (this._tier == 1) ? "New Client" : "New Issue"; }
     get entries()           { return this.data.siblings(this.currentId); }
     get pickerButton()      { return $("#" + this._pickerButtonID); }
     get pickerDiv()         { return $("#" + this._pickerDivID); }
@@ -251,7 +255,7 @@ class Utility {
 //        console.log("Group:", this.group);
 //        console.log("Current:", this.current);
 //        console.log("Current name:", this.current.name);
-        pickerButtonText = (this._naming) ? this.current.name : this.parseDate(this.current.creation);
+        pickerButtonText = this.name;
         if (this.entries > 1) { pickerButtonText += " " + this._caretDownIcon; }
         this.pickerButton.html(pickerButtonText);
 
@@ -272,44 +276,43 @@ class Utility {
             this.pickerScrollDiv.css("height", String(scrollDivHeight) + "px");
             this.pickerDiv.css("height", String(parseInt(this.pickerSearchInput.outerHeight) + parseInt(this.pickerScrollDiv.outerHeight) + 10) + "px");
 
-            this.addButton.attr("disabled", (this.group.findByName(this.group.defaultName) != undefined));
+            this.addButton.attr("disabled", (this._naming && this.data..findByName(this.defaultName) != undefined));
         }
 
     }
 
     pickerButtons(method) {
-        var code, sort;
+        var ids;
         const upArrow = this._upArrow;
         const downArrow = this._downArrow;
 
         if (method) {
-            this.group.sortMethod = (this.group.sortMethod == method) ? method + "_reverse" : method;
+            this._sortMethod = (this._sortMethod == method) ? method + "_reverse" : method;
         }
 
         ["name", "creation", "edited", "opened"].forEach((value, index) => {
             var sort = "", label = value.charAt(0).toUpperCase() + value.slice(1);
-            if (this.group.sortMethod == value)              { sort = downArrow + " "; }
-            if (this.group.sortMethod == value + "_reverse") { sort = upArrow + " "; }
+            if (this._sortMethod == value)              { sort = downArrow + " "; }
+            if (this._sortMethod == value + "_reverse") { sort = upArrow + " "; }
             this.pickerSort.find("button").eq(index).html(sort + label);
         });
         
-        switch (this.group.sortMethod) {
-            case "name":             sort = this.group.sortByName;                       break;
-            case "name_reverse":     sort = this.group.sortByName;       sort.reverse(); break;
-            case "creation":         sort = this.group.sortByCreation;                   break;
-            case "creation_reverse": sort = this.group.sortByCreation;   sort.reverse(); break;
-            case "edited":           sort = this.group.sortByLastEdited;                 break;
-            case "edited_reverse":   sort = this.group.sortByLastEdited; sort.reverse(); break;
-            case "opened":           sort = this.group.sortByLastOpened;                 break;
-            case "opened_reverse":   sort = this.group.sortByLastOpened; sort.reverse(); break;
+        const nameSort = ;
+        switch (this._sortMethod.includes("_") ? this._sortMethod.split("_")[0] : this._sortMethod) {
+            case "name":     ids = (!this._naming) ? this.data.sort(this.siblingIds, (a, b) => this.parseDate(a.creation) < this.parseDate(b.creation))
+                                 : this.data.sortAlphabeticallyByKey(this.siblingIds, "name"); break;
+            case "creation": ids = this.data.sortByCreation(this.siblingIds);                  break;
+            case "edited":   ids = this.data.sortByLastEdited(this.siblingIds);                break;
+            case "opened":   ids = this.data.sortByLastOpened(this.siblingIds);                break;
         }
+        if (this._sortMethod.endsWith("_reverse")) { ids = ids.reverse(); }
 
-        code = "<div style = 'display: grid'>";
-        sort.forEach((entry) => {
+        var code = "<div style = 'display: grid'>";
+        this.data.records(ids).forEach((entry) => {
             code += "<div class = 'row'><button type='button' class='btn btn-block ";
             if (entry.id == this.current.id) { code += "btn-info"; }
             else { code += "btn-outline-info"; }
-            code += " btn-sm' value = '" + entry.id + "'>" + entry.name + "</button></div>";
+            code += " btn-sm' value = '" + entry.id + "'>" + this._naming ? entry.name : entry.creation + "</button></div>";
         });
         code += "</div>";
 

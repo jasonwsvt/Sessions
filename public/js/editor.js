@@ -9,7 +9,6 @@ class Editor {
         this.lines = new Lines(this);
         this.cursor = new Cursor(this);
         $(document).ready(function() {
-            console.log(self.lines.div);
             $(document).on("keyup", function(e) {
                 self.session.lines = self.lines.linesArray;
             });

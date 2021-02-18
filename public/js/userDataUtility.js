@@ -440,17 +440,9 @@ class UserDataUtility {
 
         this.manage();
 
-        this.messagesDiv.text("Please select one or more records to perform an action.");
-
-        //this._propagateScrollDiv();
-
         if (!this.actionDiv.hasClass("hidden")) { this.actionDiv.addClass("hidden"); }
         this.actions.data("value", "");
     }
-
-    //_propagateScrollDiv() {
-    //
-    //}
 
     manage() {
         this.adjust.data("index", this.adjust.find("button").index(this));

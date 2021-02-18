@@ -51,17 +51,16 @@ class DataTree {
         else { record.lastEdited = this._now(); }
         if (record.hasOwnProperty("parentId") && this.has(record.parentId)) {
             parent = this._record(record.parentId);
-            if (this.has(record.id) && !this.childIds(parent.id).includes(record.id)) { return; }
+            if (this.has(record.id) && !this.childIds(parent.id).includes(record.id)) { return; } //id exists but not replacing it
             if (!parent.hasOwnProperty("children")) {                              //Parent has no children
-                parent.children = [record]; }
-            else if (!this.has(record.id)) {                                       //id doesn't exist
-                parent.children.push(record); }
-            else {
-                const index = parent.children.findIndex(r => r.id = record.id);
+                parent.children = [record];
+            } else if (!this.has(record.id)) {                                       //id doesn't exist
+                parent.children.push(record);
+            } else {
+                const index = parent.children.findIndex(r => r.id == record.id);
                 parent.children[index] = record;
             }
-        }
-        else {
+        } else {
             //console.log("got here")
             this.import(record);
         }
@@ -74,7 +73,8 @@ class DataTree {
 
     edit(id, keys, values) {
         if (!isInteger(id) || !this.has(id)) { return; }
-        if (isAlphanumeric(keys) && isAlphanumeric(values)) { keys = [keys]; values = [values]; }
+        if (isAlphanumeric(keys))            { keys = [keys]; }
+        if (!isArray(values))                { values = [values]; }
         if (isArrayOfAlphanumerics(keys) && isArrayOfAlphanumerics(values) && keys.length == values.length) {
             const record = this._record(id);
             keys.forEach((key, index) => record[key] = values[index]);
@@ -82,19 +82,45 @@ class DataTree {
         }
     }
 
+    hasKey(id, key) { return this.has(id) && this._record(id).hasOwnProperty(key); }
+    getKey(id, key) {
+        if (this.hasKey(id, key)) {
+            this.record(id).lastOpened = this.now();
+            return this.record(id)[key];
+        }
+    }
+    setKey(id, key, value) {
+        if (this.hasKey(id, key)) {
+            this.record(id)[key] = value;
+            this.record(id).lastEdited = this.now();
+            return true;
+        }
+    }
+    deleteKey(id, key) {
+        if (this.hasKey(id, key)) {
+            delete this.record(id)[key];
+            this.record(id).lastEdited = this.now();
+            return true;
+        }
+    }
+
     records(...ids) {
         ids = (ids == undefined) ? this.ids()
-            : (isArray(ids)) ? smoothArray(ids)
-            : undefined;
+            : (isInteger(ids) || isArrayOfIntegers(ids)) ? smoothArray(ids)
+            : [];
         throwError(isArrayOfIntegers, ids);
-        return ids.map(id => this._record(id, this._data));
+        return ids.map(id => this.record(id, this._data));
     }
-    record(id)    {
+
+    record(id, data = this._data)    {
         if (!this.has(id)) { return; }
-        const record = this._record(id, this._data);
+        const record = this._record(id, data);
         record.lastOpened = this._now();
         return record;
     }
+
+    children(id) { return (this.hasChildren(id)) ? this._record(id).children.length : 0; }
+    siblings(id) { return this.has(id) ? this.tier(id) == 0 ? 1 : this.children(this.parentId(id)) : undefined; }
     has(...ids)   { return smoothArray(ids).every(id => isInteger(this.tier(id)));  }
     keys(id)      { throwError(isInteger, id); return (this.has(id)) ? this._dataKeys(this._record(id)) : undefined; }
     values(id)    { throwError(isInteger, id); return (this.has(id)) ? this._dataValues(this._record(id)) : undefined; }
@@ -140,8 +166,7 @@ class DataTree {
 
     //Children methods
     hasChildren(id) {
-        if (!this.has(id)) { return undefined; }
-        return this._dataHasChildren(this._record(id));
+        return (!this.has(id)) ? undefined : this._dataHasChildren(this._record(id));
     }
 
     //Add a child to an existing parent with the id given by parentId.
@@ -169,35 +194,18 @@ class DataTree {
         return record.id;
     }
     
-    siblings(id) { return (this.tier(id) == 0) ? 1 : this._record(this.parentId(id), this._data).children.length; }
-
-    hasKey(id, key) { return this.has(id) && this.record(id).hasOwnProperty(key); }
-    getKey(id, key) {
-        if (this.hasKey(id, key)) {
-            this.record(id).lastOpened = this.now();
-            return this.record(id)[key];
-        }
-    }
-    setKey(id, key, value) {
-        if (this.hasKey(id, key)) {
-            this.record(id)[key] = value;
-            this.record(id).lastEdited = this.now();
-            return true;
-        }
-    }
-    deleteKey(id, key) {
-        if (this.hasKey(id, key)) {
-            delete this.record(id)[key];
-            this.record(id).lastEdited = this.now();
-            return true;
-        }
-    }
-
     //Id methods
-    ids(data = this._data) { return this._dataIds(data); }
+    ids(data = this._data) {
+        //console.log([data.id].concat(...data.children.map(child => this.ids((child))));
+        return (data.hasOwnProperty("id"))
+                ? (data.hasOwnProperty("children"))
+                ? [data.id].concat(...data.children.map(child => this.ids(child)))
+                : [data.id]
+                : [];
+    }
+
     tierIds(tier) {
-        throwError(isInteger, tier);
-        return this.ids().filter(id => this.tier(id) == tier);
+        return (isInteger(tier) && tier >= 1 && tier <= 3) ? this.ids().filter(id => this.tier(id) == tier) : undefined;
     }
 
     mostAncestral(...ids) {
@@ -216,15 +224,19 @@ class DataTree {
         return record.children.map(child => child.id);
     }
 
-    sort(ids, method)                 { return ids.sort(method); }
+    sort(ids, method)                 { return this._records(ids).sort(method).map(record => record.id); }
     sortAlphabeticallyByKey(ids, key) { return this.sort(ids, (a, b) => a[key].localeCompare(b[key])); }
     sortNumericallyByKey(ids, key)    { return this.sort(ids, (a, b) => a[key] < b[key]); }
     sortByCreation(ids)               { return this.sortNumericallyByKey(ids, "creation"); }
     sortByLastEdited(ids)             { return this.sortNumericallyByKey(ids, "lastEdited"); }
     sortByLastOpened(ids)             { return this.sortNumericallyByKey(ids, "lastOpened"); }
 
+    find(key, value, ids = this.ids()) {
+        return ids.filter(id => this.has(id) && this._record(id).hasKey(key) && this._record(id)[key] == value);
+    }
+
     descendantIds(id) {
-        var ids = this._dataIds(this._record(id));
+        var ids = this.ids(this._record(id));
         ids.splice(ids.indexOf(id), 1);
         return ids;
     }
@@ -256,7 +268,7 @@ class DataTree {
     unionIds(dataTree) {
         if (!dataTree instanceof DataTree) { throw new Error("Expecting dataTree."); }
         //console.log(this.ids());
-        //console.log(this._dataIds(dataTree));
+        //console.log(this.ids((dataTree));
         return [...new Set(this.ids().concat(dataTree.ids()))];
     }
 
@@ -455,16 +467,6 @@ class DataTree {
         return (data.id == id) ? data
              : (this._dataHasChildren(data)) ? data.children.map((child) => this._record(id, child)).find(child => child != undefined)
              : undefined;
-    }
-
-    //Return all the ids found in the given data
-    _dataIds(data = this._data) {
-//        console.log([data.id].concat(...data.children.map(child => this._dataIds(child))));
-        return (data.hasOwnProperty("id"))
-             ? (data.hasOwnProperty("children"))
-                ? [data.id].concat(...data.children.map(child => this._dataIds(child)))
-                : [data.id]
-             : [];
     }
 
     _now() { return Math.round(Date.now() / 1000); }
