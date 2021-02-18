@@ -42,10 +42,10 @@ class Utility {
                 if (self.entries > 1) {
                     if (self.pickerDiv.hasClass("hidden")) {
                         if (self.entries > 1) {
-                            $(this).html(self.current.name + " " + self._caretUpIcon);
+                            $(this).html(self.name + " " + self._caretUpIcon);
                         }
                         if (self.entries == 1) {
-                            $(this).html(self.current.name);
+                            $(this).html(self.name);
                         }
                         self.pickerDiv.removeClass("hidden");
                         this.blur();
@@ -106,7 +106,7 @@ class Utility {
                         self.renameDiv.css("left", String(self.pickerButton.position().left) + "px");
                         self.renameDiv.css("top", String($(this).position().top + 32) + "px");
                         self.renameDiv.addClass("utilityMenu");
-                        self.renameInput.val(self.current.name);
+                        self.renameInput.val(self.name);
                         self.renameInput.focus();
                     }
                     else {
@@ -119,7 +119,7 @@ class Utility {
                     if (e.key == "Enter") {
                         self.renameDiv.addClass("hidden");
                         self.renameDiv.removeClass("utilityMenu");
-                        self.current.name = this.value;
+                        self.name = this.value;
                         self.utilities.manage(self._tier);
                         self.close();
                     }
@@ -155,7 +155,7 @@ class Utility {
             else {
                 self.addButton.on("click", function (e) {
                     self.editor.load(self.data.addSibling(self.current.id));
-                    console.log(self.data)
+                    console.log(self.data.exportPrettyJSON())
                     self.utilities.manage(self._tier);
                     self.close();
                     this.blur();
@@ -251,13 +251,15 @@ class Utility {
     manage() {
         const self = this;
         var pickerButtonText, scrollDivHeight;
-//        this.pickerScrollDiv.empty();
-//        console.log("Group:", this.group);
-//        console.log("Current:", this.current);
-//        console.log("Current name:", this.current.name);
+        //this.pickerScrollDiv.empty();
+        //console.log("Group:", this.group);
+        //console.log("Current:", this.current);
+        //console.log("Current name:", this.name);
+        //console.log(this._tier, this.name);
         pickerButtonText = this.name;
         if (this.entries > 1) { pickerButtonText += " " + this._caretDownIcon; }
         this.pickerButton.html(pickerButtonText);
+        //console.log(this.pickerButton.html(), this.name, pickerButtonText);
 
         if (this.entries > 1) {
             this.pickerButtons();
@@ -276,7 +278,7 @@ class Utility {
             this.pickerScrollDiv.css("height", String(scrollDivHeight) + "px");
             this.pickerDiv.css("height", String(parseInt(this.pickerSearchInput.outerHeight) + parseInt(this.pickerScrollDiv.outerHeight) + 10) + "px");
 
-            this.addButton.attr("disabled", (this._naming && this.data..findByName(this.defaultName) != undefined));
+            this.addButton.attr("disabled", (this._naming && !this.data.find("name", this.default)));
         }
 
     }
@@ -296,8 +298,6 @@ class Utility {
             if (this._sortMethod == value + "_reverse") { sort = upArrow + " "; }
             this.pickerSort.find("button").eq(index).html(sort + label);
         });
-        
-        const nameSort = ;
         switch (this._sortMethod.includes("_") ? this._sortMethod.split("_")[0] : this._sortMethod) {
             case "name":     ids = (!this._naming) ? this.data.sort(this.siblingIds, (a, b) => this.parseDate(a.creation) < this.parseDate(b.creation))
                                  : this.data.sortAlphabeticallyByKey(this.siblingIds, "name"); break;
@@ -313,6 +313,7 @@ class Utility {
             if (entry.id == this.current.id) { code += "btn-info"; }
             else { code += "btn-outline-info"; }
             code += " btn-sm' value = '" + entry.id + "'>" + this._naming ? entry.name : entry.creation + "</button></div>";
+            console.log(code);
         });
         code += "</div>";
 
@@ -337,8 +338,8 @@ class Utility {
             this.pickerDiv.addClass("hidden");
             this.pickerDiv.removeClass("utilityMenu");
             this.pickerDiv.blur();
-            if (this.entries > 1) { this.pickerButton.html(this.current.name + " " + this._caretDownIcon); }
-            else { this.pickerButton.html(this.current.name); }
+            if (this.entries > 1) { this.pickerButton.html(this.name + " " + this._caretDownIcon); }
+            else { this.pickerButton.html(this.name); }
             this.pickerButton.blur();
         }
         if (except != this._renameButtonID)   { 

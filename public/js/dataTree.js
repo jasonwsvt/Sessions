@@ -18,6 +18,7 @@ class DataTree {
 
     export() { return this._data; }
     exportJSON() { return JSON.stringify(this._data); }
+    exportPrettyJSON() { return JSON.stringify(this._data, null, "\t"); }
     exportToSessionStorage(name) { sessionStorage.setItem(name, this.exportJSON()); }
     exportToLocalStorage(name) { localStorage.setItem(name, this.exportJSON()); }
 
@@ -105,10 +106,10 @@ class DataTree {
     }
 
     records(...ids) {
-        ids = (ids == undefined) ? this.ids()
-            : (isInteger(ids) || isArrayOfIntegers(ids)) ? smoothArray(ids)
-            : [];
-        throwError(isArrayOfIntegers, ids);
+        if (ids == undefined) { ids = this.ids(); }
+        else { ids = smoothArray(ids); }
+        if (!isArrayOfIntegers(ids)) { return; }
+
         return ids.map(id => this.record(id, this._data));
     }
 
@@ -205,7 +206,7 @@ class DataTree {
     }
 
     tierIds(tier) {
-        return (isInteger(tier) && tier >= 1 && tier <= 3) ? this.ids().filter(id => this.tier(id) == tier) : undefined;
+        return (isInteger(tier) && tier >= 0) ? this.ids().filter(id => this.tier(id) == tier) : undefined;
     }
 
     mostAncestral(...ids) {
@@ -224,7 +225,7 @@ class DataTree {
         return record.children.map(child => child.id);
     }
 
-    sort(ids, method)                 { return this._records(ids).sort(method).map(record => record.id); }
+    sort(ids, method)                 { return ids.map(id => this._record(id)).sort(method).map(record => record.id); }
     sortAlphabeticallyByKey(ids, key) { return this.sort(ids, (a, b) => a[key].localeCompare(b[key])); }
     sortNumericallyByKey(ids, key)    { return this.sort(ids, (a, b) => a[key] < b[key]); }
     sortByCreation(ids)               { return this.sortNumericallyByKey(ids, "creation"); }
@@ -232,7 +233,7 @@ class DataTree {
     sortByLastOpened(ids)             { return this.sortNumericallyByKey(ids, "lastOpened"); }
 
     find(key, value, ids = this.ids()) {
-        return ids.filter(id => this.has(id) && this._record(id).hasKey(key) && this._record(id)[key] == value);
+        return ids.filter(id => this.has(id) && this.hasKey(id, key) && this._record(id)[key] == value);
     }
 
     descendantIds(id) {
