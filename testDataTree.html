@@ -101,6 +101,9 @@ d.addChild(d.addChild(d.addChild(d.insert({ name: "New User" }), { name: "Self" 
 console.log(d.export())
 console.log(d.tierIds(0))
 console.log(d.exportPrettyJSON())
+//id = d.addSibling(d.tierIds(1)[0], { name: "New Client" })
+id = d.addChild(d.addChild(d.addSibling(d.tierIds(1)[0], { name: "New Client" }), { name: "New Issue" }));
+console.log(d.exportPrettyJSON())
 </script>
 </body>
 </html>

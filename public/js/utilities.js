@@ -24,14 +24,10 @@ class Utilities {
         });
     }
 
-    init() {
-        this.user.init();
-
-        //this.user.reset();
-        //this.manage(0);
-    }
+    init() { this.user.init(); }
 
     manage(tier) {
+        //console.log(tier);
         switch (tier) {
             case 0: this.user.manage();
             case 1: this.client.manage();

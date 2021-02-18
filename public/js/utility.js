@@ -143,8 +143,20 @@ class Utility {
                 });
 
                 self.addInput.on("keypress", function (e) {
+                    var id;
                     if (e.key == "Enter") {
-                        self.editor.load(self.data.addSibling(self.current.id, { name: this.value }));
+                        if (self.data.find("name", this.value)) { console.log(this.value, self.data.find("name", this.value)); }
+                        if (self._tier == 1) {
+                            id = self.data.addChild(self.data.addChild(self.data.addSibling(self.current.id, { name: this.value }), { name: "New Issue" }));
+                        }
+                        if (self._tier == 2) {
+                            id = self.data.addChild(self.data.addSibling(self.current.id, { name: this.value }));
+                        }
+                        if (self._tier == 3) {
+                            id = self.data.addSibling(self.current.id);
+                        }
+                        console.log(self.current.id, id, self.data.exportPrettyJSON());
+                        self.editor.load(id);
                         self.utilities.manage(self._tier);
                         self.close();
                         this.blur();
@@ -155,7 +167,8 @@ class Utility {
             else {
                 self.addButton.on("click", function (e) {
                     self.editor.load(self.data.addSibling(self.current.id));
-                    console.log(self.data.exportPrettyJSON())
+                    //console.log(self.data.exportPrettyJSON())
+                    //console.log(self._tier);
                     self.utilities.manage(self._tier);
                     self.close();
                     this.blur();
@@ -169,12 +182,12 @@ class Utility {
     get app()               { return this.utilities.app; }
     get data()              { return this.app.data; }
     get editor()            { return this.app.editor; }
-    get siblingIds()        { return this.data.childIds(this.data.parentId(this.currentId)); }
-    get currentId()         { return this.app.editor.current; }
-    get current()           { return this.data.record(this.data.idPath(this.currentId)[this._tier]); }
+    get siblingIds()        { return this.data.childIds(this.data.parentId(this.current.id)); }
+    get sessionId()         { return this.app.editor.current; }
+    get current()           { return this.data.record(this.data.idPath(this.sessionId)[this._tier]); }
     get name()              { return this._naming ? this.current.name : this.parseDate(this.current.creation); }
     get default()           { return (this._tier == 1) ? "New Client" : "New Issue"; }
-    get entries()           { return this.data.siblings(this.currentId); }
+    get entries()           { return this.data.siblings(this.data.idPath(this.sessionId)[this._tier]); }
     get pickerButton()      { return $("#" + this._pickerButtonID); }
     get pickerDiv()         { return $("#" + this._pickerDivID); }
     get pickerSearch()      { return $("#" + this._pickerSearchID); }
@@ -277,14 +290,13 @@ class Utility {
             }
             this.pickerScrollDiv.css("height", String(scrollDivHeight) + "px");
             this.pickerDiv.css("height", String(parseInt(this.pickerSearchInput.outerHeight) + parseInt(this.pickerScrollDiv.outerHeight) + 10) + "px");
-
-            this.addButton.attr("disabled", (this._naming && !this.data.find("name", this.default)));
         }
 
+        this.addButton.attr("disabled", (this._naming && !!this.data.find("name", this.default, this.data.tierIds(this._tier)).length));
     }
 
     pickerButtons(method) {
-        var ids;
+        var ids = this.siblingIds;
         const upArrow = this._upArrow;
         const downArrow = this._downArrow;
 
@@ -299,11 +311,11 @@ class Utility {
             this.pickerSort.find("button").eq(index).html(sort + label);
         });
         switch (this._sortMethod.includes("_") ? this._sortMethod.split("_")[0] : this._sortMethod) {
-            case "name":     ids = (!this._naming) ? this.data.sort(this.siblingIds, (a, b) => this.parseDate(a.creation) < this.parseDate(b.creation))
-                                 : this.data.sortAlphabeticallyByKey(this.siblingIds, "name"); break;
-            case "creation": ids = this.data.sortByCreation(this.siblingIds);                  break;
-            case "edited":   ids = this.data.sortByLastEdited(this.siblingIds);                break;
-            case "opened":   ids = this.data.sortByLastOpened(this.siblingIds);                break;
+            case "name":     ids = (!this._naming) ? this.data.sort(ids, (a, b) => this.parseDate(a.creation) < this.parseDate(b.creation))
+                                 : this.data.sortAlphabeticallyByKey(ids, "name"); break;
+            case "creation": ids = this.data.sortByCreation(ids);                  break;
+            case "edited":   ids = this.data.sortByLastEdited(ids);                break;
+            case "opened":   ids = this.data.sortByLastOpened(ids);                break;
         }
         if (this._sortMethod.endsWith("_reverse")) { ids = ids.reverse(); }
 
@@ -312,8 +324,9 @@ class Utility {
             code += "<div class = 'row'><button type='button' class='btn btn-block ";
             if (entry.id == this.current.id) { code += "btn-info"; }
             else { code += "btn-outline-info"; }
-            code += " btn-sm' value = '" + entry.id + "'>" + this._naming ? entry.name : entry.creation + "</button></div>";
-            console.log(code);
+            //console.log(entry.id, this._naming ? entry.name : this.parseDate(entry.creation));
+            code += " btn-sm' value = '" + entry.id + "'>" + (this._naming ? entry.name : this.parseDate(entry.creation)) + "</button></div>";
+            //console.log(code);
         });
         code += "</div>";
 
@@ -338,6 +351,7 @@ class Utility {
             this.pickerDiv.addClass("hidden");
             this.pickerDiv.removeClass("utilityMenu");
             this.pickerDiv.blur();
+            //console.log(this._tier, this.entries)
             if (this.entries > 1) { this.pickerButton.html(this.name + " " + this._caretDownIcon); }
             else { this.pickerButton.html(this.name); }
             this.pickerButton.blur();
