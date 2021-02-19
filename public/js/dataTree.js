@@ -228,9 +228,16 @@ class DataTree {
         return record.children.map(child => child.id);
     }
 
-    sort(ids, method)                 { return ids.map(id => this._record(id)).sort(method).map(record => record.id); }
+    sort(ids, method)                 {
+        //console.log(ids, method);
+        return ids.map(id => this._record(id)).sort(method).map(record => record.id); }
     sortAlphabeticallyByKey(ids, key) { return this.sort(ids, (a, b) => a[key].localeCompare(b[key])); }
-    sortNumericallyByKey(ids, key)    { return this.sort(ids, (a, b) => a[key] < b[key]); }
+    sortNumericallyByKey(ids, key)    { return this.sort(ids, (a, b) => {
+        //console.log("a.id:", a.id, ", a." + key + ":", a[key]);
+        //console.log("b.id:", b.id, ", b." + key + ":", b[key]);
+        //console.log((a[key] < b[key]) ? -1 : (a[key] > b[key]) ? 1 : 0);
+        return (a[key] < b[key]) ? -1 : (a[key] > b[key]) ? 1 : 0;
+    }); }
     sortByCreation(ids)               { return this.sortNumericallyByKey(ids, "creation"); }
     sortByLastEdited(ids)             { return this.sortNumericallyByKey(ids, "lastEdited"); }
     sortByLastOpened(ids)             { return this.sortNumericallyByKey(ids, "lastOpened"); }

@@ -8,22 +8,23 @@ d = new DataTree();
 d.import(d.testing());
 console.log(d.exportPrettyJSON());
 function sort(id) {
+    console.log("\n\nId:", id)
     const tier3Ids = d.tierIds(3);
     const recordIds = d.ids(d.record(id));
     const ids = recordIds.filter(id => tier3Ids.includes(id));
-    const lastEdited = d.sortByLastEdited(ids).slice(-1, 1)[0];
-    const lastOpened = d.sortByLastOpened(ids).slice(-1, 1)[0];
-    const creation   = d.sortByCreation(ids).slice(-1, 1)[0];
-    console.log("\n\nId:", id)
+    if (ids.length == 1) { return ids[0]; }
     console.log("Tier:", d.tier(id))
-    id = lastOpened;
     console.log("tier3Ids:", tier3Ids)
     console.log("recordIds:", recordIds)
     console.log("ids:", ids)
     ids.forEach(id => { console.log(id, d.creation(id), d.lastEdited(id), d.lastOpened(id)); })
+    const lastEdited = d.sortByLastEdited(ids) .slice(-1)[0];
     console.log("lastEdited:", lastEdited)
+    const lastOpened = d.sortByLastOpened(ids).slice(-1)[0];
     console.log("lastOpened:", lastOpened)
+    const creation   = d.sortByCreation(ids).slice(-1)[0];
     console.log("creation:", creation)
+    id = lastOpened;
     console.log("id:", id)
 }
 d.ids().forEach(id => sort(id));

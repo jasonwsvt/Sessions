@@ -284,9 +284,10 @@ class Utility {
                     const tier3Ids = self.data.tierIds(3);
                     const idDescendants = self.data.descendantIds(self.current.id);
                     var ids = idDescendants.filter(id => tier3Ids.includes(id));
-                    const lastEdited = self.data.sortByLastEdited(ids).slice(-1, 1)[0];
-                    const creation   = self.data.sortByCreation(ids).slice(-1, 1)[0];
-                    id = lastEdited ? lastEdited : creation;
+                    const lastOpened = self.data.sortByLastOpened(ids).slice(-1)[0];
+                    const lastEdited = self.data.sortByLastEdited(ids).slice(-1)[0];
+                    const creation   = self.data.sortByCreation(ids).slice(-1)[0];
+                    id = lastEdited ? lastEdited : lastOpened ? lastOpened : creation;
                     console.log(self.current.id, tier3Ids, idDescendants, ids, lastEdited, creation, id)
                 }
                 if (id == undefined) {
