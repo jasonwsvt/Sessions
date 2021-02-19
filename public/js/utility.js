@@ -115,6 +115,10 @@ class Utility {
                     e.stopPropagation();
                 });
 
+                self.renameDiv.on("click", function (e) {
+                    e.stopPropagation();
+                });
+    
                 self.renameInput.on("keypress", function (e) {
                     if (e.key == "Enter") {
                         self.renameDiv.addClass("hidden");
@@ -123,6 +127,10 @@ class Utility {
                         self.utilities.manage(self._tier);
                         self.close();
                     }
+                    e.stopPropagation();
+                });
+
+                self.renameInput.on("click", function (e) {
                     e.stopPropagation();
                 });
 
@@ -142,10 +150,15 @@ class Utility {
                     e.stopPropagation();
                 });
 
+                self.addDiv.on("click", function (e) {
+                    e.stopPropagation();
+                });
+
                 self.addInput.on("keypress", function (e) {
+                    e.stopPropagation();
                     var id;
                     if (e.key == "Enter") {
-                        if (!!self.data.find("name", this.value).length) { console.log(this.value, self.data.find("name", this.value)); }
+                        if (!!self.data.find("name", this.value).length) { console.log(this.value, self.data.find("name", this.value)); return; }
                         if (self._tier == 1) {
                             id = self.data.addChild(self.data.addChild(self.data.addSibling(self.current.id, { name: this.value }), { name: "New Issue" }));
                         }
@@ -155,13 +168,13 @@ class Utility {
                         if (self._tier == 3) {
                             id = self.data.addSibling(self.current.id);
                         }
+                        this.value = "";
                         //console.log(self.current.id, id, self.data.exportPrettyJSON());
                         self.editor.load(id);
                         self.utilities.manage(self._tier);
                         self.close();
                         this.blur();
                     }
-                    e.stopPropagation();
                 });
             }
             else {
@@ -287,17 +300,17 @@ class Utility {
                     const lastEdited = self.data.sortByLastEdited(tier3Descendants).slice(-1)[0];
                     const creation   = self.data.sortByCreation(tier3Descendants).slice(-1)[0];
                     id = lastEdited ? lastEdited : lastOpened ? lastOpened : creation;
-                    if (id == undefined) {
-                        console.log(self.data.exportPrettyJSON());
-                        console.log("this.value:", this.value);
-                        console.log("tier3Ids:", tier3Ids);
-                        console.log("descendants:", descendants);
-                        console.log("tier3Descendants:", tier3Descendants);
-                        console.log("lastOpened:", lastOpened);
-                        console.log("lastEdited:", lastEdited);
-                        console.log("creation:", creation);
-                        console.log("id:", id);
-                    }
+                    //if (id == undefined) {
+                    //    console.log(self.data.exportPrettyJSON());
+                    //    console.log("this.value:", this.value);
+                    //    console.log("tier3Ids:", tier3Ids);
+                    //    console.log("descendants:", descendants);
+                    //    console.log("tier3Descendants:", tier3Descendants);
+                    //    console.log("lastOpened:", lastOpened);
+                    //    console.log("lastEdited:", lastEdited);
+                    //    console.log("creation:", creation);
+                    //    console.log("id:", id);
+                    //}
                 }
                 console.log(id, self.sessionId);
                 self.editor.load(id);
