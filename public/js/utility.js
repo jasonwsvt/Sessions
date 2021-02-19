@@ -195,12 +195,12 @@ class Utility {
     get app()               { return this.utilities.app; }
     get data()              { return this.app.data; }
     get editor()            { return this.app.editor; }
-    get siblingIds()        { return this.data.childIds(this.data.parentId(this.current.id)); }
+    get siblingIds()        { return this.data.siblingIds(this.current.id); }
     get sessionId()         { return this.app.editor.current; }
     get current()           { return this.data.record(this.data.idPath(this.sessionId)[this._tier]); }
     get name()              { if (this.current == undefined) { console.log(this.data.exportPrettyJSON()); } return this._naming ? this.current.name : this.parseDate(this.current.creation); }
     get default()           { return (this._tier == 1) ? "New Client" : "New Issue"; }
-    get entries()           { return this.data.siblings(this.data.idPath(this.sessionId)[this._tier]); }
+    get entries()           { return this.data.siblings(this.current.id); }
     get pickerButton()      { return $("#" + this._pickerButtonID); }
     get pickerDiv()         { return $("#" + this._pickerDivID); }
     get pickerSearch()      { return $("#" + this._pickerSearchID); }

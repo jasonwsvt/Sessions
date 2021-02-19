@@ -1,7 +1,6 @@
 //a DataTree is an object with three characteristic parameters:
 // 1) .id that signifies the id,
 // 2) .children, if it exists, is an array of DataTrees, and
-// 3) .parentId, if it exists, signifies that it is a child.
 class DataTree {
     _data = {};
     _deleted = [];
@@ -27,13 +26,11 @@ class DataTree {
     importFromSessionStorage(name) { this.importJSON(sessionStorage.getItem(name)); }
     importFromLocalStorage(name) { this.importJSON(localStorage.getItem(name)); }
 
-    isDataTree(data, parentId) {
+    isDataTree(data) {
         //console.log(!isObject(data))
         if (!isObject(data)) { return false; }
         //console.log(data.hasOwnProperty("id"))
-        //console.log((!data.hasOwnProperty("parentId") || data.parentId == parentId || ((parentId == undefined && this.has(data.parentId)))))
         return (data.hasOwnProperty("id") &&
-              (!data.hasOwnProperty("parentId") || data.parentId == parentId || ((parentId == undefined && this.has(data.parentId)))) &&
               (!data.hasOwnProperty("children") || data.children.every(child => this.isDataTree(child, data.id))));
     }
 
@@ -41,35 +38,16 @@ class DataTree {
         return (isArray(data) && data.every(item => this.isDataTree(item)));
     }
 
-    //Record creation, reading, updating, deletion
-    //If record.id exists in tree and has a parent, the replacement record will take the old record's parentId.
-    //If record.id doesn't exist, or record.id doesn't have a parent, the record will take the root.
-    insert(record) {
-        //console.log("got here", record.id)
-        if (isObject(record) && !record.hasOwnProperty("id")) { record.id = this._newId(); }
-        if (!this.isDataTree(record)) { return; }
-        if (!record.hasOwnProperty("creation")) { record.creation = this._now(); }
-        if (!record.hasOwnProperty("lastEdited")) { record.lastEdited = this._now(); }
-        if (record.hasOwnProperty("parentId") && this.has(record.parentId)) {
-            parent = this._record(record.parentId);
-            if (this.has(record.id) && !this.childIds(parent.id).includes(record.id)) { return; } //id exists but not replacing it
-            if (!parent.hasOwnProperty("children")) {                              //Parent has no children
-                parent.children = [record];
-            } else if (!this.has(record.id)) {                                       //id doesn't exist
-                parent.children.push(record);
-            } else {
-                const index = parent.children.findIndex(r => r.id == record.id);
-                parent.children[index] = record;
-            }
-        } else {
-            //console.log("got here")
-            this.import(record);
+    update(record = {}, id) {
+        if (id == undefined) {
+            if (record.hasOwnProperty("id")) { id = record.id; }
+            else { return; }
         }
-        return record.id;
-    }
-
-    update(id, record) {
-        if (this.has(id)) { record.id = id; record.lastEdited = this._now(); this.insert(record); }
+        if (this.has(id) && this.isDataTree(record)) {
+            const r = this.record(id);
+            Object.keys(record).forEach(key => r[key] = record[key]);
+            record.lastEdited = this._now();
+        }
     }
 
     edit(id, keys, values) {
@@ -80,6 +58,17 @@ class DataTree {
             const record = this._record(id);
             keys.forEach((key, index) => record[key] = values[index]);
             record.lastEdited = this._now();
+        }
+    }
+
+    changeId(id, newId) {
+        if (!isInteger(id) || !this.has(id)) { return; }
+        if (newId == undefined) { newId = this._newId(); }
+        else if (!isInteger(newId) || this.has(newId)) { return; }
+        const record = this.record(id);
+        record.id = newId;
+        if (record.hasOwnProperty("children") && isArray(record.children)) {
+            record.children.forEach(child => child.parentId = newId);
         }
     }
 
@@ -184,18 +173,15 @@ class DataTree {
         if (!isInteger(parentId) || !this.has(parentId)) { return; }
         if (!record.hasOwnProperty("id")) { record.id = this._newId(); }
         if (!this.isDataTree(record)) { return; }
-        record.parentId = parentId;
-        this.insert(record);
+        const parent = this._record(parentId);
+        if (parent.hasOwnProperty("children")) { parent.children.push(record); }
+        else { parent.children = [record]; }
         return record.id;
     }
 
     addSibling(siblingId, record = {}) {
         if (!isInteger(siblingId) || !this.has(siblingId) || this.tier(siblingId) == 0) { return; }
-        if (!record.hasOwnProperty("id")) { record.id = this._newId(); }
-        if (!this.isDataTree(record)) { return; }
-        record.parentId = this.record(siblingId).parentId;
-        this.insert(record);
-        return record.id;
+        this.addChild(this.parentId(siblingId), record);
     }
     
     //Id methods
@@ -244,6 +230,12 @@ class DataTree {
 
     find(key, value, ids = this.ids()) {
         return ids.filter(id => this.has(id) && this.hasKey(id, key) && this._record(id)[key] == value);
+    }
+
+    siblingIds(id) {
+        return (this.hasParent(id)) ? this.childIds(this.parentId(id))
+                   : (this.has(id)) ? id
+                   : undefined;
     }
 
     descendantIds(id) {
@@ -368,13 +360,19 @@ class DataTree {
         }
         return this.dataCompareIds(dataTree, func, ids);
     }
-    
-    mergeRecords(...records) {
-        records = smoothArray(records);
-        if (!isArray(records) && records.every(record => this.isDataTree(record))) { return; }
-        records.forEach(record => this.insert(record));
-    }
 
+    merge(record, parentId) {
+        if (!record.hasOwnProperty("id")) { record.id = this._newId(); }
+        if (!this.isDataTree(record)) { return; }
+        if (parentId == undefined && !this.has(record.id)) { this.import(record); }
+        else if (this.has(parentId)) {
+            if (this.has(record.id)) {
+                if (this.parentId(record.id) == parentId) { this.update(record); }
+            }
+            else { this.addChild(parentId, record); }
+        }
+    }
+    
     mergeIds(ids, dataTree)  {
         if (isInteger(ids)) { ids = [ids]; }
         if (!isArrayOfIntegers(ids)) { return; }
