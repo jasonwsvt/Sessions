@@ -278,22 +278,28 @@ class Utility {
             this.pickerButtons();
 
             this.pickerScrollDiv.find("button").on("click", function (e) {
-                var id;
-                if (self._tier == 3) { id = this.value; }
-                else {
+                var id = parseInt(this.value);
+                if (self.data.tier(id) != 3) {
                     const tier3Ids = self.data.tierIds(3);
-                    const idDescendants = self.data.descendantIds(self.current.id);
-                    var ids = idDescendants.filter(id => tier3Ids.includes(id));
-                    const lastOpened = self.data.sortByLastOpened(ids).slice(-1)[0];
-                    const lastEdited = self.data.sortByLastEdited(ids).slice(-1)[0];
-                    const creation   = self.data.sortByCreation(ids).slice(-1)[0];
+                    const descendants = self.data.descendantIds(id);
+                    var tier3Descendants = descendants.filter(d => tier3Ids.includes(d));
+                    const lastOpened = self.data.sortByLastOpened(tier3Descendants).slice(-1)[0];
+                    const lastEdited = self.data.sortByLastEdited(tier3Descendants).slice(-1)[0];
+                    const creation   = self.data.sortByCreation(tier3Descendants).slice(-1)[0];
                     id = lastEdited ? lastEdited : lastOpened ? lastOpened : creation;
-                    console.log(self.current.id, tier3Ids, idDescendants, ids, lastEdited, creation, id)
+                    if (id == undefined) {
+                        console.log(self.data.exportPrettyJSON());
+                        console.log("this.value:", this.value);
+                        console.log("tier3Ids:", tier3Ids);
+                        console.log("descendants:", descendants);
+                        console.log("tier3Descendants:", tier3Descendants);
+                        console.log("lastOpened:", lastOpened);
+                        console.log("lastEdited:", lastEdited);
+                        console.log("creation:", creation);
+                        console.log("id:", id);
+                    }
                 }
-                if (id == undefined) {
-                    console.log(self.data.exportPrettyJSON());
-                    console.log(self.sessionId, self.current);
-                }
+                console.log(id, self.sessionId);
                 self.editor.load(id);
                 console.log(self.sessionId, self.current);
                 self.close();

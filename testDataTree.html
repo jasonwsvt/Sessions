@@ -5,29 +5,85 @@
 <script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\dataTree.js"></script>
 <script type="text/javascript">
 d = new DataTree();
-d.import(d.testing());
+d.import({
+	"username": "newuser",
+	"id": 412099228542649,
+	"creation": 1613747104,
+	"lastEdited": 1613747104,
+	"children": [
+		{
+			"name": "Self",
+			"id": 19825399854373,
+			"parentId": 412099228542649,
+			"creation": 1613747104,
+			"lastEdited": 1613747104,
+			"children": [
+				{
+					"name": "New",
+					"id": 698787554428416,
+					"parentId": 19825399854373,
+					"creation": 1613747104,
+					"lastEdited": 1613747108,
+					"children": [
+						{
+							"id": 532875805907999,
+							"parentId": 698787554428416,
+							"creation": 1613747104,
+							"lastEdited": 1613747104,
+							"lastOpened": 1613747110,
+							"lines": [
+								"<div><h2 id=\"cursor\">|</h2></div>"
+							]
+						}
+					],
+					"lastOpened": 1613747111
+				},
+				{
+					"name": "Test",
+					"id": 90726873693349,
+					"parentId": 19825399854373,
+					"creation": 1613747111,
+					"lastEdited": 1613747111,
+					"children": [
+						{
+							"id": 660856033906383,
+							"parentId": 90726873693349,
+							"creation": 1613747111,
+							"lastEdited": 1613747111,
+							"lastOpened": 1613747112,
+							"lines": [
+								"<div><h2 id=\"cursor\">|</h2></div>"
+							]
+						}
+					],
+					"lastOpened": 1613747112
+				}
+			],
+			"lastOpened": 1613747112
+		}
+	],
+	"lastOpened": 1613747104
+});
 console.log(d.exportPrettyJSON());
-function sort(id) {
-    console.log("\n\nId:", id)
+d.ids().forEach(id => {
+    if (d.tier(id) == 3) { return; }
     const tier3Ids = d.tierIds(3);
-    const recordIds = d.ids(d.record(id));
-    const ids = recordIds.filter(id => tier3Ids.includes(id));
-    if (ids.length == 1) { return ids[0]; }
-    console.log("Tier:", d.tier(id))
-    console.log("tier3Ids:", tier3Ids)
-    console.log("recordIds:", recordIds)
-    console.log("ids:", ids)
-    ids.forEach(id => { console.log(id, d.creation(id), d.lastEdited(id), d.lastOpened(id)); })
-    const lastEdited = d.sortByLastEdited(ids) .slice(-1)[0];
-    console.log("lastEdited:", lastEdited)
-    const lastOpened = d.sortByLastOpened(ids).slice(-1)[0];
-    console.log("lastOpened:", lastOpened)
-    const creation   = d.sortByCreation(ids).slice(-1)[0];
-    console.log("creation:", creation)
-    id = lastOpened;
-    console.log("id:", id)
-}
-d.ids().forEach(id => sort(id));
+    const descendants = d.descendantIds(id);
+    var tier3Descendants = descendants.filter(id => tier3Ids.includes(id));
+    const lastOpened = d.sortByLastOpened(tier3Descendants).slice(-1)[0];
+    const lastEdited = d.sortByLastEdited(tier3Descendants).slice(-1)[0];
+    const creation   = d.sortByCreation(tier3Descendants).slice(-1)[0];
+    newId = lastEdited ? lastEdited : lastOpened ? lastOpened : creation;
+    //console.log(d.exportPrettyJSON());
+    console.log("id:", id);
+    //console.log("tier3Ids:", tier3Ids);
+    //console.log("descendants:", descendants);
+    //console.log("tier3Descendants:", tier3Descendants);
+    //console.log("lastOpened:", lastOpened);
+    //console.log("lastEdited:", lastEdited);
+    //console.log("creation:", creation);
+    console.log("newId:", newId);
+});
 </script>
 </body>
 </html>
