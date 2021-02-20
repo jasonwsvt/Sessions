@@ -7,83 +7,38 @@
 d = new DataTree();
 d.import({
 	"username": "newuser",
-	"id": 412099228542649,
-	"creation": 1613747104,
-	"lastEdited": 1613747104,
+	"id": 664902783205072,
+	"creation": 1613835231,
 	"children": [
 		{
 			"name": "Self",
-			"id": 19825399854373,
-			"parentId": 412099228542649,
-			"creation": 1613747104,
-			"lastEdited": 1613747104,
+			"id": 715055689690006,
+			"creation": 1613835231,
 			"children": [
 				{
-					"name": "New",
-					"id": 698787554428416,
-					"parentId": 19825399854373,
-					"creation": 1613747104,
-					"lastEdited": 1613747108,
+					"name": "New Issue",
+					"id": 245509164355643,
+					"creation": 1613835231,
 					"children": [
 						{
-							"id": 532875805907999,
-							"parentId": 698787554428416,
-							"creation": 1613747104,
-							"lastEdited": 1613747104,
-							"lastOpened": 1613747110,
-							"lines": [
-								"<div><h2 id=\"cursor\">|</h2></div>"
-							]
+							"id": 275645471768520,
+							"creation": 1613835231,
+							"lastOpened": 1613835231
 						}
 					],
-					"lastOpened": 1613747111
-				},
-				{
-					"name": "Test",
-					"id": 90726873693349,
-					"parentId": 19825399854373,
-					"creation": 1613747111,
-					"lastEdited": 1613747111,
-					"children": [
-						{
-							"id": 660856033906383,
-							"parentId": 90726873693349,
-							"creation": 1613747111,
-							"lastEdited": 1613747111,
-							"lastOpened": 1613747112,
-							"lines": [
-								"<div><h2 id=\"cursor\">|</h2></div>"
-							]
-						}
-					],
-					"lastOpened": 1613747112
+					"lastOpened": 1613835231
 				}
 			],
-			"lastOpened": 1613747112
+			"lastOpened": 1613835231
 		}
 	],
-	"lastOpened": 1613747104
+	"lastOpened": 1613835231
 });
 console.log(d.exportPrettyJSON());
-d.ids().forEach(id => {
-    if (d.tier(id) == 3) { return; }
-    const tier3Ids = d.tierIds(3);
-    const descendants = d.descendantIds(id);
-    var tier3Descendants = descendants.filter(id => tier3Ids.includes(id));
-    const lastOpened = d.sortByLastOpened(tier3Descendants).slice(-1)[0];
-    const lastEdited = d.sortByLastEdited(tier3Descendants).slice(-1)[0];
-    const creation   = d.sortByCreation(tier3Descendants).slice(-1)[0];
-    newId = lastEdited ? lastEdited : lastOpened ? lastOpened : creation;
-    //console.log(d.exportPrettyJSON());
-    console.log("id:", id);
-    //console.log("tier3Ids:", tier3Ids);
-    //console.log("descendants:", descendants);
-    //console.log("tier3Descendants:", tier3Descendants);
-    //console.log("lastOpened:", lastOpened);
-    //console.log("lastEdited:", lastEdited);
-    //console.log("creation:", creation);
-    console.log("newId:", newId);
-});
+console.log(d.addChild(715055689690006, { name: "First" }))
+console.log(d.addSibling(245509164355643, { name: "Second" }))
+console.log(d.addChild(d.addSibling(245509164355643, { name: "Third" })))
+console.log(d.exportPrettyJSON());
 </script>
 </body>
 </html>

@@ -123,8 +123,9 @@ class Utility {
                     if (e.key == "Enter") {
                         self.renameDiv.addClass("hidden");
                         self.renameDiv.removeClass("utilityMenu");
-                        self.data.setKey(self.current.id, "name", this.value);
+                        self.data.setKey(self.id, "name", this.value);
                         self.utilities.manage(self._tier);
+                        //self.manage();
                         self.close();
                     }
                     e.stopPropagation();
@@ -158,18 +159,18 @@ class Utility {
                     e.stopPropagation();
                     var id;
                     if (e.key == "Enter") {
-                        if (!!self.data.find("name", this.value).length) { console.log(this.value, self.data.find("name", this.value)); return; }
+                        if (self.data.find("name", this.value)) { console.log(this.value, self.data.find("name", this.value)); return; }
                         if (self._tier == 1) {
-                            id = self.data.addChild(self.data.addChild(self.data.addSibling(self.current.id, { name: this.value }), { name: "New Issue" }));
+                            id = self.data.addChild(self.data.addChild(self.data.addSibling(self.id, { name: this.value }), { name: "New Issue" }));
                         }
                         if (self._tier == 2) {
-                            id = self.data.addChild(self.data.addSibling(self.current.id, { name: this.value }));
+                            id = self.data.addChild(self.data.addSibling(self.id, { name: this.value }));
                         }
                         if (self._tier == 3) {
-                            id = self.data.addSibling(self.current.id);
+                            id = self.data.addSibling(self.id);
                         }
                         this.value = "";
-                        //console.log(self.current.id, id, self.data.exportPrettyJSON());
+                        //console.log(self.id, id, self.data.exportPrettyJSON());
                         self.editor.load(id);
                         self.utilities.manage(self._tier);
                         self.close();
@@ -179,7 +180,7 @@ class Utility {
             }
             else {
                 self.addButton.on("click", function (e) {
-                    self.editor.load(self.data.addSibling(self.current.id));
+                    self.editor.load(self.data.addSibling(self.id));
                     //console.log(self.data.exportPrettyJSON())
                     //console.log(self._tier);
                     self.utilities.manage(self._tier);
@@ -194,13 +195,16 @@ class Utility {
     get app()               { return this.utilities.app; }
     get data()              { return this.app.data; }
     get editor()            { return this.app.editor; }
-    get siblingIds()        { return this.data.siblingIds(this.current.id); }
+    get siblingIds()        { return this.data.siblingIds(this.id); }
     get sessionId()         { return this.app.editor.current; }
-    get current()           { return this.data.record(this.data.idPath(this.sessionId)[this._tier]); }
-    get name()              { return this._naming ? this.current.name : this.parseDate(this.current.creation); }
-    get entries()           { return this.data.siblings(this.current.id); }
+    get entries()           { return this.data.siblings(this.id); }
     get type()              { return this._tier == 1 ? "client" : this._tier == 2 ? "issue" : "session"; }
     get default()           { return this._tier == 1 ? "New Client" : "New Issue"; }
+    get id()                { return this.data.idPath(this.sessionId)[this._tier]; }
+    get name()              { return this._naming ? this.data.value(this.id, "name") : this.parseDate(this.creation); }
+    get creation()          { return this.data.value(this.id, "creation"); }
+    get lastEdited()        { return this.data.value(this.id, "lastEdited"); }
+    get lastOpened()        { return this.data.value(this.id, "lastOpened"); }
 
     get div()               { return $("#" + this._divID); }
     get pickerButton()      { return $("#" + this._pickerButtonID); }
@@ -313,9 +317,8 @@ class Utility {
                     //    console.log("id:", id);
                     //}
                 }
-                console.log(id, self.sessionId);
                 self.editor.load(id);
-                console.log(self.sessionId, self.current);
+                //console.log(self.sessionId, self.current);
                 self.close();
                 self.utilities.manage(self._tier);
                 e.stopPropagation();
@@ -328,8 +331,7 @@ class Utility {
             this.pickerScrollDiv.css("height", String(scrollDivHeight) + "px");
             this.pickerDiv.css("height", String(parseInt(this.pickerSearchInput.outerHeight) + parseInt(this.pickerScrollDiv.outerHeight) + 10) + "px");
         }
-
-        this.addButton.attr("disabled", (this._naming && !!this.data.find("name", this.default, this.data.tierIds(this._tier)).length));
+        this.addButton.attr("disabled", (this._naming && !!this.data.find("name", this.default, this.siblingIds)));
     }
 
     pickerButtons(method) {
@@ -349,21 +351,20 @@ class Utility {
         });
         switch (this._sortMethod.includes("_") ? this._sortMethod.split("_")[0] : this._sortMethod) {
             case "name":     ids = (!this._naming) ? this.data.sort(ids, (a, b) => this.parseDate(a.creation) < this.parseDate(b.creation))
-                                 : this.data.sortAlphabeticallyByKey(ids, "name"); break;
-            case "creation": ids = this.data.sortByCreation(ids);                  break;
-            case "edited":   ids = this.data.sortByLastEdited(ids);                break;
-            case "opened":   ids = this.data.sortByLastOpened(ids);                break;
+                                 : this.data.sortAlnumByKey(ids, "name"); break;
+            case "creation": ids = this.data.sortByCreation(ids);         break;
+            case "edited":   ids = this.data.sortByLastEdited(ids);       break;
+            case "opened":   ids = this.data.sortByLastOpened(ids);       break;
         }
         if (this._sortMethod.endsWith("_reverse")) { ids = ids.reverse(); }
 
         var code = "<div style = 'display: grid'>";
-        this.data.records(ids).forEach((entry) => {
+        ids.forEach(id => {
+            const name = this._naming ? this.data.value(id, "name") : this.parseDate(this.data.value(id, "creation"));
             code += "<div class = 'row'><button type='button' class='btn btn-block ";
-            if (entry.id == this.current.id) { code += "btn-info"; }
+            if (id == this.id) { code += "btn-info"; }
             else { code += "btn-outline-info"; }
-            //console.log(entry.id, this._naming ? entry.name : this.parseDate(entry.creation));
-            code += " btn-sm' value = '" + entry.id + "'>" + (this._naming ? entry.name : this.parseDate(entry.creation)) + "</button></div>";
-            //console.log(code);
+            code += " btn-sm' value = '" + id + "'>" + name + "</button></div>";
         });
         code += "</div>";
 

@@ -21,7 +21,18 @@ class DataTree {
     exportToSessionStorage(name) { sessionStorage.setItem(name, this.exportJSON()); }
     exportToLocalStorage(name) { localStorage.setItem(name, this.exportJSON()); }
 
-    import(data) { if (this.isDataTree(data)) { this._data = data; } }
+    import(data) {
+        if (!data.hasOwnProperty("id")) {
+            data.id = this._newId();
+        }
+        if (!data.hasOwnProperty("creation")) {
+            data.creation = this._now();
+        }
+        if (this.isDataTree(data)) {
+            this._data = data;
+            return this._data.id;
+        }
+    }
     importJSON(json) { this.import(JSON.parse(json)); }
     importFromSessionStorage(name) { this.importJSON(sessionStorage.getItem(name)); }
     importFromLocalStorage(name) { this.importJSON(localStorage.getItem(name)); }
@@ -73,7 +84,7 @@ class DataTree {
     }
 
     hasKey(id, key) { return this.has(id) && this._record(id).hasOwnProperty(key); }
-    getKey(id, key) {
+    value(id, key) {
         if (this.hasKey(id, key)) {
             this.record(id).lastOpened = this._now();
             return this.record(id)[key];
@@ -172,6 +183,7 @@ class DataTree {
     addChild(parentId, record = {}) {
         if (!isInteger(parentId) || !this.has(parentId)) { return; }
         if (!record.hasOwnProperty("id")) { record.id = this._newId(); }
+        if (!record.hasOwnProperty("creation")) { record.creation = this._now(); }
         if (!this.isDataTree(record)) { return; }
         const parent = this._record(parentId);
         if (parent.hasOwnProperty("children")) { parent.children.push(record); }
@@ -181,7 +193,7 @@ class DataTree {
 
     addSibling(siblingId, record = {}) {
         if (!isInteger(siblingId) || !this.has(siblingId) || this.tier(siblingId) == 0) { return; }
-        this.addChild(this.parentId(siblingId), record);
+        return this.addChild(this.parentId(siblingId), record);
     }
     
     //Id methods
@@ -218,11 +230,15 @@ class DataTree {
     sortByKey(ids, k)        { return this.sort(ids, (a, b) => (a[k] instanceof String) ? a[k].localeCompare(b[k]) : (a[k] < b[k]) ? -1 : (a[k] > b[k]) ? 1 : 0); }
     sortAlnumByKey(ids, key) { return this.sort(ids, (a, b) => a[key].localeCompare(b[key])); }
     sortNumByKey(ids, key)   { return this.sort(ids, (a, b) => (a[key] < b[key]) ? -1 : (a[key] > b[key]) ? 1 : 0); }
-    sortByCreation(ids)      { return this.sortNumericallyByKey(ids, "creation"); }
-    sortByLastEdited(ids)    { return this.sortNumericallyByKey(ids, "lastEdited"); }
-    sortByLastOpened(ids)    { return this.sortNumericallyByKey(ids, "lastOpened"); }
+    sortByCreation(ids)      { return this.sortNumByKey(ids, "creation"); }
+    sortByLastEdited(ids)    { return this.sortNumByKey(ids, "lastEdited"); }
+    sortByLastOpened(ids)    { return this.sortNumByKey(ids, "lastOpened"); }
 
     find(key, value, ids = this.ids()) {
+        return ids.find(id => this.has(id) && this.hasKey(id, key) && this._record(id)[key] == value);
+    }
+
+    filter(key, value, ids = this.ids()) {
         return ids.filter(id => this.has(id) && this.hasKey(id, key) && this._record(id)[key] == value);
     }
 

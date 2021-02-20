@@ -45,6 +45,7 @@ class Editor {
     }
 
     load(id) {
+        //console.log(id);
         this.current = id;
         this.lines.load();
         this.cursor.checkForCursor();
