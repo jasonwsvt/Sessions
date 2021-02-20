@@ -65,29 +65,29 @@ class UserSettingsUtility {
             });
 
             self.rememberMe.on("click", function (e) {
-                self.current.rememberMe = $(this).prop("checked");
+                self.value("rememberMe") = $(this).prop("checked");
                 e.stopPropagation();
             });
 
             self.hidden.on("click", function (e) {
-                self.current.hidden = $(this).prop("checked");
+                self.value("hidden") = $(this).prop("checked");
                 e.stopPropagation();
             });
 
             self.storage.on("change", function (e) {
-                self.current.storagePermanence = $(this).val();
+                self.value("storagePermanence") = $(this).val();
                 self.manage();
             });
 
             self.backupFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
-                self.current.backupFrequency = (val == "false") ? false : parseInt(val);
+                self.value("backupFrequency") = (val == "false") ? false : parseInt(val);
                 self.manageForm();
             });
 
             self.serverBackupFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
-                self.current.serverBackupFrequency = (val == "false") ? false : parseInt(val);
+                self.value("serverBackupFrequency") = (val == "false") ? false : parseInt(val);
                 self.manageForm();
             });
         }); 
@@ -96,8 +96,9 @@ class UserSettingsUtility {
     get userUtilities()         { return this._userUtilities; }
     get utilities()             { return this._userUtilities.utilities; }
     get app()                   { return this.utilities.app; }
+    get data()                  { return this.app.data; }
     get sessionId()             { return this.userUtilities.current; }
-    get id()                    { return this.data.idPath(this.sessionId)[this._tier]; }
+    get id()                    { return this.data.export().id; }
     setKey(key, value)          { this.data.setKey(this.id, key, value); }
     value(key)                  { return this.data.record(this.id)[key]; }
 
@@ -153,8 +154,10 @@ class UserSettingsUtility {
         this.div.append(actionDiv);
         this.div.append(optionsDiv);
 
-        this.div.css("left", String(this.button.position().left) + "px");
-        this.div.css("top", String(this.button.position().top + 32) + "px");
+        //this.div.css("left", String(this.button.position().left) + "px");
+        //this.div.css("top", String(this.button.position().top + 32) + "px");
+        this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
+        this.div.css("left", String(this.userUtilities.div.position().left) + "px");
         this.storage.append("<option value = 'true'>Browser</option>");
         this.storage.append("<option value = 'false'>Session</option>");
         this.backupFrequency.html([false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
@@ -176,7 +179,7 @@ class UserSettingsUtility {
     manage() {
         var fields = [this.username, this.email, this.currentPassword, this.newPassword1, this.newPassword2];
 
-        if (!this.hasKey("password") || this.value("password") == "" || this.passwordVerified) {
+        if (!this.data.hasKey("password") || this.data.value("password") == "" || this.passwordVerified) {
             fields.forEach(field => {
                 if (field.hasClass("hidden")) { field.removeClass("hidden"); }
             });
@@ -198,11 +201,11 @@ class UserSettingsUtility {
     manageForm() {
         var messages = [], actions = [], options = [];
         const uname = this.unameState;
-        const isDefault = (uname == this.userUtilities.defaultUserName);
+        const isDefault = (uname == "newuser");
         const curPW = this.curPWState;
         const newPW = this.newPWState;
         const email = this.emailState;
-        const server = this.current.useServerStorage;
+        const server = this.value("useServerStorage");
         const storagePermanence = this.value("storagePermanence");
 
         this.storage.val(String(storagePermanence));
@@ -228,7 +231,7 @@ class UserSettingsUtility {
             this.hidden.prop("disabled", this.value("username") == this.userUtilities.defaultUserName)
 
             //Messages
-            if (uname == "Invalid")          { messages.push("Usernames must contain only alphanumeric characters and ., -, and _.")}
+            if (uname == "Invalid")          { messages.push("Usernames must be 5-20 characters, each a letter, number, ., -, or _.")}
             if (uname == "Emptied")          { messages.push("Usernames are required."); }
             if (uname == "Local duplicate")  { messages.push("Username is duplicated locally."); }
             if (uname == "Server duplicate") { messages.push("Username is duplicated on the server."); }
@@ -319,18 +322,18 @@ class UserSettingsUtility {
     }
 
     get ableToSetRememberMe() {
-        return (this.current.username != this.userUtilities.defaultUserName &&
+        return (this.value("username") != this.userUtilities.defaultUserName &&
                 this.storagePermanence &&
-                (!this.rememberMeExists || this.rememberMe == this.current.id));
+                (!this.rememberMeExists || this.rememberMe == this.id));
     }
 
     get unameState() { //Unchanged, Emptied, Duplicate, Filled
-        const current = this.current.username;
+        const current = this.value("username");
         const fieldVal = this.username.val();
-        const server = this.current.useServerStorage;
-        const valid = /^[a-z0-9_\-.]{5,20}$/;
-        //const containerDup = this.cUserNameExists(fieldVal);
-        //const localDup = this.lUserNameExists(fieldVal);
+        const server = this.value("useServerStorage");
+        const valid = /^[a-zA-Z0-9_\-.]{5,20}$/;
+        const containerDup = this.userUtilities.containerUsernameExists(fieldVal);
+        const localDup = this.userUtilities.localUsernameExists(fieldVal);
         const serverDup = false;
 
         if (current == fieldVal)                        { return "Unchanged"; }
@@ -347,7 +350,7 @@ class UserSettingsUtility {
     get curPWState() { //Empty, Invalid, Insecure, Strong
         const fieldVal = this.currentPassword.val();
         const hashed = this.hashedPassword(fieldVal);
-        const current = isString(this.current.password) ? this.current.password : "";
+        const current = isString(this.value("password")) ? this.value("password") : "";
         const strongComplexity = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#$%^&*()_+\-|~=`{}\[\]:\";\'<>?,.\/])(?=.{8,127})/;
         const strongLength = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{20,127})/;
 
@@ -379,7 +382,7 @@ class UserSettingsUtility {
 
     get emailState() { //Unchanged, Invalid, Emptied, Filled, Changed
         const fieldVal = this.email.val();
-        const current = isString(this.current.email) ? this.current.email : "";
+        const current = isString(this.value("email")) ? this.value("email") : "";
         const valid = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
         if (fieldVal == current)                           { return "Unchanged"; }
         if (!valid.test(fieldVal) && fieldVal.length != 0) { return "Invalid"; }
@@ -408,13 +411,15 @@ class UserSettingsUtility {
                     case "change username":      
                         funcs.push(() => {
                             this.setKey("username", this.username.val());
-                            this.button.html(this.current.username);
+                            this.button.html(this.value("username"));
                         });
                         break;
                     case "add password": 
                     case "change password":
                         funcs.push(() => {
                             this.setKey("password", this._newPassword);
+                            this.newPassword1.val("");
+                            this.newPassword2.val("");
                         });
                         break;
                     case "set email address":
@@ -422,7 +427,7 @@ class UserSettingsUtility {
                         funcs.push(() => { this.setKey("email", this.email.val()); });
                         break;
                     case "remove email address": 
-                        funcs.push(() => { this.setKey("email", ""); });
+                        funcs.push(() => { this.deleteKey("email"); });
                         break;
                     default: console.log(action + " is not supported.");
                 }
@@ -448,7 +453,7 @@ class UserSettingsUtility {
                     cl = "btn-warning";
                     func = () => {
                         this.currentPassword.val("");
-                        this.setKey("password", "");
+                        this.removeKey("password");
                     };
                     break;
                 case "Add server storage":                              
@@ -460,7 +465,7 @@ class UserSettingsUtility {
                 case "Remove server storage":
                     cl = "btn-danger";
                     func = () => {
-                        this.setKey("useServerStorage", false);
+                        this.removeKey("useServerStorage");
                     };
                     break; //If no local storage, download all data to session Storage?
                 default: console.log(option + "is not supported.");

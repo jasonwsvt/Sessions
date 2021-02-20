@@ -55,6 +55,8 @@ class UserDataUtility {
         this.localData = new DataTree;
         this.loadedData = new DataTree;
 
+        this._build();
+
         $(document).ready(function() {
             self.button.on("click", function(e) {
                 self.utilities.close(self._buttonID);
@@ -114,8 +116,8 @@ class UserDataUtility {
     get userUtilities()         { return this._userUtilities; }
     get utilities()             { return this.userUtilities.utilities; }
     get app()                   { return this.utilities.app; }
-    get current()               { return this.userUtilities.current; }
-     
+    get data()                  { return this.app.data; }
+
     get button()                { return $("#" + this._buttonID); }
     get div()                   { return $("#" + this._divID); }
     get exportButton()          { return $("#" + this._exportButtonID); }
@@ -132,7 +134,7 @@ class UserDataUtility {
     get actionDiv()             { return $("#" + this._actionDivID); }
     get rows()                  { return this.scrollAreaDiv.children(); }
 
-    build() {
+    _build() {
         const loadDiv = "<div id = '" + this._loadDivID + "'></div>";
         const loadButton = "<button id = '" + this._loadButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._loadIcon + "</button>";
         const exportButton = "<button id = '" + this._exportButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._exportIcon + "</button>";
@@ -567,18 +569,18 @@ class UserDataUtility {
 
     _buildRecords() {
         const self = this;
-        if (this.localData.isEmpty()) { this.localData.import(this.app.data.export()); }
+        if (this.localData.isEmpty()) { this.localData.import(this.data.export()); }
         //clear scrollAreaDiv
         this.scrollAreaDiv.empty();
         this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 22) + "px");
         this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
         //call buildRecord with data
         //console.log(localData, this.loadedData);
-        this._buildRecord(this.localData.export());
+        this._buildRecord(this.localData.tierIds(0)[0]);
         if (!this.loadedData.isEmpty()) {
             this.loadDiv.addClass("hidden");
             if (this.localData.export().id != this.loadedData.export().id) {
-                this._buildRecord(this.loadedData.id);
+                this._buildRecord(this.loadedData.tierIds(0)[0]);
             }
         }
         else {
@@ -695,12 +697,21 @@ class UserDataUtility {
     }
 
     _buildRecord(id) {
-        const local = (this.localData.has(id)) ? this.localData.record(id) : false;
-        const loaded = (this.loadedData.has(id)) ? this.loadedData.record(id) : false;
-        const tier = (this.localData.has(id)) ? this.localData.rowTier(id) : this.loadedData.rowTier(id);
-        var keys = [];
-        const localKeys = (Object.keys(local).length) ? Object.keys(local) : [];
-        const loadedKeys = (Object.keys(loaded).length) ? Object.keys(loaded) : [];
+        const localKeys = (this.localData.has(id)) ? this.localData.keys(id) : [];
+        const loadedKeys = (this.loadedData.has(id)) ? this.loadedData.keys(id) : [];
+        const tier = (this.localData.has(id)) ? this.localData.tier(id) : this.loadedData.tier(id);
+        var keys = [], local, loaded;
+
+        if (localKeys.length)  {
+            local = [];
+            this.localData.values(id).forEach((value, index) => local[localKeys[index]] = value);
+        } else { local = false; }
+
+        if (loadedKeys.length) {
+            loaded = [];
+            this.loadedData.values(id).forEach((value, index) => loaded[loadedKeys[index]] = value);
+        } else { loaded = false; }
+
         var unsortedKeys = [...new Set(localKeys.concat(loadedKeys))];
         //console.log(id, tier, local, unsortedKeys);
 

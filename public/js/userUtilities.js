@@ -5,7 +5,6 @@ class UserUtilities {
     login           = null;
     new             = null;
     _divID          = "userUtilities";
-    defaultUserName = "newuser"
 
     constructor (utilities) {
         this.utilities = utilities;
@@ -20,7 +19,6 @@ class UserUtilities {
 
     get app()     { return this.utilities.app; }
     get div()     { return $("#" + this._divID); }
-    //get current() { return this.app.data.record(this.app.data.tierIds(0)[0]); }
 
     init() {
         this.login.init();
@@ -48,4 +46,10 @@ class UserUtilities {
         this.login.close(except);
         this.new.close(except);
     }
+
+    usernameExists() {}
+    localUsernameExists() {}
+    sessionUsernameExists() {}
+    containerUsernameExists() {}
+
 }

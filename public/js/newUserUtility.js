@@ -33,11 +33,11 @@ class NewUserUtility {
     get userUtilities()     { return this._userUtilities; }
     get utilities()         { return this._userUtilities.utilities; }
     get app()               { return this.utilities.app; }
-    get current()           { return this.userUtilities.current; }
-    get lines()             { return this.app.editor.lines; }
-    get buttons()           { return this.app.buttons; }
-    get storagePermanence() { return this.current.storagePermanence; }
+    get data()              { return this.app.data; }
     get div()               { return $("#" + this._utilityID); }
+    get sessionId()         { return this.app.editor.current; }
+    get id()                { return this.data.idPath(this.sessionId)[this._tier]; }
+    get username()          { return this.data.value(this.id, "username"); }
 
     get button()            { return $("#" + this._buttonID); }
 
@@ -54,10 +54,11 @@ class NewUserUtility {
         if (data.isEmpty()) {
             data.addChild(data.addChild(data.addChild(data.import({ username: "newuser" }), { name: "Self" }), { name: "New Issue" }));
         }
+        this.manage();
     }
 
     manage() {
-        this.button.prop("disabled", (this.current.username == this.userUtilities.defaultUsername));
+        this.button.prop("disabled", (this.username == this.userUtilities.defaultUsername));
     }
 
     reset() {

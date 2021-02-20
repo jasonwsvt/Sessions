@@ -86,21 +86,21 @@ class DataTree {
     hasKey(id, key) { return this.has(id) && this._record(id).hasOwnProperty(key); }
     value(id, key) {
         if (this.hasKey(id, key)) {
-            this.record(id).lastOpened = this._now();
-            return this.record(id)[key];
+            this._record(id).lastOpened = this._now();
+            return this._record(id)[key];
         }
     }
     setKey(id, key, value) {
-        if (this.hasKey(id, key)) {
-            this.record(id)[key] = value;
-            this.record(id).lastEdited = this._now();
+        if (this.has(id) && isAlphabetic(key.charAt(0)) && isAlphanumeric(key)) {
+            this._record(id)[key] = value;
+            this._record(id).lastEdited = this._now();
             return true;
         }
     }
     deleteKey(id, key) {
         if (this.hasKey(id, key)) {
-            delete this.record(id)[key];
-            this.record(id).lastEdited = this._now();
+            delete this._record(id)[key];
+            this._record(id).lastEdited = this._now();
             return true;
         }
     }
