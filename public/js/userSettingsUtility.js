@@ -93,33 +93,29 @@ class UserSettingsUtility {
         }); 
     }
 
-    get userUtilities()          { return this._userUtilities; }
-    get utilities()              { return this._userUtilities.utilities; }
-    get app()                    { return this.utilities.app; }
-//    get group()                  { return this.userUtilities.group; }
-    get lines()                  { return this.app.editor.lines; }
-    get buttons()                { return this.app.buttons; }
-    get current()                { return this.userUtilities.current; }
-    setKey(key, value)           { this.app.data.setKey(this.currentId, key, value); }
+    get userUtilities()         { return this._userUtilities; }
+    get utilities()             { return this._userUtilities.utilities; }
+    get app()                   { return this.utilities.app; }
+    get sessionId()             { return this.userUtilities.current; }
+    get id()                    { return this.data.idPath(this.sessionId)[this._tier]; }
+    setKey(key, value)          { this.data.setKey(this.id, key, value); }
+    value(key)                  { return this.data.record(this.id)[key]; }
 
-    get button()                 { return $("#" + this._buttonID); }
-    get div()                    { return $("#" + this._divID); }
-    get username()               { return $("#" + this._usernameID); }
-    get email()                  { return $("#" + this._emailID); }
-    get divPassword()            { return $("#" + this._divPasswordID); }
-    get divFirstName()           { return $("#" + this._divFirstNameID); }
-    get username()               { return $("#" + this._usernameID); }
-    get currentPassword()        { return $("#" + this._currentPasswordID); }
-    get newPassword1()           { return $("#" + this._newPassword1ID); }
-    get newPassword2()           { return $("#" + this._newPassword2ID); }
-    get rememberMe()             { return $("#" + this._rememberMeID); }
-    get hidden()                 { return $("#" + this._hiddenID); }
-    get storage()                { return $("#" + this._storageID); }
-    get messagesDiv()            { return $("#" + this._messagesDivID); }
-    get actionDiv()              { return $("#" + this._actionDivID); }
-    get optionsDiv()             { return $("#" + this._optionsDivID); }
-    get backupFrequency() { return $("#" + this._backupFrequencyID); }
-    get serverBackupFrequency()  { return $("#" + this._serverBackupFrequencyID); }
+    get button()                { return $("#" + this._buttonID); }
+    get div()                   { return $("#" + this._divID); }
+    get username()              { return $("#" + this._usernameID); }
+    get currentPassword()       { return $("#" + this._currentPasswordID); }
+    get newPassword1()          { return $("#" + this._newPassword1ID); }
+    get newPassword2()          { return $("#" + this._newPassword2ID); }
+    get email()                 { return $("#" + this._emailID); }
+    get rememberMe()            { return $("#" + this._rememberMeID); }
+    get hidden()                { return $("#" + this._hiddenID); }
+    get storage()               { return $("#" + this._storageID); }
+    get messagesDiv()           { return $("#" + this._messagesDivID); }
+    get actionDiv()             { return $("#" + this._actionDivID); }
+    get optionsDiv()            { return $("#" + this._optionsDivID); }
+    get backupFrequency()       { return $("#" + this._backupFrequencyID); }
+    get serverBackupFrequency() { return $("#" + this._serverBackupFrequencyID); }
 
     _build() {
         const prefix = "<div class = 'row'><div class = 'col-3'>";
@@ -166,21 +162,21 @@ class UserSettingsUtility {
     }
 
     reset() {
-        this.button.html(this.current.username);
-        this.username.val(this.current.username);
+        this.button.html(this.value("username"));
+        this.username.val(this.value("username"));
         this.currentPassword.val("");
         this.newPassword1.val("");
         this.newPassword2.val("");
-        this.email.val((isString(this.current.email)) ? this.current.email : "");
-        this.backupFrequency.val(String((this.current.saveFrequency != undefined) ? this.current.saveFrequency : false));
-        this.hidden.prop("checked", this.current.hidden == true);
-        this.rememberMe.prop("checked", this.current.rememberMe == true);
+        this.email.val((isString(this.value("email"))) ? this.value("email") : "");
+        this.backupFrequency.val(String((this.value("backupFrequency") != undefined) ? this.value("backupFrequency") : false));
+        this.hidden.prop("checked", this.value("hidden") == true);
+        this.rememberMe.prop("checked", this.value("rememberMe") == true);
     }
 
     manage() {
         var fields = [this.username, this.email, this.currentPassword, this.newPassword1, this.newPassword2];
 
-        if (!this.current.hasOwnProperty("password") || this.current.password == "" || this.current.passwordVerified) {
+        if (!this.hasKey("password") || this.value("password") == "" || this.passwordVerified) {
             fields.forEach(field => {
                 if (field.hasClass("hidden")) { field.removeClass("hidden"); }
             });
@@ -207,7 +203,7 @@ class UserSettingsUtility {
         const newPW = this.newPWState;
         const email = this.emailState;
         const server = this.current.useServerStorage;
-        const storagePermanence = this.current.storagePermanence;
+        const storagePermanence = this.value("storagePermanence");
 
         this.storage.val(String(storagePermanence));
 
@@ -221,15 +217,15 @@ class UserSettingsUtility {
             else {
                 this.serverBackupFrequency.html([false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
                     .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
-                this.serverBackupFrequency.val(String(this.current.serverBackupFrequency));
+                this.serverBackupFrequency.val(String(this.value("serverBackupFrequency")));
             }
             this.storage.prop("disabled", (uname == "Local duplicate"));
             this.rememberMe.prop("disabled", !this.ableToSetRememberMe);
-            if (this.current.hidden == true && this.current.username == this.userUtilities.defaultUserName) {
+            if (this.value("hidden") == true && this.value("username") == this.userUtilities.defaultUserName) {
                 this.setKey("hidden", false);
             }
-            this.hidden.prop("checked", this.current.hidden);
-            this.hidden.prop("disabled", this.current.username == this.userUtilities.defaultUserName)
+            this.hidden.prop("checked", this.value("hidden"));
+            this.hidden.prop("disabled", this.value("username") == this.userUtilities.defaultUserName)
 
             //Messages
             if (uname == "Invalid")          { messages.push("Usernames must contain only alphanumeric characters and ., -, and _.")}
@@ -272,13 +268,13 @@ class UserSettingsUtility {
                     messages.push("Username is duplicated locally and on the server.");
                 }
                 if (uname == "Storage duplicate") {
-                    messages.push("");
+                    messages.push("Username already exists.");
                 }
                 if (uname == "Local duplicate") {
-                    messages.push("");
+                    messages.push("Username is duplicated in local storage and on the server.");
                 }
                 if (uname == "Server duplicate") {
-                    messages.push("");
+                    messages.push("Username is duplicated on the server.");
                 }
             }
 

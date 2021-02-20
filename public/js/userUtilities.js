@@ -20,7 +20,7 @@ class UserUtilities {
 
     get app()     { return this.utilities.app; }
     get div()     { return $("#" + this._divID); }
-    get current() { return this.app.data.record(this.app.data.tierIds(0)[0]); }
+    //get current() { return this.app.data.record(this.app.data.tierIds(0)[0]); }
 
     init() {
         this.login.init();
