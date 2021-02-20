@@ -191,22 +191,24 @@ class Utility {
         }); 
     }
 
-    get div()               { return $("#" + this._divID); }
     get app()               { return this.utilities.app; }
     get data()              { return this.app.data; }
     get editor()            { return this.app.editor; }
     get siblingIds()        { return this.data.siblingIds(this.current.id); }
     get sessionId()         { return this.app.editor.current; }
     get current()           { return this.data.record(this.data.idPath(this.sessionId)[this._tier]); }
-    get name()              { if (this.current == undefined) { console.log(this.data.exportPrettyJSON()); } return this._naming ? this.current.name : this.parseDate(this.current.creation); }
-    get default()           { return (this._tier == 1) ? "New Client" : "New Issue"; }
+    get name()              { return this._naming ? this.current.name : this.parseDate(this.current.creation); }
     get entries()           { return this.data.siblings(this.current.id); }
+    get type()              { return this._tier == 1 ? "client" : this._tier == 2 ? "issue" : "session"; }
+    get default()           { return this._tier == 1 ? "New Client" : "New Issue"; }
+
+    get div()               { return $("#" + this._divID); }
     get pickerButton()      { return $("#" + this._pickerButtonID); }
     get pickerDiv()         { return $("#" + this._pickerDivID); }
     get pickerSearch()      { return $("#" + this._pickerSearchID); }
     get pickerSearchInput() { return $("#" + this._pickerSearchInputID); }
-    get pickerSort()        { return $("#" + this._pickerSortID); }
     get pickerScrollDiv()   { return $("#" + this._pickerScrollDivID); }
+    get pickerSort()        { return $("#" + this._pickerSortID); }
     get renameButton()      { return $("#" + this._renameButtonID); }
     get renameDiv()         { return $("#" + this._renameDivID); }
     get renameInput()       { return $("#" + this._renameInputID); }
@@ -215,7 +217,6 @@ class Utility {
     get addInput()          { return $("#" + this._addInputID); }
     row(i)                  { return this.pickerScrollDiv.find(".row").eq(i); }
     button(i)               { return this.pickerScrollDiv.find("button").eq(i); }
-    get type()              { return this._tier == 1 ? "client" : this._tier == 2 ? "issue" : "session"; }
 
     _init() {
         const type = this.type;
