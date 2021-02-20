@@ -214,19 +214,13 @@ class DataTree {
         return record.children.map(child => child.id);
     }
 
-    sort(ids, method)                 {
-        //console.log(ids, method);
-        return ids.map(id => this._record(id)).sort(method).map(record => record.id); }
-    sortAlphabeticallyByKey(ids, key) { return this.sort(ids, (a, b) => a[key].localeCompare(b[key])); }
-    sortNumericallyByKey(ids, key)    { return this.sort(ids, (a, b) => {
-        //console.log("a.id:", a.id, ", a." + key + ":", a[key]);
-        //console.log("b.id:", b.id, ", b." + key + ":", b[key]);
-        //console.log((a[key] < b[key]) ? -1 : (a[key] > b[key]) ? 1 : 0);
-        return (a[key] < b[key]) ? -1 : (a[key] > b[key]) ? 1 : 0;
-    }); }
-    sortByCreation(ids)               { return this.sortNumericallyByKey(ids, "creation"); }
-    sortByLastEdited(ids)             { return this.sortNumericallyByKey(ids, "lastEdited"); }
-    sortByLastOpened(ids)             { return this.sortNumericallyByKey(ids, "lastOpened"); }
+    sort(ids, method)        { return ids.map(id => this._record(id)).sort(method).map(record => record.id); }
+    sortByKey(ids, k)        { return this.sort(ids, (a, b) => (a[k] instanceof String) ? a[k].localeCompare(b[k]) : (a[k] < b[k]) ? -1 : (a[k] > b[k]) ? 1 : 0); }
+    sortAlnumByKey(ids, key) { return this.sort(ids, (a, b) => a[key].localeCompare(b[key])); }
+    sortNumByKey(ids, key)   { return this.sort(ids, (a, b) => (a[key] < b[key]) ? -1 : (a[key] > b[key]) ? 1 : 0); }
+    sortByCreation(ids)      { return this.sortNumericallyByKey(ids, "creation"); }
+    sortByLastEdited(ids)    { return this.sortNumericallyByKey(ids, "lastEdited"); }
+    sortByLastOpened(ids)    { return this.sortNumericallyByKey(ids, "lastOpened"); }
 
     find(key, value, ids = this.ids()) {
         return ids.filter(id => this.has(id) && this.hasKey(id, key) && this._record(id)[key] == value);
@@ -361,48 +355,48 @@ class DataTree {
         return this.dataCompareIds(dataTree, func, ids);
     }
 
-    merge(record, parentId) {
-        if (!record.hasOwnProperty("id")) { record.id = this._newId(); }
-        if (!this.isDataTree(record)) { return; }
-        if (parentId == undefined && !this.has(record.id)) { this.import(record); }
-        else if (this.has(parentId)) {
-            if (this.has(record.id)) {
-                if (this.parentId(record.id) == parentId) { this.update(record); }
-            }
-            else { this.addChild(parentId, record); }
+    merge(dataTree, ids)  {
+        if (ids == undefined) { ids = dataTree.ids(); }
+        else {
+            ids = smoothArray(ids);
+            if (!isArrayOfIntegers(ids)) { return; }
         }
-    }
-    
-    mergeIds(ids, dataTree)  {
-        if (isInteger(ids)) { ids = [ids]; }
-        if (!isArrayOfIntegers(ids)) { return; }
-        console.log("Merging", ids, "of dataTree with", this.ids());
-        this.mergeRecords(dataTree.records(dataTree.mostAncestral(ids)));
+        dataTree.mostAncestral(ids).forEach(id => {
+            const record = dataTree.record(id);
+            if (this.has(id)) { this.update(id, record); }
+            else if (dataTree.hasParent(id)) {
+                const parentId = dataTree.parentId(id);
+                if (this.has(parentId)) { this.addChild(parentId, record); }
+            }
+            else { this.import(dataTree.record(id)); } 
+        });
     }
 
     //Newer, Older, Unique, and Selected, all refer to dataTree.  Different is the same either way.
-    mergeNewer(dataTree)     { this.mergeIds(dataTree.newerIds(this), dataTree); }
-    mergeOlder(dataTree)     { this.mergeIds(dataTree.olderIds(this), dataTree); }
-    mergeDifferent(dataTree) { this.mergeIds(dataTree.differentIds(this), dataTree); }
-    mergeUnique(dataTree)    { this.mergeIds(dataTree.uniqueIds(this), dataTree); }
-    mergeSelected(dataTree)  { this.mergeIds(dataTree.selected(), dataTree); }
+    mergeNewer(dataTree)     { this.merge(dataTree, dataTree.newerIds(this)); }
+    mergeOlder(dataTree)     { this.merge(dataTree, dataTree.olderIds(this)); }
+    mergeDifferent(dataTree) { this.merge(dataTree, dataTree.differentIds(this)); }
+    mergeUnique(dataTree)    { this.merge(dataTree, dataTree.uniqueIds(this)); }
+    mergeSelected(dataTree)  { this.merge(dataTree, dataTree.selected()); }
 
-    delete(...ids)  {
+    delete(ids)  {
         var ids = smoothArray(ids);
         throwError(isArrayOfIntegers, ids);
         ids = ids.filter(id => this.has(id));
         if (ids.length == 0) { return; }
         ids = this.mostAncestral(ids);
-        this._deleted.push(this.records(ids));
+        this._deleted.push(ids.map(id => [this._record(id), this.parentId(id)]));
         //console.log(this._deleted);
-        if (this.tier(ids[0]) == 0) { this.clear(); return true; }
-        ids.forEach(id => {
-            const parentId = this.parentId(id);
-            const index = this.indexPath(id).splice(-1, 1)[0];
-            //console.log(parentId, index);
-            this._record(parentId).children.splice(index, 1);
-            //console.log(this._record(parentId));
-        });
+        if (this.tier(ids[0]) == 0) { this.clear(); }
+        else {
+            ids.forEach(id => {
+                const parentId = this.parentId(id);
+                const index = this.indexPath(id).splice(-1)[0];
+                //console.log(parentId, index);
+                this._record(parentId).children.splice(index, 1);
+                //console.log(this._record(parentId));
+            });
+        }
         return true;
     }
 
@@ -418,7 +412,7 @@ class DataTree {
         if (isArray(this._deleted) && this._deleted.length > 0) {
             if (!this.isArrayOfDataTrees(this._deleted[this._deleted.length - 1])) { return; }
             console.log(this._deleted);
-            this._deleted.pop().forEach(record => { this.insert(record); });
+            this._deleted.pop().forEach((record, parentId) => { this.merge(record, parentId); });
         }
     }
 
@@ -462,8 +456,8 @@ class DataTree {
         }
     }
 
-    _dataKeys(dataTree) { return Object.keys(dataTree); }
-    _dataValues(dataTree) { return Object.values(dataTree); }
+    _dataKeys(record) { return Object.keys(record); }
+    _dataValues(record) { return Object.values(record); }
 
     _dataHasChildren(data = this._data) {
         return (data.hasOwnProperty("children") && isArray(data.children) && data.children.length); 
