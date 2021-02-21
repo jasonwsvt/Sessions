@@ -10,7 +10,7 @@ class Editor {
         this.cursor = new Cursor(this);
         $(document).ready(function() {
             $(document).on("keyup", function(e) {
-                self.session.lines = self.lines.linesArray;
+                self.app.data.setKey(self.current, "lines", self.lines.linesArray);
             });
         });
     }

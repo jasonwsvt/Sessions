@@ -254,24 +254,24 @@ class DataTree {
         return ids;
     }
 
-    selectIds(...ids) {
+    select(...ids) {
         ids = smoothArray(ids);
         if (!isArrayOfIntegers(ids)) { return; }
         console.log("Selecting", ...ids)
-        ids.filter(id => this.has(id)).forEach(id => this._select.add(id));
+        ids.filter(id => this.has(id)).forEach(id => this._select.addValue(id));
     }
     //Newer, Older, Unique all refer to this.  Different is the same either way.  Selected refers to dataTree.
-    selectNewer(dataTree)     { this.selectIds(this.newerIds(dataTree)); }     //Select ids that are newer in this
-    selectOlder(dataTree)     { this.selectIds(this.olderIds(dataTree)); }     //Select ids that are older in this
-    selectDifferent(dataTree) { this.selectIds(this.differentIds(dataTree)); } //Select ids that are different
-    selectUnique(dataTree)    { this.selectIds(this.uniqueIds(dataTree)); }    //Select ids that are unique to this
-    selectSelected(dataTree)  { this.selectIds(dataTree.selected()); }         //Select ids that are selected in dataTree
+    selectNewer(dataTree)     { this.select(this.newerIds(dataTree)); }     //Select ids that are newer in this
+    selectOlder(dataTree)     { this.select(this.olderIds(dataTree)); }     //Select ids that are older in this
+    selectDifferent(dataTree) { this.select(this.differentIds(dataTree)); } //Select ids that are different
+    selectUnique(dataTree)    { this.select(this.uniqueIds(dataTree)); }    //Select ids that are unique to this
+    selectSelected(dataTree)  { this.select(dataTree.selected()); }         //Select ids that are selected in dataTree
 
-    selected() {
-        return this._select.values();
-    }
+    selected() { return this._select.values(); }
 
-    unselectIds(...ids) {
+    isSelected(id) { return this._select.hasValue(id); }
+
+    unselect(...ids) {
         ids = smoothArray(ids);
         if (!isArrayOfIntegers(ids)) { return; }
         ids.forEach(id => this._select.dropValue(id));
