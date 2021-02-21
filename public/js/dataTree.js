@@ -314,9 +314,9 @@ class DataTree {
     //opened        true or false            defaults to true
     //ifNotExistsI  true or false            defaults to false
     //ifNotExistsE  true or false            defaults to true
-    compareIdTimestamps(dataTree, ids, symbol = "e", creation = true, edited = true, opened = true, ifNotExistsI = false, ifNotExistsE = true) {
+    compareIdTimestamps(dataTree, ids, symbol = "==", creation = true, edited = true, opened = true, ifNotExistsI = false, ifNotExistsE = true) {
         if ([ifNotExistsI, ifNotExistsE, creation, edited, opened].find(arg => !isBoolean(arg)) ||
-            !["<", ">", "<=", ">=", "!=", "e"].includes(symbol)) { return; }
+            !["<", ">", "<=", ">=", "!=", "=="].includes(symbol)) { return; }
         const func = (i, e) => {
             if (i == undefined) { return ifNotExistsI; }
             if (e == undefined) { return ifNotExistsE; }

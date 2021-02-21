@@ -63,7 +63,7 @@ class UserDataUtility {
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     this.blur();
-                    self._buildRecords();
+                    self._buildList();
                 }
                 else {
                     self.close();
@@ -567,7 +567,7 @@ class UserDataUtility {
         }
     }
 
-    _buildRecords() {
+    _buildList() {
         const self = this;
         if (this.localData.isEmpty()) { this.localData.import(this.data.export()); }
         //clear scrollAreaDiv
@@ -576,11 +576,14 @@ class UserDataUtility {
         this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
         //call buildRecord with data
         //console.log(localData, this.loadedData);
-        this._buildRecord(this.localData.tierIds(0)[0]);
+        console.log(this.localData.tierIds(0)[0])
+        this._buildRecords(this.localData.tierIds(0)[0]);
+        //this._buildRecord(this.localData.tierIds(0)[0]);
         if (!this.loadedData.isEmpty()) {
             this.loadDiv.addClass("hidden");
-            if (this.localData.export().id != this.loadedData.export().id) {
-                this._buildRecord(this.loadedData.tierIds(0)[0]);
+            if (this.localData.tierIds(0)[0] != this.loadedData.tierIds(0)[0]) {
+                this._buildRecords(this.loadedData);
+                //this._buildRecord(this.loadedData.tierIds(0)[0]);
             }
         }
         else {
@@ -696,11 +699,22 @@ class UserDataUtility {
         });
     }
 
+    _buildRecords(id) {
+        this._buildRecord(id);
+        const localIds = this.localData.hasChildren(id) ? this.localData.childIds(id) : [];
+        const loadedIds = this.loadedData.hasChildren(id) ? this.loadedData.childIds(id) : [];
+        //put sorting here;
+        const ids = [...new Set(localIds.concat(loadedIds))];
+        ids.forEach(id => { this._buildRecords(id); });
+    }
+
+
     _buildRecord(id) {
+        console.log(id)
         const localKeys = (this.localData.has(id)) ? this.localData.keys(id) : [];
         const loadedKeys = (this.loadedData.has(id)) ? this.loadedData.keys(id) : [];
         const tier = (this.localData.has(id)) ? this.localData.tier(id) : this.loadedData.tier(id);
-        var keys = [], local, loaded;
+        var keys = [], local, loaded, children;
 
         if (localKeys.length)  {
             local = [];
@@ -763,10 +777,10 @@ class UserDataUtility {
         }
         //console.log("After creation, lastEdited, lastOpened, lines", unsortedKeys, keys);
 
-        if (unsortedKeys.find(key => (isArray(local[key])))) {
-            var children = unsortedKeys.find(key => (isArray(local[key])));
-            unsortedKeys.splice(unsortedKeys.indexOf(children), 1);
-        }
+        if (unsortedKeys.includes("children")) {
+            children = (tier == 0) ? "clients" : (tier == 1) ? "issues" : "sessions";
+            unsortedKeys.splice(unsortedKeys.indexOf("children"), 1);
+        } else { children = false; }
         //console.log("after children", unsortedKeys, keys);
 
         keys = keys.concat(unsortedKeys);
@@ -807,45 +821,45 @@ class UserDataUtility {
         if (children) {
             line = "<td class = 'outside" + tier + "'>" + childrenRowsButton + "</td>";
             line += "<td class = 'inside" + tier + "'>" + children + ":</td>";
-            if (isArray(local[children]) && local[children].length) {
-                line += "<td>(" + local[children].length + ")</td>";
+            if (local.hasOwnProperty("children") && isArray(local.children) && local.children.length) {
+                line += "<td>(" + local.children.length + ")</td>";
                 line += "<td>" + selectLocalChildren + "</td>";
             }
             else { line += "<td></td><td></td>"; }
-            if (isArray(loaded[children]) && loaded[children].length) {
-                line += "<td>(" + loaded[children].length + ")</td>";
+            if (loaded.hasOwnProperty("children") && isArray(loaded.children) && loaded.children.length) {
+                line += "<td>(" + loaded.children.length + ")</td>";
                 line += "<td>" + selectLoadedChildren + "</td>";
             }
             else { line += "<td></td><td></td>"; }
             record += "<tr>" + line + "</tr>";
         }
         this.scrollAreaDiv.append("<table id = 'row_" + id + "' class = 'flex-container'>" + record + "</table>");
-        if (loaded) {
-            this.row(id).addClass("loaded");
-            this.row(id).data("loaded_name", (keys.includes("name")) ? loaded.name : this.parseDate(loaded.creation));
-            if (keys.includes("creation"))   { this.row(id).data("loaded_creation",   loaded.creation); }
-            if (keys.includes("lastEdited")) { this.row(id).data("loaded_lastEdited", loaded.lastEdited); }
-            if (keys.includes("lastOpened")) { this.row(id).data("loaded_lastOpened", loaded.lastOpened); }
-            if (keys.includes("lines"))      { this.row(id).data("loaded_lines",      loaded.lines); }
-        }
-        if (local)  {
-            this.row(id).addClass("local");
-            this.row(id).data("local_name", (keys.includes("name")) ? local.name : this.parseDate(local.creation));
-            if (keys.includes("creation"))   { this.row(id).data("local_creation",   local.creation); }
-            if (keys.includes("lastEdited")) { this.row(id).data("local_lastEdited", local.lastEdited); }
-            if (keys.includes("lastOpened")) { this.row(id).data("local_lastOpened", local.lastOpened); }
-            if (keys.includes("lines"))      { this.row(id).data("local_lines",      local.lines); }
-        }
+//        if (loaded) {
+//            this.row(id).addClass("loaded");
+//            this.row(id).data("loaded_name", (keys.includes("name")) ? loaded.name : this.parseDate(loaded.creation));
+//            if (keys.includes("creation"))   { this.row(id).data("loaded_creation",   loaded.creation); }
+//            if (keys.includes("lastEdited")) { this.row(id).data("loaded_lastEdited", loaded.lastEdited); }
+//            if (keys.includes("lastOpened")) { this.row(id).data("loaded_lastOpened", loaded.lastOpened); }
+//            if (keys.includes("lines"))      { this.row(id).data("loaded_lines",      loaded.lines); }
+//        }
+//        if (local)  {
+//            this.row(id).addClass("local");
+//            this.row(id).data("local_name", (keys.includes("name")) ? local.name : this.parseDate(local.creation));
+//            if (keys.includes("creation"))   { this.row(id).data("local_creation",   local.creation); }
+//            if (keys.includes("lastEdited")) { this.row(id).data("local_lastEdited", local.lastEdited); }
+//            if (keys.includes("lastOpened")) { this.row(id).data("local_lastOpened", local.lastOpened); }
+//            if (keys.includes("lines"))      { this.row(id).data("local_lines",      local.lines); }
+//        }
 
         //console.log(local[children]);
-        if (children) {
-            keys = local[children].map(child => child.id);
-            if (loaded && Object.keys(loaded).includes(children)) {
-                keys = keys.concat(loaded[children].map(child => child.id)).filter((key, index) => (keys.indexOf(key) === index));
-            }
-            //console.log(id, keys);
-            keys.forEach(id => { this._buildRecord(id); });
-        }
+//        if (children) {
+//            keys = local[children].map(child => child.id);
+//            if (loaded && Object.keys(loaded).includes(children)) {
+//                keys = keys.concat(loaded[children].map(child => child.id)).filter((key, index) => (keys.indexOf(key) === index));
+//            }
+//            //console.log(id, keys);
+//            keys.forEach(id => { this._buildRecord(id); });
+//        }
     }
 
     sortChildren(id, method, direction) {
@@ -1310,9 +1324,9 @@ class UserDataUtility {
             let reader = new FileReader();
             reader.readAsText(file);
             reader.onload = function() {
-                self.loadedData.set(JSON.parse(reader.result));
+                self.loadedData.import(JSON.parse(reader.result));
                 self.setUpOptionsData();
-                self._buildRecords();
+                self._buildList();
             };
             reader.onerror = function() {
               console.log(reader.error);
