@@ -226,22 +226,6 @@ class DataTree {
         return record.children.map(child => child.id);
     }
 
-    sort(ids, method)        { return ids.map(id => this._record(id)).sort(method).map(record => record.id); }
-    sortByKey(ids, k)        { return this.sort(ids, (a, b) => (a[k] instanceof String) ? a[k].localeCompare(b[k]) : (a[k] < b[k]) ? -1 : (a[k] > b[k]) ? 1 : 0); }
-    sortAlnumByKey(ids, key) { return this.sort(ids, (a, b) => a[key].localeCompare(b[key])); }
-    sortNumByKey(ids, key)   { return this.sort(ids, (a, b) => (a[key] < b[key]) ? -1 : (a[key] > b[key]) ? 1 : 0); }
-    sortByCreation(ids)      { return this.sortNumByKey(ids, "creation"); }
-    sortByLastEdited(ids)    { return this.sortNumByKey(ids, "lastEdited"); }
-    sortByLastOpened(ids)    { return this.sortNumByKey(ids, "lastOpened"); }
-
-    find(key, value, ids = this.ids()) {
-        return ids.find(id => this.has(id) && this.hasKey(id, key) && this._record(id)[key] == value);
-    }
-
-    filter(key, value, ids = this.ids()) {
-        return ids.filter(id => this.has(id) && this.hasKey(id, key) && this._record(id)[key] == value);
-    }
-
     siblingIds(id) {
         return (this.hasParent(id)) ? this.childIds(this.parentId(id))
                    : (this.has(id)) ? id
@@ -254,7 +238,26 @@ class DataTree {
         return ids;
     }
 
-    select(...ids) {
+    find(key, value, ids = this.ids()) {
+        return ids.find(id => this.hasKey(id, key) && this.value(id, key) == value);
+    }
+
+    filter(key, value, ids = this.ids()) {
+        return ids.filter(id => this.hasKey(id, key) && this.value(id, key) == value);
+    }
+
+    sort(method, ids = this.ids()) { return ids.map(id => this._record(id)).sort(method).map(record => record.id); }
+    sortByKey(k, ids)              { return this.sort(ids, (a, b) => (a[k] instanceof String) ? a[k].localeCompare(b[k]) : (a[k] < b[k]) ? -1 : (a[k] > b[k]) ? 1 : 0); }
+    sortAlnumByKey(key, ids)       { return this.sort(ids, (a, b) => a[key].localeCompare(b[key])); }
+    sortNumByKey(key, ids)         { return this.sort(ids, (a, b) => (a[key] < b[key]) ? -1 : (a[key] > b[key]) ? 1 : 0); }
+    sortByCreation(ids)            { return this.sortNumByKey(ids, "creation"); }
+    sortByLastEdited(ids)          { return this.sortNumByKey(ids, "lastEdited"); }
+    sortByLastOpened(ids)          { return this.sortNumByKey(ids, "lastOpened"); }
+
+    min(key, ids) { return this.sortNumByKey(key, ids)[0]; }
+    max(key, ids) { return this.sortNumByKey(key, ids).reverse()[0]; }
+
+    select(ids) {
         ids = smoothArray(ids);
         if (!isArrayOfIntegers(ids)) { return; }
         console.log("Selecting", ...ids)
@@ -271,7 +274,7 @@ class DataTree {
 
     isSelected(id) { return this._select.hasValue(id); }
 
-    unselect(...ids) {
+    unselect(ids = this.selected()) {
         ids = smoothArray(ids);
         if (!isArrayOfIntegers(ids)) { return; }
         ids.forEach(id => this._select.dropValue(id));
@@ -285,9 +288,8 @@ class DataTree {
         return [...new Set(this.ids().concat(dataTree.ids()))];
     }
 
-    compareIds(dataTree, inSet1, inSet2, ids) {
+    compareIds(dataTree, inSet1, inSet2, ids = this.unionIds(dataTree)) {
         if (!dataTree instanceof DataTree) { throw new Error("Expecting dataTree"); }
-        if (ids == undefined) { ids = this.unionIds(dataTree); }
         const set1 = this.ids();
         const set2 = dataTree.ids();
         //console.log("unionIds:", ids);
