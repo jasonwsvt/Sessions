@@ -712,20 +712,12 @@ class UserDataUtility {
 
     _buildRecord(id) {
         //console.log(id)
-        const localKeys = (this.localData.has(id)) ? this.localData.keys(id) : [];
-        const loadedKeys = (this.loadedData.has(id)) ? this.loadedData.keys(id) : [];
+        const local = this.localRecord(id) || false;
+        const loaded = this.loadedRecord(id) || false;
+        const localKeys = (local) ? this.localData.keys(id) : [];
+        const loadedKeys = (loaded) ? this.loadedData.keys(id) : [];
         const tier = (this.localData.has(id)) ? this.localData.tier(id) : this.loadedData.tier(id);
-        var keys = [], local, loaded, children;
-
-        if (localKeys.length)  {
-            local = [];
-            this.localData.values(id).forEach((value, index) => local[localKeys[index]] = value);
-        } else { local = false; }
-
-        if (loadedKeys.length) {
-            loaded = [];
-            this.loadedData.values(id).forEach((value, index) => loaded[loadedKeys[index]] = value);
-        } else { loaded = false; }
+        var keys = [], children;
 
         var unsortedKeys = [...new Set(localKeys.concat(loadedKeys))];
         //console.log(id, tier, local, unsortedKeys);
@@ -845,99 +837,31 @@ class UserDataUtility {
         }
     }
 
-    sortChildren(id, method, direction) {
-        var sortValues = [], sortedValues, index, loaded, children, child, childData, value, methodRow, methodValue, sortValue, lastDescendantId, rows;
-        if (this.hasChildren(id)) {
-            //console.log(id, "has children");
-            children = this.allChildIds(id);
-            //Determining sort values
-            children.forEach(childId => {
-                loaded = this.loadedData.has(childId);
-                child = this.row(childId);
-                if (this.hasChildren(childId)) { value = this.sortChildren(childId, method, direction); }
-                childData = child.data(((loaded) ? "loaded" : "local") + "_" + method);
-                //console.log(id, childId, method, sortValue);
-                sortValues.push({ id: childId, value: (childData ? childData : value) });
-            });
-
-            if (children.length > 1) {
-                //console.log(id, "before", method, direction, "sort:", sortValues);
-                //Sorting values
-                sortedValues = [...sortValues];
-                sortedValues.sort((a,b) => (isString(a.value) ? a.value.toLowerCase().localeCompare(b.value.toLowerCase()) : a.value - b.value));
-                if (direction == "descending") { sortedValues.reverse(); }
-                //console.log(id, "after", method, direction, "sort:", sortedValues);
-
-                //Moving rows of id and children based on sort
-                index = id;
-                sortedValues.forEach((item) => {
-                    if (this.hasChildren(item.id)) {
-                        lastDescendantId = this.allDescendantIds(item.id).slice(-1)[0];
-                        //console.log(item.id, this.allDescendantIds(item.id), lastDescendantId);
-                        rows = this.row(item.id).nextUntil("#" + lastDescendantId).addBack().add("#" + lastDescendantId).detach();
-                        //console.log("including all the descendants", this.allDescendantIds(item.id));
-                        //console.log("moving", item.id, "to", lastDescendantId, "after", index, rows);
-                    }
-                    else {
-                        rows = this.row(item.id).detach();
-                        //console.log("moving", item.id, "after", index, rows);
-                    }
-                    this.row(index).after(rows);
-                    index = (this.hasChildren(item.id)) ? this.allDescendantIds(item.id).slice(-1)[0] : item.id;
-                });
-                return sortedValues[(direction == "descending") ? 0 : sortedValues.length - 1].value;
-            } else {
-                //console.log(id, "only has one child so no sorting necessary");
-                return sortValues[0].value;
-            }
+    //Array methods
+    localRecord(id) {
+        if (this.localData.has(id)) {
+            var record = [];
+            this.localData.keys(id).forEach(key => record[key] = this.localData.value(id, key));
+            return record;
+        }
+    }
+    loadedRecord(id) {
+        if (this.loadedData.has(id)) {
+            var record = [];
+            this.loadedData.keys(id).forEach(key => record[key] = this.loadedData.value(id, key));
+            return record;
         }
     }
 
-    //Array methods
-    localRecords(ids) { return this.localData.records(ids); }
-    loadedRecords(ids) { return this.loadedData.records(ids); }
-    localRecord(id) { return this.localData.record(id); }
-    loadedRecord(id) { return this.loadedData.record(id); }
-
-    //Returns an array of indices, one index for each set of children
-    rowIndexPath(id)    { const p = this.localIndexPath(id); return (p) ? P : this.loadedIndexPath(id); }
-    localIndexPath(id)  { return this.localData.indexPath(id); }
-    loadedIndexPath(id) { return this.loadedData.indexPath(id); }
-
-    rowIdPath(id)    { const p = this.localIdPath(id); return (p) ? p : this.loadedIdPath(id); }
-    localIdPath(id)  { return this.localData.idPath(id); }
-    loadedIdPath(id) { return this.loadedData.idPath(id); }
-
-    rowTier(id)    { const t = this.localTier(id); return (isInteger(t)) ? t : this.loadedTier(id); }
-    localTier(id)  { return this.localData.tier(id); }
-    loadedTier(id) { return this.loadedData.tier(id); }
-
-    // Returns an array of ids for which the remaining given ids are all their descendants.
-    localMostAncestral(ids)  { return this.localData.mostAncestral(ids); }
-    loadedMostAncestral(ids) { return this.loadedData.mostAncestral(ids); }
-
-    rowHasParent(id)      { return (this.localData.has(id)) ? this.localHasParent(id) : this.loadedHasParent(id); }
-    localHasParent(id)    { return this.localData.hasParent(id); }
-    loadedHasParent(id)   { return this.loadedData.hasParent(id); }
-
-    rowParentId(id)       { return (this.localData.has(id)) ? this.localParentId(id) : this.loadedParentId(id); }
-    localParentId(id)     { return this.parentId(id, this.localData); }
-    loadedParentId(id)    { return this.parentId(id, this.loadedData); }
-
+    rowIndexPath(id)      { const p = this.localData.indexPath(id); return (p) ? P : this.loadedData.indexPath(id); }
+    rowIdPath(id)         { const p = this.localData.idPath(id); return (p) ? p : this.loadedData.idPath(id); }
+    rowTier(id)           { const t = this.localData.tier(id); return (isInteger(t)) ? t : this.loadedData.tier(id); }
+    rowHasParent(id)      { return (this.localData.has(id)) ? this.localData.hasParent(id) : this.loadedData.hasParent(id); }
+    rowParentId(id)       { return (this.localData.has(id)) ? this.localData.parentId(id) : this.loadedData.parentId(id); }
     rowParentIds(ids)     { return [...new Set(ids.map(id => this.rowParentId(id)))].filter(id => isInteger(id)); }
-    localParentIds(ids)   { return this.localData.parentIds(ids); }
-    loadedParentIds(ids)  { return this.loadedData.parentIds(ids); }
     get allRowParentIds() { return this.rowParentIds(this.allIds); }
-    
-    rowHasChildren(id)    { return (this.localData.has(id)) ? this.hasLocalChildren(id) : this.hasLoadedChildren(id); }
-    hasLocalChildren(id)  { return this.localData.hasChildren(id); }
-    hasLoadedChildren(id) { return this.loadedData.hasChildren(id); }
-
-    //id existance methods
-    get loadedRecordsExist() { return (!this.loadedData.isEmpty()); }
-    localRecordExists(id)    { return this.localData.has(id); }
-    loadedRecordExists(id)   { return this.loadedData.has(id); }
-    rowExists(id)            { return (this.localData.has(id) || this.loadedData.has(id)); }
+    rowHasChildren(id)    { return (this.localData.has(id)) ? this.localData.hasChildren(id) : this.loadedData.hasChildren(id); }
+    rowExists(id)         { return (this.localData.has(id) || this.loadedData.has(id)); }
 
     //deletion methods
     deleteRecords(localIds, loadedIds)  {
@@ -1067,6 +991,7 @@ class UserDataUtility {
     }
     updateLocalChildrenSelectStatus(id) {
         const ids = this.localData.childIds(id);
+        if (!isArrayOfIntegers(ids)) { return; }
         this.localChildrenSelect(id).html(
             (this.localRecordsAreSelected(ids))   ? this._fullIcon
           : (this.localRecordsAreUnselected(ids)) ? this._emptyIcon
@@ -1107,12 +1032,6 @@ class UserDataUtility {
 
     //Id collections
     get allIds()    { return this.localData.unionIds(this.loadedData); }
-    get localIds()  { return this.localData.ids; }
-    get loadedIds() { return this.loadedData.ids; }
-    get newerLoadedIds() { this.loadedData.newerIds(this.localData); }
-    get olderLoadedIds() { this.loadedData.olderIds(this.localData); }
-    get newerLocalIds()  { this.localData.newerIds(this.loadedData); }
-    get olderLocalIds()  { this.localData.olderIds(this.loadedData); }
     
     allChildIds(parentId)    { return [... new Set(this.localChildIds(parentId).concat(this.loadedChildIds(parentId)))]; }
     localChildIds(parentId)  { return this.localData.childIds(parentId); }
@@ -1173,11 +1092,11 @@ class UserDataUtility {
             switch (option) {
                 case "local":
                     this.localData.select(this.allLocalIds);
-                    parentIds = this.localParentIds(this.allLocalIds);
+                    parentIds = this.localData.parentIds(this.allLocalIds);
                     break;
                 case "loaded":
                     this.loadedData.select(this.allLoadedIds);
-                    parentIds = this.loadedParentIds(this.allLoadedIds);
+                    parentIds = this.loadedData.parentIds(this.allLoadedIds);
                     break;
                 case "older":
                     this.allIds.forEach(id => {
@@ -1202,7 +1121,7 @@ class UserDataUtility {
                     parentIds = this.allRowParentIds;
                     break;
                 case "unselected":
-                    if (this.loadedRecordsExist) {
+                    if (!this.loadedData.isEmpty()) {
                         this.allIds.forEach(id => {
                             if (this.loadedData.has(id) &&
                                (!this.rowIsSelected(id) || !this.loadedData.isSelected(id))) { this.loadedData.select(id); }
