@@ -350,8 +350,8 @@ class Utility {
             this.pickerSort.find("button").eq(index).html(sort + label);
         });
         switch (this._sortMethod.includes("_") ? this._sortMethod.split("_")[0] : this._sortMethod) {
-            case "name":     ids = (!this._naming) ? this.data.sort(ids, (a, b) => this.parseDate(a.creation) < this.parseDate(b.creation))
-                                 : this.data.sortAlnumByKey(ids, "name"); break;
+            case "name":     ids = (!this._naming) ? this.data.sort((a, b) => this.parseDate(a.creation) < this.parseDate(b.creation), ids)
+                                 : this.data.sortAlnumByKey("name", ids); break;
             case "creation": ids = this.data.sortByCreation(ids);         break;
             case "edited":   ids = this.data.sortByLastEdited(ids);       break;
             case "opened":   ids = this.data.sortByLastOpened(ids);       break;

@@ -278,7 +278,7 @@ class DataTree {
     select(ids) {
         ids = smoothArray(ids);
         if (!isArrayOfIntegers(ids)) { return; }
-        console.log("Selecting", ...ids)
+        //console.log("Selecting", ...ids)
         ids.filter(id => this.has(id)).forEach(id => this._select.add(id));
     }
 

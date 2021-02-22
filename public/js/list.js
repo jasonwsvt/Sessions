@@ -16,7 +16,7 @@ class List {
             if (validateKey == false) {
                 //Automatic keys and value validation
                 this.add = (value) => {
-                    console.log(value);
+                    //console.log(value);
                     if (this._validateValue(value, this._items)) {
                         const key = parseInt(this._items.length);
                         this._items.push({ "key": key, "value": value });
