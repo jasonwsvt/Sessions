@@ -122,7 +122,12 @@ class DataTree {
 
     children(id) { return (this.hasChildren(id)) ? this._record(id).children.length : 0; }
     siblings(id) { return this.has(id) ? this.tier(id) == 0 ? 1 : this.children(this.parentId(id)) : undefined; }
-    has(...ids)   { return smoothArray(ids).every(id => isInteger(this.tier(id)));  }
+    has(ids)   {
+        ids = smoothArray(ids);
+        return (isArrayOfIntegers(ids))
+            ? !!ids.every(id => isInteger(this.tier(id)))
+            : undefined;
+    }
     keys(id)      { throwError(isInteger, id); return (this.has(id)) ? this._dataKeys(this._record(id)) : undefined; }
     values(id)    { throwError(isInteger, id); return (this.has(id)) ? this._dataValues(this._record(id)) : undefined; }
 
@@ -150,7 +155,11 @@ class DataTree {
         return path;
     }
 
-    tier(id)       { const t = this._indexPath(id, this._data); return (t === true) ? 0 : t.length; }
+    tier(id)       {
+        const t = this._indexPath(id, this._data);
+        return (isArray(t)) ? t.length : undefined;
+    }
+
     creation(id)   { return this._record(id).creation; }
     lastEdited(id) { return this._record(id).lastEdited; }
     lastOpened(id) { return this._record(id).lastOpened; }
@@ -165,7 +174,7 @@ class DataTree {
     parentIds(...ids) {
         ids = smoothArray(ids);
         throwError(isArrayOfIntegers, ids);
-        return [...new Set(ids.map(id => this.parentId(id)))];
+        return [...new Set(ids.map(id => this.parentId(id)).filter(id => isInteger(id)))];
     }
 
     //Children methods
@@ -246,29 +255,32 @@ class DataTree {
         return ids.filter(id => this.hasKey(id, key) && this.value(id, key) == value);
     }
 
-    sort(method, ids = this.ids()) { return ids.map(id => this._record(id)).sort(method).map(record => record.id); }
-    sortByKey(k, ids)              { return this.sort(ids, (a, b) => (a[k] instanceof String) ? a[k].localeCompare(b[k]) : (a[k] < b[k]) ? -1 : (a[k] > b[k]) ? 1 : 0); }
-    sortAlnumByKey(key, ids)       { return this.sort(ids, (a, b) => a[key].localeCompare(b[key])); }
-    sortNumByKey(key, ids)         { return this.sort(ids, (a, b) => (a[key] < b[key]) ? -1 : (a[key] > b[key]) ? 1 : 0); }
-    sortByCreation(ids)            { return this.sortNumByKey(ids, "creation"); }
-    sortByLastEdited(ids)          { return this.sortNumByKey(ids, "lastEdited"); }
-    sortByLastOpened(ids)          { return this.sortNumByKey(ids, "lastOpened"); }
+    sort(method, ids = this.ids()) {
+        if (!isArrayOfIntegers(ids)) { console.log(ids); console.trace(); return; }
+        return ids.map(id => this._record(id)).sort(method).map(record => record.id);
+    }
+    sortByKey(k, ids)              { return this.sort((a, b) => (a[k] instanceof String) ? a[k].localeCompare(b[k]) : (a[k] < b[k]) ? -1 : (a[k] > b[k]) ? 1 : 0, ids); }
+    sortAlnumByKey(key, ids)       { return this.sort((a, b) => a[key].localeCompare(b[key]), ids); }
+    sortNumByKey(key, ids)         { return this.sort((a, b) => (a[key] < b[key]) ? -1 : (a[key] > b[key]) ? 1 : 0, ids); }
+    sortByCreation(ids)            { return this.sortNumByKey("creation", ids); }
+    sortByLastEdited(ids)          { return this.sortNumByKey("lastEdited", ids); }
+    sortByLastOpened(ids)          { return this.sortNumByKey("lastOpened", ids); }
 
     min(key, ids) { return this.sortNumByKey(key, ids)[0]; }
     max(key, ids) { return this.sortNumByKey(key, ids).reverse()[0]; }
+    firstCreated(ids) { return this.min("creation", ids); }
+    firstEdited(ids)  { return this.min("lastEdited", ids); }
+    firstOpened(ids)  { return this.min("lastOpened", ids); }
+    lastCreated(ids)  { return this.max("creation", ids); }
+    lastEdited(ids)   { return this.max("lastEdited", ids); }
+    lastOpened(ids)   { return this.max("lastOpened", ids); }
 
     select(ids) {
         ids = smoothArray(ids);
         if (!isArrayOfIntegers(ids)) { return; }
         console.log("Selecting", ...ids)
-        ids.filter(id => this.has(id)).forEach(id => this._select.addValue(id));
+        ids.filter(id => this.has(id)).forEach(id => this._select.add(id));
     }
-    //Newer, Older, Unique all refer to this.  Different is the same either way.  Selected refers to dataTree.
-    selectNewer(dataTree)     { this.select(this.newerIds(dataTree)); }     //Select ids that are newer in this
-    selectOlder(dataTree)     { this.select(this.olderIds(dataTree)); }     //Select ids that are older in this
-    selectDifferent(dataTree) { this.select(this.differentIds(dataTree)); } //Select ids that are different
-    selectUnique(dataTree)    { this.select(this.uniqueIds(dataTree)); }    //Select ids that are unique to this
-    selectSelected(dataTree)  { this.select(dataTree.selected()); }         //Select ids that are selected in dataTree
 
     selected() { return this._select.values(); }
 
@@ -281,6 +293,13 @@ class DataTree {
     }
 
     //Methods for two DataTrees
+    //Newer, Older, Unique all refer to this.  Different is the same either way.  Selected refers to dataTree.
+    selectNewer(dataTree)     { this.select(this.newerIds(dataTree)); }     //Select ids that are newer in this
+    selectOlder(dataTree)     { this.select(this.olderIds(dataTree)); }     //Select ids that are older in this
+    selectDifferent(dataTree) { this.select(this.differentIds(dataTree)); } //Select ids that are different
+    selectUnique(dataTree)    { this.select(this.uniqueIds(dataTree)); }    //Select ids that are unique to this
+    selectSelected(dataTree)  { this.select(dataTree.selected()); }         //Select ids that are selected in dataTree
+
     unionIds(dataTree) {
         if (!dataTree instanceof DataTree) { throw new Error("Expecting dataTree."); }
         //console.log(this.ids());
@@ -288,8 +307,9 @@ class DataTree {
         return [...new Set(this.ids().concat(dataTree.ids()))];
     }
 
-    compareIds(dataTree, inSet1, inSet2, ids = this.unionIds(dataTree)) {
+    compareIds(dataTree, inSet1, inSet2, ids) {
         if (!dataTree instanceof DataTree) { throw new Error("Expecting dataTree"); }
+        if (ids == undefined) { ids = this.unionIds(dataTree); }
         const set1 = this.ids();
         const set2 = dataTree.ids();
         //console.log("unionIds:", ids);
@@ -450,7 +470,7 @@ class DataTree {
                          : false;
     
                 }).find(p => isArray(p));
-                return (path === undefined) ? false : path;
+                return (!isArray(path)) ? false : path;
             }
             else { return false; }
         }

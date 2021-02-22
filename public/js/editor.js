@@ -16,8 +16,9 @@ class Editor {
     }
 
     init() {
-        const mostRecentlyCreated = this.app.data.sortByCreation(this.app.data.tierIds(3)).slice(-1, 1)[0];
-        const mostRecentlyOpened = this.app.data.sortByLastOpened(this.app.data.tierIds(3)).slice(-1, 1)[0];
+        const tier3Ids = this.app.data.tierIds(3);
+        const mostRecentlyCreated = this.app.data.lastCreated(tier3Ids);
+        const mostRecentlyOpened = this.app.data.lastOpened(tier3Ids);
         this.load(mostRecentlyOpened ? mostRecentlyOpened : mostRecentlyCreated);
     }
 

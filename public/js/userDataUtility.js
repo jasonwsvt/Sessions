@@ -64,7 +64,7 @@ class UserDataUtility {
                     self.div.removeClass("hidden");
                     this.blur();
                     self.localData.import(self.data.export());
-                    self._buildList();
+                    self._buildRecordList();
                 }
                 else {
                     self.close();
@@ -568,7 +568,7 @@ class UserDataUtility {
         }
     }
 
-    _buildList() {
+    _buildRecordList() {
         const self = this;
         //if (this.localData.isEmpty()) { this.localData.import(this.data.export()); }
         //clear scrollAreaDiv
@@ -576,15 +576,15 @@ class UserDataUtility {
         this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 22) + "px");
         this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
         //call buildRecord with data
-        //console.log(localData, this.loadedData);
+        //console.log(this.localData, this.loadedData);
         //console.log(this.localData.tierIds(0)[0])
-        this._buildRecords(this.localData.tierIds(0)[0]);
-        //this._buildRecord(this.localData.tierIds(0)[0]);
+        const localRootId = this.localData.tierIds(0)[0];
+        this._buildRecords(localRootId);
         if (!this.loadedData.isEmpty()) {
+            const loadedRootId = this.loadedData.tierIds(0)[0];
             this.loadDiv.addClass("hidden");
-            if (this.localData.tierIds(0)[0] != this.loadedData.tierIds(0)[0]) {
-                this._buildRecords(this.loadedData);
-                //this._buildRecord(this.loadedData.tierIds(0)[0]);
+            if (localRootId != loadedRootId) {
+                this._buildRecord(loadedRootId);
             }
         }
         else {
@@ -638,22 +638,28 @@ class UserDataUtility {
         //ctrl additionally selects all descendants.
         this.localSelects.on("click", function (e) {
             const id = parseInt($(this).parent().parent().parent().parent().prop("id").split("_")[1]);
-            var ids = (e.ctrlKey) ? [id] : self.localData.ids(self.localData.record(id));
+            var ids = (e.ctrlKey) ? [id] : [id].concat(self.localData.childIds(id));
             //console.log(ids);
-            if (self.localData.isSelected(id)) { self.unselectLocalRecords(ids); }
+            if (self.localData.isSelected(id)) { self.localData.unselect(ids); }
             else {                               self.localData.select(ids);   }
-            //console.log(ids);
-            self.updateChildrenSelectStatuses(self.localData.parentIds(ids));
+            const parentIds = self.localData.parentIds(ids);
+            console.log(parentIds);
+            if (isArray(parentIds)) {
+                self.updateChildrenSelectStatuses(parentIds);
+            }
         });
 
         //click event for select loaded record buttons ("loaded_" + id)
         //ctrl additionally selects all descendants.
         this.loadedSelects.on("click", function (e) {
             const id = parseInt($(this).parent().parent().parent().parent().prop("id").split("_")[1]);
-            var ids = (e.ctrlKey) ? [id] : self.loadedData.ids(self.loadedData.record(id));
-            if (self.loadedData.isSelected(id)) { self.unselectLoadedRecords(ids); }
+            var ids = (e.ctrlKey) ? [id] : [id].concat(self.loadedData.childIds(id));
+            if (self.loadedData.isSelected(id)) { self.loadedData.unselect(ids); }
             else {                                self.loadedData.select(ids); }
-            self.updateChildrenSelectStatuses(self.loadedData.parentIds(ids));
+            const parentIds = self.loadedData.parentIds(ids);
+            if (isArray(parentIds)) {
+                self.updateChildrenSelectStatuses(parentIds);
+            }
         });
 
         //click event for select local Children buttons ("local_" + id + "_children")
@@ -662,12 +668,15 @@ class UserDataUtility {
             //console.log(id, self.localChildIds(id));
             const ids = (e.ctrlKey) ? self.localData.childIds(id) : self.localData.descendantIds(id);
             if (self.localChildrenSelectIsSelected(id)) {
-                self.unselectLocalChildrenSelect(id); self.unselectLocalRecords(ids);
+                self.unselectLocalChildrenSelect(id); self.localData.unselect(ids);
             }
             else {
                 self.selectLocalChildrenSelect(id);   self.localData.select(ids);
             }
-            self.updateChildrenSelectStatuses(self.localData.parentIds(ids));
+            const parentIds = self.localData.parentIds(ids);
+            if (isArray(parentIds)) {
+                self.updateChildrenSelectStatuses(parentIds);
+            }
         });
 
         //click event for select loaded Children buttons ("loaded_" + id + "_children")
@@ -675,12 +684,15 @@ class UserDataUtility {
             const id = parseInt($(this).parent().parent().parent().parent().prop("id").split("_")[1]);
             const ids = (e.ctrlKey) ? self.loadedData.childIds(id) : self.loadedData.descendantIds(id);
             if (self.loadedChildrenSelectIsSelected(id)) {
-                self.unselectLoadedChildrenSelect(id); self.unselectLoadedRecords(ids);
+                self.unselectLoadedChildrenSelect(id); self.loadedData.unselect(ids);
             }
             else {
                 self.selectLoadedChildrenSelect(id);   self.loadedData.select(ids);
             }
-            self.updateChildrenSelectStatuses(self.loadedData.parentIds(ids));
+            const parentIds = self.loadedData.parentIds(ids);
+            if (isArray(parentIds)) {
+                self.updateChildrenSelectStatuses(parentIds);
+            }
         });
 
         [this.rowButtons, this.childrenRowsButtons, this.localSelects, this.loadedSelects, this.localChildrenSelects, this.loadedChildrenSelects].forEach(c => {
@@ -826,7 +838,7 @@ class UserDataUtility {
             else { line += "<td></td><td></td>"; }
             record += "<tr>" + line + "</tr>";
         }
-        if (this.row(id)) { 
+        if (this.row(id).length) { 
             this.row(id).html(record);
             if (this.localData.isSelected(id)) { this.selectLocal(id); }
             if (this.loadedData.isSelected(id)) { this.selectLoaded(id); }
@@ -882,16 +894,16 @@ class UserDataUtility {
     //Buttons
     rowButton(id)               { return this.row(id).find("tr:first>td:first>span"); }
     childrenRowsButton(id)      { return this.row(id).find("tr:last>td:first>span"); }
-    localSelect(id)             { return (this.localData.has(id)) ? this.row(id).find("tr:first>td:nth-of-type(4)>span") : null; }
-    loadedSelect(id)            { return (this.loadedData.has(id)) ? this.row(id).find("tr:first>td:nth-of-type(6)>span") : null; }
-    localChildrenSelect(id)     { return (this.localData.has(id)) ? this.row(id).find("tr:last>td:nth-of-type(4)>span") : null; }
-    loadedChildrenSelect(id)    { return (this.loadedData.has(id)) ? this.row(id).find("tr:last>td:nth-of-type(6)>span") : null; }
+    localSelect(id)             { return this.row(id).find("tr:first>td:nth-of-type(4)>span"); }
+    loadedSelect(id)            { return this.row(id).find("tr:first>td:nth-of-type(6)>span"); }
+    localChildrenSelect(id)     { return this.row(id).find("tr:last>td:nth-of-type(4)>span"); }
+    loadedChildrenSelect(id)    { return this.row(id).find("tr:last>td:nth-of-type(6)>span"); }
     get rowButtons()            { return this.scrollAreaDiv.find("tr:first-child>td:first-child>span"); }
     get childrenRowsButtons()   { return this.scrollAreaDiv.find("tr:last-child>td:first-child>span"); }
-    get localSelects()          { return this.scrollAreaDiv.find(".local tr:first-child>td:nth-of-type(4)>span"); }
-    get loadedSelects()         { return this.scrollAreaDiv.find(".loaded tr:first-child>td:nth-of-type(6)>span"); }
-    get localChildrenSelects()  { return this.scrollAreaDiv.find(".local tr:last-child>td:nth-of-type(4)>span"); }
-    get loadedChildrenSelects() { return this.scrollAreaDiv.find(".loaded tr:last-child>td:nth-of-type(6)>span"); }
+    get localSelects()          { return this.scrollAreaDiv.find("tr:first-child>td:nth-of-type(4)>span"); }
+    get loadedSelects()         { return this.scrollAreaDiv.find("tr:first-child>td:nth-of-type(6)>span"); }
+    get localChildrenSelects()  { return this.scrollAreaDiv.find("tr:last-child>td:nth-of-type(4)>span"); }
+    get loadedChildrenSelects() { return this.scrollAreaDiv.find("tr:last-child>td:nth-of-type(6)>span"); }
 
     resetRow(id)          { this.unselectRow(id); this.expandRow(id); }
     resetRows(ids)        { ids.forEach(id => this.reset(id)); }
@@ -987,6 +999,8 @@ class UserDataUtility {
     updateChildrenSelectStatuses(ids) { ids.forEach(id => this.updateChildrenSelectStatus(id)); }
     updateChildrenSelectStatus(id) {
         if (this.localData.has(id)) { this.updateLocalChildrenSelectStatus(id); }
+        console.log(id, this.loadedData.has(id))
+        console.trace();
         if (this.loadedData.has(id)) { this.updateLoadedChildrenSelectStatus(id); }
     }
     updateLocalChildrenSelectStatus(id) {
@@ -1228,7 +1242,7 @@ class UserDataUtility {
             reader.onload = function() {
                 self.loadedData.import(JSON.parse(reader.result));
                 self.setUpOptionsData();
-                self._buildList();
+                self._buildRecordList();
             };
             reader.onerror = function() {
               console.log(reader.error);

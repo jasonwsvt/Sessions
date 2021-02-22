@@ -82,11 +82,15 @@ function makeArray(values) {
 
 //returns one single-level array of arguments, regardless of whether the arguments were given in an array
 function smoothArray() {
-    var args = [...arguments[0]], num = 0, index;
-    while(true) {
-        index = args.findIndex(arg => isArray(arg));
-        if (index < 0 || num++ > 10) { break; }
-        args = [].concat.apply([], args);
+    var args = arguments[0], num = 0, index;
+    if (isArray(args)) {
+        args = [...arguments[0]];
+        while(true) {
+            index = args.findIndex(arg => isArray(arg));
+            if (index < 0 || num++ > 10) { break; }
+            args = [].concat.apply([], args);
+        }
     }
+    else { args = [args]; }
     return args;
 }
