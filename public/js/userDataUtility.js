@@ -713,37 +713,39 @@ class UserDataUtility {
     }
 
     _buildRecords(id, method = "name", direction = "ascending") {
+        console.log("\n\n '" + method + "' '" + direction);
         var localIds = [], loadedIds = [];
         this._buildRecord(id);
 
-        //const localIds = this.localData.hasChildren(id) ? this.localData.sortByKey(method, this.localData.childIds(id)) : [];
-        //const loadedIds = this.loadedData.hasChildren(id) ? this.loadedData.sortByKey(method, this.loadedData.childIds(id)) : [];
-        if (this.localData.hasChildren(id)) {
-            const childIds = this.localData.childIds(id);
-            const tier = this.loadedData.tier(id);
-            localIds = (method == "name") ? (tier < 2) ? this.localData.sortAlnumByKey(method, childIds)
-                                                       : this.localData.sortByCreation(childIds)
-                     : (method == "creation")          ? this.localData.sortByCreation(childIds)
-                     : (method == "lastEdited")        ? this.localData.sortByLastEdited(childIds)
-                     : (method == "lastOpened")        ? this.localData.sortByLastOpened(childIds)
-                     : [];
-            if (direction == "descending") { localIds.reverse(); }
-        }
+        const localHasChildren = this.localData.hasChildren(id);
+        const loadedHasChildren = this.loadedData.hasChildren(id);
+        if (localHasChildren || loadedHasChildren) {
+            if (localHasChildren) {
+                const childIds = this.localData.childIds(id);
+                const tier = this.loadedData.tier(id);
+                localIds = (method == "name") ? (tier < 2) ? this.localData.sortAlnumByKey(method, childIds)
+                                                           : this.localData.sortByCreation(childIds)
+                         : (method == "creation")          ? this.localData.sortByCreation(childIds)
+                         : (method == "lastEdited")        ? this.localData.sortByLastEdited(childIds)
+                         : (method == "lastOpened")        ? this.localData.sortByLastOpened(childIds)
+                         : [];
+                if (direction == "descending") { localIds.reverse(); }
+            }
 
-        if (this.loadedData.hasChildren(id)) {
-            const childIds = this.loadedData.childIds(id);
-            const tier = this.loadedData.tier(id);
-            loadedIds = (method == "name") ? (tier < 2) ? this.loadedData.sortAlnumByKey(method, childIds)
-                                                        : this.loadedData.sortByCreation(childIds)
-                      : (method == "creation")          ? this.loadedData.sortByCreation(childIds)
-                      : (method == "lastEdited")        ? this.loadedData.sortByLastEdited(childIds)
-                      : (method == "lastOpened")        ? this.loadedData.sortByLastOpened(childIds)
-                      : [];
-            if (direction == "descending") { loadedIds.reverse(); }
+            if (loadedHasChildren) {
+                const childIds = this.loadedData.childIds(id);
+                const tier = this.loadedData.tier(id);
+                loadedIds = (method == "name") ? (tier < 2) ? this.loadedData.sortAlnumByKey(method, childIds)
+                                                            : this.loadedData.sortByCreation(childIds)
+                          : (method == "creation")          ? this.loadedData.sortByCreation(childIds)
+                          : (method == "lastEdited")        ? this.loadedData.sortByLastEdited(childIds)
+                          : (method == "lastOpened")        ? this.loadedData.sortByLastOpened(childIds)
+                          : [];
+                if (direction == "descending") { loadedIds.reverse(); }
+            }
+        
+            [...new Set(localIds.concat(loadedIds))].forEach(id => { this._buildRecords(id, method, direction); });
         }
-
-        const ids = [...new Set(localIds.concat(loadedIds))];
-        ids.forEach(id => { this._buildRecords(id); });
     }
 
 
@@ -1062,11 +1064,11 @@ class UserDataUtility {
     }
 
     //row record comparison methods
-    rowRecordsAreIdentical(id) { this.localData.isIdentical(this.loadedData.record(id)); }
-    localRecordIsNewer(id) { this.localData.isNewer(this.loadedData.record(id)); }
-    localRecordIsOlder(id) { this.localData.isOlder(this.loadedData.record(id)); }
-    loadedRecordIsNewer(id) { this.loadedData.isNewer(this.localData.record(id)); }
-    loadedRecordIsOlder(id) { this.loadedData.isOlder(this.localData.record(id)); }
+    rowRecordsAreIdentical(id) { return !!this.localData.identicalIds(this.loadedData, [id]).length; }
+    localRecordIsNewer(id) { return !!this.localData.newerIds(this.loadedData, [id]).length; }
+    localRecordIsOlder(id) { return !!this.localData.olderIds(this.loadedData, [id]).length; }
+    loadedRecordIsNewer(id) { return !!this.loadedData.newerIds(this.localData, [id]).length; }
+    loadedRecordIsOlder(id) { return !!this.loadedData.olderIds(this.localData, [id]).length; }
 
 
     //Id collections
@@ -1181,22 +1183,8 @@ class UserDataUtility {
             this.updateChildrenSelectStatuses(parentIds);
         }
         else if (adjust == "export") {
-            const records = (option == "local")    ? this.localData.export()
-                          : (option == "loaded")   ? this.loadedData.export()
-                          : (option == "selected") ? this.allSelectedRowIds.map(id =>
-                                                       (this.localData.isSelected(id)
-                                                           ? this.localData.record(id) : this.loadedData.record(id)))
-                          : (option == "newer")    ? this.allIds.map(id =>
-                                                       (!this.loadedData.exists(id) || this.loadedData.isOlder(this.localData.record(id)))
-                                                           ? this.localData.record(id)
-                                                           : this.loadedData.record(id))
-                          : (option == "older")    ? this.allIds.map(id =>
-                                                       (!this.loadedData.exists(id) || this.loadedData.isNewer(this.localData.record(id)))
-                                                           ? this.localData.record(id)
-                                                           : this.loadedData.record(id))
-                          : [];
-            console.log(records);
-            //this._exportJSON(records);
+            if (option == "local") { this._exportJSON(this.localData.export()); }
+            if (option == "loaded") { this._exportJSON(this.loadedData.export()); }
         }
         else if (adjust == "delete") {
             if (option == "undo") { this.undoDelete(); }

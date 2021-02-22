@@ -86,7 +86,6 @@ class DataTree {
     hasKey(id, key) { return this.has(id) && this._record(id).hasOwnProperty(key); }
     value(id, key) {
         if (this.hasKey(id, key)) {
-            this._record(id).lastOpened = this._now();
             return this._record(id)[key];
         }
     }
@@ -274,6 +273,8 @@ class DataTree {
     lastCreated(ids)  { return this.max("creation", ids); }
     lastEdited(ids)   { return this.max("lastEdited", ids); }
     lastOpened(ids)   { return this.max("lastOpened", ids); }
+
+    
 
     select(ids) {
         ids = smoothArray(ids);
