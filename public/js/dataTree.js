@@ -78,6 +78,7 @@ class DataTree {
         else if (!isInteger(newId) || this.has(newId)) { return; }
         const record = this.record(id);
         record.id = newId;
+        record.lastEdited = this._now();
         if (record.hasOwnProperty("children") && isArray(record.children)) {
             record.children.forEach(child => child.parentId = newId);
         }
@@ -86,20 +87,23 @@ class DataTree {
     hasKey(id, key) { return this.has(id) && this._record(id).hasOwnProperty(key); }
     value(id, key) {
         if (this.hasKey(id, key)) {
-            return this._record(id)[key];
+            const record = this._record(id);
+            return record[key];
         }
     }
     setKey(id, key, value) {
         if (this.has(id) && isAlphabetic(key.charAt(0)) && isAlphanumeric(key)) {
-            this._record(id)[key] = value;
-            this._record(id).lastEdited = this._now();
+            const record = this._record(id);
+            record[key] = value;
+            record.lastEdited = this._now();
             return true;
         }
     }
     deleteKey(id, key) {
         if (this.hasKey(id, key)) {
-            delete this._record(id)[key];
-            this._record(id).lastEdited = this._now();
+            const record = this._record(id);
+            delete record[key];
+            record.lastEdited = this._now();
             return true;
         }
     }

@@ -572,6 +572,7 @@ class UserDataUtility {
         const self = this;
         //if (this.localData.isEmpty()) { this.localData.import(this.data.export()); }
         //clear scrollAreaDiv
+        const position = this.scrollAreaDiv.scrollTop();
         this.scrollAreaDiv.empty();
         this.loadDiv.css("left", String(this.scrollAreaDiv.position().left + this.scrollAreaDiv.prop("scrollWidth") - this.loadDiv.width() - 22) + "px");
         this.loadDiv.css("top", String(this.scrollAreaDiv.position().top + 5) + "px");
@@ -584,12 +585,13 @@ class UserDataUtility {
             const loadedRootId = this.loadedData.tierIds(0)[0];
             this.loadDiv.addClass("hidden");
             if (localRootId != loadedRootId) {
-                this._buildRecord(loadedRootId);
+                this._buildRecords(loadedRootId, method, direction);
             }
         }
         else {
             this.loadDiv.removeClass("hidden");
         }
+        this.scrollAreaDiv.scrollTop(position);
 
         //click event for rowButtons ("row_" + id)
         this.rowButtons.on("click", function (e) {
@@ -631,6 +633,7 @@ class UserDataUtility {
                 if (e.shiftKey)               { self.hideRows(ids); }
                 else                          { self.collapseRows(ids); }
             }
+            //console.log(ids, self.rowParentIds(ids))
             self.updateChildrenRowsButtonStatuses(self.rowParentIds(ids));
         });
         
@@ -713,7 +716,7 @@ class UserDataUtility {
     }
 
     _buildRecords(id, method = "name", direction = "ascending") {
-        console.log("\n\n '" + method + "' '" + direction);
+        //console.log("\n\n '" + method + "' '" + direction);
         var localIds = [], loadedIds = [];
         this._buildRecord(id);
 
@@ -936,6 +939,17 @@ class UserDataUtility {
     resetRows(ids)        { ids.forEach(id => this.reset(id)); }
     get resetAllRows()    { this.resetRows(this.allIds); }
 
+    updateChildrenRowsButtonStatuses(ids) { ids.forEach(id => this.updateChildrenRowsButtonStatus(id)); }
+    updateChildrenRowsButtonStatus(id) {
+        const ids = this.allChildIds(id);
+        //console.trace();
+        this.childrenRowsButton(id).html(
+            this.rowsAreHidden(ids)    ? this._hiddenIcon
+          : this.rowsAreCollapsed(ids) ? this._collapsedIcon
+          : this.rowsAreExpanded(ids)  ? this._expandedIcon
+          :                              this._multiIcon);
+    }
+
     //Hiding methods
     rowIsHidden(id)    { return this.row(id).hasClass("hidden"); }
     rowsAreHidden(ids) { return ids.every(id => this.rowIsHidden(id)); }
@@ -1041,27 +1055,15 @@ class UserDataUtility {
     updateLoadedChildrenSelectStatus(id) {
         const ids = this.loadedData.childIds(id);
         this.loadedChildrenSelect(id).html(
-            (this.loadedRecordsAreSelected(ids))   ? this._fullIcon
-          : (this.loadedRecordsAreUnselected(ids)) ? this._emptyIcon
-          :                                          this._multiIcon);
+            this.loadedRecordsAreSelected(ids)   ? this._fullIcon
+          : this.loadedRecordsAreUnselected(ids) ? this._emptyIcon
+          :                                        this._multiIcon);
     }
 
     selectLocalChildrenSelect(id)    { this.localData.childIds(id).forEach(id => this.selectLocalRecord(id)); }
     selectLoadedChildrenSelect(id)   { this.loadedData.childIds(id).forEach(id => this.selectLoadedRecord(id)); }
     unselectLocalChildrenSelect(id)  { this.localData.childIds(id).forEach(id => this.unselectLocalRecord(id)); }
     unselectLoadedChildrenSelect(id) { this.loadedData.childIds(id).forEach(id => this.unselectLoadedRecord(id)); }
-
-    updateChildrenRowsButtonStatuses(ids) { ids.forEach(id => this.updateChildrenRowsButtonStatus(id)); }
-    updateChildrenRowsButtonStatus(id) {
-        const ids = this.allChildIds(id);
-        //console.log(id, ids);
-        //console.trace();
-        this.childrenRowsButton(id).html(
-            (this.rowsAreHidden(ids))    ? this._hiddenIcon
-          : (this.rowsAreCollapsed(ids)) ? this._collapsedIcon
-          : (this.rowsAreExpanded(ids))  ? this._expandedIcon
-          :                                this._multiIcon);
-    }
 
     //row record comparison methods
     rowRecordsAreIdentical(id) { return !!this.localData.identicalIds(this.loadedData, [id]).length; }
@@ -1074,7 +1076,11 @@ class UserDataUtility {
     //Id collections
     get allIds()    { return this.localData.unionIds(this.loadedData); }
     
-    allChildIds(parentId)    { return [... new Set(this.localChildIds(parentId).concat(this.loadedChildIds(parentId)))]; }
+    allChildIds(parentId)    {
+        const localIds = this.localChildIds(parentId) || [];
+        const loadedIds = this.loadedChildIds(parentId) || [];
+        return [... new Set(localIds.concat(loadedIds))];
+    }
     localChildIds(parentId)  { return this.localData.childIds(parentId); }
     loadedChildIds(parentId) { return this.loadedData.childIds(parentId); }
 
@@ -1122,7 +1128,6 @@ class UserDataUtility {
                       : (option == "selected")   ? this.allSelectedRowIds
                       : (option == "unselected") ? this.allUnselectedRowIds : [];
 
-            console.log(ids);
             switch (adjust) {
                 case "expand":   this.expandRows(ids);   break;
                 case "collapse": this.collapseRows(ids); break;
