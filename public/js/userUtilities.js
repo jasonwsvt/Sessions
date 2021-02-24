@@ -1,4 +1,7 @@
 class UserUtilities {
+    lastLocalBackup = null;
+    nextLocalBackup = null;
+    localBackupId   = null;
     utilities       = null;
     settings        = null;
     data            = null;
@@ -15,6 +18,10 @@ class UserUtilities {
 
         this.div.addClass("btn-group");
         this.div.attr("role", "group");
+
+        $(document).ready(function() {
+
+        });
     }
 
     get app()     { return this.utilities.app; }
@@ -47,14 +54,33 @@ class UserUtilities {
         this.new.close(except);
     }
 
-    usernameExists() {}
-    localUsernameExists() {}
-    sessionUsernameExists() {}
-    containerUsernameExists() {}
-    backup() {
-        const data = this.app.data;
-        const location = (data.hasOwnProperty("localBackup") && data.localBackup == "browser") ? localStorage : sessionStorage;
-        
+    usernameExists() {
+        return [localStorage, sessionStorage].every(storage => !Object.keys(storage).includes(this.app.data.username));
     }
 
+    localBackup() {
+        const data = this.app.data;
+        if (data.localBackupLocation == "localStorage") {
+            data.exportToLocalStorage(data.username);
+        }
+        else if (data.localBackupLocation == "sessionStorage") {
+            data.exportToSessionStorage(data.username);
+        }
+        this.lastLocalBackup = this._now();
+        this.nextLocalBackup = undefined;
+    }
+
+    scheduleLocalBackup() {
+        if (this.nextLocalBackup == undefined || this.nextLocalBackup < this._now()) {
+            this.localBackupId = setTimeout(this.localBackup, data.localBackupFrequency * 1000);
+            this.nextLocalBackup = this._now() + data.localBackupFrequency;
+        }
+    }
+
+    cancelLocalBackup() {
+        clearTimeout(this.localBackupId);
+        this.nextLocalBackup = undefined;
+    }
+
+    _now() { return Math.round(Date.now() / 1000); }
 }
