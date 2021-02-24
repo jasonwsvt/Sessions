@@ -1,6 +1,5 @@
 class UserUtilities {
     lastLocalBackup = null;
-    nextLocalBackup = null;
     localBackupId   = null;
     utilities       = null;
     settings        = null;
@@ -67,19 +66,24 @@ class UserUtilities {
             data.exportToSessionStorage(data.username);
         }
         this.lastLocalBackup = this._now();
-        this.nextLocalBackup = undefined;
     }
 
-    scheduleLocalBackup() {
-        if (this.nextLocalBackup == undefined || this.nextLocalBackup < this._now()) {
-            this.localBackupId = setTimeout(this.localBackup, data.localBackupFrequency * 1000);
-            this.nextLocalBackup = this._now() + data.localBackupFrequency;
+    scheduleLocalBackup(timeout) {
+        if (timeout == undefined) { timeout = this.app.data.localBackupFrequency; }
+        const last = this.lastLocalBackup;
+        const now = this._now();
+        if (this.localBackupId) { this.cancelLocalBackup(); }
+        if (!last || (last + timeout <= now)) { this.localBackup(); }
+        else {
+            if (!last) { this.localBackup(); }
+            if (this.localBackupId) { this.cancelLocalBackup(); }
+            this.localBackupId = setTimeout(this.localBackup, timeout * 1000);
         }
     }
 
     cancelLocalBackup() {
         clearTimeout(this.localBackupId);
-        this.nextLocalBackup = undefined;
+        this.localBackupId = null;
     }
 
     _now() { return Math.round(Date.now() / 1000); }

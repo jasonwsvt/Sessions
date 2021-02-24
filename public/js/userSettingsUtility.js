@@ -25,7 +25,7 @@ class UserSettingsUtility {
     _messagesDivID = "settingsDivMessages";
     _actionDivID = "settingsDivAction";
     _optionsDivID = "settingsDivOptions";
-    _backupFrequencyID = "backupFrequency";
+    _localBackupFrequencyID = "localBackupFrequency";
     _serverBackupFrequencyID = "serverBackupFrequency";
 
     constructor (userUtilities, group) {
@@ -75,19 +75,29 @@ class UserSettingsUtility {
             });
 
             self.storage.on("change", function (e) {
-                self.value("storagePermanence") = $(this).val();
+                if (self.value("storageContainer") == "localStorage" && Object.keys(localStorage).includes(self.value("username"))) {
+                    sessionStorage.setItem(self.value("username"), localStorage.getItem(self.value("username")));
+                    localStorage.removeItem(self.value("username"));
+                }
+                if (self.value("storageContainer") == "sessionStorage" && Object.keys(sessionStorage).includes(self.value("username"))) {
+                    localStorage.setItem(self.value("username"), sessionStorage.getItem(self.value("username")));
+                    sessionStorage.removeItem(self.value("username");
+                }
+                self.value("storageContainer") = $(this).val();
                 self.manage();
             });
 
-            self.backupFrequency.on("change", function (e) {
+            self.localBackupFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
-                self.value("backupFrequency") = (val == "false") ? false : parseInt(val);
+                self.value("localBackupFrequency") = (val == "false") ? false : parseInt(val);
+                self.userUtilities.scheduleLocalBackup();
                 self.manageForm();
             });
 
             self.serverBackupFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
                 self.value("serverBackupFrequency") = (val == "false") ? false : parseInt(val);
+                self.userUtilities.scheduleServerBackup();
                 self.manageForm();
             });
         }); 
@@ -115,7 +125,7 @@ class UserSettingsUtility {
     get messagesDiv()           { return $("#" + this._messagesDivID); }
     get actionDiv()             { return $("#" + this._actionDivID); }
     get optionsDiv()            { return $("#" + this._optionsDivID); }
-    get backupFrequency()       { return $("#" + this._backupFrequencyID); }
+    get localBackupFrequency()       { return $("#" + this._localBackupFrequencyID); }
     get serverBackupFrequency() { return $("#" + this._serverBackupFrequencyID); }
 
     _build() {
@@ -134,8 +144,8 @@ class UserSettingsUtility {
         const storage = "<select id = '" + this._storageID + "'></select>"; 
         const storagePermanenceLabel = "<label style = 'text-align: right'>Storage permanence:</label>";
 
-        const backupFrequencyLabel = "<label style = 'text-align: right'>Storage frequency:</label>";
-        const backupFrequency = "<select id = '" + this._backupFrequencyID + "'></select>";
+        const localBackupFrequencyLabel = "<label style = 'text-align: right'>Storage frequency:</label>";
+        const localBackupFrequency = "<select id = '" + this._localBackupFrequencyID + "'></select>";
         const serverBackupFrequency = "<select id = '" + this._serverBackupFrequencyID + "'></select>";
 
         const messagesDiv = "<div id = '" + this._messagesDivID + "'></div>";
@@ -149,7 +159,7 @@ class UserSettingsUtility {
         this.div.append(newPassword2);
         this.div.append(email);
         this.div.append(prefix + hidden     + infix + storagePermanenceLabel      + infix + storage                + infix + "Server"              + postfix);
-        this.div.append(prefix + rememberMe + infix + backupFrequencyLabel + infix + backupFrequency + infix + serverBackupFrequency + postfix);
+        this.div.append(prefix + rememberMe + infix + localBackupFrequencyLabel + infix + localBackupFrequency + infix + serverBackupFrequency + postfix);
         this.div.append(messagesDiv);
         this.div.append(actionDiv);
         this.div.append(optionsDiv);
@@ -160,7 +170,7 @@ class UserSettingsUtility {
         this.div.css("left", String(this.userUtilities.div.position().left) + "px");
         this.storage.append("<option value = 'true'>Browser</option>");
         this.storage.append("<option value = 'false'>Session</option>");
-        this.backupFrequency.html([false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
+        this.localBackupFrequency.html([false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
     }
 
@@ -171,7 +181,7 @@ class UserSettingsUtility {
         this.newPassword1.val("");
         this.newPassword2.val("");
         this.email.val((isString(this.value("email"))) ? this.value("email") : "");
-        this.backupFrequency.val(String((this.value("backupFrequency") != undefined) ? this.value("backupFrequency") : false));
+        this.localBackupFrequency.val(String((this.value("localBackupFrequency") != undefined) ? this.value("localBackupFrequency") : false));
         this.hidden.prop("checked", this.value("hidden") == true);
         this.rememberMe.prop("checked", this.value("rememberMe") == true);
     }
