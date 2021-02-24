@@ -29,7 +29,6 @@ class UserSettingsUtility {
     _serverBackupFrequencyID = "serverBackupFrequency";
 
     constructor (userUtilities, group) {
-        const self = this;
         this._userUtilities = userUtilities;
         this._group = group;
         this._type = "user";
@@ -37,6 +36,7 @@ class UserSettingsUtility {
 
         this._build();
 
+        const self = this;
         $(document).ready(function() {
             self.button.on("click", function (e) {
                 self.utilities.close(self._buttonID);
@@ -81,22 +81,23 @@ class UserSettingsUtility {
                 }
                 if (self.value("storageContainer") == "sessionStorage" && Object.keys(sessionStorage).includes(self.value("username"))) {
                     localStorage.setItem(self.value("username"), sessionStorage.getItem(self.value("username")));
-                    sessionStorage.removeItem(self.value("username");
+                    sessionStorage.removeItem(self.value("username"));
                 }
-                self.value("storageContainer") = $(this).val();
+                self.setKey("storageContainer", $(this).val());
                 self.manage();
             });
 
             self.localBackupFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
-                self.value("localBackupFrequency") = (val == "false") ? false : parseInt(val);
+                self.setKey("localBackupFrequency", (val == "false") ? false : parseInt(val));
+                if (self.userUtilities.localBackupId) { this.cancelLocalBackup(); }
                 self.userUtilities.scheduleLocalBackup();
                 self.manageForm();
             });
 
             self.serverBackupFrequency.on("change", function (e) {
                 const val = $(this).find("option:selected").val();
-                self.value("serverBackupFrequency") = (val == "false") ? false : parseInt(val);
+                self.value("serverBackupFrequency", (val == "false") ? false : parseInt(val));
                 self.userUtilities.scheduleServerBackup();
                 self.manageForm();
             });
@@ -125,7 +126,7 @@ class UserSettingsUtility {
     get messagesDiv()           { return $("#" + this._messagesDivID); }
     get actionDiv()             { return $("#" + this._actionDivID); }
     get optionsDiv()            { return $("#" + this._optionsDivID); }
-    get localBackupFrequency()       { return $("#" + this._localBackupFrequencyID); }
+    get localBackupFrequency()  { return $("#" + this._localBackupFrequencyID); }
     get serverBackupFrequency() { return $("#" + this._serverBackupFrequencyID); }
 
     _build() {
@@ -142,7 +143,7 @@ class UserSettingsUtility {
         const hidden = "<input id = '" + this._hiddenID + "' type = 'checkbox'> Hidden";
         const rememberMe = "<input id = '" + this._rememberMeID + "' type = 'checkbox'> Remember me";
         const storage = "<select id = '" + this._storageID + "'></select>"; 
-        const storagePermanenceLabel = "<label style = 'text-align: right'>Storage permanence:</label>";
+        const storageContainerLabel = "<label style = 'text-align: right'>Storage permanence:</label>";
 
         const localBackupFrequencyLabel = "<label style = 'text-align: right'>Storage frequency:</label>";
         const localBackupFrequency = "<select id = '" + this._localBackupFrequencyID + "'></select>";
@@ -158,7 +159,7 @@ class UserSettingsUtility {
         this.div.append(newPassword1);
         this.div.append(newPassword2);
         this.div.append(email);
-        this.div.append(prefix + hidden     + infix + storagePermanenceLabel      + infix + storage                + infix + "Server"              + postfix);
+        this.div.append(prefix + hidden     + infix + storageContainerLabel      + infix + storage                + infix + "Server"              + postfix);
         this.div.append(prefix + rememberMe + infix + localBackupFrequencyLabel + infix + localBackupFrequency + infix + serverBackupFrequency + postfix);
         this.div.append(messagesDiv);
         this.div.append(actionDiv);
@@ -168,8 +169,8 @@ class UserSettingsUtility {
         //this.div.css("top", String(this.button.position().top + 32) + "px");
         this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
         this.div.css("left", String(this.userUtilities.div.position().left) + "px");
-        this.storage.append("<option value = 'true'>Browser</option>");
-        this.storage.append("<option value = 'false'>Session</option>");
+        this.storage.append("<option value = 'localStorage'>Browser</option>");
+        this.storage.append("<option value = 'sessionStorage'>Session</option>");
         this.localBackupFrequency.html([false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
     }
@@ -216,9 +217,9 @@ class UserSettingsUtility {
         const newPW = this.newPWState;
         const email = this.emailState;
         const server = this.value("useServerStorage");
-        const storagePermanence = this.value("storagePermanence");
+        const storageContainer = this.value("storageContainer");
 
-        this.storage.val(String(storagePermanence));
+        this.storage.val(String(storageContainer));
 
         if (curPW == "Invalid") { messages.push("Current password is invalid."); }
         else {
@@ -333,7 +334,7 @@ class UserSettingsUtility {
 
     get ableToSetRememberMe() {
         return (this.value("username") != this.userUtilities.defaultUserName &&
-                this.storagePermanence &&
+                this.value("storageContainer") != "sessionStorage" &&
                 (!this.rememberMeExists || this.rememberMe == this.id));
     }
 
@@ -342,16 +343,13 @@ class UserSettingsUtility {
         const fieldVal = this.username.val();
         const server = this.value("useServerStorage");
         const valid = /^[a-zA-Z0-9_\-.]{5,20}$/;
-        const containerDup = this.userUtilities.containerUsernameExists(fieldVal);
         const localDup = this.userUtilities.localUsernameExists(fieldVal);
         const serverDup = false;
 
         if (current == fieldVal)                        { return "Unchanged"; }
         if (!valid.test(fieldVal))                      { return "Invalid"; }
         if (current.length > 0 && fieldVal.length == 0) { return "Emptied"; }
-        if (containerDup && serverDup)                  { return "Storage and server duplicate"; }
         if (localDup && serverDup)                      { return "Local and server duplicate"; }
-        if (containerDup)                               { return "Storage duplicate"; }
         if (localDup)                                   { return "Local duplicate"; }
         if (serverDup)                                  { return "Server duplicate"; }
         return "Filled";

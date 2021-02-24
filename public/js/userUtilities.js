@@ -53,11 +53,13 @@ class UserUtilities {
         this.new.close(except);
     }
 
-    usernameExists() {
-        return [localStorage, sessionStorage].every(storage => !Object.keys(storage).includes(this.app.data.username));
+    localUsernameExists() {
+        console.log(!![localStorage, sessionStorage].find(storage => Object.keys(storage).includes(this.app.data.username)));
+        return !![localStorage, sessionStorage].find(storage => Object.keys(storage).includes(this.app.data.username));
     }
 
     localBackup() {
+        console.log("running local backup")
         const data = this.app.data;
         if (data.localBackupLocation == "localStorage") {
             data.exportToLocalStorage(data.username);
@@ -69,15 +71,17 @@ class UserUtilities {
     }
 
     scheduleLocalBackup(timeout) {
-        if (timeout == undefined) { timeout = this.app.data.localBackupFrequency; }
-        const last = this.lastLocalBackup;
-        const now = this._now();
-        if (this.localBackupId) { this.cancelLocalBackup(); }
-        if (!last || (last + timeout <= now)) { this.localBackup(); }
-        else {
-            if (!last) { this.localBackup(); }
-            if (this.localBackupId) { this.cancelLocalBackup(); }
-            this.localBackupId = setTimeout(this.localBackup, timeout * 1000);
+        console.log("scheduling local backup")
+        if (!this.localBackupId) {
+            if (timeout == undefined) { timeout = this.app.data.localBackupFrequency; }
+            const last = this.lastLocalBackup;
+            const now = this._now();
+            if (!last || (last + timeout <= now)) { this.localBackup(); }
+            else {
+                if (!last) { this.localBackup(); }
+                if (this.localBackupId) { this.cancelLocalBackup(); }
+                this.localBackupId = setTimeout(this.localBackup, timeout * 1000);
+            }
         }
     }
 
