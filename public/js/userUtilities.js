@@ -51,5 +51,10 @@ class UserUtilities {
     localUsernameExists() {}
     sessionUsernameExists() {}
     containerUsernameExists() {}
+    backup() {
+        const data = this.app.data;
+        const location = (data.hasOwnProperty("localBackup") && data.localBackup == "browser") ? localStorage : sessionStorage;
+        
+    }
 
 }

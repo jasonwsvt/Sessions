@@ -15,13 +15,13 @@ class DataTree {
     isEmpty() { return Object.keys(this._data) == 0; }
     clear() { this._data = {}; }
 
-    export() { return this._data; }
-    exportJSON() { return JSON.stringify(this._data); }
-    exportPrettyJSON() { return JSON.stringify(this._data, null, "\t"); }
-    exportToSessionStorage(name) { sessionStorage.setItem(name, this.exportJSON()); }
-    exportToLocalStorage(name) { localStorage.setItem(name, this.exportJSON()); }
+    export()                            { return this._data; }
+    exportJSON()                        { return JSON.stringify(this._data); }
+    exportPrettyJSON()                  { return JSON.stringify(this._data, null, "\t"); }
+    exportToSessionStorage(name)        { sessionStorage.setItem(name, this.exportJSON()); }
+    exportToLocalStorage(name)          { localStorage.setItem(name, this.exportJSON()); }
     exportEncodedToSessionStorage(name) { sessionStorage.setItem(name, btoa(this.exportJSON())); }
-    exportEncodedToLocalStorage(name) { localStorage.setItem(name, btoa(this.exportJSON())); }
+    exportEncodedToLocalStorage(name)   { localStorage.setItem(name, btoa(this.exportJSON())); }
 
     import(data) {
         if (!data.hasOwnProperty("id")) {
@@ -35,11 +35,11 @@ class DataTree {
             return this._data.id;
         }
     }
-    importJSON(json) { this.import(JSON.parse(json)); }
-    importFromSessionStorage(name) { this.importJSON(sessionStorage.getItem(name)); }
-    importFromLocalStorage(name) { this.importJSON(localStorage.getItem(name)); }
+    importJSON(json)                      { this.import(JSON.parse(json)); }
+    importFromSessionStorage(name)        { this.importJSON(sessionStorage.getItem(name)); }
+    importFromLocalStorage(name)          { this.importJSON(localStorage.getItem(name)); }
     importEncodedFromSessionStorage(name) { this.importJSON(atob(sessionStorage.getItem(name))); }
-    importEncodedFromLocalStorage(name) { this.importJSON(atob(localStorage.getItem(name))); }
+    importEncodedFromLocalStorage(name)   { this.importJSON(atob(localStorage.getItem(name))); }
 
     isDataTree(data) {
         //console.log(!isObject(data))
