@@ -16,12 +16,22 @@ class DataTree {
     clear() { this._data = {}; }
 
     export()                            { return this._data; }
-    exportJSON()                        { return JSON.stringify(this._data); }
-    exportPrettyJSON()                  { return JSON.stringify(this._data, null, "\t"); }
+    exportJSON(modifier)                { //true: uses encoding; integer or tab: export pretty JSON.
+        const char = (isInteger(modifier) || modifier == '\t') ? modifier : null;
+        const data = JSON.stringify(this._data, null, char);
+        return (modifier == true) ? btoa(data) : data;
+    }
     exportToSessionStorage(name)        { sessionStorage.setItem(name, this.exportJSON()); }
     exportToLocalStorage(name)          { localStorage.setItem(name, this.exportJSON()); }
     exportEncodedToSessionStorage(name) { sessionStorage.setItem(name, btoa(this.exportJSON())); }
     exportEncodedToLocalStorage(name)   { localStorage.setItem(name, btoa(this.exportJSON())); }
+    sessionExport(name, when, ms) {
+        if (Object.keys(sessionStorage).includes(name)) {
+            if (when == undefined) { sessionStorage.setItem(name, this.exportJSON()); }
+            if (when == 1 && isInteger(ms)) { setTimeout(sessionExport, ms, name); }
+            if (when == 2 && isInteger(ms)) { setInterval(sessionExport, ms, name); }
+        }
+    }
 
     import(data) {
         if (!data.hasOwnProperty("id")) {

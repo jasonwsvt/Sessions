@@ -75,30 +75,33 @@ class UserSettingsUtility {
             });
 
             self.storage.on("change", function (e) {
-                if (self.value("storageContainer") == "localStorage" && Object.keys(localStorage).includes(self.value("username"))) {
+                if (self.value("localBackupLocation") == "localStorage" && Object.keys(localStorage).includes(self.value("username"))) {
                     sessionStorage.setItem(self.value("username"), localStorage.getItem(self.value("username")));
                     localStorage.removeItem(self.value("username"));
                 }
-                if (self.value("storageContainer") == "sessionStorage" && Object.keys(sessionStorage).includes(self.value("username"))) {
+                if (self.value("localBackupLocation") == "sessionStorage" && Object.keys(sessionStorage).includes(self.value("username"))) {
                     localStorage.setItem(self.value("username"), sessionStorage.getItem(self.value("username")));
                     sessionStorage.removeItem(self.value("username"));
                 }
-                self.setKey("storageContainer", $(this).val());
+                self.setKey("localBackupLocation", $(this).val());
                 self.manage();
             });
 
             self.localBackupFrequency.on("change", function (e) {
-                const val = $(this).find("option:selected").val();
-                self.setKey("localBackupFrequency", (val == "false") ? false : parseInt(val));
-                if (self.userUtilities.localBackupId) { this.cancelLocalBackup(); }
-                self.userUtilities.scheduleLocalBackup();
+                if (self.userUtilities.localBackupId) { self.userUtilities.cancelLocalBackup(); }
+                var val = $(this).find("option:selected").val();
+                val = (val == "false") ? false : parseInt(val);
+                if (val) { self.userUtilities.scheduleLocalBackup(val); }
+                self.setKey("localBackupFrequency", val);
                 self.manageForm();
             });
 
             self.serverBackupFrequency.on("change", function (e) {
-                const val = $(this).find("option:selected").val();
-                self.value("serverBackupFrequency", (val == "false") ? false : parseInt(val));
-                self.userUtilities.scheduleServerBackup();
+                if (self.userUtilities.localBackupId) { self.userUtilities.cancelLocalBackup(); }
+                var val = $(this).find("option:selected").val();
+                val = (val == "false") ? false : parseInt(val);
+                if (val) { self.userUtilities.scheduleServerBackup(val); }
+                self.value("serverBackupFrequency", val);
                 self.manageForm();
             });
         }); 
@@ -109,9 +112,9 @@ class UserSettingsUtility {
     get app()                   { return this.utilities.app; }
     get data()                  { return this.app.data; }
     get sessionId()             { return this.userUtilities.current; }
-    get id()                    { return this.data.export().id; }
+    get id()                    { return this.data.tierIds(0)[0]; }
     setKey(key, value)          { this.data.setKey(this.id, key, value); }
-    value(key)                  { return this.data.record(this.id)[key]; }
+    value(key)                  { return this.data.value(this.id, key); }
 
     get button()                { return $("#" + this._buttonID); }
     get div()                   { return $("#" + this._divID); }
@@ -143,7 +146,7 @@ class UserSettingsUtility {
         const hidden = "<input id = '" + this._hiddenID + "' type = 'checkbox'> Hidden";
         const rememberMe = "<input id = '" + this._rememberMeID + "' type = 'checkbox'> Remember me";
         const storage = "<select id = '" + this._storageID + "'></select>"; 
-        const storageContainerLabel = "<label style = 'text-align: right'>Storage permanence:</label>";
+        const localBackupLocationLabel = "<label style = 'text-align: right'>Storage permanence:</label>";
 
         const localBackupFrequencyLabel = "<label style = 'text-align: right'>Storage frequency:</label>";
         const localBackupFrequency = "<select id = '" + this._localBackupFrequencyID + "'></select>";
@@ -159,7 +162,7 @@ class UserSettingsUtility {
         this.div.append(newPassword1);
         this.div.append(newPassword2);
         this.div.append(email);
-        this.div.append(prefix + hidden     + infix + storageContainerLabel      + infix + storage                + infix + "Server"              + postfix);
+        this.div.append(prefix + hidden     + infix + localBackupLocationLabel      + infix + storage                + infix + "Server"              + postfix);
         this.div.append(prefix + rememberMe + infix + localBackupFrequencyLabel + infix + localBackupFrequency + infix + serverBackupFrequency + postfix);
         this.div.append(messagesDiv);
         this.div.append(actionDiv);
@@ -217,9 +220,9 @@ class UserSettingsUtility {
         const newPW = this.newPWState;
         const email = this.emailState;
         const server = this.value("useServerStorage");
-        const storageContainer = this.value("storageContainer");
+        const localBackupLocation = this.value("localBackupLocation");
 
-        this.storage.val(String(storageContainer));
+        this.storage.val(String(localBackupLocation));
 
         if (curPW == "Invalid") { messages.push("Current password is invalid."); }
         else {
@@ -334,7 +337,7 @@ class UserSettingsUtility {
 
     get ableToSetRememberMe() {
         return (this.value("username") != this.userUtilities.defaultUserName &&
-                this.value("storageContainer") != "sessionStorage" &&
+                this.value("localBackupLocation") != "sessionStorage" &&
                 (!this.rememberMeExists || this.rememberMe == this.id));
     }
 

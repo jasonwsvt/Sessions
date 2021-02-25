@@ -18,13 +18,19 @@ class UserUtilities {
         this.div.addClass("btn-group");
         this.div.attr("role", "group");
 
+        const self = this;
         $(document).ready(function() {
-
+            $(document).on("keyup", function(e) {
+                if (!self.localBackupId && self.value("localBackupFrequency")) {
+                    self.scheduleLocalBackup();
+                }
+            });
         });
     }
 
     get app()     { return this.utilities.app; }
     get div()     { return $("#" + this._divID); }
+    value(key)    { return this.app.data.value(this.app.data.tierIds(0)[0], key); }
 
     init() {
         this.login.init();
@@ -54,33 +60,33 @@ class UserUtilities {
     }
 
     localUsernameExists() {
-        console.log(!![localStorage, sessionStorage].find(storage => Object.keys(storage).includes(this.app.data.username)));
+        //console.log(!![localStorage, sessionStorage].find(storage => Object.keys(storage).includes(this.app.data.username)));
         return !![localStorage, sessionStorage].find(storage => Object.keys(storage).includes(this.app.data.username));
     }
 
     localBackup() {
-        console.log("running local backup")
-        const data = this.app.data;
-        if (data.localBackupLocation == "localStorage") {
-            data.exportToLocalStorage(data.username);
+        //console.log(this.app.data.record(this.app.data.tierIds(0)[0]));
+        //console.trace();
+        console.log("running local backup", this.value("localBackupLocation"))
+        if (this.value("localBackupLocation") == "localStorage") {
+            this.app.data.exportToLocalStorage(this.value("username"));
         }
-        else if (data.localBackupLocation == "sessionStorage") {
-            data.exportToSessionStorage(data.username);
+        if (this.value("localBackupLocation") == "sessionStorage") {
+            this.app.data.exportToSessionStorage(this.value("username"));
         }
         this.lastLocalBackup = this._now();
+        this.localBackupId = null;
     }
 
-    scheduleLocalBackup(timeout) {
+    scheduleLocalBackup(newTimeout) {
         console.log("scheduling local backup")
         if (!this.localBackupId) {
-            if (timeout == undefined) { timeout = this.app.data.localBackupFrequency; }
+            const freq = this.value("localBackupFrequency");
             const last = this.lastLocalBackup;
-            const now = this._now();
-            if (!last || (last + timeout <= now)) { this.localBackup(); }
+            const timeout = (newTimeout && last) ? newTimeout - this._now() + last : freq;
+            if (!last || timeout <= 0) { this.localBackup(); }
             else {
-                if (!last) { this.localBackup(); }
-                if (this.localBackupId) { this.cancelLocalBackup(); }
-                this.localBackupId = setTimeout(this.localBackup, timeout * 1000);
+                this.localBackupId = setTimeout(this.localBackup.bind(this), timeout * 1000);
             }
         }
     }
