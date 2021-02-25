@@ -76,15 +76,26 @@ class UserSettingsUtility {
 
             self.storage.on("change", function (e) {
                 if (self.value("localBackupLocation") == "localStorage" && Object.keys(localStorage).includes(self.value("username"))) {
-                    sessionStorage.setItem(self.value("username"), localStorage.getItem(self.value("username")));
+                    if ($(this).val() == "sessionStorage") {
+                        sessionStorage.setItem(self.value("username"), localStorage.getItem(self.value("username")));
+                    }
                     localStorage.removeItem(self.value("username"));
                 }
                 if (self.value("localBackupLocation") == "sessionStorage" && Object.keys(sessionStorage).includes(self.value("username"))) {
-                    localStorage.setItem(self.value("username"), sessionStorage.getItem(self.value("username")));
+                    if ($(this).val() == "localStorage") {
+                        localStorage.setItem(self.value("username"), sessionStorage.getItem(self.value("username")));
+                    }
                     sessionStorage.removeItem(self.value("username"));
                 }
-                self.setKey("localBackupLocation", $(this).val());
-                self.manage();
+                if ($(this).val() != "sessionStorage" && $(this).val() != "localStorage") {
+                    self.localBackupFrequency.val("false");
+                    self.localBackupFrequency.trigger("change");
+                    self.app.data.deleteKey(self.id, "localBackupLocation");
+                }
+                else {
+                    self.setKey("localBackupLocation", $(this).val());
+                }
+                self.manageForm();
             });
 
             self.localBackupFrequency.on("change", function (e) {
@@ -93,6 +104,7 @@ class UserSettingsUtility {
                 val = (val == "false") ? false : parseInt(val);
                 if (val) { self.userUtilities.scheduleLocalBackup(val); }
                 self.setKey("localBackupFrequency", val);
+                console.log(val, self.value("localBackupFrequency"));
                 self.manageForm();
             });
 
@@ -172,6 +184,7 @@ class UserSettingsUtility {
         //this.div.css("top", String(this.button.position().top + 32) + "px");
         this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
         this.div.css("left", String(this.userUtilities.div.position().left) + "px");
+        this.storage.append("<option value = undefined>None</option>");
         this.storage.append("<option value = 'localStorage'>Browser</option>");
         this.storage.append("<option value = 'sessionStorage'>Session</option>");
         this.localBackupFrequency.html([false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
@@ -215,7 +228,7 @@ class UserSettingsUtility {
     manageForm() {
         var messages = [], actions = [], options = [];
         const uname = this.unameState;
-        const isDefault = (uname == "newuser");
+        const isDefault = (uname == this.userUtilities.defaultUsername);
         const curPW = this.curPWState;
         const newPW = this.newPWState;
         const email = this.emailState;
@@ -237,12 +250,14 @@ class UserSettingsUtility {
                 this.serverBackupFrequency.val(String(this.value("serverBackupFrequency")));
             }
             this.storage.prop("disabled", (uname == "Local duplicate"));
+            console.log(this.value("localBackupLocation"));
+            this.localBackupFrequency.prop("disabled", !this.value("localBackupLocation"))
             this.rememberMe.prop("disabled", !this.ableToSetRememberMe);
-            if (this.value("hidden") == true && this.value("username") == this.userUtilities.defaultUserName) {
+            if (this.value("hidden") == true && this.value("username") == this.userUtilities.defaultUsername) {
                 this.setKey("hidden", false);
             }
             this.hidden.prop("checked", this.value("hidden"));
-            this.hidden.prop("disabled", this.value("username") == this.userUtilities.defaultUserName)
+            this.hidden.prop("disabled", this.value("username") == this.userUtilities.defaultUsername)
 
             //Messages
             if (uname == "Invalid")          { messages.push("Usernames must be 5-20 characters, each a letter, number, ., -, or _.")}
@@ -336,9 +351,9 @@ class UserSettingsUtility {
     }
 
     get ableToSetRememberMe() {
-        return (this.value("username") != this.userUtilities.defaultUserName &&
+        return (this.value("username") != this.userUtilities.defaultUsername &&
                 this.value("localBackupLocation") != "sessionStorage" &&
-                (!this.rememberMeExists || this.rememberMe == this.id));
+                (!Object.keys(localStorage).includes("rememberMe") || localStorage.getItem("rememberMe") == this.id));
     }
 
     get unameState() { //Unchanged, Emptied, Duplicate, Filled
@@ -421,8 +436,16 @@ class UserSettingsUtility {
                     case "set username":
                     case "change username":      
                         funcs.push(() => {
+                            const update = (this.value("username") == this.userUtilities.defaultUsername);
+                            var container = this.value("localBackupLocation");
+                            if (container) {
+                                container = (container == "localStorage") ? localStorage : sessionStorage;
+                                container.setItem(this.username.val(), container.getItem(this.value("username")));
+                                container.removeItem(this.value("username"));
+                            }
                             this.setKey("username", this.username.val());
                             this.button.html(this.value("username"));
+                            if (update) { this.userUtilities.new.manage(); }
                         });
                         break;
                     case "add password": 
@@ -438,7 +461,7 @@ class UserSettingsUtility {
                         funcs.push(() => { this.setKey("email", this.email.val()); });
                         break;
                     case "remove email address": 
-                        funcs.push(() => { this.deleteKey("email"); });
+                        funcs.push(() => { this.app.data.deleteKey(this.id, "email"); });
                         break;
                     default: console.log(action + " is not supported.");
                 }
@@ -447,6 +470,7 @@ class UserSettingsUtility {
             this.actionDiv.append("<button id = 'settingsDivActionButton' type = 'button' class = 'btn btn-primary'>" + actionText + "</button>");
             $("#settingsDivActionButton").on("click", function (e) {
                 funcs.forEach(func => { func(); });
+                self.userUtilities.scheduleLocalBackup();
                 self.manageForm();
             });
         }

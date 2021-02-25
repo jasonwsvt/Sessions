@@ -101,18 +101,44 @@ class UserLoginUtility {
     init() {
         //Check to see if a user qualifies for automatic login
         const sessionKeys = Object.keys(sessionStorage);
-        const browserKeys = Object.keys(localStorage);
-        const rememberMeUserId = false;
-        const defaultSessionUser = browserKeys.find(user => !JSON.parse(sessionStorage.getItem(user)).hasOwnProperty("password"));
-        const noPasswordSessionUser = false;
-        const defaultBrowserUser = browserKeys.find(user => !JSON.parse(localStorage.getItem(user)).hasOwnProperty("password"));
-        const noPasswordBrowserUser = false;
-
-        if      (rememberMeUserId)      {  }
-        else if (defaultSessionUser)    { this.data.importJSON(sessionStorage.getItem(defaultBrowserUser)); }
-        else if (noPasswordSessionUser) {  }
-        else if (defaultBrowserUser)    { this.data.importJSON(localStorage.getItem(defaultBrowserUser)); }
-        else if (noPasswordBrowserUser) {  }
+        const localKeys = Object.keys(localStorage);
+        const defaultUsername = this.userUtilities.defaultUsername;
+        if (sessionKeys.length >= 2 && sessionKeys.includes("rememberMe")) {
+            const username = sessionStorage.getItem("rememberMe");
+            if (sessionKeys.includes(username)) {
+                const user = JSON.parse(sessionStorage.getItem(username));
+                if (user.hasOwnProperty("rememberMe") && user.rememberMe == true) {
+                    this.app.data.importFromSessionStorage(username);
+                    return;
+                }
+            }
+        }
+        if (localKeys.length >= 2 && localKeys.includes("rememberMe")) {
+            const username = localStorage.getItem("rememberMe");
+            if (localKeys.includes(username)) {
+                const user = JSON.parse(localStorage.getItem(username));
+                if (user.hasOwnProperty("rememberMe") && user.rememberMe == true) {
+                    this.app.data.importFromLocalStorage(username);
+                    return;
+                }
+            }
+        }
+        if (sessionKeys.length == 1 && sessionKeys[0] == defaultUsername) { //sessionStorage user with default username and no password
+            const user = JSON.parse(sessionStorage.getItem(sessionKeys[0]));
+            if (user && user.hasOwnProperty("username") && user.username == defaultUsername &&
+                (!user.hasOwnProperty("password") || user.password == "")) {
+                    this.app.data.importFromSessionStorage(defaultUsername);
+                    return;
+            }
+        }
+        if (localKeys.length == 1 && localKeys[0] == defaultUsername) { //localStorage user with default username and no password
+            const user = JSON.parse(localStorage.getItem(sessionKeys[0]));
+            if (user && user.hasOwnProperty("username") && user.username == defaultUsername &&
+                (!user.hasOwnProperty("password") || user.password == "")) {
+                    this.app.data.importFromLocalStorage(defaultUsername);
+                    return;
+            }
+        }
     }
 
     manage() {
