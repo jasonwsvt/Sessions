@@ -64,6 +64,7 @@ class UserLoginUtility {
     get lines()             { return this.app.editor.lines; }
     get buttons()           { return this.app.buttons; }
     get storagePermanence() { return this.current.storagePermanence; }
+    get id()                { return this.app.data.tierIds(0)[0]; }
 
     get button()            { return $("#" + this._buttonID); }
     get div()               { return $("#" + this._divID); }
@@ -103,16 +104,8 @@ class UserLoginUtility {
         const sessionKeys = Object.keys(sessionStorage);
         const localKeys = Object.keys(localStorage);
         const defaultUsername = this.userUtilities.defaultUsername;
-        if (sessionKeys.length >= 2 && sessionKeys.includes("rememberMe")) {
-            const username = sessionStorage.getItem("rememberMe");
-            if (sessionKeys.includes(username)) {
-                const user = JSON.parse(sessionStorage.getItem(username));
-                if (user.hasOwnProperty("rememberMe") && user.rememberMe == true) {
-                    this.app.data.importFromSessionStorage(username);
-                    return;
-                }
-            }
-        }
+
+        //localStorage rememberMe user
         if (localKeys.length >= 2 && localKeys.includes("rememberMe")) {
             const username = localStorage.getItem("rememberMe");
             if (localKeys.includes(username)) {
@@ -123,7 +116,9 @@ class UserLoginUtility {
                 }
             }
         }
-        if (sessionKeys.length >= 1 && sessionKeys.includes(defaultUsername)) { //sessionStorage user with default username and no password
+
+        //sessionStorage user with default username and no password
+        if (sessionKeys.length >= 1 && sessionKeys.includes(defaultUsername)) {
             const user = JSON.parse(sessionStorage.getItem(defaultUsername));
             if (user && user.hasOwnProperty("username") && user.username == defaultUsername &&
                 (!user.hasOwnProperty("password") || user.password == "")) {
@@ -131,11 +126,33 @@ class UserLoginUtility {
                     return;
             }
         }
-        if (localKeys.length >= 1 && localKeys.includes(defaultUsername)) { //localStorage user with default username and no password
+
+        //localStorage user with default username and no password
+        if (localKeys.length >= 1 && localKeys.includes(defaultUsername)) {
             const user = JSON.parse(localStorage.getItem(defaultUsername));
             if (user && user.hasOwnProperty("username") && user.username == defaultUsername &&
                 (!user.hasOwnProperty("password") || user.password == "")) {
                     this.app.data.importFromLocalStorage(defaultUsername);
+                    return;
+            }
+        }
+
+        //sessionStorage user with one unhidden account and no password
+        if (sessionKeys.length == 1) {
+            const user = JSON.parse(sessionStorage.getItem(sessionKeys[0]));
+            if (user && user.hasOwnProperty("username") &&
+                (!user.hasOwnProperty("password") || user.password == "")) {
+                    this.app.data.importFromSessionStorage(sessionKeys[0]);
+                    return;
+            }
+        }
+
+        //localStorage user with one unhidden account and no password
+        if (localKeys.length == 1) {
+            const user = JSON.parse(localStorage.getItem(localKeys[0]));
+            if (user && user.hasOwnProperty("username") &&
+                (!user.hasOwnProperty("password") || user.password == "")) {
+                    this.app.data.importFromLocalStorage(localKeys[0]);
                     return;
             }
         }
@@ -154,14 +171,16 @@ class UserLoginUtility {
         this._selectedUserContainer = "";
         this.username.val("");
         this.password.val("");
-        //this._propagateUserNameButtons();
+        this.allBrowserUsers = this.bUsers;
+        this.allSessionUsers = this.sUsers;
+        this._propagateUserNameButtons();
     }
 
     _propagateUserNameButtons() {
         const self = this;
 
         this.browserUsers.empty();
-        const browserUsers = this.bUsers.filter(r => (r.id != this.current.id && !r.hidden));
+        const browserUsers = this.allBrowserUsers.filter(u => u.id != this.id && u.hidden != true);
         browserUsers.forEach(r => {
             this.browserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.username + "</button>");
         });
@@ -184,7 +203,8 @@ class UserLoginUtility {
         });
 
         this.sessionUsers.empty();
-        const sessionUsers = this.sUsers.filter(r => (r.username != this.current.username));
+        const sessionUsers = this.allSessionUsers.filter(u => u.id != this.id);
+        console.log(sessionUsers);
         sessionUsers.forEach(r => {
             this.sessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.username + "</button>");
         });
@@ -242,9 +262,9 @@ class UserLoginUtility {
     }
 
     noPasswordAccount() {
-        var user = this.userExists(this._selectedUserContainer, this._selectedUser);
+        var user = this.getUser(this._selectedUserContainer, this._selectedUser);
 
-        return (user && this.password.val() == "" && user.passwordHash == "");
+        return (user && this.password.val() == "" && (!user.hasOwnProperty("password") || user.password == ""));
     }
 
     verifyCredentials() {
@@ -252,7 +272,7 @@ class UserLoginUtility {
         if (this.username.val() != "") {
             [localStorage, sessionStorage].forEach(c => {
                 if (!user && Object.keys(c).includes("users")) {
-                    user = userExists(c, username);
+                    user = userExists(c, this.username.val());
                     if (user) { container = c; }
                 }
             });
@@ -277,13 +297,39 @@ class UserLoginUtility {
         //Not found locally, so try logging in on the server.
     }
 
-    userExists(container, username) {
-        if (Object.keys(container).includes("users")) {
-            const users = JSON.parse(container.getItem("users"));
-            const user = users.find(user => (user.username = username));
-            return (user) ? user : undefined;
-        }
-        return undefined;
+    get bUsers() {
+        var users = Object.keys(localStorage);
+        if (users.includes("rememberMe")) { users.splice(users.indexOf("rememberMe", 1)); }
+        users = users.map(user => this.getUser(localStorage, user));
+        return users;
+    }
+
+    get sUsers() {
+        var users = Object.keys(sessionStorage);
+        if (users.includes("rememberMe")) { users.splice(users.indexOf("rememberMe", 1)); }
+        users = users.map(user => this.getUser(sessionStorage, user));
+        console.log(users);
+        return users;
+    }
+
+    resetUsersList() {
+        const sessionKeys = Object.keys(sessionStorage).filter(key => key != "rememberMe");
+        const sessionUsers = sessionKeys.map(username => {
+            const user = sessionStorage.getItem(username);
+            if (user.hasOwnProperty("children")) { delete user.children; }
+            return user;
+        });
+        const localKeys = Object.keys(localStorage).filter(key => key != "rememberMe");
+        const localUsers = localKeys.map(username => {
+            const user = localStorage.getItem(username);
+            if (user.hasOwnProperty("children")) { delete user.children; }
+            return user;
+        });
+        this._users = sessionUsers.concat(localUsers);
+    }
+
+    user(username) {
+        return this._users.find(user => user.username == username);
     }
 
     hashedPassword(password) {
