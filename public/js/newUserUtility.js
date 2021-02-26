@@ -21,8 +21,8 @@ class NewUserUtility {
             self.button.on("click", function (e) {
                 console.log("newAccountButton");
                 self.utilities.close(self._buttonID);
-                self.group.new();
-                self.reset();
+                self._new();
+                self.manage();
                 self.userUtilities.settings.button.trigger('click');
                 this.blur();
                 e.stopPropagation();
@@ -39,6 +39,16 @@ class NewUserUtility {
     get username()          { return this.data.value(this.id, "username"); }
 
     get button()            { return $("#" + this._buttonID); }
+
+    _new() {
+        const u = this.userUtilities;
+        const data = this.app.data;
+        if (u.localBackupId)  { u.cancelLocalBackup();  u.localBackup(); }
+        if (u.serverBackupId) { u.cancelServerBackup(); u.serverBackup(); }
+        data.clear();
+        this.init();
+        this.userUtilities.reset();
+    }
 
     _build() {
         const plusIcon = this._plusIcon;
@@ -57,7 +67,8 @@ class NewUserUtility {
     }
 
     manage() {
-        this.button.prop("disabled", (this.username == this.userUtilities.defaultUsername));
+        const u = this.userUtilities;
+        this.button.prop("disabled", (this.username == u.defaultUsername || !!u.localBackupId || !!u.serverBackupId));
     }
 
     reset() {

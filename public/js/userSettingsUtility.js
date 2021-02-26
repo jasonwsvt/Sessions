@@ -114,6 +114,7 @@ class UserSettingsUtility {
                 val = (val == "false") ? false : parseInt(val);
                 if (val) { self.userUtilities.scheduleServerBackup(val); }
                 self.value("serverBackupFrequency", val);
+                self.userUtilities.new.manage();
                 self.manageForm();
             });
         }); 
@@ -442,6 +443,7 @@ class UserSettingsUtility {
                                 container = (container == "localStorage") ? localStorage : sessionStorage;
                                 container.setItem(this.username.val(), container.getItem(this.value("username")));
                                 container.removeItem(this.value("username"));
+                                this.userUtilities.new.manage();
                             }
                             this.setKey("username", this.username.val());
                             this.button.html(this.value("username"));

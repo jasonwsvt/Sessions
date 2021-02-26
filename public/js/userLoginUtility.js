@@ -123,16 +123,16 @@ class UserLoginUtility {
                 }
             }
         }
-        if (sessionKeys.length == 1 && sessionKeys[0] == defaultUsername) { //sessionStorage user with default username and no password
-            const user = JSON.parse(sessionStorage.getItem(sessionKeys[0]));
+        if (sessionKeys.length >= 1 && sessionKeys.includes(defaultUsername)) { //sessionStorage user with default username and no password
+            const user = JSON.parse(sessionStorage.getItem(defaultUsername));
             if (user && user.hasOwnProperty("username") && user.username == defaultUsername &&
                 (!user.hasOwnProperty("password") || user.password == "")) {
                     this.app.data.importFromSessionStorage(defaultUsername);
                     return;
             }
         }
-        if (localKeys.length == 1 && localKeys[0] == defaultUsername) { //localStorage user with default username and no password
-            const user = JSON.parse(localStorage.getItem(sessionKeys[0]));
+        if (localKeys.length >= 1 && localKeys.includes(defaultUsername)) { //localStorage user with default username and no password
+            const user = JSON.parse(localStorage.getItem(defaultUsername));
             if (user && user.hasOwnProperty("username") && user.username == defaultUsername &&
                 (!user.hasOwnProperty("password") || user.password == "")) {
                     this.app.data.importFromLocalStorage(defaultUsername);

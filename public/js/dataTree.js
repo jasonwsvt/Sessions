@@ -13,7 +13,7 @@ class DataTree {
     //DataTree methods
     size() { const ids = this.ids(); return (isArray(ids)) ? this.ids().length : 0; }
     isEmpty() { return Object.keys(this._data) == 0; }
-    clear() { this._data = {}; }
+    clear() { this._data = {}; this._select.clear(); }
 
     export()                            { return this._data; }
     exportJSON(modifier)                { //true: uses encoding; integer or tab: export pretty JSON.

@@ -75,6 +75,7 @@ class UserUtilities {
         }
         this.lastLocalBackup = this._now();
         this.localBackupId = null;
+        this.new.manage();
     }
 
     scheduleLocalBackup(newTimeout) {
@@ -86,6 +87,7 @@ class UserUtilities {
             if (!last || timeout <= 0) { this.localBackup(); }
             else {
                 this.localBackupId = setTimeout(this.localBackup.bind(this), timeout * 1000);
+                this.new.manage();
             }
         }
     }
@@ -93,6 +95,7 @@ class UserUtilities {
     cancelLocalBackup() {
         clearTimeout(this.localBackupId);
         this.localBackupId = null;
+        this.new.manage();
     }
 
     _now() { return Math.round(Date.now() / 1000); }

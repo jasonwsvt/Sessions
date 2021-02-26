@@ -87,10 +87,10 @@ class List {
         }
     }
     
-    values    = ()      => { return this._items.map(item => item.value); }
-    hasValue  = (value) => { return this._index(value, this._items) != -1; }
-    key       = (value) => { return this._items[this._index(value, this._items)].key; }
-    dropValue = (value) => {
+    values    = ()       => { return this._items.map(item => item.value); }
+    hasValue  = (value)  => { return this._index(value, this._items) != -1; }
+    key       = (value)  => { return this._items[this._index(value, this._items)].key; }
+    dropValue = (value)  => {
         const len = this._items.length;
         var i = 0;
         while (this.hasValue(value) && i++ < 10) {
@@ -101,8 +101,8 @@ class List {
     }
     dropValues = (values) => { values.forEach(value => this.dropValue(value)); } 
 
-    clear     = ()      => { this._items = []; }
-    size      = ()      => { return this._items.length; }
-    isEmpty   = ()      => { return !this._items.length; }
+    clear     = ()       => { this._items = []; }
+    size      = ()       => { return this._items.length; }
+    isEmpty   = ()       => { return !this._items.length; }
 }
     
