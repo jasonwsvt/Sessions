@@ -163,13 +163,13 @@ class UserSettingsUtility {
         const hidden = "<input id = '" + this._hiddenID + "' type = 'checkbox'> Hidden";
         const rememberMe = "<input id = '" + this._rememberMeID + "' type = 'checkbox'> Remember me";
         const storage = "<select id = '" + this._storageID + "'></select>"; 
-        const backupLocationLabel = "<label style = 'text-align: right'>Backup permanence:</label>";
+        const backupLocationLabel = "<label style = 'text-align: right; display: inline-block; width: 100%'>Backup location:</label>";
 
-        const automatedBackupLabel = "<label style = 'text-align: right'>Automated backup:</label>";
+        const automatedBackupLabel = "<label style = 'text-align: right; display: inline-block; width: 100%'>Automated:</label>";
         const localBackupFrequency = "<select id = '" + this._localBackupFrequencyID + "'></select>";
         const serverBackupFrequency = "<select id = '" + this._serverBackupFrequencyID + "'></select>";
 
-        const manualBackupLabel = "<label style = 'text-align: right'>Manual backup:</label>";
+        const manualBackupLabel = "<label style = 'text-align: right; display: inline-block; width: 100%'>Manual:</label>";
         const localManualBackup = "<button id = '" + this._localManualBackupID + "' type = 'button' class = 'btn btn-primary btn-sm'>Now</button>";
         const serverManualBackup = "<button id = '" + this._serverManualBackupID + "' type = 'button' class = 'btn btn-primary btn-sm'>Now</button>";
 
