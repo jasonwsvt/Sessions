@@ -251,7 +251,7 @@ class UserSettingsUtility {
                 this.serverBackupFrequency.val(String(this.value("serverBackupFrequency")));
             }
             this.storage.prop("disabled", (uname == "Local duplicate"));
-            console.log(this.value("localBackupLocation"));
+            //console.log(this.value("localBackupLocation"));
             this.localBackupFrequency.prop("disabled", !this.value("localBackupLocation"))
             this.rememberMe.prop("disabled", !this.ableToSetRememberMe);
             if (this.value("hidden") == true && this.value("username") == this.userUtilities.defaultUsername) {

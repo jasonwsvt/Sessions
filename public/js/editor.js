@@ -1,4 +1,5 @@
 class Editor {
+    current = null;
     app = null;
     cursor = null;
     lines = null;
@@ -19,6 +20,7 @@ class Editor {
         const tier3Ids = this.app.data.tierIds(3);
         const mostRecentlyCreated = this.app.data.lastCreated(tier3Ids);
         const mostRecentlyOpened = this.app.data.lastOpened(tier3Ids);
+        //console.log(tier3Ids, mostRecentlyCreated, mostRecentlyOpened)
         this.load(mostRecentlyOpened ? mostRecentlyOpened : mostRecentlyCreated);
     }
 

@@ -284,9 +284,10 @@ class Utility {
         var pickerButtonText, scrollDivHeight;
         //this.pickerScrollDiv.empty();
         //console.log("Group:", this.group);
-        //console.log("Current:", this.current);
-        //console.log("Current name:", this.name);
-        //console.log(this._tier, this.name);
+        //console.log("Current:", this.sessionId);
+        //console.log("Current tier:", this._tier);
+        //console.log(this.data.idPath(this.sessionId)[this._tier]);
+        //console.log(this.data.has(this.id))
         pickerButtonText = this.name;
         if (this.entries > 1) { pickerButtonText += " " + this._caretDownIcon; }
         this.pickerButton.html(pickerButtonText);
