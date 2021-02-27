@@ -27,6 +27,8 @@ class UserSettingsUtility {
     _optionsDivID = "settingsDivOptions";
     _localBackupFrequencyID = "localBackupFrequency";
     _serverBackupFrequencyID = "serverBackupFrequency";
+    _localManualBackupID = "localManualBackup";
+    _serverManualBackupID = "serverManualBackup";
 
     constructor (userUtilities, group) {
         this._userUtilities = userUtilities;
@@ -144,6 +146,8 @@ class UserSettingsUtility {
     get optionsDiv()            { return $("#" + this._optionsDivID); }
     get localBackupFrequency()  { return $("#" + this._localBackupFrequencyID); }
     get serverBackupFrequency() { return $("#" + this._serverBackupFrequencyID); }
+    get localManualBackup()     { return $("#" + this._localManualBackupID); }
+    get serverManualBackup()    { return $("#" + this._serverManualBackupID); }
 
     _build() {
         const prefix = "<div class = 'row'><div class = 'col-3'>";
@@ -159,11 +163,15 @@ class UserSettingsUtility {
         const hidden = "<input id = '" + this._hiddenID + "' type = 'checkbox'> Hidden";
         const rememberMe = "<input id = '" + this._rememberMeID + "' type = 'checkbox'> Remember me";
         const storage = "<select id = '" + this._storageID + "'></select>"; 
-        const localBackupLocationLabel = "<label style = 'text-align: right'>Storage permanence:</label>";
+        const backupLocationLabel = "<label style = 'text-align: right'>Backup permanence:</label>";
 
-        const localBackupFrequencyLabel = "<label style = 'text-align: right'>Storage frequency:</label>";
+        const automatedBackupLabel = "<label style = 'text-align: right'>Automated backup:</label>";
         const localBackupFrequency = "<select id = '" + this._localBackupFrequencyID + "'></select>";
         const serverBackupFrequency = "<select id = '" + this._serverBackupFrequencyID + "'></select>";
+
+        const manualBackupLabel = "<label style = 'text-align: right'>Manual backup:</label>";
+        const localManualBackup = "<button id = '" + this._localManualBackupID + "' type = 'button' class = 'btn btn-primary btn-sm'>Now</button>";
+        const serverManualBackup = "<button id = '" + this._serverManualBackupID + "' type = 'button' class = 'btn btn-primary btn-sm'>Now</button>";
 
         const messagesDiv = "<div id = '" + this._messagesDivID + "'></div>";
         const actionDiv = "<div id = '" + this._actionDivID + "'></div>";
@@ -175,8 +183,9 @@ class UserSettingsUtility {
         this.div.append(newPassword1);
         this.div.append(newPassword2);
         this.div.append(email);
-        this.div.append(prefix + hidden     + infix + localBackupLocationLabel      + infix + storage                + infix + "Server"              + postfix);
-        this.div.append(prefix + rememberMe + infix + localBackupFrequencyLabel + infix + localBackupFrequency + infix + serverBackupFrequency + postfix);
+        this.div.append(prefix + hidden     + infix + backupLocationLabel  + infix + storage              + infix + "<label>Server</label>" + postfix);
+        this.div.append(prefix + rememberMe + infix + automatedBackupLabel + infix + localBackupFrequency + infix + serverBackupFrequency   + postfix);
+        this.div.append(prefix              + infix + manualBackupLabel    + infix + localManualBackup    + infix + serverManualBackup      + postfix);
         this.div.append(messagesDiv);
         this.div.append(actionDiv);
         this.div.append(optionsDiv);
@@ -201,6 +210,8 @@ class UserSettingsUtility {
         this.email.val((isString(this.value("email"))) ? this.value("email") : "");
         this.localBackupFrequency.val(String((this.value("localBackupFrequency") != undefined) ? this.value("localBackupFrequency") : false));
         this.hidden.prop("checked", this.value("hidden") == true);
+        this.localManualBackup.prop("disabled", !["localStorage", "sessionStorage"].includes(this.value("localBackupLocation")));
+        this.serverManualBackup.prop("disabled", !this.value("useServerStorage"));
         this.rememberMe.prop("checked", this.value("rememberMe") == true);
     }
 
@@ -313,8 +324,15 @@ class UserSettingsUtility {
 
             //Actions
             if (!server) {
-                if (["Filled", "Local and server duplicate", "Local duplicate", "Server duplicate"].includes(uname)) {
-                    actions.push("change username");
+                if (!localBackupLocation) {
+                    if (["Filled", "Local and server duplicate", "Local duplicate", "Server duplicate"].includes(uname)) {
+                        actions.push("change username");
+                    }
+                }
+                else {
+                    if (["Filled", "Server duplicate"].includes(uname)) {
+                        actions.push("change username");
+                    }
                 }
                 if (curPW == "Empty" && ["Weak", "Strong"].includes(newPW)) {
                     actions.push("add password");
@@ -521,7 +539,7 @@ class UserSettingsUtility {
     }
 
     frequencyName(seconds) {
-        return (seconds == false) ? "Manual" : 
+        return (seconds == false) ? "Disabled" : 
                (seconds < 60)     ? `${seconds} seconds` : 
                (seconds == 60)    ? "1 minute" :
                (seconds < 3600)   ? `${seconds / 60} minutes` :

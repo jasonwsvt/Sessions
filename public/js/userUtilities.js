@@ -58,9 +58,9 @@ class UserUtilities {
         this.new.close(except);
     }
 
-    localUsernameExists() {
+    localUsernameExists(val) {
         //console.log(!![localStorage, sessionStorage].find(storage => Object.keys(storage).includes(this.app.data.username)));
-        return !![localStorage, sessionStorage].find(storage => Object.keys(storage).includes(this.app.data.username));
+        return !![localStorage, sessionStorage].find(storage => Object.keys(storage).includes(val));
     }
 
     localBackup() {
