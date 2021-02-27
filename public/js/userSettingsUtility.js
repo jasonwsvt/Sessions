@@ -111,13 +111,25 @@ class UserSettingsUtility {
             });
 
             self.serverBackupFrequency.on("change", function (e) {
-                if (self.userUtilities.localBackupId) { self.userUtilities.cancelLocalBackup(); }
+                if (self.userUtilities.serverBackupId) { self.userUtilities.cancelServerBackup(); }
                 var val = $(this).find("option:selected").val();
                 val = (val == "false") ? false : parseInt(val);
                 if (val) { self.userUtilities.scheduleServerBackup(val); }
                 self.value("serverBackupFrequency", val);
                 self.userUtilities.new.manage();
                 self.manageForm();
+            });
+
+            self.localManualBackup.on("click", function (e) {
+                if (self.userUtilities.localBackupId) { self.userUtilities.cancelLocalBackup(); }
+                self.userUtilities.localBackup();
+                this.blur();
+            });
+
+            self.serverManualBackup.on("click", function (e) {
+                if (self.userUtilities.serverBackupId) { self.userUtilities.cancelServerBackup(); }
+                self.userUtilities.serverBackup();
+                this.blur();
             });
         }); 
     }
@@ -151,7 +163,7 @@ class UserSettingsUtility {
 
     _build() {
         const prefix = "<div class = 'row'><div class = 'col-3'>";
-        const infix = "</div><div class = 'col-3' style = 'text-align: center'>";
+        const infix = "</div><div class = 'col-3' style = 'text-align: right'>";
         const postfix = "</div>";
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const div = "<div id = '" + this._divID + "' class = 'container userMenu hidden'></div>";
