@@ -163,7 +163,8 @@ class UserSettingsUtility {
 
     _build() {
         const prefix = "<div class = 'row'><div class = 'col-3'>";
-        const infix = "</div><div class = 'col-3' style = 'text-align: right'>";
+        const infix1 = "</div><div class = 'col-3' style = 'text-align: right'>";
+        const infix2 = "</div><div class = 'col-3' style = 'text-align: center'>";
         const postfix = "</div>";
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const div = "<div id = '" + this._divID + "' class = 'container userMenu hidden'></div>";
@@ -195,9 +196,9 @@ class UserSettingsUtility {
         this.div.append(newPassword1);
         this.div.append(newPassword2);
         this.div.append(email);
-        this.div.append(prefix + hidden     + infix + backupLocationLabel  + infix + storage              + infix + "<label>Server</label>" + postfix);
-        this.div.append(prefix + rememberMe + infix + automatedBackupLabel + infix + localBackupFrequency + infix + serverBackupFrequency   + postfix);
-        this.div.append(prefix              + infix + manualBackupLabel    + infix + localManualBackup    + infix + serverManualBackup      + postfix);
+        this.div.append(prefix + hidden     + infix1 + backupLocationLabel  + infix2 + storage              + infix2 + "<label>Server</label>" + postfix);
+        this.div.append(prefix + rememberMe + infix1 + automatedBackupLabel + infix2 + localBackupFrequency + infix2 + serverBackupFrequency   + postfix);
+        this.div.append(prefix              + infix1 + manualBackupLabel    + infix2 + localManualBackup    + infix2 + serverManualBackup      + postfix);
         this.div.append(messagesDiv);
         this.div.append(actionDiv);
         this.div.append(optionsDiv);
