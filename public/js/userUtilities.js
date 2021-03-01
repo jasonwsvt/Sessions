@@ -76,9 +76,9 @@ class UserUtilities {
             this.app.data.exportToSessionStorage(this.value("username"));
         }
         this.lastLocalBackup = this._now();
-        this.backupRequired = false;
+        this.backupRequested = false;
         this.localBackupId = null;
-        this.new.manage();
+        this.manage(0);
     }
 
     requestBackup() {

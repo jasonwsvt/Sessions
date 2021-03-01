@@ -72,6 +72,7 @@ class UserSettingsUtility {
                 if (value) { localStorage.setItem("rememberMe", self.value("username")); }
                 else { localStorage.removeItem("rememberMe"); }
                 self.userUtilities.requestBackup();
+                self.userUtilities.manage(0);
                 e.stopPropagation();
             });
 
@@ -79,31 +80,6 @@ class UserSettingsUtility {
                 self.value("hidden") = $(this).prop("checked");
                 self.userUtilities.requestBackup();
                 e.stopPropagation();
-            });
-
-            self.storage.on("change", function (e) {
-                if (self.value("localBackupLocation") == "localStorage" && Object.keys(localStorage).includes(self.value("username"))) {
-                    if ($(this).val() == "sessionStorage") {
-                        sessionStorage.setItem(self.value("username"), localStorage.getItem(self.value("username")));
-                    }
-                    localStorage.removeItem(self.value("username"));
-                }
-                if (self.value("localBackupLocation") == "sessionStorage" && Object.keys(sessionStorage).includes(self.value("username"))) {
-                    if ($(this).val() == "localStorage") {
-                        localStorage.setItem(self.value("username"), sessionStorage.getItem(self.value("username")));
-                    }
-                    sessionStorage.removeItem(self.value("username"));
-                }
-                if ($(this).val() != "sessionStorage" && $(this).val() != "localStorage") {
-                    self.localBackupFrequency.val("false");
-                    self.localBackupFrequency.trigger("change");
-                    self.app.data.deleteKey(self.id, "localBackupLocation");
-                }
-                else {
-                    self.setKey("localBackupLocation", $(this).val());
-                }
-                self.userUtilities.requestBackup();
-                self.manageForm();
             });
 
             self.localBackupFrequency.on("change", function (e) {
@@ -114,7 +90,8 @@ class UserSettingsUtility {
                 else { self.userUtilities.requestBackup(); }
                 self.setKey("localBackupFrequency", val);
                 console.log(val, self.value("localBackupFrequency"));
-                self.manageForm();
+                self.userUtilities.manage(0);
+                //self.manageForm();
             });
 
             self.serverBackupFrequency.on("change", function (e) {
@@ -124,19 +101,21 @@ class UserSettingsUtility {
                 if (val) { self.userUtilities.scheduleServerBackup(val); }
                 else { self.userUtilities.requestBackup(); }
                 self.value("serverBackupFrequency", val);
-                self.userUtilities.new.manage();
-                self.manageForm();
+                self.userUtilities.manage(0);
+                //self.manageForm();
             });
 
             self.localManualBackup.on("click", function (e) {
                 if (self.userUtilities.localBackupId) { self.userUtilities.cancelLocalBackup(); }
                 self.userUtilities.localBackup();
+                self.userUtilities.manage(0);
                 this.blur();
             });
 
             self.serverManualBackup.on("click", function (e) {
                 if (self.userUtilities.serverBackupId) { self.userUtilities.cancelServerBackup(); }
                 self.userUtilities.serverBackup();
+                self.userUtilities.manage(0);
                 this.blur();
             });
         }); 
@@ -183,7 +162,8 @@ class UserSettingsUtility {
         const email = "<input id = '" + this._emailID + "' type = 'email' placeholder = 'email address' size = '30'>";
         const hidden = "<input id = '" + this._hiddenID + "' type = 'checkbox'> Hidden";
         const rememberMe = "<input id = '" + this._rememberMeID + "' type = 'checkbox'> Remember me";
-        const storage = "<select id = '" + this._storageID + "'></select>"; 
+        const localBackup = "<label>Local</label>";
+        const serverBackup = "<label>Server</label>" 
         const backupLocationLabel = "<label style = 'text-align: right; display: inline-block; width: 100%'>Backup location:</label>";
 
         const automatedBackupLabel = "<label style = 'text-align: right; display: inline-block; width: 100%'>Automated:</label>";
@@ -204,9 +184,9 @@ class UserSettingsUtility {
         this.div.append(newPassword1);
         this.div.append(newPassword2);
         this.div.append(email);
-        this.div.append(prefix + hidden     + infix1 + backupLocationLabel  + infix2 + storage              + infix2 + "<label>Server</label>" + postfix);
-        this.div.append(prefix + rememberMe + infix1 + automatedBackupLabel + infix2 + localBackupFrequency + infix2 + serverBackupFrequency   + postfix);
-        this.div.append(prefix              + infix1 + manualBackupLabel    + infix2 + localManualBackup    + infix2 + serverManualBackup      + postfix);
+        this.div.append(prefix + hidden     + infix1 + backupLocationLabel  + infix2 + localBackup          + infix2 + serverBackup          + postfix);
+        this.div.append(prefix + rememberMe + infix1 + automatedBackupLabel + infix2 + localBackupFrequency + infix2 + serverBackupFrequency + postfix);
+        this.div.append(prefix              + infix1 + manualBackupLabel    + infix2 + localManualBackup    + infix2 + serverManualBackup    + postfix);
         this.div.append(messagesDiv);
         this.div.append(actionDiv);
         this.div.append(optionsDiv);
@@ -231,7 +211,6 @@ class UserSettingsUtility {
         this.email.val((isString(this.value("email"))) ? this.value("email") : "");
         this.localBackupFrequency.val(String((this.value("localBackupFrequency") != undefined) ? this.value("localBackupFrequency") : false));
         this.hidden.prop("checked", this.value("hidden") == true);
-        this.localManualBackup.prop("disabled", !["localStorage", "sessionStorage"].includes(this.value("localBackupLocation")));
         this.serverManualBackup.prop("disabled", !this.value("useServerStorage"));
         this.rememberMe.prop("checked", this.value("rememberMe") == true);
     }
@@ -266,9 +245,6 @@ class UserSettingsUtility {
         const newPW = this.newPWState;
         const email = this.emailState;
         const server = this.value("useServerStorage");
-        const localBackupLocation = this.value("localBackupLocation");
-
-        this.storage.val(String(localBackupLocation));
 
         if (curPW == "Invalid") { messages.push("Current password is invalid."); }
         else {
@@ -283,8 +259,6 @@ class UserSettingsUtility {
                 this.serverBackupFrequency.val(String(this.value("serverBackupFrequency")));
             }
             this.storage.prop("disabled", (uname == "Local duplicate"));
-            //console.log(this.value("localBackupLocation"));
-            this.localBackupFrequency.prop("disabled", !this.value("localBackupLocation"))
             this.rememberMe.prop("disabled", !this.ableToSetRememberMe);
             if (this.value("hidden") == true && this.value("username") == this.userUtilities.defaultUsername) {
                 this.setKey("hidden", false);
@@ -345,15 +319,8 @@ class UserSettingsUtility {
 
             //Actions
             if (!server) {
-                if (!localBackupLocation) {
-                    if (["Filled", "Local and server duplicate", "Local duplicate", "Server duplicate"].includes(uname)) {
-                        actions.push("change username");
-                    }
-                }
-                else {
-                    if (["Filled", "Server duplicate"].includes(uname)) {
-                        actions.push("change username");
-                    }
+                if (["Filled", "Server duplicate"].includes(uname)) {
+                    actions.push("change username");
                 }
                 if (curPW == "Empty" && ["Weak", "Strong"].includes(newPW)) {
                     actions.push("add password");
@@ -391,9 +358,8 @@ class UserSettingsUtility {
     }
 
     get ableToSetRememberMe() {
-        return (this.value("username") != this.userUtilities.defaultUsername ||
-                (this.value("localBackupLocation") != "sessionStorage" &&
-                (!Object.keys(localStorage).includes("rememberMe") || localStorage.getItem("rememberMe") == this.id)));
+        return (!Object.keys(localStorage).includes("rememberMe") ||
+                 localStorage.getItem("rememberMe") == this.value("username"));
     }
 
     get unameState() { //Unchanged, Emptied, Duplicate, Filled
@@ -477,16 +443,13 @@ class UserSettingsUtility {
                     case "change username":      
                         funcs.push(() => {
                             const update = (this.value("username") == this.userUtilities.defaultUsername);
-                            var container = this.value("localBackupLocation");
-                            if (container) {
-                                container = (container == "localStorage") ? localStorage : sessionStorage;
-                                container.setItem(this.username.val(), container.getItem(this.value("username")));
-                                container.removeItem(this.value("username"));
-                                this.userUtilities.new.manage();
+                            if (Object.keys(localStorage).includes(this.value("username"))) {
+                                localStorage.setItem(this.username.val(), localStorage.getItem(this.value("username")));
+                                localStorage.removeItem(this.value("username"));
                             }
                             this.setKey("username", this.username.val());
                             this.button.html(this.value("username"));
-                            if (update) { this.userUtilities.new.manage(); }
+                            this.userUtilities.manage(0);
                         });
                         break;
                     case "add password": 
