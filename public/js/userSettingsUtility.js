@@ -67,7 +67,10 @@ class UserSettingsUtility {
             });
 
             self.rememberMe.on("click", function (e) {
-                self.value("rememberMe") = $(this).prop("checked");
+                const value = $(this).prop("checked");
+                self.setKey("rememberMe", value);
+                if (value) { localStorage.setItem("rememberMe", self.value("username")); }
+                else { localStorage.removeItem("rememberMe"); }
                 self.userUtilities.requestBackup();
                 e.stopPropagation();
             });
@@ -388,9 +391,9 @@ class UserSettingsUtility {
     }
 
     get ableToSetRememberMe() {
-        return (this.value("username") != this.userUtilities.defaultUsername &&
-                this.value("localBackupLocation") != "sessionStorage" &&
-                (!Object.keys(localStorage).includes("rememberMe") || localStorage.getItem("rememberMe") == this.id));
+        return (this.value("username") != this.userUtilities.defaultUsername ||
+                (this.value("localBackupLocation") != "sessionStorage" &&
+                (!Object.keys(localStorage).includes("rememberMe") || localStorage.getItem("rememberMe") == this.id)));
     }
 
     get unameState() { //Unchanged, Emptied, Duplicate, Filled

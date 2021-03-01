@@ -33,7 +33,7 @@ class UserLoginUtility {
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     this.blur();
-                    self.manage();
+                    self.determineStage();
                     self.username.focus();
                 }
                 else {
@@ -47,7 +47,7 @@ class UserLoginUtility {
             });
 
             self.div.find("input").on("keyup", function (e) {
-                self.manage();
+                self.determineStage();
                 e.stopPropagation();
             });
 
@@ -160,11 +160,15 @@ class UserLoginUtility {
     }
 
     manage() {
+        this.button.prop("disabled", this.userUtilities.backupRequested);
+    }
+
+    determineStage() {
         if (this._selectedUser || this.username.val()) {
             if (this._selectedUser) { }  // what would I want to do if selectedUser and not username.val?
-            this._enterPasswordStep();
+            this._enterPasswordStage();
         }
-        else { this._selectUserNameStep(); }
+        else { this._selectUserNameStage(); }
     }
 
     reset() {
@@ -193,7 +197,7 @@ class UserLoginUtility {
                 self.loginUser();
             }
             else {
-                self.manage();
+                self.determineStage();
             }
             e.stopPropagation();
         });
@@ -211,13 +215,13 @@ class UserLoginUtility {
                 self.loginUser();
             }
             else {
-                self.manage();
+                self.determineStage();
             }
             e.stopPropagation();
         });
     }
 
-    _selectUserNameStep() {
+    _selectUserNameStage() {
         this.browserUsers.find("button").show();
         this.sessionUsers.find("button").show();
         this.username.show();
@@ -226,7 +230,7 @@ class UserLoginUtility {
         this.messagesDiv.empty();
     }
 
-    _enterPasswordStep() {
+    _enterPasswordStage() {
         var i, button, buttons;
 
         buttons = this.browserUsers.find("button");

@@ -67,8 +67,7 @@ class NewUserUtility {
     }
 
     manage() {
-        const u = this.userUtilities;
-        this.button.prop("disabled", (this.username == u.defaultUsername || !!u.backupRequested));
+        this.button.prop("disabled", !!this.userUtilities.backupRequested);
     }
 
     reset() {
