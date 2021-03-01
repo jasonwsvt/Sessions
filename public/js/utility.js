@@ -125,9 +125,13 @@ class Utility {
                         self.renameDiv.removeClass("utilityMenu");
                         self.data.setKey(self.id, "name", this.value);
                         self.utilities.manage(self._tier);
-                        //self.manage();
+                        self.utilities.user.requestBackup();
                         self.close();
                     }
+                    e.stopPropagation();
+                });
+
+                self.renameInput.on("keyup", function (e) {
                     e.stopPropagation();
                 });
 
@@ -175,7 +179,13 @@ class Utility {
                         self.utilities.manage(self._tier);
                         self.close();
                         this.blur();
+                        self.utilities.user.requestBackup();
                     }
+                    e.stopPropagation();
+                });
+
+                self.addInput.on("keyup", function (e) {
+                    e.stopPropagation();
                 });
             }
             else {
@@ -186,6 +196,7 @@ class Utility {
                     self.utilities.manage(self._tier);
                     self.close();
                     this.blur();
+                    self.utilities.user.requestBackup();
                     e.stopPropagation();
                 });
             }

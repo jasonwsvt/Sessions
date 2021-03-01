@@ -68,11 +68,13 @@ class UserSettingsUtility {
 
             self.rememberMe.on("click", function (e) {
                 self.value("rememberMe") = $(this).prop("checked");
+                self.userUtilities.requestBackup();
                 e.stopPropagation();
             });
 
             self.hidden.on("click", function (e) {
                 self.value("hidden") = $(this).prop("checked");
+                self.userUtilities.requestBackup();
                 e.stopPropagation();
             });
 
@@ -97,6 +99,7 @@ class UserSettingsUtility {
                 else {
                     self.setKey("localBackupLocation", $(this).val());
                 }
+                self.userUtilities.requestBackup();
                 self.manageForm();
             });
 
@@ -105,6 +108,7 @@ class UserSettingsUtility {
                 var val = $(this).find("option:selected").val();
                 val = (val == "false") ? false : parseInt(val);
                 if (val) { self.userUtilities.scheduleLocalBackup(val); }
+                else { self.userUtilities.requestBackup(); }
                 self.setKey("localBackupFrequency", val);
                 console.log(val, self.value("localBackupFrequency"));
                 self.manageForm();
@@ -115,6 +119,7 @@ class UserSettingsUtility {
                 var val = $(this).find("option:selected").val();
                 val = (val == "false") ? false : parseInt(val);
                 if (val) { self.userUtilities.scheduleServerBackup(val); }
+                else { self.userUtilities.requestBackup(); }
                 self.value("serverBackupFrequency", val);
                 self.userUtilities.new.manage();
                 self.manageForm();
@@ -503,7 +508,7 @@ class UserSettingsUtility {
             this.actionDiv.append("<button id = 'settingsDivActionButton' type = 'button' class = 'btn btn-primary'>" + actionText + "</button>");
             $("#settingsDivActionButton").on("click", function (e) {
                 funcs.forEach(func => { func(); });
-                self.userUtilities.scheduleLocalBackup();
+                self.userUtilities.requestBackup();
                 self.manageForm();
             });
         }

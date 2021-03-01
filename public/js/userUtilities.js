@@ -1,5 +1,6 @@
 class UserUtilities {
     defaultUsername = "newuser";
+    backupRequested = false;
     lastLocalBackup = null;
     localBackupId   = null;
     utilities       = null;
@@ -22,7 +23,8 @@ class UserUtilities {
         const self = this;
         $(document).ready(function() {
             $(document).on("keyup", function(e) {
-                self.scheduleLocalBackup();
+                self.requestBackup();
+                e.stopPropagation();
             });
         });
     }
@@ -74,8 +76,18 @@ class UserUtilities {
             this.app.data.exportToSessionStorage(this.value("username"));
         }
         this.lastLocalBackup = this._now();
+        this.backupRequired = false;
         this.localBackupId = null;
         this.new.manage();
+    }
+
+    requestBackup() {
+        console.trace();
+        this.backupRequested = true;
+        if (this.value("localBackupFrequency") != false && !this.localBackupId) {
+            this.scheduleLocalBackup();
+        }
+        //add similar code for server backup
     }
 
     scheduleLocalBackup(newTimeout) {
