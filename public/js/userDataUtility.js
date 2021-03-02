@@ -1119,6 +1119,10 @@ class UserDataUtility {
             this._buildRecordList(method, direction);
             //this.sortChildren(this.scrollAreaDiv.children().eq(0).attr("id"), method, direction);
         }
+        else if (adjust == "expand" && option == "user") {
+            const id = this.localData.tierIds(0)[0];
+            this.expandRow(id);
+        }
         else if (["expand", "collapse", "hide"].includes(adjust)) {
             const ids = (option == "clients")    ? this.allClientRowIds
                       : (option == "issues")     ? this.allIssueRowIds
