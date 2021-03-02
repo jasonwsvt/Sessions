@@ -1,6 +1,3 @@
-/* utilities class links to sessions class
-*/
-
 class UserLoginUtility {
     _userUtilities = null;
     _utilityID = null;
@@ -10,15 +7,14 @@ class UserLoginUtility {
 
     _loginIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-door-open' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M1 15.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM11.5 2H11V1h.5A1.5 1.5 0 0 1 13 2.5V15h-1V2.5a.5.5 0 0 0-.5-.5z'/><path fill-rule='evenodd' d='M10.828.122A.5.5 0 0 1 11 .5V15h-1V1.077l-6 .857V15H3V1.5a.5.5 0 0 1 .43-.495l7-1a.5.5 0 0 1 .398.117z'/><path d='M8 9c0 .552.224 1 .5 1s.5-.448.5-1-.224-1-.5-1-.5.448-.5 1z'/></svg>";
 
-    _buttonID       = "loginButton";
-    _divID          = "loginDiv";
-    _browserUsersID = "loginDivBrowserUsers";
-    _sessionUsersID = "loginDivSessionUsers";
-    _usernameID     = "loginDivUsername";
-    _passwordID     = "loginDivPassword";
-    _messagesDivID  = "loginDivMessages";
-    _loginID        = "loginDivButton";
-    _forgotID       = "loginDivForgotPasswordButton";
+    _buttonID      = "loginButton";
+    _divID         = "loginDiv";
+    _localUsersID  = "loginDivLocalUsers";
+    _usernameID    = "loginDivUsername";
+    _passwordID    = "loginDivPassword";
+    _messagesDivID = "loginDivMessages";
+    _loginID       = "loginDivButton";
+    _forgotID      = "loginDivForgotPasswordButton";
 
     constructor (userUtilities) {
         const self = this;
@@ -69,8 +65,7 @@ class UserLoginUtility {
 
     get button()            { return $("#" + this._buttonID); }
     get div()               { return $("#" + this._divID); }
-    get browserUsers()      { return $("#" + this._browserUsersID); }
-    get sessionUsers()      { return $("#" + this._sessionUsersID); }
+    get localUsers()        { return $("#" + this._localUsersID); }
     get username()          { return $("#" + this._usernameID); }
     get password()          { return $("#" + this._passwordID); }
     get messagesDiv()       { return $("#" + this._messagesDivID); }
@@ -81,16 +76,14 @@ class UserLoginUtility {
         const loginIcon = this._loginIcon;
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + loginIcon + "</button>";
         const div = "<div id = '" + this._divID + "' class = 'hidden userMenu'></div>";
-        const browserUsers = "<div id = '" + this._browserUsersID + "'></div>";
-        const sessionUsers = "<div id = '" + this._sessionUsersID + "'></div>";
+        const localUsers = "<div id = '" + this._localUsersID + "'></div>";
         const username = "<input id = '" + this._usernameID + "' placeholder = 'username' size = '50'>";
         const password = "<input id = '" + this._passwordID + "' type = 'password' placeholder = 'password' size = '30'>";
         const messages = "<div id = '" + this._messagesDivID + "'></div>";
         const action = "<button id = '" + this._loginID + "' type = 'button'>Log in</button>";
         this.userUtilities.div.append(button + div);
         this.div.addClass("container");
-        this.div.append(browserUsers);
-        this.div.append(sessionUsers);
+        this.div.append(localUsers);
         this.div.append(username);
         this.div.append(password);
         this.div.append(messages);
@@ -102,11 +95,10 @@ class UserLoginUtility {
 
     init() {
         //Check to see if a user qualifies for automatic login
-        const sessionKeys = Object.keys(sessionStorage);
         const localKeys = Object.keys(localStorage);
         const defaultUsername = this.userUtilities.defaultUsername;
 
-        //localStorage rememberMe user
+        //rememberMe user
         if (localKeys.length >= 2 && localKeys.includes("rememberMe")) {
             const username = localStorage.getItem("rememberMe");
             if (localKeys.includes(username)) {
@@ -118,17 +110,7 @@ class UserLoginUtility {
             }
         }
 
-        //sessionStorage user with default username and no password
-        if (sessionKeys.length >= 1 && sessionKeys.includes(defaultUsername)) {
-            const user = JSON.parse(sessionStorage.getItem(defaultUsername));
-            if (user && user.hasOwnProperty("username") && user.username == defaultUsername &&
-                (!user.hasOwnProperty("password") || user.password == "")) {
-                    this.app.data.importFromSessionStorage(defaultUsername);
-                    return;
-            }
-        }
-
-        //localStorage user with default username and no password
+        //user with default username and no password
         if (localKeys.length >= 1 && localKeys.includes(defaultUsername)) {
             const user = JSON.parse(localStorage.getItem(defaultUsername));
             if (user && user.hasOwnProperty("username") && user.username == defaultUsername &&
@@ -138,17 +120,7 @@ class UserLoginUtility {
             }
         }
 
-        //sessionStorage user with one unhidden account and no password
-        if (sessionKeys.length == 1) {
-            const user = JSON.parse(sessionStorage.getItem(sessionKeys[0]));
-            if (user && user.hasOwnProperty("username") &&
-                (!user.hasOwnProperty("password") || user.password == "")) {
-                    this.app.data.importFromSessionStorage(sessionKeys[0]);
-                    return;
-            }
-        }
-
-        //localStorage user with one unhidden account and no password
+        //user with one unhidden account and no password
         if (localKeys.length == 1) {
             const user = JSON.parse(localStorage.getItem(localKeys[0]));
             if (user && user.hasOwnProperty("username") &&
@@ -184,12 +156,11 @@ class UserLoginUtility {
     _propagateUserNameButtons() {
         const self = this;
 
-        this.browserUsers.empty();
-        this.sessionUsers.empty();
-        this._users.filter(u => u.localBackupLocation == "localStorage" && u.id != this.id && u.hidden != true).forEach(r => {
-            this.browserUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.username + "</button>");
+        this.localUsers.empty();
+        this._users.filter(u => u.id != this.id && u.hidden != true).forEach(r => {
+            this.localUsers.append("<button type = 'button' class = 'btn btn-primary' value = '" + r.id + "'>" + r.username + "</button>");
         });
-        this.browserUsers.find("button").on("click", function (e) {
+        this.localUsers.find("button").on("click", function (e) {
             this.blur();
             self._selectedUser = (self._selectedUser == $(this).text()) ? "" : $(this).text();
             self._selectedUserContainer = localStorage;
@@ -202,29 +173,10 @@ class UserLoginUtility {
             }
             e.stopPropagation();
         });
-
-        this.sessionUsers.empty();
-        this._users.filter(u => u.localBackupLocation == "sessionStorage" && u.id != this.id && u.hidden != true).forEach(r => {
-            this.sessionUsers.append("<button type = 'button' class = 'btn btn-warning' value = '" + r.id + "'>" + r.username + "</button>");
-        });
-        this.sessionUsers.find("button").on("click", function (e) {
-            this.blur();
-            self._selectedUser = (self._selectedUser == $(this).text()) ? "" : $(this).text();
-            self._selectedUserContainer = sessionStorage;
-            //console.log(self.noPasswordAccount(), parseInt($(this).val()));
-            if (self.noPasswordAccount()) {
-                self.loginUser();
-            }
-            else {
-                self.determineStage();
-            }
-            e.stopPropagation();
-        });
     }
 
     _selectUserNameStage() {
-        this.browserUsers.find("button").show();
-        this.sessionUsers.find("button").show();
+        this.localUsers.find("button").show();
         this.username.show();
         this.password.hide();
         this.login.hide();
@@ -234,17 +186,10 @@ class UserLoginUtility {
     _enterPasswordStage() {
         var i, button, buttons;
 
-        buttons = this.browserUsers.find("button");
+        buttons = this.localUsers.find("button");
         for (i = 0; i < buttons.length; i++) {
             button = buttons.eq(i);
             console.log(button);
-            if (button.text() != this._selectedUser) { button.hide(); } else { button.show(); }
-        }
-
-        buttons = this.sessionUsers.find("button");
-        for (i = 0; i < buttons.length; i++) {
-            button = buttons.eq(i);
-            //console.log(button);
             if (button.text() != this._selectedUser) { button.hide(); } else { button.show(); }
         }
 
@@ -297,20 +242,12 @@ class UserLoginUtility {
     }
 
     resetUsersList() {
-        const sessionKeys = Object.keys(sessionStorage).filter(key => key != "rememberMe");
-        const sessionUsers = sessionKeys.map(username => {
-            const user = JSON.parse(sessionStorage.getItem(username));
-            if (user.hasOwnProperty("children")) { delete user.children; }
-            return user;
-        });
         const localKeys = Object.keys(localStorage).filter(key => key != "rememberMe");
-        const localUsers = localKeys.map(username => {
+        this._users = localKeys.map(username => {
             const user = JSON.parse(localStorage.getItem(username));
             if (user.hasOwnProperty("children")) { delete user.children; }
             return user;
         });
-
-        this._users = sessionUsers.concat(localUsers);
     }
 
     user(username) {

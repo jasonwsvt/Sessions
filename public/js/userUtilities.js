@@ -60,21 +60,11 @@ class UserUtilities {
         this.new.close(except);
     }
 
-    localUsernameExists(val) {
-        //console.log(!![localStorage, sessionStorage].find(storage => Object.keys(storage).includes(this.app.data.username)));
-        return !![localStorage, sessionStorage].find(storage => Object.keys(storage).includes(val));
-    }
-
     localBackup() {
         //console.log(this.app.data.record(this.app.data.tierIds(0)[0]));
         //console.trace();
         console.log("running local backup", this.value("localBackupLocation"))
-        if (this.value("localBackupLocation") == "localStorage") {
-            this.app.data.exportToLocalStorage(this.value("username"));
-        }
-        if (this.value("localBackupLocation") == "sessionStorage") {
-            this.app.data.exportToSessionStorage(this.value("username"));
-        }
+        this.app.data.exportToLocalStorage(this.value("username"));
         this.lastLocalBackup = this._now();
         this.backupRequested = false;
         this.localBackupId = null;

@@ -195,10 +195,9 @@ class UserSettingsUtility {
         //this.div.css("top", String(this.button.position().top + 32) + "px");
         this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
         this.div.css("left", String(this.userUtilities.div.position().left) + "px");
-        this.storage.append("<option value = undefined>None</option>");
-        this.storage.append("<option value = 'localStorage'>Browser</option>");
-        this.storage.append("<option value = 'sessionStorage'>Session</option>");
         this.localBackupFrequency.html([false, 5, 10, 20, 30, 45, 60, 120, 180, 240, 300]
+            .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
+        this.serverBackupFrequency.html([false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
             .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
     }
 
@@ -210,9 +209,7 @@ class UserSettingsUtility {
         this.newPassword2.val("");
         this.email.val((isString(this.value("email"))) ? this.value("email") : "");
         this.localBackupFrequency.val(String((this.value("localBackupFrequency") != undefined) ? this.value("localBackupFrequency") : false));
-        this.hidden.prop("checked", this.value("hidden") == true);
-        this.serverManualBackup.prop("disabled", !this.value("useServerStorage"));
-        this.rememberMe.prop("checked", this.value("rememberMe") == true);
+        this.localBackupFrequency.val(String((this.value("serverBackupFrequency") != undefined) ? this.value("serverBackupFrequency") : false));
     }
 
     manage() {
@@ -244,27 +241,22 @@ class UserSettingsUtility {
         const curPW = this.curPWState;
         const newPW = this.newPWState;
         const email = this.emailState;
-        const server = this.value("useServerStorage");
+        const server = this.value("useServerStorage") == true;
+        const changes = uname != "Unchanged" || newPW != "Empty" || email != "Unchanged";
 
         if (curPW == "Invalid") { messages.push("Current password is invalid."); }
         else {
             //SetUp
-            if (!server) {
-                this.serverBackupFrequency.html("<option>Disabled</option>");
-                this.serverBackupFrequency.prop("disabled", true);
-            }
-            else {
-                this.serverBackupFrequency.html([false, 60, 2*60, 3*60, 4*60, 5*60, 10*60, 20*60, 40*60, 60*60, 2*60*60, 5*60*60, 10*60*60]
-                    .map(f => { return "<option value = '" + f + "'>" + this.frequencyName(f) + "</option>"; }).join(""));
-                this.serverBackupFrequency.val(String(this.value("serverBackupFrequency")));
-            }
-            this.storage.prop("disabled", (uname == "Local duplicate"));
-            this.rememberMe.prop("disabled", !this.ableToSetRememberMe);
-            if (this.value("hidden") == true && this.value("username") == this.userUtilities.defaultUsername) {
-                this.setKey("hidden", false);
-            }
-            this.hidden.prop("checked", this.value("hidden"));
-            this.hidden.prop("disabled", this.value("username") == this.userUtilities.defaultUsername)
+            this.hidden.prop("checked", this.value("hidden") == true);
+            this.hidden.prop("disabled", (changes || this.value("username") == this.userUtilities.defaultUsername));
+            this.rememberMe.prop("checked", this.value("rememberMe") == true);
+            this.rememberMe.prop("disabled", (changes || (Object.keys(localStorage).includes("rememberMe") && localStorage.getItem("rememberMe") != this.value("username"))));
+            this.localBackupFrequency.prop("disabled", changes);
+            this.localBackupFrequency.val(String(this.value("localBackupFrequency") || false));
+            this.localManualBackup.prop("disabled", changes);            
+            this.serverBackupFrequency.prop("disabled", (!server || changes));
+            this.serverBackupFrequency.val(String(this.value("serverBackupFrequency") || false));
+            this.serverManualBackup.prop("disabled", (!server || changes));
 
             //Messages
             if (uname == "Invalid")          { messages.push("Usernames must be 5-20 characters, each a letter, number, ., -, or _.")}
@@ -279,14 +271,11 @@ class UserSettingsUtility {
                 if (uname == "Default") {
                     messages.push("Server storage requires a username that's not the default.");
                 }
-                if (uname == "Storage and server duplicate") {
-                    messages.push("Username is unavailable in local storage and on the server.");
-                }
                 if (uname == "Local and server duplicate") {
-                    messages.push("Username is unavailable locally and on the server.");
+                    messages.push("Username is unavailable both locally and on the server.");
                 }
-                if (uname == "Storage duplicate") {
-                    messages.push("Username is unavailable on the server.");
+                if (uname == "Local duplicate") {
+                    messages.push("Username is already exists locally.");
                 }
                 if (uname == "Server duplicate") {
                     messages.push("username is unavailable on the server.");
@@ -300,17 +289,11 @@ class UserSettingsUtility {
             }
             else {
                 if (uname == "Default") { messages.push("The username must not be the default."); }
-                if (uname == "Storage and server duplicate") {
-                    messages.push("Username is duplicated in local storage and on the server.");
-                }
                 if (uname == "Local and server duplicate") {
-                    messages.push("Username is duplicated locally and on the server.");
-                }
-                if (uname == "Storage duplicate") {
-                    messages.push("Username already exists.");
+                    messages.push("Username already exists locally and on the server.");
                 }
                 if (uname == "Local duplicate") {
-                    messages.push("Username is duplicated in local storage and on the server.");
+                    messages.push("Username is already exists locally.");
                 }
                 if (uname == "Server duplicate") {
                     messages.push("Username is duplicated on the server.");
@@ -357,17 +340,12 @@ class UserSettingsUtility {
         this.options(options);
     }
 
-    get ableToSetRememberMe() {
-        return (!Object.keys(localStorage).includes("rememberMe") ||
-                 localStorage.getItem("rememberMe") == this.value("username"));
-    }
-
     get unameState() { //Unchanged, Emptied, Duplicate, Filled
         const current = this.value("username");
         const fieldVal = this.username.val();
         const server = this.value("useServerStorage");
         const valid = /^[a-zA-Z0-9_\-.]{5,20}$/;
-        const localDup = this.userUtilities.localUsernameExists(fieldVal);
+        const localDup = !!Object.keys(localStorage).includes(fieldVal);
         const serverDup = false;
 
         if (current == fieldVal)                        { return "Unchanged"; }
