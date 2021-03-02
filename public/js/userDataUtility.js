@@ -7,6 +7,7 @@ class UserDataUtility {
     localData;
     loadedData;
     deletedRecords = [];
+    localDataHasChanged = false;
 
     _buttonIcon    = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-person-lines-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm2 9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/></svg>';
     _fullIcon      = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2z"/></svg>';
@@ -147,6 +148,7 @@ class UserDataUtility {
         adjust += "<div id = '" + this._adjustID + "' class = 'hidden'></div>";
 
         const options = "<div id = '" + this._optionsID + "' class='btn-group btn-group-sm' role='group'></div>";
+        //const options = "<div id = '" + this._optionsID + "'></div>";
 
         const actions = "<div id = '" + this._actionsID + "' class='btn-group btn-group-sm' role='group'></div>";
         const action1 = "<button type = 'button' class = 'btn btn-secondary' value = 'import'>Import</button>";
@@ -168,16 +170,16 @@ class UserDataUtility {
         this.div.append(top + scrollDiv + messagesDiv + actionDiv + loadDiv);
         this.actions.append(action1 + action2 + action3);
 
-        const adjust1 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'sort'>Sort</button>";
-        const adjust2 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'expand'>Expand</button>";
-        const adjust3 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'collapse'>Collapse</button>";
-        const adjust4 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'hide'>Hide</button>";
-        const adjust5 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'select'>Select</button>";
-        const adjust6 = "<button type = 'button' class = 'btn btn-sm btn-secondary hidden' value = 'merge'>Merge</button>";
+        const adjust0 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'sort'>Sort</button>";
+        const adjust1 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'expand'>Expand</button>";
+        const adjust2 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'collapse'>Collapse</button>";
+        const adjust3 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'hide'>Hide</button>";
+        const adjust4 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'select'>Select</button>";
+        const adjust5 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'import'>Import</button>";
+        const adjust6 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'merge'>Merge</button>";
         const adjust7 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'export'>Export</button>";
         const adjust8 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'delete'>Delete</button>";
-        const adjust9 = "<button type = 'button' class = 'btn btn-sm btn-secondary hidden' value = 'import'>Import</button>";
-        this.adjust.append(adjust1, adjust2, adjust3, adjust4, adjust5, adjust6, adjust7, adjust8, adjust9);
+        this.adjust.append(adjust0, adjust1, adjust2, adjust3, adjust4, adjust5, adjust6, adjust7, adjust8);
 
         this.adjust.data("unselectedClass", "btn-secondary");
         this.adjust.data("selectedClass", "btn-primary");
@@ -255,26 +257,25 @@ class UserDataUtility {
         this.options.data("sort_3_1_unselected", "Opened");
         this.options.data("sort_3_1_value", "sort opened descending");
         
-        this.options.data("expand_0_html", "Sessions");
-        this.options.data("expand_0_value", "expand sessions");
-        this.options.data("expand_1_html", "Issues");
-        this.options.data("expand_1_value", "expand issues");
-        this.options.data("expand_2_html", "Clients");
-        this.options.data("expand_2_value", "expand clients");
-        this.options.data("expand_3_html", "Selected");
-        this.options.data("expand_3_value", "expand selected");
-        this.options.data("expand_4_html", "Unselected");
-        this.options.data("expand_4_value", "expand unselected");
+        this.options.data("expand_indices", 8);
+        this.options.data("expand_0_html", "User");
+        this.options.data("expand_0_value", "expand user");
+        this.options.data("expand_1_html", "Clients");
+        this.options.data("expand_1_value", "expand clients");
+        this.options.data("expand_2_html", "Issues");
+        this.options.data("expand_2_value", "expand issues");
+        this.options.data("expand_3_html", "Sessions");
+        this.options.data("expand_3_value", "expand sessions");
+        this.options.data("expand_4_html", "Selected");
+        this.options.data("expand_4_value", "expand selected");
+        this.options.data("expand_5_html", "Unselected");
+        this.options.data("expand_5_value", "expand unselected");
+        this.options.data("expand_6_html", "Identical");
+        this.options.data("expand_6_value", "expand identical");
+        this.options.data("expand_7_html", "Different");
+        this.options.data("expand_7_value", "expand different");
 
-        if (!loaded) { this.options.data("expand_indices", 5); }
-        else {
-            this.options.data("expand_indices", 7);
-            this.options.data("expand_5_html", "Identical");
-            this.options.data("expand_5_value", "expand identical");
-            this.options.data("expand_6_html", "Different");
-            this.options.data("expand_6_value", "expand different");
-        }
-
+        this.options.data("collapse_indices", 7);
         this.options.data("collapse_0_html", "Sessions");
         this.options.data("collapse_0_value", "collapse sessions");
         this.options.data("collapse_1_html", "Issues");
@@ -285,16 +286,12 @@ class UserDataUtility {
         this.options.data("collapse_3_value", "collapse selected");
         this.options.data("collapse_4_html", "Unselected");
         this.options.data("collapse_4_value", "collapse unselected");
+        this.options.data("collapse_5_html", "Identical");
+        this.options.data("collapse_5_value", "collapse identical");
+        this.options.data("collapse_6_html", "Different");
+        this.options.data("collapse_6_value", "collapse different");
 
-        if (!loaded) { this.options.data("collapse_indices", 5); }
-        else {
-            this.options.data("collapse_indices", 7);
-            this.options.data("collapse_5_html", "Identical");
-            this.options.data("collapse_5_value", "collapse identical");
-            this.options.data("collapse_6_html", "Different");
-            this.options.data("collapse_6_value", "collapse different");
-        }
-
+        this.options.data("hide_indices", 7);
         this.options.data("hide_0_html", "Sessions");
         this.options.data("hide_0_value", "hide sessions");
         this.options.data("hide_1_html", "Issues");
@@ -305,121 +302,84 @@ class UserDataUtility {
         this.options.data("hide_3_value", "hide selected");
         this.options.data("hide_4_html", "Unselected");
         this.options.data("hide_4_value", "hide unselected");
+        this.options.data("hide_5_html", "Identical");
+        this.options.data("hide_5_value", "hide identical");
+        this.options.data("hide_6_html", "Different");
+        this.options.data("hide_6_value", "hide different");
 
-        if (!loaded) { this.options.data("hide_indices", 5); }
-        else {
-            this.options.data("hide_indices", 7);
-            this.options.data("hide_5_html", "Identical");
-            this.options.data("hide_5_value", "hide identical");
-            this.options.data("hide_6_html", "Different");
-            this.options.data("hide_6_value", "hide different");
-        }
+        this.options.data("select_indices", 8);
+        this.options.data("select_0_html", "Local");
+        this.options.data("select_0_value", "select local");
+        this.options.data("select_1_html", "Loaded");
+        this.options.data("select_1_value", "select loaded");
+        this.options.data("select_2_html", "Older");
+        this.options.data("select_2_value", "select older");
+        this.options.data("select_3_html", "Newer");
+        this.options.data("select_3_value", "select newer");
+        this.options.data("select_4_html", "Different");
+        this.options.data("select_4_value", "select different");
+        this.options.data("select_5_html", "Identical");
+        this.options.data("select_5_value", "select identical");
+        this.options.data("select_6_html", "None");
+        this.options.data("select_6_value", "select none");
+        this.options.data("select_7_html", "Unselected");
+        this.options.data("select_7_value", "select unselected");
 
-        if (!loaded) {
-            this.options.data("select_indices", 3);
-            this.options.data("select_0_html", "All");
-            this.options.data("select_0_value", "select local");
-            this.options.data("select_1_html", "None");
-            this.options.data("select_1_value", "select none");
-            this.options.data("select_2_html", "Unselected");
-            this.options.data("select_2_value", "select unselected");
-        }
-        else {
-            this.options.data("select_indices", 8);
-            this.options.data("select_0_html", "Local");
-            this.options.data("select_0_value", "select local");
-            this.options.data("select_1_html", "Loaded");
-            this.options.data("select_1_value", "select loaded");
-            this.options.data("select_2_html", "Older");
-            this.options.data("select_2_value", "select older");
-            this.options.data("select_3_html", "Newer");
-            this.options.data("select_3_value", "select newer");
-            this.options.data("select_4_html", "Different");
-            this.options.data("select_4_value", "select different");
-            this.options.data("select_5_html", "Identical");
-            this.options.data("select_5_value", "select identical");
-            this.options.data("select_6_html", "None");
-            this.options.data("select_6_value", "select none");
-            this.options.data("select_7_html", "Unselected");
-            this.options.data("select_7_value", "select unselected");
-        }
-        
-        if (!loaded) {
-            this.options.data("export_indices", 3);
-            this.options.data("export_0_html", "All");
-            this.options.data("export_0_value", "export local");
-            this.options.data("export_1_html", "Selected");
-            this.options.data("export_1_value", "export selected");
-            this.options.data("export_2_html", "Unselected");
-            this.options.data("export_2_value", "export unselected");
-        }
-        else {
-            this.options.data("export_indices", 6);
-            this.options.data("export_0_html", "Local");
-            this.options.data("export_0_value", "export local");
-            this.options.data("export_1_html", "Loaded");
-            this.options.data("export_1_hidden", "until load");
-            this.options.data("export_1_value", "export loaded");
-            this.options.data("export_2_html", "Older");
-            this.options.data("export_2_hidden", "until load");
-            this.options.data("export_2_value", "export older");
-            this.options.data("export_3_html", "Newer");
-            this.options.data("export_3_hidden", "until load");
-            this.options.data("export_3_value", "export newer");
-            this.options.data("export_4_html", "Selected");
-            this.options.data("export_4_value", "export selected");
-            this.options.data("export_5_html", "Unselected");
-            this.options.data("export_5_value", "export unselected");
-        }
+        this.options.data("import_indices", 2);
+        this.options.data("import_unselectedClass", "btn-danger");
+        this.options.data("import_selectedClass", "btn-danger");
+        this.options.data("import_0_html", "Local");
+        this.options.data("import_0_value", "import local");
+        this.options.data("import_1_html", "Loaded");
+        this.options.data("import_1_value", "import loaded");
 
-        if (loaded) {
-            this.options.data("merge_indices", 6);
-            this.options.data("merge_unselectedClass", "btn-warning");
-            this.options.data("merge_selectedClass", "btn-warning");
-            this.options.data("merge_0_html", "Local");
-            this.options.data("merge_0_value", "merge local");
-            this.options.data("merge_1_html", "Loaded");
-            this.options.data("merge_1_value", "merge loaded");
-            this.options.data("merge_2_html", "Older");
-            this.options.data("merge_2_value", "merge older");
-            this.options.data("merge_3_html", "Newer");
-            this.options.data("merge_3_value", "merge newer");
-            this.options.data("merge_4_html", "Selected");
-            this.options.data("merge_4_value", "merge selected");
-            this.options.data("merge_5_html", "Unselected");
-            this.options.data("merge_5_value", "merge unselected");
-        }
+        this.options.data("export_indices", 6);
+        this.options.data("export_0_html", "Local");
+        this.options.data("export_0_value", "export local");
+        this.options.data("export_1_html", "Loaded");
+        this.options.data("export_1_value", "export loaded");
+        this.options.data("export_2_html", "Older");
+        this.options.data("export_2_value", "export older");
+        this.options.data("export_3_html", "Newer");
+        this.options.data("export_3_value", "export newer");
+        this.options.data("export_4_html", "Selected");
+        this.options.data("export_4_value", "export selected");
+        this.options.data("export_5_html", "Unselected");
+        this.options.data("export_5_value", "export unselected");
+
+        this.options.data("merge_indices", 6);
+        this.options.data("merge_unselectedClass", "btn-warning");
+        this.options.data("merge_selectedClass", "btn-warning");
+        this.options.data("merge_0_html", "Local");
+        this.options.data("merge_0_value", "merge local");
+        this.options.data("merge_1_html", "Loaded");
+        this.options.data("merge_1_value", "merge loaded");
+        this.options.data("merge_2_html", "Older");
+        this.options.data("merge_2_value", "merge older");
+        this.options.data("merge_3_html", "Newer");
+        this.options.data("merge_3_value", "merge newer");
+        this.options.data("merge_4_html", "Selected");
+        this.options.data("merge_4_value", "merge selected");
+        this.options.data("merge_5_html", "Unselected");
+        this.options.data("merge_5_value", "merge unselected");
 
         this.options.data("delete_unselectedClass", "btn-danger");
         this.options.data("delete_selectedClass", "btn-danger");
-        if (!loaded) {
-            this.options.data("delete_indices", 3);
-            this.options.data("delete_0_html", "All");
-            this.options.data("delete_0_value", "delete local");
-            this.options.data("delete_1_html", "Selected");
-            this.options.data("delete_1_value", "delete selected");
-            this.options.data("delete_2_html", "Unselected");
-            this.options.data("delete_2_value", "delete unselected");
-            this.options.data("delete_3_html", "Undo");
-            this.options.data("delete_3_value", "delete undo");
-        }
-        else {
-            this.options.data("delete_indices", 7);
-            this.options.data("delete_0_html", "Local");
-            this.options.data("delete_0_value", "delete local");
-            this.options.data("delete_1_html", "Loaded");
-            this.options.data("delete_1_value", "delete loaded");
-            this.options.data("delete_2_html", "Older");
-            this.options.data("delete_2_value", "delete older");
-            this.options.data("delete_3_html", "Newer");
-            this.options.data("delete_3_value", "delete newer");
-            this.options.data("delete_4_html", "Selected");
-            this.options.data("delete_4_value", "delete selected");
-            this.options.data("delete_5_html", "Unselected");
-            this.options.data("delete_5_value", "delete unselected");
-            this.options.data("delete_5_html", "Undo");
-            this.options.data("delete_5_value", "delete undo");
-        }
+        this.options.data("delete_indices", 7);
+        this.options.data("delete_0_html", "Local");
+        this.options.data("delete_0_value", "delete local");
+        this.options.data("delete_1_html", "Loaded");
+        this.options.data("delete_1_value", "delete loaded");
+        this.options.data("delete_2_html", "Older");
+        this.options.data("delete_2_value", "delete older");
+        this.options.data("delete_3_html", "Newer");
+        this.options.data("delete_3_value", "delete newer");
+        this.options.data("delete_4_html", "Selected");
+        this.options.data("delete_4_value", "delete selected");
+        this.options.data("delete_5_html", "Unselected");
+        this.options.data("delete_5_value", "delete unselected");
+        this.options.data("delete_6_html", "Undo");
+        this.options.data("delete_6_value", "delete undo");
     }
 
     reset() {
@@ -451,6 +411,42 @@ class UserDataUtility {
         this.adjust.data("index", this.adjust.find("button").index(this));
         this._manageGroup(this.adjust);
         this._buildOptionButtons();
+        this._manageButtons();
+    }
+
+    _manageButtons() {
+        const adjust = this.adjust.data("value");
+        const loaded = !this.loadedData.isEmpty();
+        const aButtons = this.adjust.find("button");
+        const oButtons = this.options.find("button");
+        const selected = !!this.allSelectedRowIds.length;
+        const unselected = !!this.allUnselectedRowIds.length;
+        var button, i;
+
+        //Adjust buttons
+        for (i = 0; i < aButtons.length; i++) {
+            button = aButtons.eq(i);
+            if (button.text() == "Merge"  && !loaded)                              { button.hide(); } else { button.show(); }
+            if (button.text() == "Import" && !loaded && !this.localDataHasChanged) { button.hide(); } else { button.show(); }
+        }
+
+        //Options buttons
+        for (i = 0; i < oButtons.length; i++) {
+            button = oButtons.eq(i);
+            //console.log(adjust, button.text(), loaded);
+            if (button.text() == "Local"          &&  loaded)     { button.text("All"); };
+            if (button.text() == "All"            && !loaded)     { button.text("Local"); };
+            if (button.text() == "Loaded")     { if (!loaded)     { button.hide(); } else { button.show(); } }
+            if (button.text() == "Older")      { if (!loaded)     { button.hide(); } else { button.show(); } }
+            if (button.text() == "Newer")      { if (!loaded)     { button.hide(); } else { button.show(); } }
+            if (button.text() == "Different")  { if (!loaded)     { button.hide(); } else { button.show(); } }
+            if (button.text() == "Identical")  { if (!loaded)     { button.hide(); } else { button.show(); } }
+            if (button.text() == "Selected")   { if (!selected)   { button.hide(); } else { button.show(); } }
+            if (button.text() == "Unselected") { if (!unselected) { button.hide(); } else { button.show(); } }
+            if (adjust == "merge")                            { button.prop("disabled", !loaded); }
+            if (adjust == "import" && ["All", "Local"].includes(button.text()))  { button.prop("disabled", !this.localDataHasChanged); }
+            if (adjust == "import" && button.text() == "Loaded") { button.prop("disabled", !loaded); }
+        }
     }
 
     _buildOptionButtons() {
@@ -610,6 +606,7 @@ class UserDataUtility {
                 else                       { self.collapseRow(id); }
             }
             if (self.rowHasParent(id)) { self.updateChildrenRowsButtonStatus(self.rowParentId(id)); }
+            self._manageButtons();
         });
 
         //click event for childrenRowsButton buttons (id + "_children")
@@ -635,6 +632,7 @@ class UserDataUtility {
             }
             //console.log(ids, self.rowParentIds(ids))
             self.updateChildrenRowsButtonStatuses(self.rowParentIds(ids));
+            self._manageButtons();
         });
         
         //click event for select local record buttons ("local_" + id)
@@ -650,6 +648,7 @@ class UserDataUtility {
             if (isArray(parentIds)) {
                 self.updateChildrenSelectStatuses(parentIds);
             }
+            self._manageButtons();
         });
 
         //click event for select loaded record buttons ("loaded_" + id)
@@ -663,6 +662,7 @@ class UserDataUtility {
             if (isArray(parentIds)) {
                 self.updateChildrenSelectStatuses(parentIds);
             }
+            self._manageButtons();
         });
 
         //click event for select local Children buttons ("local_" + id + "_children")
@@ -680,6 +680,7 @@ class UserDataUtility {
             if (isArray(parentIds)) {
                 self.updateChildrenSelectStatuses(parentIds);
             }
+            self._manageButtons();
         });
 
         //click event for select loaded Children buttons ("loaded_" + id + "_children")
@@ -696,6 +697,7 @@ class UserDataUtility {
             if (isArray(parentIds)) {
                 self.updateChildrenSelectStatuses(parentIds);
             }
+            self._manageButtons();
         });
 
         [this.rowButtons, this.childrenRowsButtons, this.localSelects, this.loadedSelects, this.localChildrenSelects, this.loadedChildrenSelects].forEach(c => {
@@ -987,10 +989,8 @@ class UserDataUtility {
     unexpandRows(ids)    { console.trace(); console.log("unnecessary call"); /* ids.forEach(id => this.unexpandRow(id)); */ }
 
     //Selecting methods
-    rowIsSelected(id)                  { return this.localData.isSelected(id) || this.loadedData.isSelected(id); }
+    rowIsSelected(id)                  { this.localData.isSelected(id) || this.loadedData.isSelected(id); }
     rowsAreSelected(ids)               { return ids.every(id => this.rowIsSelected(id)); }
-    localRecordIsSelected(id)          { return this.row(id).hasClass("localSelected"); }
-    loadedRecordIsSelected(id)         { return this.row(id).hasClass("loadedSelected"); }
     localRecordsAreSelected(ids)       { return ids.every(id => this.localData.isSelected(id)); }
     loadedRecordsAreSelected(ids)      { return ids.every(id => this.loadedData.isSelected(id)); }
     localRecordsAreUnselected(ids)     { return ids.every(id => !this.localData.isSelected(id)); }
