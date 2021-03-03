@@ -275,37 +275,41 @@ class UserDataUtility {
         this.options.data("expand_7_html", "Different");
         this.options.data("expand_7_value", "expand different");
 
-        this.options.data("collapse_indices", 7);
-        this.options.data("collapse_0_html", "Clients");
-        this.options.data("collapse_0_value", "collapse clients");
-        this.options.data("collapse_1_html", "Issues");
-        this.options.data("collapse_1_value", "collapse issues");
-        this.options.data("collapse_2_html", "Sessions");
-        this.options.data("collapse_2_value", "collapse sessions");
-        this.options.data("collapse_3_html", "Selected");
-        this.options.data("collapse_3_value", "collapse selected");
-        this.options.data("collapse_4_html", "Unselected");
-        this.options.data("collapse_4_value", "collapse unselected");
-        this.options.data("collapse_5_html", "Identical");
-        this.options.data("collapse_5_value", "collapse identical");
-        this.options.data("collapse_6_html", "Different");
-        this.options.data("collapse_6_value", "collapse different");
+        this.options.data("collapse_indices", 8);
+        this.options.data("collapse_0_html", "User");
+        this.options.data("collapse_0_value", "collapse user");
+        this.options.data("collapse_1_html", "Clients");
+        this.options.data("collapse_1_value", "collapse clients");
+        this.options.data("collapse_2_html", "Issues");
+        this.options.data("collapse_2_value", "collapse issues");
+        this.options.data("collapse_3_html", "Sessions");
+        this.options.data("collapse_3_value", "collapse sessions");
+        this.options.data("collapse_4_html", "Selected");
+        this.options.data("collapse_4_value", "collapse selected");
+        this.options.data("collapse_5_html", "Unselected");
+        this.options.data("collapse_5_value", "collapse unselected");
+        this.options.data("collapse_6_html", "Identical");
+        this.options.data("collapse_6_value", "collapse identical");
+        this.options.data("collapse_7_html", "Different");
+        this.options.data("collapse_7_value", "collapse different");
 
-        this.options.data("hide_indices", 7);
-        this.options.data("hide_0_html", "Clients");
-        this.options.data("hide_0_value", "hide clients");
-        this.options.data("hide_1_html", "Issues");
-        this.options.data("hide_1_value", "hide issues");
-        this.options.data("hide_2_html", "Sessions");
-        this.options.data("hide_2_value", "hide sessions");
-        this.options.data("hide_3_html", "Selected");
-        this.options.data("hide_3_value", "hide selected");
-        this.options.data("hide_4_html", "Unselected");
-        this.options.data("hide_4_value", "hide unselected");
-        this.options.data("hide_5_html", "Identical");
-        this.options.data("hide_5_value", "hide identical");
-        this.options.data("hide_6_html", "Different");
-        this.options.data("hide_6_value", "hide different");
+        this.options.data("hide_indices", 8);
+        this.options.data("hide_0_html", "User");
+        this.options.data("hide_0_value", "hide user");
+        this.options.data("hide_1_html", "Clients");
+        this.options.data("hide_1_value", "hide clients");
+        this.options.data("hide_2_html", "Issues");
+        this.options.data("hide_2_value", "hide issues");
+        this.options.data("hide_3_html", "Sessions");
+        this.options.data("hide_3_value", "hide sessions");
+        this.options.data("hide_4_html", "Selected");
+        this.options.data("hide_4_value", "hide selected");
+        this.options.data("hide_5_html", "Unselected");
+        this.options.data("hide_5_value", "hide unselected");
+        this.options.data("hide_6_html", "Identical");
+        this.options.data("hide_6_value", "hide identical");
+        this.options.data("hide_7_html", "Different");
+        this.options.data("hide_7_value", "hide different");
 
         this.options.data("select_indices", 8);
         this.options.data("select_0_html", "Local");
@@ -421,48 +425,61 @@ class UserDataUtility {
         const oButtons = this.options.find("button");
         const selected = !!this.allSelectedRowIds.length;
         const unselected = !!this.allUnselectedRowIds.length;
-        const users    = [... new Set([this.localData.tierIds(0).concat(this.loadedData.tierIds(0))])];
-        const clients  = [... new Set([this.localData.tierIds(1).concat(this.loadedData.tierIds(1))])];
-        const issues   = [... new Set([this.localData.tierIds(2).concat(this.loadedData.tierIds(2))])];
-        const sessions = [... new Set([this.localData.tierIds(3).concat(this.loadedData.tierIds(3))])];
+        const users    = [... new Set(this.localData.tierIds(0).concat(this.loadedData.tierIds(0)))];
+        const clients  = [... new Set(this.localData.tierIds(1).concat(this.loadedData.tierIds(1)))];
+        const issues   = [... new Set(this.localData.tierIds(2).concat(this.loadedData.tierIds(2)))];
+        const sessions = [... new Set(this.localData.tierIds(3).concat(this.loadedData.tierIds(3)))];
         var button, i, text;
-console.log(adjust, this.localDataHasChanged, !this.localDataHasChanged);
+
+//console.log(users, this.rowsAreExpanded(users), this.rowsAreCollapsed(users), this.rowsAreHidden(users));
+//console.log(clients, this.rowsAreExpanded(clients), this.rowsAreCollapsed(clients), this.rowsAreHidden(clients));
+//console.log(issues, this.rowsAreExpanded(issues), this.rowsAreCollapsed(issues), this.rowsAreHidden(issues));
+//console.log(sessions, this.rowsAreExpanded(sessions), this.rowsAreCollapsed(sessions), this.rowsAreHidden(sessions));
+
         //Options buttons
         for (i = 0; i < oButtons.length; i++) {
             button = oButtons.eq(i);
             text = button.text();
             //console.log(adjust, button.text(), loaded);
-            if (text == "Local"            &&  loaded)                        { button.text("All"); };
-            if (text == "All"              && !loaded)                        { button.text("Local"); };
-            if (text == "Loaded")       { if (!loaded)                        { button.hide(); } else { button.show(); } }
-            if (text == "Older")        { if (!loaded)                        { button.hide(); } else { button.show(); } }
-            if (text == "Newer")        { if (!loaded)                        { button.hide(); } else { button.show(); } }
-            if (text == "Different")    { if (!loaded)                        { button.hide(); } else { button.show(); } }
-            if (text == "Identical")    { if (!loaded)                        { button.hide(); } else { button.show(); } }
-            if (text == "Selected")     { if (!selected)                      { button.hide(); } else { button.show(); } }
-            if (text == "Unselected")   { if (!unselected)                    { button.hide(); } else { button.show(); } }
-            if (adjust == "merge")      { if (!loaded)                        { button.hide(); } else { button.show(); } }
+            if (text == "User"     && users.length    == 2) { button.text("Users"); }
+            if (text == "Users"    && users.length    == 1) { button.text("User"); }
+            if (text == "Client"   && clients.length  == 2) { button.text("Clients"); }
+            if (text == "Clients"  && clients.length  == 1) { button.text("Client"); }
+            if (text == "Issue"    && issues.length   == 2) { button.text("Issues"); }
+            if (text == "Issues"   && issues.length   == 1) { button.text("Issue"); }
+            if (text == "Session"  && sessions.length == 2) { button.text("Sessions"); }
+            if (text == "Sessions" && sessions.length == 1) { button.text("Session"); }
+            if (text == "Local"    &&  loaded)              { button.text("All"); }
+            if (text == "All"      && !loaded)              { button.text("Local"); }
             if (adjust == "import" && ["All", "Local"].includes(text))  { if (!this.localDataHasChanged) { button.hide(); } else { button.show(); } }
-            if (adjust == "import" && text == "Loaded") { if (!loaded) { button.hide(); } else { button.show(); } }
+            if (adjust == "import" && text == "Loaded") { if (!loaded)                 { button.hide(); } else { button.show(); } }
+            if (adjust == "merge")              { if (!loaded)                         { button.hide(); } else { button.show(); } }
+            if (text == "Loaded")               { if (!loaded)                         { button.hide(); } else { button.show(); } }
+            if (text == "Older")                { if (!loaded)                         { button.hide(); } else { button.show(); } }
+            if (text == "Newer")                { if (!loaded)                         { button.hide(); } else { button.show(); } }
+            if (text == "Different")            { if (!loaded)                         { button.hide(); } else { button.show(); } }
+            if (text == "Identical")            { if (!loaded)                         { button.hide(); } else { button.show(); } }
+            if (text == "Selected")             { if (!selected)                       { button.hide(); } else { button.show(); } }
+            if (text == "Unselected")           { if (!unselected)                     { button.hide(); } else { button.show(); } }
             if (adjust == "expand") {
-                if (text == "User")     { if (this.rowsAreExpanded(users))    { button.hide(); } else { button.show(); } }
-                if (text == "Clients")  { if (this.rowsAreExpanded(clients))  { button.hide(); } else { button.show(); } }
-                if (text == "Issues")   { if (this.rowsAreExpanded(issues))   { button.hide(); } else { button.show(); } }
-                if (text == "Sessions") { if (this.rowsAreExpanded(sessions)) { button.hide(); } else { button.show(); } }
+                if (text.startsWith("User"))    { if (this.rowsAreExpanded(users))     { button.hide(); } else { button.show(); } }
+                if (text.startsWith("Client"))  { if (this.rowsAreExpanded(clients))   { button.hide(); } else { button.show(); } }
+                if (text.startsWith("Issue"))   { if (this.rowsAreExpanded(issues))    { button.hide(); } else { button.show(); } }
+                if (text.startsWith("Session")) { if (this.rowsAreExpanded(sessions))  { button.hide(); } else { button.show(); } }
             }
             if (adjust == "collapse") {
-                if (text == "User")     { if (this.rowsAreCollapsed(users))    { button.hide(); } else { button.show(); } }
-                if (text == "Clients")  { if (this.rowsAreCollapsed(clients))  { button.hide(); } else { button.show(); } }
-                if (text == "Issues")   { if (this.rowsAreCollapsed(issues))   { button.hide(); } else { button.show(); } }
-                if (text == "Sessions") { if (this.rowsAreCollapsed(sessions)) { button.hide(); } else { button.show(); } }
+                if (text.startsWith("User"))    { if (this.rowsAreCollapsed(users))    { button.hide(); } else { button.show(); } }
+                if (text.startsWith("Client"))  { if (this.rowsAreCollapsed(clients))  { button.hide(); } else { button.show(); } }
+                if (text.startsWith("Issue"))   { if (this.rowsAreCollapsed(issues))   { button.hide(); } else { button.show(); } }
+                if (text.startsWith("Session")) { if (this.rowsAreCollapsed(sessions)) { button.hide(); } else { button.show(); } }
             }
             if (adjust == "hide") {
-                if (text == "User")     { if (this.rowsAreHidden(users))       { button.hide(); } else { button.show(); } }
-                if (text == "Clients")  { if (this.rowsAreHidden(clients))     { button.hide(); } else { button.show(); } }
-                if (text == "Issues")   { if (this.rowsAreHidden(issues))      { button.hide(); } else { button.show(); } }
-                if (text == "Sessions") { if (this.rowsAreHidden(sessions))    { button.hide(); } else { button.show(); } }
+                if (text.startsWith("User"))    { if (this.rowsAreHidden(users))       { button.hide(); } else { button.show(); } }
+                if (text.startsWith("Client"))  { if (this.rowsAreHidden(clients))     { button.hide(); } else { button.show(); } }
+                if (text.startsWith("Issue"))   { if (this.rowsAreHidden(issues))      { button.hide(); } else { button.show(); } }
+                if (text.startsWith("Session")) { if (this.rowsAreHidden(sessions))    { button.hide(); } else { button.show(); } }
             }
-            if (adjust == "delete" && text == "Undo") { if (this.deletedRecords == 0) { button.hide(); } else { button.show(); } }
+            if (adjust == "delete" && text == "Undo") { if (this.deletedRecords == 0)  { button.hide(); } else { button.show(); } }
         }
 
         //Adjust buttons
