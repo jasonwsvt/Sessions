@@ -413,9 +413,64 @@ class UserDataUtility {
 
     manage() {
         this.adjust.data("index", this.adjust.find("button").index(this));
-        this._manageGroup(this.adjust);
+        this._manageAdjustButtons();
         this._buildOptionButtons();
         this._manageButtons();
+    }
+
+    _manageAdjustButtons() {
+        const group = this.adjust;
+        var i, button;
+        //if (group.find("button").length == 0) { console.trace(); return; }
+        //console.log(group);
+        for (i = 0; i < group.find("button").length; i++) {
+            button = group.find("button").eq(i);
+            //console.log(group.data("value"));
+            //console.log(button.val());
+            if (group.data("value").toLowerCase() == button.val().toLowerCase()) {
+                //console.log("setting button", i, "to", group.data("unselectedClass"));
+                button.removeClass(group.data("unselectedClass"));
+                button.addClass(group.data("selectedClass"));
+            }
+            else {
+                //console.log("setting button", i, "to", group.data("selectedClass"));
+                button.removeClass(group.data("selectedClass"));
+                button.addClass(group.data("unselectedClass"));
+            }
+        }
+    }
+
+    _buildOptionButtons() {
+        const self = this;
+        const adjust = this.adjust.data("value");
+        const indices = this.options.data(adjust + "_indices");
+
+        if (this.options.data(adjust + "_selectedClass")) {
+            this.options.data("unselectedClass", this.options.data(adjust + "_unselectedClass"));
+            this.options.data("selectedClass", this.options.data(adjust + "_selectedClass"));
+        }
+        else {
+            this.options.data("unselectedClass", this.options.data("default_unselectedClass"));
+            this.options.data("selectedClass", this.options.data("default_selectedClass"));
+        }
+
+        this.options.data("value",
+            (this.options.data(adjust + "_lastValue")) ? this.options.data(adjust + "_lastValue") :
+            (this.options.data(adjust + "_default")) ? this.options.data(adjust + "_default") : "");
+        //console.log(adjust, indices, this.options.data("value"));
+        this.options.empty();
+        for (var i = 0; i < indices; i++) {
+            this.options.append("<button type = 'button' class = 'btn'></button>");
+        }
+
+        this.options.find("button").on("click", function (e) {
+            self.options.data("value", $(this).val());
+            $(this).blur();
+            self._manageOptionButtons();
+            self._doAdjustOption();
+        });
+
+        this._manageOptionButtons();
     }
 
     _manageButtons() {
@@ -425,10 +480,10 @@ class UserDataUtility {
         const oButtons = this.options.find("button");
         const selected = !!this.allSelectedRowIds.length;
         const unselected = !!this.allUnselectedRowIds.length;
-        const users    = [... new Set(this.localData.tierIds(0).concat(this.loadedData.tierIds(0)))];
-        const clients  = [... new Set(this.localData.tierIds(1).concat(this.loadedData.tierIds(1)))];
-        const issues   = [... new Set(this.localData.tierIds(2).concat(this.loadedData.tierIds(2)))];
-        const sessions = [... new Set(this.localData.tierIds(3).concat(this.loadedData.tierIds(3)))];
+        const users    = this.allUserRowIds;
+        const clients  = this.allClientRowIds;
+        const issues   = this.allIssueRowIds;
+        const sessions = this.allSessionRowIds;
         var button, i, text;
 
 //console.log(users, this.rowsAreExpanded(users), this.rowsAreCollapsed(users), this.rowsAreHidden(users));
@@ -491,39 +546,6 @@ class UserDataUtility {
 
     }
 
-    _buildOptionButtons() {
-        const self = this;
-        const adjust = this.adjust.data("value");
-        const indices = this.options.data(adjust + "_indices");
-
-        if (this.options.data(adjust + "_selectedClass")) {
-            this.options.data("unselectedClass", this.options.data(adjust + "_unselectedClass"));
-            this.options.data("selectedClass", this.options.data(adjust + "_selectedClass"));
-        }
-        else {
-            this.options.data("unselectedClass", this.options.data("default_unselectedClass"));
-            this.options.data("selectedClass", this.options.data("default_selectedClass"));
-        }
-
-        this.options.data("value",
-            (this.options.data(adjust + "_lastValue")) ? this.options.data(adjust + "_lastValue") :
-            (this.options.data(adjust + "_default")) ? this.options.data(adjust + "_default") : "");
-        //console.log(adjust, indices, this.options.data("value"));
-        this.options.empty();
-        for (var i = 0; i < indices; i++) {
-            this.options.append("<button type = 'button' class = 'btn'></button>");
-        }
-
-        this.options.find("button").on("click", function (e) {
-            self.options.data("value", $(this).val());
-            $(this).blur();
-            self._manageOptionButtons();
-            self._doAdjustOption();
-        });
-
-        this._manageOptionButtons();
-    }
-
     _manageOptionButtons() {
         var value, params, adjust, index, indices, state, states, name, i, button, lastIndex, selected;
         value = this.options.data("value");
@@ -581,27 +603,6 @@ class UserDataUtility {
             else {
                 button.removeClass(this.options.data("selectedClass"));
                 button.addClass(this.options.data("unselectedClass"));
-            }
-        }
-    }
-
-    _manageGroup(group) {
-        var i, button;
-        if (group.find("button").length == 0) { console.trace(); return; }
-        //console.log(group);
-        for (i = 0; i < group.find("button").length; i++) {
-            button = group.find("button").eq(i);
-            //console.log(group.data("value"));
-            //console.log(button.val());
-            if (group.data("value").toLowerCase() == button.val().toLowerCase()) {
-                //console.log("setting button", i, "to", group.data("unselectedClass"));
-                button.removeClass(group.data("unselectedClass"));
-                button.addClass(group.data("selectedClass"));
-            }
-            else {
-                //console.log("setting button", i, "to", group.data("selectedClass"));
-                button.removeClass(group.data("selectedClass"));
-                button.addClass(group.data("unselectedClass"));
             }
         }
     }
@@ -1130,6 +1131,7 @@ class UserDataUtility {
     localDescendantIds(id)  { return this.localData.descendantIds(id); }
     loadedDescendantIds(id) { return this.loadedData.descendantIds(id); }
 
+    get allUserRowIds()           { return [...new Set(this.localData.tierIds(0).concat(this.loadedData.tierIds(0)))]; }
     get allClientRowIds()         { return [...new Set(this.localData.tierIds(1).concat(this.loadedData.tierIds(1)))]; }
     get allIssueRowIds()          { return [...new Set(this.localData.tierIds(2).concat(this.loadedData.tierIds(2)))]; }
     get allSessionRowIds()        { return [...new Set(this.localData.tierIds(3).concat(this.loadedData.tierIds(3)))]; }
@@ -1166,14 +1168,15 @@ class UserDataUtility {
             this.expandRow(id);
         }
         else if (["expand", "collapse", "hide"].includes(adjust)) {
-            const ids = (option == "clients")    ? this.allClientRowIds
-                      : (option == "issues")     ? this.allIssueRowIds
-                      : (option == "sessions")   ? this.allSessionRowIds
-                      : (option == "different")  ? this.allDifferentRowIds
-                      : (option == "identical")  ? this.allIdenticalRowIds
-                      : (option == "selected")   ? this.allSelectedRowIds
-                      : (option == "unselected") ? this.allUnselectedRowIds : [];
-
+            const ids = (option.startsWith("user"))       ? this.allUserRowIds
+                      : (option.startsWith("client"))     ? this.allClientRowIds
+                      : (option.startsWith("issues"))     ? this.allIssueRowIds
+                      : (option.startsWith("sessions"))   ? this.allSessionRowIds
+                      : (option.startsWith("different"))  ? this.allDifferentRowIds
+                      : (option.startsWith("identical"))  ? this.allIdenticalRowIds
+                      : (option.startsWith("selected"))   ? this.allSelectedRowIds
+                      : (option.startsWith("unselected")) ? this.allUnselectedRowIds : [];
+console.log(adjust, ids);
             switch (adjust) {
                 case "expand":   this.expandRows(ids);   break;
                 case "collapse": this.collapseRows(ids); break;
@@ -1257,6 +1260,7 @@ class UserDataUtility {
               this.delete
             }
         }
+        this._manageButtons();
     }
 
     parseDate(ts) {
