@@ -6,7 +6,7 @@ class UserDataUtility {
     _group = null;
     localData;
     loadedData;
-    deletedRecords = [];
+    deletedRecords = 0;
     localDataHasChanged = false;
 
     _buttonIcon    = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-person-lines-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm2 9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/></svg>';
@@ -276,12 +276,12 @@ class UserDataUtility {
         this.options.data("expand_7_value", "expand different");
 
         this.options.data("collapse_indices", 7);
-        this.options.data("collapse_0_html", "Sessions");
-        this.options.data("collapse_0_value", "collapse sessions");
+        this.options.data("collapse_0_html", "Clients");
+        this.options.data("collapse_0_value", "collapse clients");
         this.options.data("collapse_1_html", "Issues");
         this.options.data("collapse_1_value", "collapse issues");
-        this.options.data("collapse_2_html", "Clients");
-        this.options.data("collapse_2_value", "collapse clients");
+        this.options.data("collapse_2_html", "Sessions");
+        this.options.data("collapse_2_value", "collapse sessions");
         this.options.data("collapse_3_html", "Selected");
         this.options.data("collapse_3_value", "collapse selected");
         this.options.data("collapse_4_html", "Unselected");
@@ -292,12 +292,12 @@ class UserDataUtility {
         this.options.data("collapse_6_value", "collapse different");
 
         this.options.data("hide_indices", 7);
-        this.options.data("hide_0_html", "Sessions");
-        this.options.data("hide_0_value", "hide sessions");
+        this.options.data("hide_0_html", "Clients");
+        this.options.data("hide_0_value", "hide clients");
         this.options.data("hide_1_html", "Issues");
         this.options.data("hide_1_value", "hide issues");
-        this.options.data("hide_2_html", "Clients");
-        this.options.data("hide_2_value", "hide clients");
+        this.options.data("hide_2_html", "Sessions");
+        this.options.data("hide_2_value", "hide sessions");
         this.options.data("hide_3_html", "Selected");
         this.options.data("hide_3_value", "hide selected");
         this.options.data("hide_4_html", "Unselected");
@@ -421,32 +421,57 @@ class UserDataUtility {
         const oButtons = this.options.find("button");
         const selected = !!this.allSelectedRowIds.length;
         const unselected = !!this.allUnselectedRowIds.length;
-        var button, i;
+        const users    = [... new Set([this.localData.tierIds(0).concat(this.loadedData.tierIds(0))])];
+        const clients  = [... new Set([this.localData.tierIds(1).concat(this.loadedData.tierIds(1))])];
+        const issues   = [... new Set([this.localData.tierIds(2).concat(this.loadedData.tierIds(2))])];
+        const sessions = [... new Set([this.localData.tierIds(3).concat(this.loadedData.tierIds(3))])];
+        var button, i, text;
+console.log(adjust, this.localDataHasChanged, !this.localDataHasChanged);
+        //Options buttons
+        for (i = 0; i < oButtons.length; i++) {
+            button = oButtons.eq(i);
+            text = button.text();
+            //console.log(adjust, button.text(), loaded);
+            if (text == "Local"            &&  loaded)                        { button.text("All"); };
+            if (text == "All"              && !loaded)                        { button.text("Local"); };
+            if (text == "Loaded")       { if (!loaded)                        { button.hide(); } else { button.show(); } }
+            if (text == "Older")        { if (!loaded)                        { button.hide(); } else { button.show(); } }
+            if (text == "Newer")        { if (!loaded)                        { button.hide(); } else { button.show(); } }
+            if (text == "Different")    { if (!loaded)                        { button.hide(); } else { button.show(); } }
+            if (text == "Identical")    { if (!loaded)                        { button.hide(); } else { button.show(); } }
+            if (text == "Selected")     { if (!selected)                      { button.hide(); } else { button.show(); } }
+            if (text == "Unselected")   { if (!unselected)                    { button.hide(); } else { button.show(); } }
+            if (adjust == "merge")      { if (!loaded)                        { button.hide(); } else { button.show(); } }
+            if (adjust == "import" && ["All", "Local"].includes(text))  { if (!this.localDataHasChanged) { button.hide(); } else { button.show(); } }
+            if (adjust == "import" && text == "Loaded") { if (!loaded) { button.hide(); } else { button.show(); } }
+            if (adjust == "expand") {
+                if (text == "User")     { if (this.rowsAreExpanded(users))    { button.hide(); } else { button.show(); } }
+                if (text == "Clients")  { if (this.rowsAreExpanded(clients))  { button.hide(); } else { button.show(); } }
+                if (text == "Issues")   { if (this.rowsAreExpanded(issues))   { button.hide(); } else { button.show(); } }
+                if (text == "Sessions") { if (this.rowsAreExpanded(sessions)) { button.hide(); } else { button.show(); } }
+            }
+            if (adjust == "collapse") {
+                if (text == "User")     { if (this.rowsAreCollapsed(users))    { button.hide(); } else { button.show(); } }
+                if (text == "Clients")  { if (this.rowsAreCollapsed(clients))  { button.hide(); } else { button.show(); } }
+                if (text == "Issues")   { if (this.rowsAreCollapsed(issues))   { button.hide(); } else { button.show(); } }
+                if (text == "Sessions") { if (this.rowsAreCollapsed(sessions)) { button.hide(); } else { button.show(); } }
+            }
+            if (adjust == "hide") {
+                if (text == "User")     { if (this.rowsAreHidden(users))       { button.hide(); } else { button.show(); } }
+                if (text == "Clients")  { if (this.rowsAreHidden(clients))     { button.hide(); } else { button.show(); } }
+                if (text == "Issues")   { if (this.rowsAreHidden(issues))      { button.hide(); } else { button.show(); } }
+                if (text == "Sessions") { if (this.rowsAreHidden(sessions))    { button.hide(); } else { button.show(); } }
+            }
+            if (adjust == "delete" && text == "Undo") { if (this.deletedRecords == 0) { button.hide(); } else { button.show(); } }
+        }
 
         //Adjust buttons
         for (i = 0; i < aButtons.length; i++) {
             button = aButtons.eq(i);
-            if (button.text() == "Merge"  && !loaded)                              { button.hide(); } else { button.show(); }
-            if (button.text() == "Import" && !loaded && !this.localDataHasChanged) { button.hide(); } else { button.show(); }
+            if (button.text() == "Merge")  { if (!loaded) { button.hide(); } else { button.show(); } }
+            if (button.text() == "Import") { if (!loaded && !this.localDataHasChanged) { button.hide(); } else { button.show(); } }
         }
 
-        //Options buttons
-        for (i = 0; i < oButtons.length; i++) {
-            button = oButtons.eq(i);
-            //console.log(adjust, button.text(), loaded);
-            if (button.text() == "Local"          &&  loaded)     { button.text("All"); };
-            if (button.text() == "All"            && !loaded)     { button.text("Local"); };
-            if (button.text() == "Loaded")     { if (!loaded)     { button.hide(); } else { button.show(); } }
-            if (button.text() == "Older")      { if (!loaded)     { button.hide(); } else { button.show(); } }
-            if (button.text() == "Newer")      { if (!loaded)     { button.hide(); } else { button.show(); } }
-            if (button.text() == "Different")  { if (!loaded)     { button.hide(); } else { button.show(); } }
-            if (button.text() == "Identical")  { if (!loaded)     { button.hide(); } else { button.show(); } }
-            if (button.text() == "Selected")   { if (!selected)   { button.hide(); } else { button.show(); } }
-            if (button.text() == "Unselected") { if (!unselected) { button.hide(); } else { button.show(); } }
-            if (adjust == "merge")                            { button.prop("disabled", !loaded); }
-            if (adjust == "import" && ["All", "Local"].includes(button.text()))  { button.prop("disabled", !this.localDataHasChanged); }
-            if (adjust == "import" && button.text() == "Loaded") { button.prop("disabled", !loaded); }
-        }
     }
 
     _buildOptionButtons() {
