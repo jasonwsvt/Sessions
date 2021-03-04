@@ -88,7 +88,7 @@ class List {
     }
     
     values    = ()       => { return this._items.map(item => item.value); }
-    hasValue  = (value)  => { return this._index(value, this._items) != -1; }
+    hasValue  = (value)  => { return this._index(value, this._items) >= 0; }
     key       = (value)  => { return this._items[this._index(value, this._items)].key; }
     dropValue = (value)  => {
         const len = this._items.length;

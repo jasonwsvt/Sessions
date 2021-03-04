@@ -15,7 +15,7 @@ class DataTree {
     isEmpty() { return Object.keys(this._data) == 0; }
     clear() { this._data = {}; this._deleted = []; this._indexPaths = []; this._idPaths = []; this._select.clear(); }
 
-    export()                            { return this._data; }
+    export()                            { return Object.assign({}, this._data); }
     exportJSON(modifier)                { //true: uses encoding; integer or tab: export pretty JSON.
         const char = (isInteger(modifier) || modifier == '\t') ? modifier : null;
         const data = JSON.stringify(this._data, null, char);
@@ -33,7 +33,8 @@ class DataTree {
         }
     }
 
-    import(data) {
+    import(object) {
+        var data = Object.assign({}, object);
         if (!data.hasOwnProperty("id")) {
             data.id = this._newId();
         }
