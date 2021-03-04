@@ -145,30 +145,31 @@ class UserDataUtility {
         const div = "<div id = '" + this._divID + "' class = 'container userDataUtilityMenu hidden'></div>";
 
         var adjust = "<button class='btn btn-sm btn-primary' type='button' id = '" + this._adjustMenuButtonID + "'>Sort " + this._caretDownIcon + "</button>";
-        adjust += "<div id = '" + this._adjustID + "' class = 'hidden'></div>";
+        adjust += "<div id = '" + this._adjustID + "' class = 'hidden' style = 'width: 610px'></div>";
 
         const options = "<div id = '" + this._optionsID + "' class='btn-group btn-group-sm' role='group'></div>";
         //const options = "<div id = '" + this._optionsID + "'></div>";
 
-        const actions = "<div id = '" + this._actionsID + "' class='btn-group btn-group-sm' role='group'></div>";
-        const action1 = "<button type = 'button' class = 'btn btn-secondary' value = 'import'>Import</button>";
-        const action2 = "<button type = 'button' class = 'btn btn-secondary' value = 'export'>Export</button>";
-        const action3 = "<button type = 'button' class = 'btn btn-secondary' value = 'delete'>Delete</button>";
+        //const actions = "<div id = '" + this._actionsID + "' class='btn-group btn-group-sm' role='group'></div>";
+        //const action1 = "<button type = 'button' class = 'btn btn-secondary' value = 'import'>Import</button>";
+        //const action2 = "<button type = 'button' class = 'btn btn-secondary' value = 'export'>Export</button>";
+        //const action3 = "<button type = 'button' class = 'btn btn-secondary' value = 'delete'>Delete</button>";
 
-        const acknowledge = "<button id = '" + this._acknowledgeID + "' type = 'button' class = 'btn btn-secondary'>Acknowledge</button>";
+        //acknowledge = "<button id = '" + this._acknowledgeID + "' type = 'button' class = 'btn btn-secondary'>Acknowledge</button>";
 
-        const execute = "<button id = '" + this._executeID + "' type = 'button' class = 'btn btn-secondary'></button>";
+        //const execute = "<button id = '" + this._executeID + "' type = 'button' class = 'btn btn-secondary'></button>";
 
         const topLeft = "<div class = 'd-flex flex-row'>" + adjust + "</div>";
         const topRight = "<div>" + options + "</div>";
         const top = "<div class = 'd-flex flex-row justify-content-between'>" + topLeft + topRight + "</div>";
         const scrollDiv = "<div id = '" + this._scrollAreaDivID + "'></div>";
-        const messagesDiv = "<div id = '" + this._messagesDivID + "' style = 'text-align: center'></div>";
-        const actionDiv = "<div id = '" + this._actionDivID + "' class = 'd-flex justify-content-start'>" + actions + acknowledge + execute + "</div>";
+        //const messagesDiv = "<div id = '" + this._messagesDivID + "' style = 'text-align: center'></div>";
+        //const actionDiv = "<div id = '" + this._actionDivID + "' class = 'd-flex justify-content-start'>" + actions + acknowledge + execute + "</div>";
 
         this.userUtilities.div.append(button + div);
-        this.div.append(top + scrollDiv + messagesDiv + actionDiv + loadDiv);
-        this.actions.append(action1 + action2 + action3);
+        //this.div.append(top + scrollDiv + messagesDiv + actionDiv + loadDiv);
+        this.div.append(top + scrollDiv + loadDiv);
+        //this.actions.append(action1 + action2 + action3);
 
         const adjust0 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'sort'>Sort</button>";
         const adjust1 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'expand'>Expand</button>";
@@ -187,8 +188,8 @@ class UserDataUtility {
 
         this.setUpOptionsData();
 
-        this.actions.data("unselectedClass", "btn-secondary");
-        this.actions.data("selectedClass", "btn-primary");
+        //this.actions.data("unselectedClass", "btn-secondary");
+        //this.actions.data("selectedClass", "btn-primary");
 
         this.loadDiv.append(loadButton);
         this.loadButton.prop("data-toggle", "popover");
@@ -200,9 +201,9 @@ class UserDataUtility {
             this.loadButton.prop("data-content", "Load data.");
         }
 
-//        this.div.append(exportButton);
-//        this.exportButton.prop("data-toggle", "popover");
-//        this.exportButton.prop("data-content", "Export data.");
+        //this.div.append(exportButton);
+        //this.exportButton.prop("data-toggle", "popover");
+        //this.exportButton.prop("data-content", "Export data.");
 
         this.div.css("left", String(this.userUtilities.div.position().left) + "px");
         this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
@@ -212,8 +213,8 @@ class UserDataUtility {
     setUpOptionsData() {
         const loaded = !this.loadedData.isEmpty();
         //console.log(this.adjust.children().eq(5));
-        if (loaded) { this.adjust.children().eq(5).removeClass("hidden"); }
-        else { this.adjust.eq(5).addClass("hidden"); }
+        //if (loaded) { this.adjust.children().eq(5).removeClass("hidden"); }
+        //else { this.adjust.eq(5).addClass("hidden"); }
 
         this.options.removeData();
 
