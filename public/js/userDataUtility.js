@@ -1244,27 +1244,39 @@ if (this.allIds.length == 0) { console.trace(); }
             this.updateChildrenSelectStatuses(parentIds);
         }
         else if (adjust == "export") {
-            if (option == "local") { this._exportJSON(this.localData); }
-            if (option == "loaded") { this._exportJSON(this.loadedData); }
+            this._exportJSON((option == "local") ? this.localData : this.loadedData);
+        }
+        else if (adjust == "import") {
+            this.app.data.import((option == "local") ? this.localData : this.loadedData);
+            this.app.user.requestBackup();            
         }
         else if (adjust == "delete") {
             if (option == "undo") { this.undoDelete(); }
             else {
-                const records = (option == "local")    ? this.allLocalRecords
-                              : (option == "loaded")   ? this.allLoadedRecords
-                              : (option == "selected") ? this.allSelectedRowIds.map(id =>
-                                                          (this.localData.isSelected(id)
-                                                              ? this.localRecord(id) : this.loadedRecord(id)))
-                              : (option == "newer")    ? this.allIds.map(id =>
-                                                          (!this.loadedData.has(id) || this.loadedRecordIsOlder(id))
-                                                              ? this.localRecord(id)
-                                                              : this.loadedRecord(id))
-                              : (option == "older")    ? this.allIds.map(id =>
-                                                          (!this.loadedData.has(id) || this.loadedRecordIsNewer(id))
-                                                              ? this.localRecord(id)
-                                                              : this.loadedRecord(id))
-                              : [];
-              this.delete
+                var local = [], loaded = [];
+                switch (option) {
+                    case "local": local = this.localData.tierIds(0); break;
+                    case "loaded": loaded = this.loadedData.tierIds(0); break;
+                    case "selected":
+                        local = this.localData.selected();
+                        loaded = this.loadedData.selected();
+                        break;
+                    case "newer":
+                        const newerIds = this.loadedData.newerIds(this.localData);
+                        this.allIds.forEach(id => {
+                            if (!this.loadedData.has(id) || !newerIds.includes(id)) { local.push(id); }
+                            else { loaded.push(id); }
+                        });
+                        break;
+                    case "older":
+                        const olderIds = this.loadedData.olderIds(this.localData);
+                        this.allIds.forEach(id => {
+                            if (!this.loadedData.has(id) || !olderIds.includes(id)) { local.push(id); }
+                            else { loaded.push(id); }
+                        });
+                        break;
+                }
+                this.deleteRecords(local, loaded);
             }
         }
         this._manageButtons();
