@@ -111,6 +111,7 @@ class UserDataUtility {
 
             self.loadButton.on("click", function() {
                 self._loadJSON();
+                self._manageButtons();
                 $(this).blur();
             });
         }); 
