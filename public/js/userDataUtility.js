@@ -36,12 +36,12 @@ class UserDataUtility {
     _adjustMenuButtonID        = "userDataUtilityAdjustMenuButton";
     _adjustID                  = "userDataUtilityAdjustMenu";
     _optionsID                 = "userDataUtilityOptions";
-    _actionsID                 = "userDataUtilityActions";
-    _acknowledgeID             = "userDataUtilityAcknowledge";
-    _executeID                 = "userDataUtilityexecute";
+    //_actionsID                 = "userDataUtilityActions";
+    //_acknowledgeID             = "userDataUtilityAcknowledge";
+    //_executeID                 = "userDataUtilityexecute";
     _scrollAreaDivID           = "userDataUtilityScrollAreaDiv";
     _messagesDivID             = "userDataUtilityMessagesDiv";
-    _actionDivID               = "userDataUtilityActionDiv";
+    //_actionDivID               = "userDataUtilityActionDiv";
     _rowButtonClass            = "userDataUtilityrowButton";
     _childrenRowsButtonClass   = "childrenRowsButton";
     _localSelectClass          = "localSelectClass";
@@ -93,7 +93,8 @@ class UserDataUtility {
 
             self.adjustMenuButton.on("click", function (e) {
                 //console.log("button clicked");
-                self.options.addClass("hidden");
+                //self.options.addClass("hidden");
+                self._manageButtons();
                 self.adjust.removeClass("hidden");
                 $(this).blur();
             }); 
@@ -104,7 +105,7 @@ class UserDataUtility {
                 $(this).blur();
                 self.adjustMenuButton.html($(this).html() + self._caretDownIcon);
                 self.adjust.addClass("hidden");
-                self.options.removeClass("hidden");
+                //self.options.removeClass("hidden");
                 self.manage();
             }); 
 
@@ -127,13 +128,13 @@ class UserDataUtility {
     get loadDiv()               { return $("#" + this._loadDivID); }
     get adjustMenuButton()      { return $("#" + this._adjustMenuButtonID); }
     get adjust()                { return $("#" + this._adjustID); }
-    get actions()               { return $("#" + this._actionsID); }
+    //get actions()               { return $("#" + this._actionsID); }
     get options()               { return $("#" + this._optionsID); }
-    get acknowledge()           { return $("#" + this._acknowledgeID); }
-    get execute()               { return $("#" + this._executeID); }
+    //get acknowledge()           { return $("#" + this._acknowledgeID); }
+    //get execute()               { return $("#" + this._executeID); }
     get scrollAreaDiv()         { return $("#" + this._scrollAreaDivID); }
     get messagesDiv()           { return $("#" + this._messagesDivID); }
-    get actionDiv()             { return $("#" + this._actionDivID); }
+    //get actionDiv()             { return $("#" + this._actionDivID); }
     get rows()                  { return this.scrollAreaDiv.children(); }
 
     _build() {
@@ -408,8 +409,8 @@ class UserDataUtility {
 
         this.manage();
 
-        if (!this.actionDiv.hasClass("hidden")) { this.actionDiv.addClass("hidden"); }
-        this.actions.data("value", "");
+        //if (!this.actionDiv.hasClass("hidden")) { this.actionDiv.addClass("hidden"); }
+        //this.actions.data("value", "");
     }
 
     manage() {
@@ -537,12 +538,16 @@ class UserDataUtility {
             }
             if (adjust == "delete" && text == "Undo") { if (this.deletedRecords == 0)  { button.hide(); } else { button.show(); } }
         }
-
+if (this.allIds.length == 0) { console.trace(); }
+        console.log(this.allIds, this.allIds.length, this.rowsAreExpanded(this.allIds), this.rowsAreCollapsed(this.allIds), this.rowsAreHidden(this.allIds));
         //Adjust buttons
         for (i = 0; i < aButtons.length; i++) {
             button = aButtons.eq(i);
-            if (button.text() == "Merge")  { if (!loaded) { button.hide(); } else { button.show(); } }
-            if (button.text() == "Import") { if (!loaded && !this.localDataHasChanged) { button.hide(); } else { button.show(); } }
+            if (button.text() == "Merge")    { if (!loaded)                              { button.hide(); } else { button.show(); } }
+            if (button.text() == "Import")   { if (!loaded && !this.localDataHasChanged) { button.hide(); } else { button.show(); } }
+            if (button.text() == "Expand")   { if (this.rowsAreExpanded(this.allIds))    { button.hide(); } else { button.show(); } }
+            if (button.text() == "Hide")     { if (this.rowsAreHidden(this.allIds))      { button.hide(); } else { button.show(); } }
+            if (button.text() == "Collapse") { if (this.rowsAreCollapsed(this.allIds))   { button.hide(); } else { button.show(); } }
         }
 
     }
@@ -1177,7 +1182,7 @@ class UserDataUtility {
                       : (option.startsWith("identical"))  ? this.allIdenticalRowIds
                       : (option.startsWith("selected"))   ? this.allSelectedRowIds
                       : (option.startsWith("unselected")) ? this.allUnselectedRowIds : [];
-console.log(adjust, ids);
+//console.log(adjust, ids);
             switch (adjust) {
                 case "expand":   this.expandRows(ids);   break;
                 case "collapse": this.collapseRows(ids); break;
@@ -1238,8 +1243,8 @@ console.log(adjust, ids);
             this.updateChildrenSelectStatuses(parentIds);
         }
         else if (adjust == "export") {
-            if (option == "local") { this._exportJSON(this.localData.export()); }
-            if (option == "loaded") { this._exportJSON(this.loadedData.export()); }
+            if (option == "local") { this._exportJSON(this.localData); }
+            if (option == "loaded") { this._exportJSON(this.loadedData); }
         }
         else if (adjust == "delete") {
             if (option == "undo") { this.undoDelete(); }
@@ -1280,8 +1285,8 @@ console.log(adjust, ids);
     _escapeHTML(html) { return html.map(line => (jQuery(line).text())); }
 
     _exportJSON(data) {
-        const blob1 = new Blob([JSON.stringify(data, null, 2)], { type: "text/plain;charset=utf-8" });
-        const name = this.current.username + ".json";
+        const blob1 = new Blob([data.exportJSON("\t")], { type: "text/plain;charset=utf-8" });
+        const name = this.data.username + ".json";
         console.log(blob1);
  
         //Check the Browser.
