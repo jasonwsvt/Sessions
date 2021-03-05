@@ -30,9 +30,8 @@ class UserSettingsUtility {
     _localManualBackupID = "localManualBackup";
     _serverManualBackupID = "serverManualBackup";
 
-    constructor (userUtilities, group) {
+    constructor (userUtilities) {
         this._userUtilities = userUtilities;
-        this._group = group;
         this._type = "user";
         this._utilityID = "userUtility";
 

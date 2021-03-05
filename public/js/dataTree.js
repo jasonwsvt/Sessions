@@ -378,11 +378,11 @@ class DataTree {
         return this.dataCompareIds(dataTree, func, ids);
     }
 
-    newerIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, ">"); }
+    newerIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, ">", true, true, false); }
     mostRecentlyCreated(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, ">", true,  false, false); }
     mostRecentlyEdited(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, ">", false, true,  false); }
     mostRecentlyOpened(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, ">", false, false, true); }
-    olderIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, "<"); }
+    olderIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, "<", true, true, false); }
     leastRecentlyCreated(dataTree, ids) { return this.compareIdTimestamps(dataTree, ids, "<", true,  false, false); }
     leastRecentlyEdited(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "<", false, true,  false); }
     leastRecentlyOpened(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "<", false, false, true); }

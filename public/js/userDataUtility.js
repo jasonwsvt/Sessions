@@ -3,11 +3,10 @@
 
 class UserDataUtility {
     _userUtilities = null;
-    _group = null;
     localData;
     loadedData;
     _deletedRecords = [];
-    localDataHasChanged = false;
+    localDataHasChanged;
 
     _buttonIcon    = '<svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-person-lines-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm2 9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/></svg>';
     _fullIcon      = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2z"/></svg>';
@@ -44,10 +43,9 @@ class UserDataUtility {
     _loadedSelectClass         = "loadedSelectClass";
     _loadedChildrenSelectClass = "loadedChildrenSelectClass";
 
-    constructor (userUtilities, group) {
+    constructor (userUtilities) {
         const self = this;
         this._userUtilities = userUtilities;
-        this._group = group;
         this.localData = new DataTree;
         this.loadedData = new DataTree;
 
@@ -60,6 +58,7 @@ class UserDataUtility {
                     self.div.removeClass("hidden");
                     this.blur();
                     self.localData.import(self.data.export());
+                    self.localDataHasChanged = false;
                     self._buildRecordList();
                 }
                 else {
@@ -452,7 +451,11 @@ class UserDataUtility {
         const clients    = this.allClientRowIds;
         const issues     = this.allIssueRowIds;
         const sessions   = this.allSessionRowIds;
-        var button, i, text;
+        const older      = this.loadedData.olderIds(this.localData).length;
+        const newer      = this.loadedData.newerIds(this.localData).length;
+        const different  = this.loadedData.differentIds(this.localData).length;
+        const identical  = this.loadedData.identicalIds(this.localData).length;
+        var button, i, option;
 
 //console.log(users, this.rowsAreExpanded(users), this.rowsAreCollapsed(users), this.rowsAreHidden(users));
 //console.log(clients, this.rowsAreExpanded(clients), this.rowsAreCollapsed(clients), this.rowsAreHidden(clients));
@@ -463,45 +466,45 @@ class UserDataUtility {
         //Options buttons
         for (i = 0; i < oButtons.length; i++) {
             button = oButtons.eq(i);
-            text = button.text();
+            option = button.text();
             //console.log(action, button.text(), loaded);
-            if (text == "User"     && users.length    == 2) { button.text("Users"); }
-            if (text == "Users"    && users.length    == 1) { button.text("User"); }
-            if (text == "Client"   && clients.length  == 2) { button.text("Clients"); }
-            if (text == "Clients"  && clients.length  == 1) { button.text("Client"); }
-            if (text == "Issue"    && issues.length   == 2) { button.text("Issues"); }
-            if (text == "Issues"   && issues.length   == 1) { button.text("Issue"); }
-            if (text == "Session"  && sessions.length == 2) { button.text("Sessions"); }
-            if (text == "Sessions" && sessions.length == 1) { button.text("Session"); }
-            if (text == "Local"    &&  loaded)              { button.text("All"); }
-            if (text == "All"      && !loaded)              { button.text("Local"); }
+            if (option == "User"     && users.length    == 2) { button.text("Users"); }
+            if (option == "Users"    && users.length    == 1) { button.text("User"); }
+            if (option == "Client"   && clients.length  == 2) { button.text("Clients"); }
+            if (option == "Clients"  && clients.length  == 1) { button.text("Client"); }
+            if (option == "Issue"    && issues.length   == 2) { button.text("Issues"); }
+            if (option == "Issues"   && issues.length   == 1) { button.text("Issue"); }
+            if (option == "Session"  && sessions.length == 2) { button.text("Sessions"); }
+            if (option == "Sessions" && sessions.length == 1) { button.text("Session"); }
+            if (option == "Local"    && !loaded)              { button.text("All"); }
+            if (option == "All"      &&  loaded)              { button.text("Local"); }
             if (action == "import" && ["All", "Local"].includes(text))  { if (!this.localDataHasChanged) { button.hide(); } else { button.show(); } }
-            if (action == "import" && text == "Loaded") { if (!loaded)                  { button.hide(); } else { button.show(); } }
-            if (action == "merge")              { if (!loaded)                          { button.hide(); } else { button.show(); } }
-            if (text == "Loaded")               { if (!loaded)                          { button.hide(); } else { button.show(); } }
-            if (text == "Older")                { if (!loaded)                          { button.hide(); } else { button.show(); } }
-            if (text == "Newer")                { if (!loaded)                          { button.hide(); } else { button.show(); } }
-            if (text == "Different")            { if (!loaded)                          { button.hide(); } else { button.show(); } }
-            if (text == "Identical")            { if (!loaded)                          { button.hide(); } else { button.show(); } }
-            if (text == "Selected")             { if (!selected)                        { button.hide(); } else { button.show(); } }
-            if (text == "Unselected")           { if (!unselected)                      { button.hide(); } else { button.show(); } }
+//            if (action == "import" && option == "Loaded") { if (!loaded)                    { button.hide(); } else { button.show(); } }
+            if (action == "merge")                { if (!loaded)                          { button.hide(); } else { button.show(); } }
+            if (option == "Loaded")               { if (!loaded)                          { button.hide(); } else { button.show(); } }
+            if (option == "Older")                { if (!loaded || !older)                { button.hide(); } else { button.show(); } }
+            if (option == "Newer")                { if (!loaded || !newer)                { button.hide(); } else { button.show(); } }
+            if (option == "Different")            { if (!loaded || !different)            { button.hide(); } else { button.show(); } }
+            if (option == "Identical")            { if (!loaded || !identical)            { button.hide(); } else { button.show(); } }
+            if (option == "Selected")             { if (!selected)                        { button.hide(); } else { button.show(); } }
+            if (option == "Unselected")           { if (!unselected)                      { button.hide(); } else { button.show(); } }
             if (action == "expand") {
-                if (text.startsWith("User"))    { if (this.rowsAreExpanded(users))      { button.hide(); } else { button.show(); } }
-                if (text.startsWith("Client"))  { if (this.rowsAreExpanded(clients))    { button.hide(); } else { button.show(); } }
-                if (text.startsWith("Issue"))   { if (this.rowsAreExpanded(issues))     { button.hide(); } else { button.show(); } }
-                if (text.startsWith("Session")) { if (this.rowsAreExpanded(sessions))   { button.hide(); } else { button.show(); } }
+                if (option.startsWith("User"))    { if (this.rowsAreExpanded(users))      { button.hide(); } else { button.show(); } }
+                if (option.startsWith("Client"))  { if (this.rowsAreExpanded(clients))    { button.hide(); } else { button.show(); } }
+                if (option.startsWith("Issue"))   { if (this.rowsAreExpanded(issues))     { button.hide(); } else { button.show(); } }
+                if (option.startsWith("Session")) { if (this.rowsAreExpanded(sessions))   { button.hide(); } else { button.show(); } }
             }
             if (action == "collapse") {
-                if (text.startsWith("User"))    { if (this.rowsAreCollapsed(users))     { button.hide(); } else { button.show(); } }
-                if (text.startsWith("Client"))  { if (this.rowsAreCollapsed(clients))   { button.hide(); } else { button.show(); } }
-                if (text.startsWith("Issue"))   { if (this.rowsAreCollapsed(issues))    { button.hide(); } else { button.show(); } }
-                if (text.startsWith("Session")) { if (this.rowsAreCollapsed(sessions))  { button.hide(); } else { button.show(); } }
+                if (option.startsWith("User"))    { if (this.rowsAreCollapsed(users))     { button.hide(); } else { button.show(); } }
+                if (option.startsWith("Client"))  { if (this.rowsAreCollapsed(clients))   { button.hide(); } else { button.show(); } }
+                if (option.startsWith("Issue"))   { if (this.rowsAreCollapsed(issues))    { button.hide(); } else { button.show(); } }
+                if (option.startsWith("Session")) { if (this.rowsAreCollapsed(sessions))  { button.hide(); } else { button.show(); } }
             }
             if (action == "hide") {
-                if (text.startsWith("User"))    { if (this.rowsAreHidden(users))        { button.hide(); } else { button.show(); } }
-                if (text.startsWith("Client"))  { if (this.rowsAreHidden(clients))      { button.hide(); } else { button.show(); } }
-                if (text.startsWith("Issue"))   { if (this.rowsAreHidden(issues))       { button.hide(); } else { button.show(); } }
-                if (text.startsWith("Session")) { if (this.rowsAreHidden(sessions))     { button.hide(); } else { button.show(); } }
+                if (option.startsWith("User"))    { if (this.rowsAreHidden(users))        { button.hide(); } else { button.show(); } }
+                if (option.startsWith("Client"))  { if (this.rowsAreHidden(clients))      { button.hide(); } else { button.show(); } }
+                if (option.startsWith("Issue"))   { if (this.rowsAreHidden(issues))       { button.hide(); } else { button.show(); } }
+                if (option.startsWith("Session")) { if (this.rowsAreHidden(sessions))     { button.hide(); } else { button.show(); } }
             }
             if (action == "delete" && text == "Undo") { if (this._deletedRecords == []) { button.hide(); } else { button.show(); } }
         }
@@ -1125,7 +1128,7 @@ if (this.allIds.length == 0) { console.trace(); }
     get allUnselectedRowIds()     { return this.allIds.filter(id => !this.rowIsSelected(id)); }
 
     _doActionOption() {
-        var parentIds, local = [], loaded = [];
+        var parentIds = this.allRowParentIds, local = [], loaded = [];
         const action = this.action.data("value");
         const option = this.options.data(this.options.data("value")).substr(action.length + 1, this.options.data(this.options.data("value")).length - 1)
         console.log(action, this.options.data(this.options.data("value")), "'" + action + "'", "'" + option + "'");
@@ -1171,24 +1174,24 @@ if (this.allIds.length == 0) { console.trace(); }
                 case "identical": loaded = this.loadedData.identicalIds(this.localData); break;
                 case "unselected":
                     if (!this.loadedData.isEmpty()) {
+                        const unselected = this.allUnselectedRowIds();
                         loaded = this.localData.selected();
                         local = this.loadedData.selected();
                         this.unselectLocalRecords(loaded);
                         this.unselectLoadedRecords(local);
+                        unselected.forEach(id => !this.localData.has(id) ? loaded.push(id) : local.push(id));
                     }
                     else {
                         const selected = this.localData.selected();
                         local = this.allIds.filter(id => !selected.includes(id));
                         this.unselectRows(selected);
-                        parentIds = this.allRowParentIds;
                     }
                     break;
                 case "none": this.unselectRows(this.allIds); break;
             }
             if (local.length) { this.selectLocalRecords(local); }
             if (loaded.length) { this.selectLoadedRecords(loaded); }
-            parentIds = this.localData.parentIds(local).concat(this.loadedData.parentIds(loaded));
-            this.updateChildrenSelectStatuses(parentIds);
+            this.updateChildrenSelectStatuses(this.allRowParentIds);
         }
         else if (action == "export") {
             const data = (option == "local") ? this.localData : this.loadedData;
@@ -1197,14 +1200,17 @@ if (this.allIds.length == 0) { console.trace(); }
         else if (action == "merge") {
             var ids;
             switch (option) {
-                case "loaded":    ids = this.loadedData.ids(); break;
-                case "newer":     ids = this.loadedData.newerIds(this.localData); break;
-                case "older":     ids = this.loadedData.olderIds(this.localData); break;
+                case "loaded":    ids = this.loadedData.ids();                        break;
+                case "newer":     ids = this.loadedData.newerIds(this.localData);     break;
+                case "older":     ids = this.loadedData.olderIds(this.localData);     break;
                 case "different": ids = this.loadedData.differentIds(this.localData); break;
-                case "selected":  ids = this.loadedData.selected(); break;
-                case "absent":    ids = this.loadedData.absentIds(); break;
+                case "selected":  ids = this.loadedData.selected();                   break;
+                case "absent":    ids = this.loadedData.absentIds();                  break;
             }
-            this.localData.merge(this.loadedData, ids);
+            if (ids.length) {
+                this.localData.merge(this.loadedData, ids);
+                this.localDataHasChanged = true;
+            }
             this._buildRecordList();
         }
         else if (action == "import") {
@@ -1218,8 +1224,13 @@ if (this.allIds.length == 0) { console.trace(); }
             else {
                 var local = [], loaded = [];
                 switch (option) {
-                    case "local": local = this.localData.tierIds(0); break;
-                    case "loaded": loaded = this.loadedData.tierIds(0); break;
+                    case "local":
+                        local = this.localData.tierIds(0);
+                        if (local.length) { this.localDataHasChanged = true; }
+                        break;
+                    case "loaded":
+                        loaded = this.loadedData.tierIds(0);
+                        break;
                     case "selected":
                         local = this.localData.selected();
                         loaded = this.loadedData.selected();
@@ -1230,6 +1241,7 @@ if (this.allIds.length == 0) { console.trace(); }
                             if (!this.loadedData.has(id) || !newerIds.includes(id)) { local.push(id); }
                             else { loaded.push(id); }
                         });
+                        if (local.length) { this.localDataHasChanged = true; }
                         break;
                     case "older":
                         const olderIds = this.loadedData.olderIds(this.localData);
@@ -1237,6 +1249,7 @@ if (this.allIds.length == 0) { console.trace(); }
                             if (!this.loadedData.has(id) || !olderIds.includes(id)) { local.push(id); }
                             else { loaded.push(id); }
                         });
+                        if (local.length) { this.localDataHasChanged = true; }
                         break;
                 }
                 this.deleteRecords(local, loaded);
