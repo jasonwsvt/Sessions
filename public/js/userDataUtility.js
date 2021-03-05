@@ -33,15 +33,10 @@ class UserDataUtility {
     _loadDivID                 = "userDataLoadDiv";
     _loadButtonID              = "userDataLoadButton";
     _exportButtonID            = "userDataExportButton";
-    _adjustMenuButtonID        = "userDataUtilityAdjustMenuButton";
-    _adjustID                  = "userDataUtilityAdjustMenu";
+    _actionMenuButtonID        = "userDataUtilityActionMenuButton";
+    _actionID                  = "userDataUtilityActionMenu";
     _optionsID                 = "userDataUtilityOptions";
-    //_actionsID                 = "userDataUtilityActions";
-    //_acknowledgeID             = "userDataUtilityAcknowledge";
-    //_executeID                 = "userDataUtilityexecute";
     _scrollAreaDivID           = "userDataUtilityScrollAreaDiv";
-    _messagesDivID             = "userDataUtilityMessagesDiv";
-    //_actionDivID               = "userDataUtilityActionDiv";
     _rowButtonClass            = "userDataUtilityrowButton";
     _childrenRowsButtonClass   = "childrenRowsButton";
     _localSelectClass          = "localSelectClass";
@@ -91,20 +86,20 @@ class UserDataUtility {
                 e.stopPropagation();
             });
 
-            self.adjustMenuButton.on("click", function (e) {
+            self.actionMenuButton.on("click", function (e) {
                 //console.log("button clicked");
                 //self.options.addClass("hidden");
                 self._manageButtons();
-                self.adjust.removeClass("hidden");
+                self.action.removeClass("hidden");
                 $(this).blur();
             }); 
 
-            self.adjust.find("button").on("click", function (e) {
+            self.action.find("button").on("click", function (e) {
                 //console.log("button clicked");
-                self.adjust.data("value", $(this).val());
+                self.action.data("value", $(this).val());
                 $(this).blur();
-                self.adjustMenuButton.html($(this).html() + self._caretDownIcon);
-                self.adjust.addClass("hidden");
+                self.actionMenuButton.html($(this).html() + self._caretDownIcon);
+                self.action.addClass("hidden");
                 //self.options.removeClass("hidden");
                 self.manage();
             }); 
@@ -127,71 +122,49 @@ class UserDataUtility {
     get exportButton()          { return $("#" + this._exportButtonID); }
     get loadButton()            { return $("#" + this._loadButtonID); }
     get loadDiv()               { return $("#" + this._loadDivID); }
-    get adjustMenuButton()      { return $("#" + this._adjustMenuButtonID); }
-    get adjust()                { return $("#" + this._adjustID); }
-    //get actions()               { return $("#" + this._actionsID); }
+    get actionMenuButton()      { return $("#" + this._actionMenuButtonID); }
+    get action()                { return $("#" + this._actionID); }
     get options()               { return $("#" + this._optionsID); }
-    //get acknowledge()           { return $("#" + this._acknowledgeID); }
-    //get execute()               { return $("#" + this._executeID); }
     get scrollAreaDiv()         { return $("#" + this._scrollAreaDivID); }
     get messagesDiv()           { return $("#" + this._messagesDivID); }
-    //get actionDiv()             { return $("#" + this._actionDivID); }
     get rows()                  { return this.scrollAreaDiv.children(); }
 
     _build() {
         const loadDiv = "<div id = '" + this._loadDivID + "'></div>";
         const loadButton = "<button id = '" + this._loadButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._loadIcon + "</button>";
-        const exportButton = "<button id = '" + this._exportButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._exportIcon + "</button>";
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + this._buttonIcon + "</button>";
         const div = "<div id = '" + this._divID + "' class = 'container userDataUtilityMenu hidden'></div>";
 
-        var adjust = "<button class='btn btn-sm btn-primary' type='button' id = '" + this._adjustMenuButtonID + "'>Sort " + this._caretDownIcon + "</button>";
-        adjust += "<div id = '" + this._adjustID + "' class = 'hidden' style = 'width: 610px'></div>";
+        var action = "<button class='btn btn-sm btn-primary' type='button' id = '" + this._actionMenuButtonID + "'>Sort " + this._caretDownIcon + "</button>";
+        action += "<div id = '" + this._actionID + "' class = 'hidden' style = 'width: 610px'></div>";
 
         const options = "<div id = '" + this._optionsID + "' class='btn-group btn-group-sm' role='group'></div>";
-        //const options = "<div id = '" + this._optionsID + "'></div>";
 
-        //const actions = "<div id = '" + this._actionsID + "' class='btn-group btn-group-sm' role='group'></div>";
-        //const action1 = "<button type = 'button' class = 'btn btn-secondary' value = 'import'>Import</button>";
-        //const action2 = "<button type = 'button' class = 'btn btn-secondary' value = 'export'>Export</button>";
-        //const action3 = "<button type = 'button' class = 'btn btn-secondary' value = 'delete'>Delete</button>";
-
-        //acknowledge = "<button id = '" + this._acknowledgeID + "' type = 'button' class = 'btn btn-secondary'>Acknowledge</button>";
-
-        //const execute = "<button id = '" + this._executeID + "' type = 'button' class = 'btn btn-secondary'></button>";
-
-        const topLeft = "<div class = 'd-flex flex-row'>" + adjust + "</div>";
+        const topLeft = "<div class = 'd-flex flex-row'>" + action + "</div>";
         const topRight = "<div>" + options + "</div>";
         const top = "<div class = 'd-flex flex-row justify-content-between'>" + topLeft + topRight + "</div>";
         const scrollDiv = "<div id = '" + this._scrollAreaDivID + "'></div>";
-        //const messagesDiv = "<div id = '" + this._messagesDivID + "' style = 'text-align: center'></div>";
-        //const actionDiv = "<div id = '" + this._actionDivID + "' class = 'd-flex justify-content-start'>" + actions + acknowledge + execute + "</div>";
 
         this.userUtilities.div.append(button + div);
-        //this.div.append(top + scrollDiv + messagesDiv + actionDiv + loadDiv);
         this.div.append(top + scrollDiv + loadDiv);
-        //this.actions.append(action1 + action2 + action3);
 
-        const adjust0 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'sort'>Sort</button>";
-        const adjust1 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'expand'>Expand</button>";
-        const adjust2 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'collapse'>Collapse</button>";
-        const adjust3 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'hide'>Hide</button>";
-        const adjust4 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'select'>Select</button>";
-        const adjust5 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'import'>Import</button>";
-        const adjust6 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'merge'>Merge</button>";
-        const adjust7 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'export'>Export</button>";
-        const adjust8 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'delete'>Delete</button>";
-        this.adjust.append(adjust0, adjust1, adjust2, adjust3, adjust4, adjust5, adjust6, adjust7, adjust8);
+        const action0 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'sort'>Sort</button>";
+        const action1 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'expand'>Expand</button>";
+        const action2 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'collapse'>Collapse</button>";
+        const action3 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'hide'>Hide</button>";
+        const action4 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'select'>Select</button>";
+        const action5 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'import'>Import</button>";
+        const action6 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'merge'>Merge</button>";
+        const action7 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'export'>Export</button>";
+        const action8 = "<button type = 'button' class = 'btn btn-sm btn-secondary' value = 'delete'>Delete</button>";
+        this.action.append(action0, action1, action2, action3, action4, action5, action6, action7, action8);
 
-        this.adjust.data("unselectedClass", "btn-secondary");
-        this.adjust.data("selectedClass", "btn-primary");
-        this.adjust.data("default", "sort");
+        this.action.data("unselectedClass", "btn-secondary");
+        this.action.data("selectedClass", "btn-primary");
+        this.action.data("default", "sort");
 
         this.setUpOptionsData();
-
-        //this.actions.data("unselectedClass", "btn-secondary");
-        //this.actions.data("selectedClass", "btn-primary");
 
         this.loadDiv.append(loadButton);
         this.loadButton.prop("data-toggle", "popover");
@@ -203,10 +176,6 @@ class UserDataUtility {
             this.loadButton.prop("data-content", "Load data.");
         }
 
-        //this.div.append(exportButton);
-        //this.exportButton.prop("data-toggle", "popover");
-        //this.exportButton.prop("data-content", "Export data.");
-
         this.div.css("left", String(this.userUtilities.div.position().left) + "px");
         this.div.css("top", String(this.userUtilities.div.position().top + 32) + "px");
 
@@ -214,9 +183,9 @@ class UserDataUtility {
 
     setUpOptionsData() {
         const loaded = !this.loadedData.isEmpty();
-        //console.log(this.adjust.children().eq(5));
-        //if (loaded) { this.adjust.children().eq(5).removeClass("hidden"); }
-        //else { this.adjust.eq(5).addClass("hidden"); }
+        //console.log(this.action.children().eq(5));
+        //if (loaded) { this.action.children().eq(5).removeClass("hidden"); }
+        //else { this.action.eq(5).addClass("hidden"); }
 
         this.options.removeData();
 
@@ -394,35 +363,32 @@ class UserDataUtility {
         this.loadedData.clear();
         this.loadDiv.removeClass("hidden");
 
-        //set adjust default to sort
-        this.adjust.data("value", this.adjust.data("default"));
+        //set action default to sort
+        this.action.data("value", this.action.data("default"));
 
         //set default sort type
-        this.options.data("value", this.options.data(this.adjust.data("value") + "_default"));
+        this.options.data("value", this.options.data(this.action.data("value") + "_default"));
 
-        //console.log(this.adjust.data("value"), this.adjust.data(this.adjust.data("value")));
-        if (this.adjust.data("value") == "sort") {
-            this.options.data("value", this.adjust.data(this.adjust.data("value")));
+        //console.log(this.action.data("value"), this.action.data(this.action.data("value")));
+        if (this.action.data("value") == "sort") {
+            this.options.data("value", this.action.data(this.action.data("value")));
         }
         else {
             this.options.data("value", "");
         }
 
         this.manage();
-
-        //if (!this.actionDiv.hasClass("hidden")) { this.actionDiv.addClass("hidden"); }
-        //this.actions.data("value", "");
     }
 
     manage() {
-        this.adjust.data("index", this.adjust.find("button").index(this));
-        this._manageAdjustButtons();
+        this.action.data("index", this.action.find("button").index(this));
+        this._manageActionButtons();
         this._buildOptionButtons();
         this._manageButtons();
     }
 
-    _manageAdjustButtons() {
-        const group = this.adjust;
+    _manageActionButtons() {
+        const group = this.action;
         var i, button;
         //if (group.find("button").length == 0) { console.trace(); return; }
         //console.log(group);
@@ -445,12 +411,12 @@ class UserDataUtility {
 
     _buildOptionButtons() {
         const self = this;
-        const adjust = this.adjust.data("value");
-        const indices = this.options.data(adjust + "_indices");
+        const action = this.action.data("value");
+        const indices = this.options.data(action + "_indices");
 
-        if (this.options.data(adjust + "_selectedClass")) {
-            this.options.data("unselectedClass", this.options.data(adjust + "_unselectedClass"));
-            this.options.data("selectedClass", this.options.data(adjust + "_selectedClass"));
+        if (this.options.data(action + "_selectedClass")) {
+            this.options.data("unselectedClass", this.options.data(action + "_unselectedClass"));
+            this.options.data("selectedClass", this.options.data(action + "_selectedClass"));
         }
         else {
             this.options.data("unselectedClass", this.options.data("default_unselectedClass"));
@@ -458,9 +424,9 @@ class UserDataUtility {
         }
 
         this.options.data("value",
-            (this.options.data(adjust + "_lastValue")) ? this.options.data(adjust + "_lastValue") :
-            (this.options.data(adjust + "_default")) ? this.options.data(adjust + "_default") : "");
-        //console.log(adjust, indices, this.options.data("value"));
+            (this.options.data(action + "_lastValue")) ? this.options.data(action + "_lastValue") :
+            (this.options.data(action + "_default")) ? this.options.data(action + "_default") : "");
+        //console.log(action, indices, this.options.data("value"));
         this.options.empty();
         for (var i = 0; i < indices; i++) {
             this.options.append("<button type = 'button' class = 'btn'></button>");
@@ -470,16 +436,16 @@ class UserDataUtility {
             self.options.data("value", $(this).val());
             $(this).blur();
             self._manageOptionButtons();
-            self._doAdjustOption();
+            self._doActionOption();
         });
 
         this._manageOptionButtons();
     }
 
     _manageButtons() {
-        const adjust     = this.adjust.data("value");
+        const action     = this.action.data("value");
         const loaded     = !this.loadedData.isEmpty();
-        const aButtons   = this.adjust.find("button");
+        const aButtons   = this.action.find("button");
         const oButtons   = this.options.find("button");
         const selected   = !!this.allSelectedRowIds.length;
         const unselected = !!this.allUnselectedRowIds.length;
@@ -493,13 +459,13 @@ class UserDataUtility {
 //console.log(clients, this.rowsAreExpanded(clients), this.rowsAreCollapsed(clients), this.rowsAreHidden(clients));
 //console.log(issues, this.rowsAreExpanded(issues), this.rowsAreCollapsed(issues), this.rowsAreHidden(issues));
 //console.log(sessions, this.rowsAreExpanded(sessions), this.rowsAreCollapsed(sessions), this.rowsAreHidden(sessions));
-console.log(this.allSelectedRowIds, selected, this.allUnselectedRowIds, unselected);
+//console.log(this.allSelectedRowIds, selected, this.allUnselectedRowIds, unselected);
 
         //Options buttons
         for (i = 0; i < oButtons.length; i++) {
             button = oButtons.eq(i);
             text = button.text();
-            //console.log(adjust, button.text(), loaded);
+            //console.log(action, button.text(), loaded);
             if (text == "User"     && users.length    == 2) { button.text("Users"); }
             if (text == "Users"    && users.length    == 1) { button.text("User"); }
             if (text == "Client"   && clients.length  == 2) { button.text("Clients"); }
@@ -510,9 +476,9 @@ console.log(this.allSelectedRowIds, selected, this.allUnselectedRowIds, unselect
             if (text == "Sessions" && sessions.length == 1) { button.text("Session"); }
             if (text == "Local"    &&  loaded)              { button.text("All"); }
             if (text == "All"      && !loaded)              { button.text("Local"); }
-            if (adjust == "import" && ["All", "Local"].includes(text))  { if (!this.localDataHasChanged) { button.hide(); } else { button.show(); } }
-            if (adjust == "import" && text == "Loaded") { if (!loaded)                  { button.hide(); } else { button.show(); } }
-            if (adjust == "merge")              { if (!loaded)                          { button.hide(); } else { button.show(); } }
+            if (action == "import" && ["All", "Local"].includes(text))  { if (!this.localDataHasChanged) { button.hide(); } else { button.show(); } }
+            if (action == "import" && text == "Loaded") { if (!loaded)                  { button.hide(); } else { button.show(); } }
+            if (action == "merge")              { if (!loaded)                          { button.hide(); } else { button.show(); } }
             if (text == "Loaded")               { if (!loaded)                          { button.hide(); } else { button.show(); } }
             if (text == "Older")                { if (!loaded)                          { button.hide(); } else { button.show(); } }
             if (text == "Newer")                { if (!loaded)                          { button.hide(); } else { button.show(); } }
@@ -520,29 +486,29 @@ console.log(this.allSelectedRowIds, selected, this.allUnselectedRowIds, unselect
             if (text == "Identical")            { if (!loaded)                          { button.hide(); } else { button.show(); } }
             if (text == "Selected")             { if (!selected)                        { button.hide(); } else { button.show(); } }
             if (text == "Unselected")           { if (!unselected)                      { button.hide(); } else { button.show(); } }
-            if (adjust == "expand") {
+            if (action == "expand") {
                 if (text.startsWith("User"))    { if (this.rowsAreExpanded(users))      { button.hide(); } else { button.show(); } }
                 if (text.startsWith("Client"))  { if (this.rowsAreExpanded(clients))    { button.hide(); } else { button.show(); } }
                 if (text.startsWith("Issue"))   { if (this.rowsAreExpanded(issues))     { button.hide(); } else { button.show(); } }
                 if (text.startsWith("Session")) { if (this.rowsAreExpanded(sessions))   { button.hide(); } else { button.show(); } }
             }
-            if (adjust == "collapse") {
+            if (action == "collapse") {
                 if (text.startsWith("User"))    { if (this.rowsAreCollapsed(users))     { button.hide(); } else { button.show(); } }
                 if (text.startsWith("Client"))  { if (this.rowsAreCollapsed(clients))   { button.hide(); } else { button.show(); } }
                 if (text.startsWith("Issue"))   { if (this.rowsAreCollapsed(issues))    { button.hide(); } else { button.show(); } }
                 if (text.startsWith("Session")) { if (this.rowsAreCollapsed(sessions))  { button.hide(); } else { button.show(); } }
             }
-            if (adjust == "hide") {
+            if (action == "hide") {
                 if (text.startsWith("User"))    { if (this.rowsAreHidden(users))        { button.hide(); } else { button.show(); } }
                 if (text.startsWith("Client"))  { if (this.rowsAreHidden(clients))      { button.hide(); } else { button.show(); } }
                 if (text.startsWith("Issue"))   { if (this.rowsAreHidden(issues))       { button.hide(); } else { button.show(); } }
                 if (text.startsWith("Session")) { if (this.rowsAreHidden(sessions))     { button.hide(); } else { button.show(); } }
             }
-            if (adjust == "delete" && text == "Undo") { if (this._deletedRecords == []) { button.hide(); } else { button.show(); } }
+            if (action == "delete" && text == "Undo") { if (this._deletedRecords == []) { button.hide(); } else { button.show(); } }
         }
 if (this.allIds.length == 0) { console.trace(); }
         console.log(this.allIds, this.allIds.length, this.rowsAreExpanded(this.allIds), this.rowsAreCollapsed(this.allIds), this.rowsAreHidden(this.allIds));
-        //Adjust buttons
+        //Action buttons
         for (i = 0; i < aButtons.length; i++) {
             button = aButtons.eq(i);
             if (button.text() == "Merge")    { if (!loaded)                              { button.hide(); } else { button.show(); } }
@@ -555,28 +521,28 @@ if (this.allIds.length == 0) { console.trace(); }
     }
 
     _manageOptionButtons() {
-        var value, params, adjust, index, indices, state, states, name, i, button, lastIndex, selected;
+        var value, params, action, index, indices, state, states, name, i, button, lastIndex, selected;
         value = this.options.data("value");
 
         if (value) {
             params = value.split("_");
-            adjust = params[0];
+            action = params[0];
             index = params[1];
             if (params.length = 4) {
                 state = params[2];
-                this.options.data(adjust + "_" + index + "_state", state);
-                this.options.data(adjust + "_lastIndex", this.options.data(adjust + "_index"));
-                lastIndex = this.options.data(adjust + "_lastIndex");
+                this.options.data(action + "_" + index + "_state", state);
+                this.options.data(action + "_lastIndex", this.options.data(action + "_index"));
+                lastIndex = this.options.data(action + "_lastIndex");
             }
-            this.options.data(adjust + "_index", index);
+            this.options.data(action + "_index", index);
         }
         else {
-            adjust = this.adjust.data("value");
+            action = this.action.data("value");
         }
-        indices = this.options.data(adjust + "_indices");
-        //console.log(name, adjust, index, state, lastIndex, indices);
+        indices = this.options.data(action + "_indices");
+        //console.log(name, action, index, state, lastIndex, indices);
         for (i = 0; i < indices; i++) {
-            name = adjust + "_" + i + "_";
+            name = action + "_" + i + "_";
             states = this.options.data(name + "states");
             if (states > 1) {
                 state = this.options.data(name + "state");
@@ -1159,13 +1125,13 @@ if (this.allIds.length == 0) { console.trace(); }
     get allSelectedRowIds()       { return this.allIds.filter(id => this.rowIsSelected(id)); }
     get allUnselectedRowIds()     { return this.allIds.filter(id => !this.rowIsSelected(id)); }
 
-    _doAdjustOption() {
+    _doActionOption() {
         var parentIds;
-        const adjust = this.adjust.data("value");
-        const option = this.options.data(this.options.data("value")).substr(adjust.length + 1, this.options.data(this.options.data("value")).length - 1)
-        console.log(adjust, this.options.data(this.options.data("value")), "'" + adjust + "'", "'" + option + "'");
+        const action = this.action.data("value");
+        const option = this.options.data(this.options.data("value")).substr(action.length + 1, this.options.data(this.options.data("value")).length - 1)
+        console.log(action, this.options.data(this.options.data("value")), "'" + action + "'", "'" + option + "'");
 
-        if (adjust == "sort") { 
+        if (action == "sort") { 
             const method = (option.split(" ")[0] == "alphabetic") ? "name"
                          : (option.split(" ")[0] == "creation")   ? "creation"
                          : (option.split(" ")[0] == "edited")     ? "lastEdited"
@@ -1175,11 +1141,11 @@ if (this.allIds.length == 0) { console.trace(); }
             this._buildRecordList(method, direction);
             //this.sortChildren(this.scrollAreaDiv.children().eq(0).attr("id"), method, direction);
         }
-        else if (adjust == "expand" && option == "user") {
+        else if (action == "expand" && option == "user") {
             const id = this.localData.tierIds(0)[0];
             this.expandRow(id);
         }
-        else if (["expand", "collapse", "hide"].includes(adjust)) {
+        else if (["expand", "collapse", "hide"].includes(action)) {
             const ids = (option.startsWith("user"))       ? this.allUserRowIds
                       : (option.startsWith("client"))     ? this.allClientRowIds
                       : (option.startsWith("issues"))     ? this.allIssueRowIds
@@ -1188,15 +1154,15 @@ if (this.allIds.length == 0) { console.trace(); }
                       : (option.startsWith("identical"))  ? this.allIdenticalRowIds
                       : (option.startsWith("selected"))   ? this.allSelectedRowIds
                       : (option.startsWith("unselected")) ? this.allUnselectedRowIds : [];
-//console.log(adjust, ids);
-            switch (adjust) {
+//console.log(action, ids);
+            switch (action) {
                 case "expand":   this.expandRows(ids);   break;
                 case "collapse": this.collapseRows(ids); break;
                 case "hide":     this.hideRows(ids);     break;
             }
             this.updateChildrenRowsButtonStatuses(this.rowParentIds(ids));
         }
-        else if (adjust == "select") {
+        else if (action == "select") {
             switch (option) {
                 case "local":
                     this.localData.select(this.allLocalIds);
@@ -1248,16 +1214,16 @@ if (this.allIds.length == 0) { console.trace(); }
             }
             this.updateChildrenSelectStatuses(parentIds);
         }
-        else if (adjust == "export") {
+        else if (action == "export") {
             const data = (option == "local") ? this.localData : this.loadedData;
             this._exportJSON(data.export());
         }
-        else if (adjust == "import") {
+        else if (action == "import") {
             const data = (option == "local") ? this.localData : this.loadedData;
             this.data.import(data.export());
             this.userUtilities.requestBackup();            
         }
-        else if (adjust == "delete") {
+        else if (action == "delete") {
             if (option == "undo") { this.undoDelete(); }
             else {
                 var local = [], loaded = [];
@@ -1350,19 +1316,19 @@ if (this.allIds.length == 0) { console.trace(); }
     }
 
     getOptionValues() {
-        const adjust = this.adjust.data("value");
+        const action = this.action.data("value");
         const index = this.options.data("index");
         const values = [];
         var i = 0, value;
 
-        value = this.options.data(adjust + "_" + index);
+        value = this.options.data(action + "_" + index);
 
         if (value) {
             return [value];
         }
         else {
             while (true) {
-                value = this.options.data(adjust + "_" + index + "_" + i);
+                value = this.options.data(action + "_" + index + "_" + i);
                 if (value) {
                     values.push(value);
                     i++;
