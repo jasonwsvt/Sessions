@@ -106,7 +106,6 @@ class UserDataUtility {
 
             self.loadButton.on("click", function() {
                 self._loadJSON();
-                self._manageButtons();
                 $(this).blur();
             });
         }); 
@@ -1126,7 +1125,7 @@ if (this.allIds.length == 0) { console.trace(); }
     get allUnselectedRowIds()     { return this.allIds.filter(id => !this.rowIsSelected(id)); }
 
     _doActionOption() {
-        var parentIds;
+        var parentIds, local = [], loaded = [];
         const action = this.action.data("value");
         const option = this.options.data(this.options.data("value")).substr(action.length + 1, this.options.data(this.options.data("value")).length - 1)
         console.log(action, this.options.data(this.options.data("value")), "'" + action + "'", "'" + option + "'");
@@ -1164,63 +1163,54 @@ if (this.allIds.length == 0) { console.trace(); }
         }
         else if (action == "select") {
             switch (option) {
-                case "local":
-                    this.localData.select(this.allLocalIds);
-                    parentIds = this.localData.parentIds(this.allLocalIds);
-                    break;
-                case "loaded":
-                    this.loadedData.select(this.allLoadedIds);
-                    parentIds = this.loadedData.parentIds(this.allLoadedIds);
-                    break;
-                case "older":
-                    this.allIds.forEach(id => {
-                        if (!this.loadedData.has(id) || this.loadedRecordIsNewer(id)) { this.localData.select(id); }
-                        else { this.loadedData.select(id); }
-                    });
-                    parentIds = this.allRowParentIds;
-                    break;
-                case "newer":
-                    this.allIds.forEach(id => {
-                        if (!this.loadedData.has(id) || this.loadedRecordIsOlder(id)) { this.localData.select(id); }
-                        else { this.loadedData.select(id); }
-                    });
-                    parentIds = this.allRowParentIds;
-                    break;
-                case "different":
-                    this.loadedData.select(this.allDifferentRecordIds);
-                    parentIds = this.allRowParentIds;
-                    break;
-                case "identical":
-                    this.loadedData.select(this.allIdenticalRecordIds);
-                    parentIds = this.allRowParentIds;
-                    break;
+                case "local":     local  = this.localData.ids();                         break;
+                case "loaded":    loaded = this.loadedData.ids();                        break;
+                case "older":     loaded = this.loadedData.olderIds(this.localData);     break;
+                case "newer":     loaded = this.loadedData.newerIds(this.localData);     break;
+                case "different": loaded = this.loadedData.differentIds(this.localData); break;
+                case "identical": loaded = this.loadedData.identicalIds(this.localData); break;
                 case "unselected":
                     if (!this.loadedData.isEmpty()) {
-                        this.allIds.forEach(id => {
-                            if (this.loadedData.has(id) &&
-                               (!this.rowIsSelected(id) || !this.loadedData.isSelected(id))) { this.loadedData.select(id); }
-                            else if (this.localData.has(id)) { this.localData.select(id); }
-                        });
+                        loaded = this.localData.selected();
+                        local = this.loadedData.selected();
+                        this.unselectLocalRecords(loaded);
+                        this.unselectLoadedRecords(local);
                     }
                     else {
-                        const selectedRows = this.allSelectedRowIds;
-                        const unselectedRows = this.allUnselectedRowIds;
-                        this.unselectRows(selectedRows);
-                        this.selectLocalRecords(unselectedRows);
+                        const selected = this.localData.selected();
+                        local = this.allIds.filter(id => !selected.includes(id));
+                        this.unselectRows(selected);
+                        parentIds = this.allRowParentIds;
                     }
-                    parentIds = this.allRowParentIds;
                     break;
                 case "none": this.unselectRows(this.allIds); break;
             }
+            if (local.length) { this.selectLocalRecords(local); }
+            if (loaded.length) { this.selectLoadedRecords(loaded); }
+            parentIds = this.localData.parentIds(local).concat(this.loadedData.parentIds(loaded));
             this.updateChildrenSelectStatuses(parentIds);
         }
         else if (action == "export") {
             const data = (option == "local") ? this.localData : this.loadedData;
-            this._exportJSON(data.export());
+            this._exportJSON(data);
+        }
+        else if (action == "merge") {
+            var ids;
+            switch (option) {
+                case "loaded":    ids = this.loadedData.ids(); break;
+                case "newer":     ids = this.loadedData.newerIds(this.localData); break;
+                case "older":     ids = this.loadedData.olderIds(this.localData); break;
+                case "different": ids = this.loadedData.differentIds(this.localData); break;
+                case "selected":  ids = this.loadedData.selected(); break;
+                case "absent":    ids = this.loadedData.absentIds(); break;
+            }
+            this.localData.merge(this.loadedData, ids);
+            this._buildRecordList();
         }
         else if (action == "import") {
             const data = (option == "local") ? this.localData : this.loadedData;
             this.data.import(data.export());
+            this.utilities.manage();
             this.userUtilities.requestBackup();            
         }
         else if (action == "delete") {
@@ -1251,9 +1241,9 @@ if (this.allIds.length == 0) { console.trace(); }
                 }
                 this.deleteRecords(local, loaded);
             }
+            this._buildRecordList();
         }
         this._manageButtons();
-        this._buildRecordList();
     }
 
     parseDate(ts) {
@@ -1273,7 +1263,7 @@ if (this.allIds.length == 0) { console.trace(); }
 
     _exportJSON(data) {
         const blob1 = new Blob([data.exportJSON("\t")], { type: "text/plain;charset=utf-8" });
-        const name = this.data.username + ".json";
+        const name = data.value(data.tierIds(0)[0], "username") + ".json";
         console.log(blob1);
  
         //Check the Browser.
@@ -1302,9 +1292,10 @@ if (this.allIds.length == 0) { console.trace(); }
             let reader = new FileReader();
             reader.readAsText(file);
             reader.onload = function() {
-                self.loadedData.import(JSON.parse(reader.result));
+                self.loadedData.importJSON(reader.result);
                 self.setUpOptionsData();
                 self._buildRecordList();
+                self._manageButtons();
             };
             reader.onerror = function() {
               console.log(reader.error);
