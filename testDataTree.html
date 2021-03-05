@@ -1,12 +1,12 @@
 <html>
 <body>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\programmingTools.js"></script>
 <script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\list.js"></script>
 <script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\dataTree.js"></script>
 <script type="text/javascript">
-d = new DataTree();
-console.log(d.has(342))
-d.import({
+a = new DataTree();
+a.import({
 	"username": "newuser",
 	"id": 664902783205072,
 	"creation": 1613835231,
@@ -35,9 +35,11 @@ d.import({
 	],
 	"lastOpened": 1613835231
 });
-console.log(d.exportPrettyJSON());
-console.log(d.setKey(245509164355643, "email", "jasodsfkjsdfklsjdflkdsjflksdjfdskljfdsklfjsdlkfjsdlkfn"))
-console.log(d.exportPrettyJSON());
+d = new DataTree();
+d.import(a.export());
+d.delete(d.tierIds(3)[0]);
+console.log(a.exportJSON("\t"));
+console.log(d.exportJSON("\t"));
 </script>
 </body>
 </html>

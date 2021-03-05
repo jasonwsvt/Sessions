@@ -15,7 +15,7 @@ class DataTree {
     isEmpty() { return Object.keys(this._data) == 0; }
     clear() { this._data = {}; this._deleted = []; this._indexPaths = []; this._idPaths = []; this._select.clear(); }
 
-    export()                            { return Object.assign({}, this._data); }
+    export()                            { return jQuery.extend(true, {}, this._data); }
     exportJSON(modifier)                { //true: uses encoding; integer or tab: export pretty JSON.
         const char = (isInteger(modifier) || modifier == '\t') ? modifier : null;
         const data = JSON.stringify(this._data, null, char);
@@ -34,7 +34,7 @@ class DataTree {
     }
 
     import(object) {
-        var data = Object.assign({}, object);
+        var data = jQuery.extend(true, {}, object);
         if (!data.hasOwnProperty("id")) {
             data.id = this._newId();
         }
@@ -452,7 +452,9 @@ class DataTree {
                 const parentId = this.parentId(id);
                 const index = this.indexPath(id).splice(-1)[0];
                 //console.log(parentId, index);
-                this._record(parentId).children.splice(index, 1);
+                const record = this._record(parentId)
+                if (record.children.length > 1) { record.children.splice(index, 1); }
+                else { delete record.children; }
                 //console.log(this._record(parentId));
             });
         }

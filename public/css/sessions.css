@@ -58,11 +58,11 @@
     height: 500px;
 }
 
-#userDataUtilityAdjustMenuButton {
+#userDataUtilityActionMenuButton {
     width: 92.63px !important;
 }
 
-#userDataUtilityAdjustMenu {
+#userDataUtilityActionMenu {
     z-index: 3;
     position: absolute;
     display: flex;
@@ -70,7 +70,6 @@
     visibility: visible;
     transition-property: display, visibility;
     transition-duration: .4s;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     opacity: 1;
     width: 92.63px;
     background-color: rgba(238, 238, 238, 1);
