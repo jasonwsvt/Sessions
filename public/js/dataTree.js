@@ -293,7 +293,6 @@ class DataTree {
     lastCreated(ids)  { return this.max("creation", ids); }
     lastEdited(ids)   { return this.max("lastEdited", ids); }
     lastOpened(ids)   { return this.max("lastOpened", ids); }
-
     
 
     select(ids) {
@@ -378,23 +377,24 @@ class DataTree {
         return this.dataCompareIds(dataTree, func, ids);
     }
 
-    newerIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, ">", true, true, false); }
-    mostRecentlyCreated(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, ">", true,  false, false); }
-    mostRecentlyEdited(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, ">", false, true,  false); }
-    mostRecentlyOpened(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, ">", false, false, true); }
-    olderIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, "<", true, true, false); }
-    leastRecentlyCreated(dataTree, ids) { return this.compareIdTimestamps(dataTree, ids, "<", true,  false, false); }
-    leastRecentlyEdited(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "<", false, true,  false); }
-    leastRecentlyOpened(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "<", false, false, true); }
+    newerIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, "<", true, true, false); }
+    mostRecentlyCreated(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "<", true,  false, false); }
+    mostRecentlyEdited(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, "<", false, true,  false); }
+    mostRecentlyOpened(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, "<", false, false, true); }
+    olderIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, ">", true, true, false); }
+    leastRecentlyCreated(dataTree, ids) { return this.compareIdTimestamps(dataTree, ids, ">", true,  false, false); }
+    leastRecentlyEdited(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, ">", false, true,  false); }
+    leastRecentlyOpened(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, ">", false, false, true); }
 
 
     //Returns all ids in dataTree that are common and identical to ones in this.
     identicalIds(dataTree, ids) {
         const func = (internal, external) => {
-            if (internal == undefined || external == undefined || internal.length !== external.length) { return false; }
-            const externalKeys = Object.keys(external);
-            Object.keys(internal).forEach(key => {
-                if (!externalKeys.includes(key) || internal[key] != external[key]) { return false; }
+            const iKeys = (internal) ? Object.keys(internal) : [];
+            const eKeys = (external) ? Object.keys(external) : [];
+            if (internal == undefined || external == undefined || iKeys.length !== eKeys.length) { return false; }
+            iKeys.forEach(key => {
+                if (!eKeys.includes(key) || internal[key] != external[key]) { return false; }
             });
             return true;
         }
@@ -404,10 +404,11 @@ class DataTree {
     //Returns all ids in dataTree that are common and not indentical to ones in this.
     differentIds(dataTree, ids) {
         const func = (internal, external) => {
-            if (internal == undefined || external == undefined || internal.length !== external.length) { return true; }
-            const externalKeys = Object.keys(external);
-            Object.keys(internal).forEach(key => {
-                if (!externalKeys.includes(key) || internal[key] != external[key]) { return true; }
+            const iKeys = (internal) ? Object.keys(internal) : [];
+            const eKeys = (external) ? Object.keys(external) : [];
+            if (internal == undefined || external == undefined || iKeys.length !== eKeys.length) { return true; }
+            iKeys.forEach(key => {
+                if (!eKeys.includes(key) || internal[key] != external[key]) { return true; }
             });
             return false;
         }

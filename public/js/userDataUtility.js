@@ -478,7 +478,7 @@ class UserDataUtility {
             if (option == "Sessions" && sessions.length == 1) { button.text("Session"); }
             if (option == "Local"    && !loaded)              { button.text("All"); }
             if (option == "All"      &&  loaded)              { button.text("Local"); }
-            if (action == "import" && ["All", "Local"].includes(text))  { if (!this.localDataHasChanged) { button.hide(); } else { button.show(); } }
+            if (action == "import" && ["All", "Local"].includes(option))  { if (!this.localDataHasChanged) { button.hide(); } else { button.show(); } }
 //            if (action == "import" && option == "Loaded") { if (!loaded)                    { button.hide(); } else { button.show(); } }
             if (action == "merge")                { if (!loaded)                          { button.hide(); } else { button.show(); } }
             if (option == "Loaded")               { if (!loaded)                          { button.hide(); } else { button.show(); } }
@@ -506,20 +506,19 @@ class UserDataUtility {
                 if (option.startsWith("Issue"))   { if (this.rowsAreHidden(issues))       { button.hide(); } else { button.show(); } }
                 if (option.startsWith("Session")) { if (this.rowsAreHidden(sessions))     { button.hide(); } else { button.show(); } }
             }
-            if (action == "delete" && text == "Undo") { if (this._deletedRecords == []) { button.hide(); } else { button.show(); } }
+            if (action == "delete" && text == "Undo") { if (this._deletedRecords == [])   { button.hide(); } else { button.show(); } }
         }
-if (this.allIds.length == 0) { console.trace(); }
-        console.log(this.allIds, this.allIds.length, this.rowsAreExpanded(this.allIds), this.rowsAreCollapsed(this.allIds), this.rowsAreHidden(this.allIds));
+    if (this.allIds.length == 0) { console.trace(); }
+        //console.log(this.allIds, this.allIds.length, this.rowsAreExpanded(this.allIds), this.rowsAreCollapsed(this.allIds), this.rowsAreHidden(this.allIds));
         //Action buttons
         for (i = 0; i < aButtons.length; i++) {
             button = aButtons.eq(i);
-            if (button.text() == "Merge")    { if (!loaded)                              { button.hide(); } else { button.show(); } }
-            if (button.text() == "Import")   { if (!loaded && !this.localDataHasChanged) { button.hide(); } else { button.show(); } }
-            if (button.text() == "Expand")   { if (this.rowsAreExpanded(this.allIds))    { button.hide(); } else { button.show(); } }
-            if (button.text() == "Hide")     { if (this.rowsAreHidden(this.allIds))      { button.hide(); } else { button.show(); } }
-            if (button.text() == "Collapse") { if (this.rowsAreCollapsed(this.allIds))   { button.hide(); } else { button.show(); } }
+            if (button.text() == "Merge")    { if (!loaded)                               { button.hide(); } else { button.show(); } }
+            if (button.text() == "Import")   { if (!loaded && !this.localDataHasChanged)  { button.hide(); } else { button.show(); } }
+            if (button.text() == "Expand")   { if (this.rowsAreExpanded(this.allIds))     { button.hide(); } else { button.show(); } }
+            if (button.text() == "Hide")     { if (this.rowsAreHidden(this.allIds))       { button.hide(); } else { button.show(); } }
+            if (button.text() == "Collapse") { if (this.rowsAreCollapsed(this.allIds))    { button.hide(); } else { button.show(); } }
         }
-
     }
 
     _manageOptionButtons() {
@@ -1131,7 +1130,7 @@ if (this.allIds.length == 0) { console.trace(); }
         var parentIds = this.allRowParentIds, local = [], loaded = [];
         const action = this.action.data("value");
         const option = this.options.data(this.options.data("value")).substr(action.length + 1, this.options.data(this.options.data("value")).length - 1)
-        console.log(action, this.options.data(this.options.data("value")), "'" + action + "'", "'" + option + "'");
+        //console.log(action, this.options.data(this.options.data("value")), "'" + action + "'", "'" + option + "'");
 
         if (action == "sort") { 
             const method = (option.split(" ")[0] == "alphabetic") ? "name"
@@ -1174,7 +1173,7 @@ if (this.allIds.length == 0) { console.trace(); }
                 case "identical": loaded = this.loadedData.identicalIds(this.localData); break;
                 case "unselected":
                     if (!this.loadedData.isEmpty()) {
-                        const unselected = this.allUnselectedRowIds();
+                        const unselected = this.allUnselectedRowIds;
                         loaded = this.localData.selected();
                         local = this.loadedData.selected();
                         this.unselectLocalRecords(loaded);
