@@ -15,8 +15,6 @@ a.ids().forEach(id => {
 		console.log(JSON.stringify(a.record(id), null, "\t"));
 		console.log(JSON.stringify(d.record(id), null, "\t"));
 	}
-});
-a.ids().forEach(id => {
 	if (a.identicalIds(d, [id]).length == 1) {
 		console.log("Identical:", id);
 		console.log(JSON.stringify(a.record(id), null, "\t"));

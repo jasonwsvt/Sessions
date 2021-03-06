@@ -294,10 +294,10 @@ class UserDataUtility {
         this.options.data("select_4_value", "select different");
         this.options.data("select_5_html", "Identical");
         this.options.data("select_5_value", "select identical");
-        this.options.data("select_6_html", "None");
-        this.options.data("select_6_value", "select none");
-        this.options.data("select_7_html", "Unselected");
-        this.options.data("select_7_value", "select unselected");
+        this.options.data("select_6_html", "Unselected");
+        this.options.data("select_6_value", "select unselected");
+        this.options.data("select_7_html", "None");
+        this.options.data("select_7_value", "select none");
 
         this.options.data("import_indices", 2);
         this.options.data("import_unselectedClass", "btn-danger");
@@ -506,7 +506,8 @@ class UserDataUtility {
                 if (option.startsWith("Issue"))   { if (this.rowsAreHidden(issues))       { button.hide(); } else { button.show(); } }
                 if (option.startsWith("Session")) { if (this.rowsAreHidden(sessions))     { button.hide(); } else { button.show(); } }
             }
-            if (action == "delete" && text == "Undo") { if (this._deletedRecords == [])   { button.hide(); } else { button.show(); } }
+            if (action == "select" && option == "None") { if (!selected)                    { button.hide(); } else { button.show(); } }
+            if (action == "delete" && option == "Undo") { if (this._deletedRecords == [])   { button.hide(); } else { button.show(); } }
         }
     if (this.allIds.length == 0) { console.trace(); }
         //console.log(this.allIds, this.allIds.length, this.rowsAreExpanded(this.allIds), this.rowsAreCollapsed(this.allIds), this.rowsAreHidden(this.allIds));
@@ -1076,6 +1077,7 @@ class UserDataUtility {
     }
     updateLoadedChildrenSelectStatus(id) {
         const ids = this.loadedData.childIds(id);
+        if (!isArrayOfIntegers(ids)) { return; }
         this.loadedChildrenSelect(id).html(
             this.loadedRecordsAreSelected(ids)   ? this._fullIcon
           : this.loadedRecordsAreUnselected(ids) ? this._emptyIcon

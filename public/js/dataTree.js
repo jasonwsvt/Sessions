@@ -251,12 +251,12 @@ class DataTree {
     childIds(id) {
         if (!this.has(id) || !this.hasChildren(id)) { return null; }
         const record = this._record(id);
-        return record.children.map(child => child.id);
+        return record.children.map(child => child.id) || [];
     }
 
     siblingIds(id) {
         return (this.hasParent(id)) ? this.childIds(this.parentId(id))
-                   : (this.has(id)) ? id
+                   : (this.has(id)) ? [id]
                    : undefined;
     }
 
@@ -390,12 +390,13 @@ class DataTree {
     //Returns all ids in dataTree that are common and identical to ones in this.
     identicalIds(dataTree, ids) {
         const func = (internal, external) => {
-            const iKeys = (internal) ? Object.keys(internal) : [];
-            const eKeys = (external) ? Object.keys(external) : [];
-            if (internal == undefined || external == undefined || iKeys.length !== eKeys.length) { return false; }
-            iKeys.forEach(key => {
-                if (!eKeys.includes(key) || internal[key] != external[key]) { return false; }
-            });
+            var key;
+            if (internal == undefined || external == undefined) { return false; }
+            const iKeys = (internal) ? Object.keys(internal).filter(key => !["lastOpened", "lastEdited", "children"].includes(key)) : [];
+            const eKeys = (external) ? Object.keys(external).filter(key => !["lastOpened", "lastEdited", "children"].includes(key)) : [];
+            if (iKeys.length != eKeys.length) { return false; }
+            if (key = iKeys.find(key => !eKeys.includes(key))) { return false; }
+            if (key = iKeys.find(key => (!["lastEdited", "lastOpened"].includes(key) && internal[key] != external[key]))) { return false; }
             return true;
         }
         return this.dataCompareIds(dataTree, func, ids);
@@ -404,12 +405,13 @@ class DataTree {
     //Returns all ids in dataTree that are common and not indentical to ones in this.
     differentIds(dataTree, ids) {
         const func = (internal, external) => {
-            const iKeys = (internal) ? Object.keys(internal) : [];
-            const eKeys = (external) ? Object.keys(external) : [];
-            if (internal == undefined || external == undefined || iKeys.length !== eKeys.length) { return true; }
-            iKeys.forEach(key => {
-                if (!eKeys.includes(key) || internal[key] != external[key]) { return true; }
-            });
+            var key;
+            if (internal == undefined || external == undefined) { return true; }
+            const iKeys = (internal) ? Object.keys(internal).filter(key => !["lastOpened", "lastEdited", "children"].includes(key)) : [];
+            const eKeys = (external) ? Object.keys(external).filter(key => !["lastOpened", "lastEdited", "children"].includes(key)) : [];
+            if (iKeys.length != eKeys.length) { return true; }
+            if (key = iKeys.find(key => !eKeys.includes(key))) { return true; }
+            if (key = iKeys.find(key => internal[key] != external[key])) { return true; }
             return false;
         }
         return this.dataCompareIds(dataTree, func, ids);
@@ -422,13 +424,13 @@ class DataTree {
             if (!isArrayOfIntegers(ids)) { return; }
         }
         dataTree.mostAncestral(ids).forEach(id => {
-            const record = dataTree.record(id);
+            const record = jQuery.extend({}, dataTree.record(id));
             if (this.has(id)) { this.update(id, record); }
             else if (dataTree.hasParent(id)) {
                 const parentId = dataTree.parentId(id);
                 if (this.has(parentId)) { this.addChild(parentId, record); }
             }
-            else { this.import(dataTree.record(id)); } 
+            else { this.import(record); }
         });
     }
 
