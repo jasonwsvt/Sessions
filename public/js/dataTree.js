@@ -54,7 +54,7 @@ class DataTree {
     importEncodedFromLocalStorage(name)   { this.importJSON(atob(localStorage.getItem(name))); }
 
     isDataTree(data) {
-        //console.log(!isObject(data))
+        console.log(data, isObject(data), data.hasOwnProperty("id"), data.hasOwnProperty("children"));
         if (!isObject(data)) { return false; }
         //console.log(data.hasOwnProperty("id"))
         return (data.hasOwnProperty("id") &&
@@ -65,15 +65,20 @@ class DataTree {
         return (isArray(data) && data.every(item => this.isDataTree(item)));
     }
 
-    update(record = {}, id) {
+    update(object = {}, id, update = true) {
+        const record = jQuery.extend(true, {}, object);
         if (id == undefined) {
             if (record.hasOwnProperty("id")) { id = record.id; }
             else { return; }
         }
+        console.log("is dataTree:", this.isDataTree(record));
         if (this.has(id) && this.isDataTree(record)) {
-            const r = this.record(id);
-            Object.keys(record).forEach(key => r[key] = record[key]);
-            record.lastEdited = this._now();
+            const r = this._record(id);
+            Object.keys(record).forEach(key => {
+                console.log(r[key], record[key]);
+                r[key] = record[key];
+            });
+            if (update) { record.lastEdited = this._now(); }
         }
     }
 
@@ -92,7 +97,7 @@ class DataTree {
         if (!isInteger(id) || !this.has(id)) { return; }
         if (newId == undefined) { newId = this._newId(); }
         else if (!isInteger(newId) || this.has(newId)) { return; }
-        const record = this.record(id);
+        const record = this.record(id, false);
         record.id = newId;
         record.lastEdited = this._now();
         if (record.hasOwnProperty("children") && isArray(record.children)) {
@@ -124,18 +129,18 @@ class DataTree {
         }
     }
 
-    records(...ids) {
+    records(ids, update = true) {
         if (ids == undefined) { ids = this.ids(); }
         else { ids = smoothArray(ids); }
         if (!isArrayOfIntegers(ids)) { return; }
 
-        return ids.map(id => this.record(id, this._data));
+        return ids.map(id => this.record(id, update));
     }
 
-    record(id, data = this._data)    {
+    record(id, update = true)    {
         if (!this.has(id)) { return; }
-        const record = this._record(id, data);
-        record.lastOpened = this._now();
+        const record = this._record(id);
+        if (update) { record.lastOpened = this._now(); }
         return record;
     }
 
@@ -190,7 +195,7 @@ class DataTree {
         const p = this.idPath(id);
         return (p.length > 1) ? p.slice(-2, -1)[0] : null;
     }
-    parentIds(...ids) {
+    parentIds(ids) {
         ids = smoothArray(ids);
         throwError(isArrayOfIntegers, ids);
         return [...new Set(ids.map(id => this.parentId(id)).filter(id => isInteger(id)))];
@@ -208,7 +213,8 @@ class DataTree {
         records.forEach(record => this.addChild(parentId, record));
     }
 
-    addChild(parentId, record = {}) {
+    addChild(parentId, object = {}) {
+        const record = jQuery.extend(true, {}, object);
         if (!isInteger(parentId) || !this.has(parentId)) { return; }
         if (!record.hasOwnProperty("id")) { record.id = this._newId(); }
         if (!record.hasOwnProperty("creation")) { record.creation = this._now(); }
@@ -238,7 +244,7 @@ class DataTree {
         return (isInteger(tier) && tier >= 0) ? this.ids().filter(id => this.tier(id) == tier) : undefined;
     }
 
-    mostAncestral(...ids) {
+    mostAncestral(ids) {
         ids = smoothArray(ids);
         //ids.forEach(id => console.log(id, this.idPath(id)))
         throwError(isArrayOfIntegers, ids);
@@ -347,7 +353,7 @@ class DataTree {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
         if (ids == undefined) { ids = this.unionIds(dataTree); }
         if (!isArrayOfIntegers(ids)) { return; }
-        return ids.filter(id => compareFunc(this._record(id), dataTree.record(id)));
+        return ids.filter(id => compareFunc(this._record(id), dataTree.record(id, false)));
     }
 
     //symbol        lt, gt, lte, gte, ne, e  defaults to "e"
@@ -424,13 +430,14 @@ class DataTree {
             if (!isArrayOfIntegers(ids)) { return; }
         }
         dataTree.mostAncestral(ids).forEach(id => {
-            const record = jQuery.extend({}, dataTree.record(id));
-            if (this.has(id)) { this.update(id, record); }
+            const record = jQuery.extend({}, dataTree.record(id, false));
+            if (this.has(id)) { console.log("has", id); this.update(record, id, false); }
             else if (dataTree.hasParent(id)) {
                 const parentId = dataTree.parentId(id);
-                if (this.has(parentId)) { this.addChild(parentId, record); }
+                if (this.has(parentId)) { console.log(id, "has parent"); this.addChild(parentId, record); }
             }
-            else { this.import(record); }
+            else { console.log(id, "has no connection");  this.import(record); }
+            console.log(this._record(id));
         });
     }
 

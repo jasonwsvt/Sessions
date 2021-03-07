@@ -744,6 +744,7 @@ class UserDataUtility {
 
         const localHasChildren = this.localData.hasChildren(id);
         const loadedHasChildren = this.loadedData.hasChildren(id);
+        console.log(id, localHasChildren, loadedHasChildren);
         if (localHasChildren || loadedHasChildren) {
             if (localHasChildren) {
                 const childIds = this.localData.childIds(id);
@@ -758,7 +759,7 @@ class UserDataUtility {
             }
 
             if (loadedHasChildren) {
-                const childIds = this.loadedData.childIds(id);
+                const childIds = this.loadedData.childIds(id) || [];
                 const tier = this.loadedData.tier(id);
                 loadedIds = (method == "name") ? (tier < 2) ? this.loadedData.sortAlnumByKey(method, childIds)
                                                             : this.loadedData.sortByCreation(childIds)
@@ -769,6 +770,7 @@ class UserDataUtility {
                 if (direction == "descending") { loadedIds.reverse(); }
             }
         
+            console.log(localIds, loadedIds);            
             [...new Set(localIds.concat(loadedIds))].forEach(id => { this._buildRecords(id, method, direction); });
         }
     }
@@ -902,20 +904,8 @@ class UserDataUtility {
     }
 
     //Array methods
-    localRecord(id) {
-        if (this.localData.has(id)) {
-            var record = [];
-            this.localData.keys(id).forEach(key => record[key] = this.localData.value(id, key));
-            return record;
-        }
-    }
-    loadedRecord(id) {
-        if (this.loadedData.has(id)) {
-            var record = [];
-            this.loadedData.keys(id).forEach(key => record[key] = this.loadedData.value(id, key));
-            return record;
-        }
-    }
+    localRecord(id)  { return this.localData.record(id, false); }
+    loadedRecord(id) { return this.loadedData.record(id, false); }
 
     rowIndexPath(id)      { const p = this.localData.indexPath(id); return (p) ? P : this.loadedData.indexPath(id); }
     rowIdPath(id)         { const p = this.localData.idPath(id); return (p) ? p : this.loadedData.idPath(id); }
