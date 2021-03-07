@@ -10,12 +10,12 @@ a.import({"username":"Jason","id":290091194489799,"creation":1614354136,"childre
 d = new DataTree();
 d.import({"username":"Jason","id":290091194489799,"creation":1614354136,"children":[{"name":"Self","id":8714634300654,"creation":1614354136,"children":[{"name":"New Issue","id":287991286141944,"creation":1614354136,"children":[{"id":194191274328563,"creation":1614354136,"lastOpened":1614957914,"lines":["<div><button type=\"button\" class=\"btn btn-light typed space\">New</button><button type=\"button\" class=\"btn btn-light typed space\">Issue</button><button type=\"button\" class=\"btn btn-light typed space\">16</button><button type=\"button\" class=\"btn btn-light typed\">new</button><h2 id=\"cursor\">|</h2></div>"],"lastEdited":1614957565},{"id":209296981468571,"creation":1614374314,"lastOpened":1614889607,"lines":["<div><button type=\"button\" class=\"btn btn-light typed space\">Jason</button><button type=\"button\" class=\"btn btn-light typed space\">Self</button><h2 id=\"cursor\">|</h2><button type=\"button\" class=\"btn btn-light typed space\">New</button><button type=\"button\" class=\"btn btn-light typed space\">Issue</button><button type=\"button\" class=\"btn btn-light typed\">34</button></div>"],"lastEdited":1614871624}]}]}],"localBackupLocation":"localStorage","lastEdited":1614636473,"localBackupFrequency":5,"rememberMe":true});
 a.ids().forEach(id => {
-	if (a.differentIds(d, [id]).length == 1) {
+	if (a.different(d, [id]).length == 1) {
 		console.log("Different:", id);
 		console.log(JSON.stringify(a.record(id), null, "\t"));
 		console.log(JSON.stringify(d.record(id), null, "\t"));
 	}
-	if (a.identicalIds(d, [id]).length == 1) {
+	if (a.identical(d, [id]).length == 1) {
 		console.log("Identical:", id);
 		console.log(JSON.stringify(a.record(id), null, "\t"));
 		console.log(JSON.stringify(d.record(id), null, "\t"));

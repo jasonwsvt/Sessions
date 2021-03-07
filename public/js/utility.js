@@ -39,12 +39,12 @@ class Utility {
         $(document).ready(function() {
             self.pickerButton.on("click", function (e) {
                 self.utilities.close(self._pickerButtonID);
-                if (self.entries > 1) {
+                if (self.numSiblings > 1) {
                     if (self.pickerDiv.hasClass("hidden")) {
-                        if (self.entries > 1) {
+                        if (self.numSiblings > 1) {
                             $(this).html(self.name + " " + self._caretUpIcon);
                         }
-                        if (self.entries == 1) {
+                        if (self.numSiblings == 1) {
                             $(this).html(self.name);
                         }
                         self.pickerDiv.removeClass("hidden");
@@ -70,7 +70,7 @@ class Utility {
             });
 
             self.pickerSearchInput.on("keyup", function (e) {
-                for (var i = 0; i < self.entries; i++) {
+                for (var i = 0; i < self.numSiblings; i++) {
                     if (!self.button(i).text().includes($(this).val())) {
                         self.row(i).addClass("hidden");
                     }
@@ -206,9 +206,9 @@ class Utility {
     get app()               { return this.utilities.app; }
     get data()              { return this.app.data; }
     get editor()            { return this.app.editor; }
-    get siblingIds()        { return this.data.siblingIds(this.id); }
     get sessionId()         { return this.app.editor.current; }
-    get entries()           { return this.data.siblings(this.id); }
+    get siblings()          { return this.data.siblings(this.id); }
+    get numSiblings()       { return this.data.numSiblings(this.id); }
     get type()              { return this._tier == 1 ? "client" : this._tier == 2 ? "issue" : "session"; }
     get default()           { return this._tier == 1 ? "New Client" : "New Issue"; }
     get id()                { return this.data.idPath(this.sessionId)[this._tier]; }
@@ -300,18 +300,18 @@ class Utility {
         //console.log(this.data.idPath(this.sessionId)[this._tier]);
         //console.log(this.data.has(this.id))
         pickerButtonText = this.name;
-        if (this.entries > 1) { pickerButtonText += " " + this._caretDownIcon; }
+        if (this.numSiblings > 1) { pickerButtonText += " " + this._caretDownIcon; }
         this.pickerButton.html(pickerButtonText);
         //console.log(this.pickerButton.html(), this.name, pickerButtonText);
 
-        if (this.entries > 1) {
+        if (this.numSiblings > 1) {
             this.pickerButtons();
 
             this.pickerScrollDiv.find("button").on("click", function (e) {
                 var id = parseInt(this.value);
                 if (self.data.tier(id) != 3) {
                     const tier3Ids = self.data.tierIds(3);
-                    const descendants = self.data.descendantIds(id);
+                    const descendants = self.data.descendants(id);
                     var tier3Descendants = descendants.filter(d => tier3Ids.includes(d));
                     const lastOpened = self.data.sortByLastOpened(tier3Descendants).slice(-1)[0];
                     const lastEdited = self.data.sortByLastEdited(tier3Descendants).slice(-1)[0];
@@ -336,18 +336,18 @@ class Utility {
                 e.stopPropagation();
             });
 
-            scrollDivHeight = this.entries * parseInt(this.row(0).outerHeight);
+            scrollDivHeight = this.numSiblings * parseInt(this.row(0).outerHeight);
             if (this.pickerScrollDiv.position().top + scrollDivHeight > window.innerHeight) {
                 scrollDivHeight = window.innerHeight - this.pickerScrollDiv.position().top;
             }
             this.pickerScrollDiv.css("height", String(scrollDivHeight) + "px");
             this.pickerDiv.css("height", String(parseInt(this.pickerSearchInput.outerHeight) + parseInt(this.pickerScrollDiv.outerHeight) + 10) + "px");
         }
-        this.addButton.attr("disabled", (this._naming && !!this.data.find("name", this.default, this.siblingIds)));
+        this.addButton.attr("disabled", (this._naming && !!this.data.find("name", this.default, this.siblings)));
     }
 
     pickerButtons(method) {
-        var ids = this.siblingIds;
+        var ids = this.siblings;
         const upArrow = this._upArrow;
         const downArrow = this._downArrow;
 
@@ -401,8 +401,8 @@ class Utility {
             this.pickerDiv.addClass("hidden");
             this.pickerDiv.removeClass("utilityMenu");
             this.pickerDiv.blur();
-            //console.log(this._tier, this.entries)
-            if (this.entries > 1) { this.pickerButton.html(this.name + " " + this._caretDownIcon); }
+            //console.log(this._tier, this.numSiblings)
+            if (this.numSiblings > 1) { this.pickerButton.html(this.name + " " + this._caretDownIcon); }
             else { this.pickerButton.html(this.name); }
             this.pickerButton.blur();
         }

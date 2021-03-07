@@ -144,8 +144,8 @@ class DataTree {
         return record;
     }
 
-    children(id) { return (this.hasChildren(id)) ? this._record(id).children.length : 0; }
-    siblings(id) { return this.has(id) ? this.tier(id) == 0 ? 1 : this.children(this.parentId(id)) : undefined; }
+    numChildren(id) { return (this.hasChildren(id)) ? this._record(id).children.length : 0; }
+    numSiblings(id) { return this.has(id) ? this.tier(id) == 0 ? 1 : this.numChildren(this.parentId(id)) : undefined; }
     has(ids)   {
         ids = smoothArray(ids);
         return (isArrayOfIntegers(ids))
@@ -254,25 +254,26 @@ class DataTree {
         return ids;
     }
     
-    childIds(id) {
+    children(id) {
         if (!this.has(id) || !this.hasChildren(id)) { return null; }
         const record = this._record(id);
         return record.children.map(child => child.id) || [];
     }
 
-    siblingIds(id) {
-        return (this.hasParent(id)) ? this.childIds(this.parentId(id))
+    siblings(id) {
+        return (this.hasParent(id)) ? this.children(this.parentId(id))
                    : (this.has(id)) ? [id]
                    : undefined;
     }
 
-    descendantIds(id) {
+    descendants(id) {
         var ids = this.ids(this._record(id));
         ids.splice(ids.indexOf(id), 1);
         return ids;
     }
 
     find(key, value, ids = this.ids()) {
+        console.log(ids, this.ids());
         return ids.find(id => this.hasKey(id, key) && this.value(id, key) == value);
     }
 
@@ -320,22 +321,22 @@ class DataTree {
 
     //Methods for two DataTrees
     //Newer, Older, Unique all refer to this.  Different is the same either way.  Selected refers to dataTree.
-    selectNewer(dataTree)     { this.select(this.newerIds(dataTree)); }     //Select ids that are newer in this
-    selectOlder(dataTree)     { this.select(this.olderIds(dataTree)); }     //Select ids that are older in this
-    selectDifferent(dataTree) { this.select(this.differentIds(dataTree)); } //Select ids that are different
-    selectUnique(dataTree)    { this.select(this.uniqueIds(dataTree)); }    //Select ids that are unique to this
+    selectNewer(dataTree)     { this.select(this.newer(dataTree)); }     //Select ids that are newer in this
+    selectOlder(dataTree)     { this.select(this.older(dataTree)); }     //Select ids that are older in this
+    selectDifferent(dataTree) { this.select(this.different(dataTree)); } //Select ids that are different
+    selectUnique(dataTree)    { this.select(this.unique(dataTree)); }    //Select ids that are unique to this
     selectSelected(dataTree)  { this.select(dataTree.selected()); }         //Select ids that are selected in dataTree
 
-    unionIds(dataTree) {
+    union(dataTree) {
         if (!dataTree instanceof DataTree) { throw new Error("Expecting dataTree."); }
         //console.log(this.ids());
         //console.log(this.ids((dataTree));
         return [...new Set(this.ids().concat(dataTree.ids()))];
     }
 
-    compareIds(dataTree, inSet1, inSet2, ids) {
+    compare(dataTree, inSet1, inSet2, ids) {
         if (!dataTree instanceof DataTree) { throw new Error("Expecting dataTree"); }
-        if (ids == undefined) { ids = this.unionIds(dataTree); }
+        if (ids == undefined) { ids = this.union(dataTree); }
         const set1 = this.ids();
         const set2 = dataTree.ids();
         //console.log("unionIds:", ids);
@@ -344,14 +345,15 @@ class DataTree {
         //ids.forEach(id => { console.log(id, set1.includes(id) == inSet1, set2.includes(id) == inSet2)})
         return ids.filter(id => set1.includes(id) == inSet1 && set2.includes(id) == inSet2);
     }
-    commonIds(dataTree, ids)    { return this.compareIds(dataTree, true,  true, ids); }
-    uniqueIds(dataTree, ids)    { return this.compareIds(dataTree, true,  false, ids); }
-    absentIds(dataTree, ids)    { return this.compareIds(dataTree, false, true, ids); }
-    exclusiveIds(dataTree, ids) { return this.uniqueIds(dataTree, ids).concat(this.absentIds(dataTree, ids)); }
 
-    dataCompareIds(dataTree, compareFunc, ids) {
+    common(dataTree, ids)    { return this.compare(dataTree, true,  true, ids); }
+    unique(dataTree, ids)    { return this.compare(dataTree, true,  false, ids); }
+    absent(dataTree, ids)    { return this.compare(dataTree, false, true, ids); }
+    exclusive(dataTree, ids) { return this.unique(dataTree, ids).concat(this.absent(dataTree, ids)); }
+
+    dataCompare(dataTree, compareFunc, ids) {
         if (!(dataTree instanceof DataTree)) { throw new Error("Expecting dataTree."); }
-        if (ids == undefined) { ids = this.unionIds(dataTree); }
+        if (ids == undefined) { ids = this.union(dataTree); }
         if (!isArrayOfIntegers(ids)) { return; }
         return ids.filter(id => compareFunc(this._record(id), dataTree.record(id, false)));
     }
@@ -362,7 +364,7 @@ class DataTree {
     //opened        true or false            defaults to true
     //ifNotExistsI  true or false            defaults to false
     //ifNotExistsE  true or false            defaults to true
-    compareIdTimestamps(dataTree, ids, symbol = "==", creation = true, edited = true, opened = true, ifNotExistsI = false, ifNotExistsE = true) {
+    compareTimestamps(dataTree, ids, symbol = "==", creation = true, edited = true, opened = true, ifNotExistsI = false, ifNotExistsE = true) {
         if ([ifNotExistsI, ifNotExistsE, creation, edited, opened].find(arg => !isBoolean(arg)) ||
             !["<", ">", "<=", ">=", "!=", "=="].includes(symbol)) { return; }
         const func = (i, e) => {
@@ -380,36 +382,38 @@ class DataTree {
                                           (symbol == "!=" && value[0] != value[1]) ||
                                           (symbol == "==" && value[0] == value[1]));
         }
-        return this.dataCompareIds(dataTree, func, ids);
+        return this.dataCompare(dataTree, func, ids);
     }
 
-    newerIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, "<", true, true, false); }
-    mostRecentlyCreated(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, "<", true,  false, false); }
-    mostRecentlyEdited(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, "<", false, true,  false); }
-    mostRecentlyOpened(dataTree, ids)   { return this.compareIdTimestamps(dataTree, ids, "<", false, false, true); }
-    olderIds(dataTree, ids)             { return this.compareIdTimestamps(dataTree, ids, ">", true, true, false); }
-    leastRecentlyCreated(dataTree, ids) { return this.compareIdTimestamps(dataTree, ids, ">", true,  false, false); }
-    leastRecentlyEdited(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, ">", false, true,  false); }
-    leastRecentlyOpened(dataTree, ids)  { return this.compareIdTimestamps(dataTree, ids, ">", false, false, true); }
+    newer(dataTree, ids)                { return this.compareTimestamps(dataTree, ids, ">", true, true, false); }
+    mostRecentlyCreated(dataTree, ids)  { return this.compareTimestamps(dataTree, ids, ">", true,  false, false); }
+    mostRecentlyEdited(dataTree, ids)   { return this.compareTimestamps(dataTree, ids, ">", false, true,  false); }
+    mostRecentlyOpened(dataTree, ids)   { return this.compareTimestamps(dataTree, ids, ">", false, false, true); }
+    older(dataTree, ids)                { return this.compareTimestamps(dataTree, ids, "<", true, true, false); }
+    leastRecentlyCreated(dataTree, ids) { return this.compareTimestamps(dataTree, ids, "<", true,  false, false); }
+    leastRecentlyEdited(dataTree, ids)  { return this.compareTimestamps(dataTree, ids, "<", false, true,  false); }
+    leastRecentlyOpened(dataTree, ids)  { return this.compareTimestamps(dataTree, ids, "<", false, false, true); }
 
 
     //Returns all ids in dataTree that are common and identical to ones in this.
-    identicalIds(dataTree, ids) {
+    identical(dataTree, ids) {
         const func = (internal, external) => {
             var key;
             if (internal == undefined || external == undefined) { return false; }
             const iKeys = (internal) ? Object.keys(internal).filter(key => !["lastOpened", "lastEdited", "children"].includes(key)) : [];
             const eKeys = (external) ? Object.keys(external).filter(key => !["lastOpened", "lastEdited", "children"].includes(key)) : [];
             if (iKeys.length != eKeys.length) { return false; }
-            if (key = iKeys.find(key => !eKeys.includes(key))) { return false; }
-            if (key = iKeys.find(key => (!["lastEdited", "lastOpened"].includes(key) && internal[key] != external[key]))) { return false; }
+            if (iKeys.find(key => !eKeys.includes(key))) { return false; }
+            if (iKeys.find(key => isArray(internal[key] && isArray(external[key]) &&
+                                  internal[key].find((val, index) => val != external[key][index])))) { return false; }
+            if (iKeys.find(key => !["lastEdited", "lastOpened"].includes(key) && internal[key] != external[key])) { return false; }
             return true;
         }
-        return this.dataCompareIds(dataTree, func, ids);
+        return this.dataCompare(dataTree, func, ids);
     }
 
     //Returns all ids in dataTree that are common and not indentical to ones in this.
-    differentIds(dataTree, ids) {
+    different(dataTree, ids) {
         const func = (internal, external) => {
             var key;
             if (internal == undefined || external == undefined) { return true; }
@@ -417,10 +421,12 @@ class DataTree {
             const eKeys = (external) ? Object.keys(external).filter(key => !["lastOpened", "lastEdited", "children"].includes(key)) : [];
             if (iKeys.length != eKeys.length) { return true; }
             if (key = iKeys.find(key => !eKeys.includes(key))) { return true; }
-            if (key = iKeys.find(key => internal[key] != external[key])) { return true; }
+            if (iKeys.find(key => isArray(internal[key] && isArray(external[key]) &&
+                                  internal[key].find((val, index) => val != external[key][index])))) { return true; }
+            if (iKeys.find(key => !["lastEdited", "lastOpened"].includes(key) && internal[key] != external[key])) { return true; }
             return false;
         }
-        return this.dataCompareIds(dataTree, func, ids);
+        return this.dataCompare(dataTree, func, ids);
     }
 
     merge(dataTree, ids)  {
@@ -442,10 +448,10 @@ class DataTree {
     }
 
     //Newer, Older, Unique, and Selected, all refer to dataTree.  Different is the same either way.
-    mergeNewer(dataTree)     { this.merge(dataTree, dataTree.newerIds(this)); }
-    mergeOlder(dataTree)     { this.merge(dataTree, dataTree.olderIds(this)); }
-    mergeDifferent(dataTree) { this.merge(dataTree, dataTree.differentIds(this)); }
-    mergeUnique(dataTree)    { this.merge(dataTree, dataTree.uniqueIds(this)); }
+    mergeNewer(dataTree)     { this.merge(dataTree, dataTree.newer(this)); }
+    mergeOlder(dataTree)     { this.merge(dataTree, dataTree.older(this)); }
+    mergeDifferent(dataTree) { this.merge(dataTree, dataTree.different(this)); }
+    mergeUnique(dataTree)    { this.merge(dataTree, dataTree.unique(this)); }
     mergeSelected(dataTree)  { this.merge(dataTree, dataTree.selected()); }
 
     delete(ids)  {
@@ -472,10 +478,10 @@ class DataTree {
     }
 
     //Newer, Older, Unique, Selected all refer to this.  Different is the same either way.
-    deleteNewer(dataTree)     { this.delete(this.newerIds(dataTree)); }
-    deleteOlder(dataTree)     { this.delete(this.olderIds(dataTree)); }
-    deleteDifferent(dataTree) { this.delete(this.differentIds(dataTree)); }
-    deleteUnique(dataTree)    { this.delete(this.uniqueIds(dataTree)); }
+    deleteNewer(dataTree)     { this.delete(this.newer(dataTree)); }
+    deleteOlder(dataTree)     { this.delete(this.older(dataTree)); }
+    deleteDifferent(dataTree) { this.delete(this.different(dataTree)); }
+    deleteUnique(dataTree)    { this.delete(this.unique(dataTree)); }
     deleteSelected()          { this.delete(this.selected()); }
 
     //Undo last deletion in deletion stack
