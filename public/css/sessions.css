@@ -184,6 +184,20 @@
     opacity: 1;
 }
 
+.infoUtilityDiv {
+    z-index: 2;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    visibility: visible;
+    transition-property: display, visibility;
+    transition-duration: .4s;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    opacity: 1;
+    background-color: rgba(238, 238, 238, 1);
+    width: 640px;
+}
+
 .btn-group-sm {
     display: flex !important;
     flex-direction: row !important;
