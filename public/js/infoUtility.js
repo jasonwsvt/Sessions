@@ -57,6 +57,54 @@ class InfoUtility {
         sections.forEach((section, index) => {
             section[index] = { "name": section, "id": data.addChild({ "name": section }) }
         });
+
+        this.manage(data.tierIds(0)[0]);
+    }
+
+    manage(picked) {
+        const data = this._data;
+        const selected = data.selected();
+
+        if (data.hasChildren(picked)) {
+            const descendants = data.descendants(picked).filter(id => selected.includes(id));
+            //If there's no selected descendant, get first child of first child etc.
+            if (descendants.length == 0) {
+                while (data.hasChildren(picked)) {
+                    picked = data.children(picked)[0];
+                }
+            }
+            //If there's a descendant that's selected, change to most recently opened.
+            else {
+                picked = data.lastOpened(descendants);
+            }
+        }
+        const siblings = data.siblings(picked);
+        if (id = data.selected.find(id => siblings.includes(id))) {
+            data.unSelect(id);
+        }
+        data.select(picked);
+
+        const path = data.idPath(picked);
+
+        //For each div with an id of infoUtility followed by a number,
+        for (var i = 0; i < this.div.children().length; i++) {
+            var id = this.div.children().eq(i).attr("id");
+            if (!path.includes(parseInt(id.substring(11)))) {
+            //if the path doesn't include the number, delete the div.
+            $("#" + id).remove();
+            }
+        }
+
+        data.idPath(picked).forEach(id => {
+            const divId = "#infoUtility" + id;
+            //Skip any divs with ids that are in the path.
+            if ($(divId).length == 0) {
+                this.div.append("<div id = '" + divId + "'></div>");
+                const record = data.record(id);
+                const keys = data.keys(id).filter(key => ["children", "name"].includes(key));
+
+            }
+        });
     }
 
     close(except) {
