@@ -86,19 +86,18 @@ class InfoUtility {
 
         //For each div with an id of infoUtility followed by a number,
         for (var i = 0; i < this.div.children().length; i++) {
-            var id = this.div.children().eq(i).attr("id");
+            var divId = this.div.children().eq(i).attr("id");
+            var id = parseInt(divId.filter(char => isInteger(char)));
             //if the path doesn't include the number, delete the div.
-            if (!path.includes(parseInt(id.substring(11)))) {
-                $("#" + id).remove();
-            }
+            if (!path.includes(id)) { $("#" + divId).remove(); }
         }
 
+        var media = [];
         path.forEach(id => {
             const divId = "#infoUtility" + id;
             //Skip any divs with ids that are in the path.
             if ($(divId).length == 0) {
-                this.div.append("<div id = '" + divId + "'></div>");
-                $(divId).append("<div id = '" + divId + "Siblings'></div>");
+                this.div.append("<div id = '" + divId + "Siblings'></div>");
                 data.siblings(id).forEach(sibling => {
                     var button = "<button class = 'btn ";
                     button += (sibling == id) ? "btn-primary" : "btn-secondary";
@@ -108,21 +107,38 @@ class InfoUtility {
                     $(divId + "Siblings").append(button);
                 });
                 const record = data.record(id);
-                const keys = data.keys(id).filter(key => ["children", "name"].includes(key));
-                keys.forEach(key => {
-                    html = "<div id = '" + divId + key + "'>";
-                    switch (key) {
-                        case "video":
-                            html += "<iframe width = 100% src='https://www.youtube.com/embed/" + record[key] + "'></iframe>";
-                            break;
-                        case "html":
-                            html += "<object data='public/slides/" + record[key] + " '>";
-                            break;
-                    }
-                    html += "</div>";
-                    $(divId).append(html);
-                });
+                media = media.concat(data.keys(id).filter(key => ["children", "name"].includes(key)).map(key => [id, key, record[key]]));
             }
+
+        });
+
+        const contentsDiv = $("#infoUtilityContents");
+        if (contentsDiv.length) { contentsDiv.clear() }
+        else { this.div.append("<div id = '" + contentsDiv + "'></div>"); }
+
+        media.forEach((id, key, value) => {
+            const divId = "#infoUtility" + id;
+            this.div.append("<div id = '" + divId + key + "'></div>");
+            const keyButton = divId + key + "Button";
+            contentsDiv.append("<button id = '" + keyButton + "'>" + key + "</button>");
+            
+            $(keyButton).on("click", (e) {
+                $(divId + key).show();
+                if (key == "video" && $(divId + "slide").length) { $(divId + "slide").hide(); }
+                if (key == "slide" && $(divId + "video").length) { $(divId + "video").hide(); }
+                e.stopPropagation();
+            });
+
+            switch (key) {
+                case "video":
+                    html += "<iframe width = 100% src='https://www.youtube.com/embed/" + value + "'></iframe>";
+                    break;
+                case "slide":
+                    html += "<object data='public/slides/" + value + " '>";
+                    break;
+            }
+            html += "</div>";
+            $(divId).append(html);
         });
     }
 
