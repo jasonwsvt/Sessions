@@ -64,6 +64,7 @@ class InfoUtility {
     manage(picked) {
         const data = this._data;
         const selected = data.selected();
+        var id;
 
         if (data.hasChildren(picked)) {
             const descendants = data.descendants(picked).filter(id => selected.includes(id));
@@ -78,10 +79,7 @@ class InfoUtility {
                 picked = data.lastOpened(descendants);
             }
         }
-        const siblings = data.siblings(picked);
-        if (id = data.selected.find(id => siblings.includes(id))) {
-            data.unSelect(id);
-        }
+        data.siblings(picked).filter(id => selected.includes(id)).forEach(id => data.unSelect(id));
         data.select(picked);
 
         const path = data.idPath(picked);
@@ -89,20 +87,41 @@ class InfoUtility {
         //For each div with an id of infoUtility followed by a number,
         for (var i = 0; i < this.div.children().length; i++) {
             var id = this.div.children().eq(i).attr("id");
-            if (!path.includes(parseInt(id.substring(11)))) {
             //if the path doesn't include the number, delete the div.
-            $("#" + id).remove();
+            if (!path.includes(parseInt(id.substring(11)))) {
+                $("#" + id).remove();
             }
         }
 
-        data.idPath(picked).forEach(id => {
+        path.forEach(id => {
             const divId = "#infoUtility" + id;
             //Skip any divs with ids that are in the path.
             if ($(divId).length == 0) {
                 this.div.append("<div id = '" + divId + "'></div>");
+                $(divId).append("<div id = '" + divId + "Siblings'></div>");
+                data.siblings(id).forEach(sibling => {
+                    var button = "<button class = 'btn ";
+                    button += (sibling == id) ? "btn-primary" : "btn-secondary";
+                    button += "'";
+                    if (sibling == id) { button += " disabled"; }
+                    button +=">" + data.value(sibling, "name") + "</button>";
+                    $(divId + "Siblings").append(button);
+                });
                 const record = data.record(id);
                 const keys = data.keys(id).filter(key => ["children", "name"].includes(key));
-
+                keys.forEach(key => {
+                    html = "<div id = '" + divId + key + "'>";
+                    switch (key) {
+                        case "video":
+                            html += "<iframe width = 100% src='https://www.youtube.com/embed/" + record[key] + "'></iframe>";
+                            break;
+                        case "html":
+                            html += "<object data='public/slides/" + record[key] + " '>";
+                            break;
+                    }
+                    html += "</div>";
+                    $(divId).append(html);
+                });
             }
         });
     }
