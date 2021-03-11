@@ -64,6 +64,7 @@ class InfoUtility {
     manage(picked) {
         const data = this._data;
         const selected = data.selected();
+        if (selected == picked) { return; }
         var id;
 
         if (data.hasChildren(picked)) {
@@ -79,55 +80,67 @@ class InfoUtility {
                 picked = data.lastOpened(descendants);
             }
         }
+
+        //If any sibling of picked is selected, unselect it.
         data.siblings(picked).filter(id => selected.includes(id)).forEach(id => data.unSelect(id));
         data.select(picked);
 
         const path = data.idPath(picked);
 
         //For each div with an id of infoUtility followed by a number,
-        for (var i = 0; i < this.div.children().length; i++) {
-            var divId = this.div.children().eq(i).attr("id");
-            var id = parseInt(divId.filter(char => isInteger(char)));
-            //if the path doesn't include the number, delete the div.
-            if (!path.includes(id)) { $("#" + divId).remove(); }
-        }
+        //if the path doesn't include the number, delete the div.
+        $("#infoUtility").children()
+            .filter(function() { return !["infoUtility_contents"].includes(this.id); })
+            .forEach(function() {
+                var id = parseInt(this.id.split("_")[1]);
+                if (!path.includes(id)) { $(this).remove(); }
+            });
 
         var media = [];
         path.forEach(id => {
-            const divId = "#infoUtility" + id;
+            const siblingsDivId = "#infoUtility_" + id + "_siblings";
+            const siblingsDiv = $(siblingsDivId);
             //Skip any divs with ids that are in the path.
-            if ($(divId).length == 0) {
-                this.div.append("<div id = '" + divId + "Siblings'></div>");
-                data.siblings(id).forEach(sibling => {
-                    var button = "<button class = 'btn ";
-                    button += (sibling == id) ? "btn-primary" : "btn-secondary";
+            if (siblingsDiv.length == 0) {
+                this.div.append("<div id = '" + siblingsDivId + "'></div>");
+                data.siblings(id).forEach(sId => {
+                    var button = "<button id = 'infoUtility_" + sId + "_button' class = 'btn ";
+                    button += (sId == id) ? "btn-primary" : "btn-secondary";
                     button += "'";
-                    if (sibling == id) { button += " disabled"; }
-                    button +=">" + data.value(sibling, "name") + "</button>";
-                    $(divId + "Siblings").append(button);
+                    if (sId == id) { button += " disabled"; }
+                    button += ">" + data.value(sId, "name") + "</button>";
+                    siblingsDiv.append(button);
                 });
                 const record = data.record(id);
                 media = media.concat(data.keys(id).filter(key => ["children", "name"].includes(key)).map(key => [id, key, record[key]]));
             }
+            else {
+                siblingsDiv.children().each(function() {
+                    if ($(this).hasClass("btn-primary") && parseInt(this.id.split("_")[1]) != id) {
+                        $(this).removeClass("btn-primary");
+                        $(this).addClass("btn-secondary");
+                    }
+                    else if ($(this).hasClass("btn-secondary") && parseInt(this.id.split("_")[1]) == id) {
+                        $(this).removeClass("btn-secondary");
+                        $(this).addClass("btn-primary");
+                    }
+                });
+            }
 
         });
 
-        const contentsDiv = $("#infoUtilityContents");
-        if (contentsDiv.length) { contentsDiv.clear() }
-        else { this.div.append("<div id = '" + contentsDiv + "'></div>"); }
+        const contentsId = "infoUtility_contents";
+        const contentsDiv = $("#" + contentsId);
+        if (contentsDiv.length) {
+
+        }
+        else { this.div.append("<div id = '" + contentsId + "'></div>"); }
 
         media.forEach((id, key, value) => {
-            const divId = "#infoUtility" + id;
-            this.div.append("<div id = '" + divId + key + "'></div>");
-            const keyButton = divId + key + "Button";
+            const divId = "#infoUtility_" + id;
+            this.div.append("<div id = '" + divId + "_" + key + "'></div>");
+            const keyButton = divId + "_" + key + "_" + "Button";
             contentsDiv.append("<button id = '" + keyButton + "'>" + key + "</button>");
-            
-            $(keyButton).on("click", (e) {
-                $(divId + key).show();
-                if (key == "video" && $(divId + "slide").length) { $(divId + "slide").hide(); }
-                if (key == "slide" && $(divId + "video").length) { $(divId + "video").hide(); }
-                e.stopPropagation();
-            });
 
             switch (key) {
                 case "video":
@@ -138,7 +151,18 @@ class InfoUtility {
                     break;
             }
             html += "</div>";
-            $(divId).append(html);
+            $(divId + key).append(html);
+            
+            $(keyButton).on("click", (e) => {
+                $("div [id^=" + divId + "]")              //select elements with an id that starts with divId
+                    .filter(function() {                  //filter out all ids without 3 segments
+                        const parts = this.id.split("_");                    //and 3rd segment == key)
+                        return !(parts.length != 3 || parts[3] == key);
+                    })
+                    .hide(); //Hide all elements that start with divId but don't end with key
+                $(divId + key).show();
+                e.stopPropagation();
+            });
         });
     }
 
