@@ -12,6 +12,9 @@ class InfoUtility {
     _buttonID = "infoUtilityButton";
     _divID = "infoUtilityWindow";
     _contentsDivID = "infoUtility_contents";
+    _pathDivID = this._utilityID + "_path";
+    _contentsDivID = this._utilityID + "_contents";
+    _mediaDivID = this._utilityID + "_media";
 
     constructor (utilities) {
         const self = this;
@@ -41,13 +44,16 @@ class InfoUtility {
     get button()             { return $("#" + this._buttonID); }
     get div()                { return $("#" + this._divID); }
     get contentsDiv()        { return $("#" + this._contentsDivID); }
-    siblingsDivId(id)        { return this._utilityId + "_" + id + "_siblings"; }
+    get pathDiv()            { return $("#" + this._pathDivID); }
+    get contentsDiv()        { return $("#" + this._contentsDivID); } 
+    get mediaDiv()           { return $("#" + this._mediaDivID); }
+    siblingsDivId(id)        { return this._utilityID + "_" + id + "_siblings"; }
     siblingsDiv(id)          { return $("#" + this.siblingsDivId(id)); }
-    siblingButtonId(id)      { return this._utilityId + "_" + id + "_button"; }
+    siblingButtonId(id)      { return this._utilityID + "_" + id + "_button"; }
     siblingButton(id)        { return $("#" + this.siblingsButtonId(id)); }
-    itemDivId(id, item)      { return this._utilityId + "_"  + id + "_" + item; }
+    itemDivId(id, item)      { return this._utilityID + "_"  + id + "_" + item; }
     itemDiv(id, item)        { return $("#" + this.itemDivId(id, item)); }
-    itemButtonId(id, item)   { return this._utilityId + "_"  + id + "_" + item + "_button"; }
+    itemButtonId(id, item)   { return this._utilityID + "_"  + id + "_" + item + "_button"; }
     itemButton(id, item)     { return $("#" + this.itemButtonId(id, item)); }
 
 
@@ -77,40 +83,33 @@ class InfoUtility {
         const selected = data.selected();
         if (selected == picked) { return; }
 
-        //If picked has children, figure out which child is picked.
+        //If picked has children, figure out which descendant is picked.
         if (data.hasChildren(picked)) {
             const descendants = data.descendants(picked).filter(id => selected.includes(id));
-            //If there's no selected descendant, get first child of first child etc.
-            if (descendants.length == 0) {
+            if (descendants.length > 0) {
+                //If there's a descendant that's selected, change to most recently opened.
+                picked = data.lastOpened(descendants);
+            }
+            else {
                 while (data.hasChildren(picked)) {
+                    //If no picked descendants, while picked has children, pick first child.
                     picked = data.children(picked)[0];
                 }
             }
-            //If there's a descendant that's selected, change to most recently opened.
-            else {
-                picked = data.lastOpened(descendants);
-            }
         }
-
-        //If any sibling of picked is selected, unselect it.  Then select picked.
-        data.siblings(picked).filter(id => selected.includes(id)).forEach(id => data.unSelect(id));
-        data.select(picked);
+        else {
+            //If any sibling of picked is selected, unselect it.  Then select picked.
+            data.siblings(picked).filter(id => selected.includes(id)).forEach(id => data.unSelect(id));
+            data.select(picked);
+        }
 
         const path = data.idPath(picked);
 
-        //Delete contents div, and every div whose id ends with "siblings", or doesn't contain an id that's in the path.
-        $("#infoUtility").children()
-            .forEach(function() {
-                const parsed = this.id.split("_");
-                if (this.id == this._contentsDivID || !path.includes(parseInt(parsed[1])) || (parsed.length == 2 && parsed[2] == "siblings")) {
-                    $(this).remove();
-                }
-            });
-
         //Create all sibling divs for ids in the path.
+        this.siblingsDiv.clear();
         var media = [];
         path.forEach(id => {
-            this.div.append("<div id = '" + this.siblingsDivId(id) + "'></div>");
+            this.pathDiv.append("<div id = '" + this.siblingsDivId(id) + "'></div>");
             data.siblings(id).forEach(sId => {
                 var button = "<button id = '" + this.siblingButtonId(sId) + "' class = 'btn ";
                 button += (sId == id) ? "btn-primary" : "btn-secondary";
@@ -123,11 +122,16 @@ class InfoUtility {
             media = media.concat(data.keys(id).filter(item => !["children", "name"].includes(item)).map(item => [id, item, record[item]]));
         });
 
-        this.div.append("<div id = '" + this._contentsDivID + "'></div>");
+        //Delete all media divs whose id isn't in the path.
+        this.mediaDiv.children().each(function() {
+            const id = parseInt(this.id.split("_")[1]);
+            if (!path.includes(id)) { $(this).remove(); }
+        });
 
-        //Create media divs
+        //Add content to contentsDiv media divs
+        this.contentsDiv.clear();
         media.forEach((id, item, value) => {
-            this.div.append("<div id = '" + this.itemDivId(id, item) + "'></div>");
+            this.contentsDiv.append("<div id = '" + this.itemDivId(id, item) + "'></div>");
             contentsDiv.append("<button id = '" + this.itemButtonId(id, item) + "'>" + item + "</button>");
 
             switch (key) {
@@ -138,20 +142,20 @@ class InfoUtility {
                     html += "<object data='public/slides/" + value + " '>";
                     break;
             }
-            html += "</div>";
-            $(divId + key).append(html);
+            this.mediaDiv.append("<div id = '" + this.itemDivId(id, item) + "' class = 'hidden'></div>");
+            this.itemDiv(id, item).append(html);
             
-            $(keyButton).on("click", (e) => {
-                $("div [id^=" + divId + "]")              //select elements with an id that starts with divId
-                    .filter(function() {                  //filter out all ids without 3 segments
-                        const parts = this.id.split("_");                    //and 3rd segment == key)
-                        return !(parts.length != 3 || parts[3] == key);
-                    })
-                    .hide(); //Hide all elements that start with divId but don't end with key
-                $(divId + key).show();
+            //If no item selected, default to first.  Otherwise, hide all unselected items and show selected one.
+            this.itemButton(id).on("click", (e) => {
+                const index = $(this).parent().index();
+                this.mediaDiv.children().addClass("hidden");
+                this.itemDiv(id, item).show();
                 e.stopPropagation();
             });
         });
+        if (this.mediaDiv.children().not(".hidden").length == 0) {
+            this.mediaDiv.children().eq(1).removeClass("hidden");
+        }
     }
 
     close(except) {
