@@ -288,18 +288,32 @@ class DataTree {
     sortByKey(k, ids)              { return this.sort((a, b) => (a[k] instanceof String) ? a[k].localeCompare(b[k]) : (a[k] < b[k]) ? -1 : (a[k] > b[k]) ? 1 : 0, ids); }
     sortAlnumByKey(key, ids)       { return this.sort((a, b) => a[key].localeCompare(b[key]), ids); }
     sortNumByKey(key, ids)         { return this.sort((a, b) => (a[key] < b[key]) ? -1 : (a[key] > b[key]) ? 1 : 0, ids); }
-    sortByCreation(ids)            { return this.sortNumByKey("creation", ids); }
     sortByLastEdited(ids)          { return this.sortNumByKey("lastEdited", ids); }
     sortByLastOpened(ids)          { return this.sortNumByKey("lastOpened", ids); }
+    sortByCreation(ids)            {
+        ids = this.sortNumByKey("creation", ids);
+        var max = ids.findIndex(id => this.creation(id) != this.creation(ids[0])) - 1; //Remove all items with >minimal creation
+
+        if (max > 0) {
+            ids = ids.map(id => [id, ...this.indexPath(id)]);
+            while (max > 0) {
+                ids = ids.sort((a, b) => a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0); //Sort by second array item
+                max = ids.findIndex(id => id[1] != ids[0][1]) - 1;                //Disregard all items with >minimal index
+                ids.forEach(id => { if (id.length > 1) { id.splice(1, 1); }});    //Remove second array item
+            }
+            ids = ids.map(id => id[0]);
+        }
+        return ids;
+    }
 
     min(key, ids) { return this.sortNumByKey(key, ids)[0]; }
     max(key, ids) { return this.sortNumByKey(key, ids).reverse()[0]; }
-    firstCreated(ids) { return this.min("creation", ids); }
-    firstEdited(ids)  { return this.min("lastEdited", ids); }
-    firstOpened(ids)  { return this.min("lastOpened", ids); }
-    lastCreated(ids)  { return this.max("creation", ids); }
-    lastEdited(ids)   { return this.max("lastEdited", ids); }
-    lastOpened(ids)   { return this.max("lastOpened", ids); }
+    firstCreated(ids) { return this.sortByCreation(ids)[0]; }
+    firstEdited(ids)  { return this.sortByLastEdited("lastEdited", ids); }
+    firstOpened(ids)  { return this.sortByLastOpened("lastOpened", ids); }
+    lastCreated(ids)  { return this.sortByCreation("creation", ids).reverse()[0]; }
+    lastEdited(ids)   { return this.sortByLastEdited("lastEdited", ids).reverse()[0]; }
+    lastOpened(ids)   { return this.sortByLastOpened("lastOpened", ids).reverse()[0]; }
     
 
     select(ids) {
