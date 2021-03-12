@@ -65,8 +65,8 @@ class InfoUtility {
         const data = this._data;
         const selected = data.selected();
         if (selected == picked) { return; }
-        var id;
 
+        //If picked has children, figure out which child is picked.
         if (data.hasChildren(picked)) {
             const descendants = data.descendants(picked).filter(id => selected.includes(id));
             //If there's no selected descendant, get first child of first child etc.
@@ -81,26 +81,27 @@ class InfoUtility {
             }
         }
 
-        //If any sibling of picked is selected, unselect it.
+        //If any sibling of picked is selected, unselect it.  Then select picked.
         data.siblings(picked).filter(id => selected.includes(id)).forEach(id => data.unSelect(id));
         data.select(picked);
 
         const path = data.idPath(picked);
 
-        //For each div with an id of infoUtility followed by a number,
-        //if the path doesn't include the number, delete the div.
+        //Delete every div that doesn't contain an id that's in the path, or contains "siblings" in the id.
         $("#infoUtility").children()
             .filter(function() { return !["infoUtility_contents"].includes(this.id); })
             .forEach(function() {
-                var id = parseInt(this.id.split("_")[1]);
-                if (!path.includes(id)) { $(this).remove(); }
+                const parsed = this.id.split("_");
+                const id = parseInt(parsed[1]);
+                if (!path.includes(id) || parsed[2] == "siblings") { $(this).remove(); }
             });
 
+        //Create all sibling divs for ids in the path that aren't yet created.
         var media = [];
         path.forEach(id => {
             const siblingsDivId = "#infoUtility_" + id + "_siblings";
             const siblingsDiv = $(siblingsDivId);
-            //Skip any divs with ids that are in the path.
+            //If the siblings is new, create it.  If not, adjust it so the 
             if (siblingsDiv.length == 0) {
                 this.div.append("<div id = '" + siblingsDivId + "'></div>");
                 data.siblings(id).forEach(sId => {
@@ -114,19 +115,6 @@ class InfoUtility {
                 const record = data.record(id);
                 media = media.concat(data.keys(id).filter(key => ["children", "name"].includes(key)).map(key => [id, key, record[key]]));
             }
-            else {
-                siblingsDiv.children().each(function() {
-                    if ($(this).hasClass("btn-primary") && parseInt(this.id.split("_")[1]) != id) {
-                        $(this).removeClass("btn-primary");
-                        $(this).addClass("btn-secondary");
-                    }
-                    else if ($(this).hasClass("btn-secondary") && parseInt(this.id.split("_")[1]) == id) {
-                        $(this).removeClass("btn-secondary");
-                        $(this).addClass("btn-primary");
-                    }
-                });
-            }
-
         });
 
         const contentsId = "infoUtility_contents";
