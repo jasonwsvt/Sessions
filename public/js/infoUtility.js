@@ -97,11 +97,10 @@ class InfoUtility {
                 }
             }
         }
-        else {
-            //If any sibling of picked is selected, unselect it.  Then select picked.
-            data.siblings(picked).filter(id => selected.includes(id)).forEach(id => data.unSelect(id));
-            data.select(picked);
-        }
+        
+        //If any sibling of picked is selected, unselect it.  Then select picked.
+        data.siblings(picked).filter(id => selected.includes(id)).forEach(id => data.unSelect(id));
+        data.select(picked);
 
         const path = data.idPath(picked);
 
@@ -110,12 +109,14 @@ class InfoUtility {
         var media = [];
         path.forEach(id => {
             this.pathDiv.append("<div id = '" + this.siblingsDivId(id) + "'></div>");
-            data.siblings(id).forEach(sId => {
+            data.siblings(id).forEach((sId, index) => {
                 var button = "<button id = '" + this.siblingButtonId(sId) + "' class = 'btn ";
                 button += (sId == id) ? "btn-primary" : "btn-secondary";
                 button += "'";
                 if (sId == id) { button += " disabled"; }
-                button += ">" + data.value(sId, "name") + "</button>";
+                button += ">";
+                button += data.hasKey(sId, "name") ? data.value(sId, "name") : index + 1;
+                button += "</button>";
                 this.siblingsDiv(id).append(button);
             });
             const record = data.record(id);
@@ -163,5 +164,64 @@ class InfoUtility {
             this.div.addClass("hidden");
             this.div.focusout();
         }
+    }
+
+    init() {
+        const data = this._data;
+        const root = data.import({});
+
+        const slides = [
+            {
+                name: "Introduction",
+                children: [
+                    { slide: "" },
+                    { slide: "" }
+                ]
+            },
+            {
+                name: "Issues",
+                children: [
+                    
+                ]
+            },
+            {
+                name: "Energy Testing",
+                children: [
+                    
+                ]
+            },
+            {
+                name: "Resolution",
+                children: [
+                    
+                ]
+            },
+            {
+                name: "Determination",
+                children: [
+                    
+                ]
+            },
+            {
+                name: "Web App",
+                children: [
+                    
+                ]
+            },
+            {
+                name: "Putting It All Together",
+                children: [
+                    
+                ]
+            },
+            {
+                name: "Final Thoughts",
+                children: [
+                    
+                ]
+            }
+            
+        ];
+
     }
 }
