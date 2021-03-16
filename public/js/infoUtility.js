@@ -67,15 +67,9 @@ class InfoUtility {
         this.div.css("left", "0px");
         this.div.css("top", String(this.utilityDiv.position().top + 32) + "px");
 
-        const data = this._data;
-
-        data.import({});
-        const sections = ["Introduction", "Overview", "Issues", "Energy Testing", "Determination", "Resolution", "Web App", "Final Thoughts"]
-        sections.forEach((section, index) => {
-            section[index] = { "name": section, "id": data.addChild({ "name": section }) }
-        });
-
-        this.manage(data.tierIds(0)[0]);
+        this.init();
+        
+        this.manage(this._data.tierIds(0)[0]);
     }
 
     manage(picked) {
@@ -394,11 +388,18 @@ class InfoUtility {
             
         ];
 
-        const root = data.import({});
-        slides.forEach(slide => {
-            if (slide.name) { }
-        })
+        const parentId = data.import({});
+        slides.forEach(slide => { this.importSlide(parentId, slide); });
+
 //        public/assets/slides/about_me.html
 //        public/assets/slides/disclaimer.html
+    }
+
+    importSlide(parentId, slide) {
+        const record = jQuery.extend({}, slide);
+        const hasChildren = slide.hasOwnProperty("children");
+        if (hasChildren) { delete record.children; }
+        const id = this._data.addChild(parentId, record);
+        if (hasChildren) { slide.children.forEach(child => this.importSlide(id, child)); }
     }
 }
