@@ -62,10 +62,14 @@ class InfoUtility {
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + infoIcon + "</button>";
         const div = "<div id = '" + this._divID + "' class = 'popUpMenu hidden'></div>";
+        const pathDiv = "<div id = '" + this._pathDivID + "'></div>";
+        const contentsDiv = "<div id = '" + this._contentsDivID + "'></div>";
+        const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
 
         this.utilityDiv.append(button + div);
         this.div.css("left", "0px");
         this.div.css("top", String(this.utilityDiv.position().top + 32) + "px");
+        this.div.append(pathDiv + contentsDiv + mediaDiv);
 
         this.init();
         
@@ -99,7 +103,7 @@ class InfoUtility {
         const path = data.idPath(picked);
 
         //Create all sibling divs for ids in the path.
-        this.siblingsDiv.clear();
+        this.pathDiv.empty();
         var media = [];
         path.forEach(id => {
             this.pathDiv.append("<div id = '" + this.siblingsDivId(id) + "'></div>");
@@ -114,8 +118,9 @@ class InfoUtility {
                 this.siblingsDiv(id).append(button);
             });
             const record = data.record(id);
-            media = media.concat(data.keys(id).filter(item => !["children", "name"].includes(item)).map(item => [id, item, record[item]]));
+            media = media.concat(data.keys(id).filter(item => !["id", "children", "name", "creation", "lastOpened", "lastEdited"].includes(item)).map(item => [id, item, record[item]]));
         });
+        console.log(media);
 
         //Delete all media divs whose id isn't in the path.
         this.mediaDiv.children().each(function() {
@@ -124,21 +129,26 @@ class InfoUtility {
         });
 
         //Add content to contentsDiv media divs
-        this.contentsDiv.clear();
-        media.forEach((id, item, value) => {
-            this.contentsDiv.append("<div id = '" + this.itemDivId(id, item) + "'></div>");
-            contentsDiv.append("<button id = '" + this.itemButtonId(id, item) + "'>" + item + "</button>");
-
-            switch (key) {
+        this.contentsDiv.empty();
+        var code;
+        media.forEach((ary, index) => {
+            const id = ary[0];
+            const item = ary[1];
+            const value = ary[2];
+            this.contentsDiv.append("<button id = '" + this.itemButtonId(id, item) + "'>" + item + "</button>");
+            switch (value) {
                 case "video":
-                    html += "<iframe width = 100% src='https://www.youtube.com/embed/" + value + "'></iframe>";
+                    code += "<iframe width = 100% src='https://www.youtube.com/embed/" + value + "'></iframe>";
                     break;
                 case "slide":
-                    html += "<object data='public/slides/" + value + " '>";
+                    code += "<object data = 'public/slides/" + value + " '>";
                     break;
             }
+            console.log("id:", id);
+            console.log("item:", item);
+            console.log("value:", value);
             this.mediaDiv.append("<div id = '" + this.itemDivId(id, item) + "' class = 'hidden'></div>");
-            this.itemDiv(id, item).append(html);
+            this.itemDiv(id, item).append(code);
             
             //If no item selected, default to first.  Otherwise, hide all unselected items and show selected one.
             this.itemButton(id).on("click", (e) => {
@@ -167,180 +177,180 @@ class InfoUtility {
             {
                 name: "Introduction",
                 children: [
-                    { html: "public/assets/slides/introduction/because_reasons_example_1.html" },
-                    { html: "public/assets/slides/introduction/because_reasons_example_2.html" },
-                    { html: "public/assets/slides/introduction/because_reasons_example_3.html" },
-                    { html: "public/assets/slides/introduction/david_hawkins_quote.html" },
-                    { html: "public/assets/slides/introduction/dawson_church_quote.html" },
-                    { html: "public/assets/slides/introduction/eckhart_tolle_quote.html" },
-                    { html: "public/assets/slides/introduction/emiliana_simon-thomas_quote.html" },
-                    { html: "public/assets/slides/introduction/energy_healing_techniques_1.html" },
-                    { html: "public/assets/slides/introduction/energy_healing_techniques_2.html" },
-                    { html: "public/assets/slides/introduction/invitation.html" },
-                    { html: "public/assets/slides/introduction/mind_body_connection_article.html" },
-                    { html: "public/assets/slides/introduction/natalie_marchant_quote.html" },
-                    { html: "public/assets/slides/introduction/sadhguru_quote.html" },
-                    { html: "public/assets/slides/introduction/what_are_unhealthy_emotions_1.html" },
-                    { html: "public/assets/slides/introduction/what_are_unhealthy_emotions_2.html" },
-                    { html: "public/assets/slides/introduction/what_is_because_reasons.html" },
-                    { html: "public/assets/slides/introduction/william_buhlman_quote.html" }
+                    { html: "introduction/because_reasons_example_1.html" },
+                    { html: "introduction/because_reasons_example_2.html" },
+                    { html: "introduction/because_reasons_example_3.html" },
+                    { html: "introduction/david_hawkins_quote.html" },
+                    { html: "introduction/dawson_church_quote.html" },
+                    { html: "introduction/eckhart_tolle_quote.html" },
+                    { html: "introduction/emiliana_simon-thomas_quote.html" },
+                    { html: "introduction/energy_healing_techniques_1.html" },
+                    { html: "introduction/energy_healing_techniques_2.html" },
+                    { html: "introduction/invitation.html" },
+                    { html: "introduction/mind_body_connection_article.html" },
+                    { html: "introduction/natalie_marchant_quote.html" },
+                    { html: "introduction/sadhguru_quote.html" },
+                    { html: "introduction/what_are_unhealthy_emotions_1.html" },
+                    { html: "introduction/what_are_unhealthy_emotions_2.html" },
+                    { html: "introduction/what_is_because_reasons.html" },
+                    { html: "introduction/william_buhlman_quote.html" }
                 ]
             },
             {
                 name: "Issues",
                 children: [
-                    { html: "public/assets/slides/issues/affirmations.html" },
-                    { html: "public/assets/slides/issues/aspirations.html" },
-                    { html: "public/assets/slides/issues/examples.html" },
-                    { html: "public/assets/slides/issues/identification.html" },
-                    { html: "public/assets/slides/issues/negative_thoughts.html" },
-                    { html: "public/assets/slides/issues/negative_thoughts_example.html" },
-                    { html: "public/assets/slides/issues/overview.html" },
-                    { html: "public/assets/slides/issues/secondary_gain.html" },
-                    { html: "public/assets/slides/issues/symptoms.html" },
-                    { html: "public/assets/slides/issues/tail_enders.html" },
-                    { html: "public/assets/slides/issues/what_is_because_reasons.html" }
+                    { html: "issues/affirmations.html" },
+                    { html: "issues/aspirations.html" },
+                    { html: "issues/examples.html" },
+                    { html: "issues/identification.html" },
+                    { html: "issues/negative_thoughts.html" },
+                    { html: "issues/negative_thoughts_example.html" },
+                    { html: "issues/overview.html" },
+                    { html: "issues/secondary_gain.html" },
+                    { html: "issues/symptoms.html" },
+                    { html: "issues/tail_enders.html" },
+                    { html: "issues/what_is_because_reasons.html" }
                 ]
             },
             {
                 name: "Energy Testing",
                 children: [
-                    { html: "public/assets/slides/energy_testing/adjusting_statements.html" },
-                    { html: "public/assets/slides/energy_testing/advanced_responses.html" },
-                    { html: "public/assets/slides/energy_testing/avoiding_influence.html" },
-                    { html: "public/assets/slides/energy_testing/basic_steps.html" },
-                    { html: "public/assets/slides/energy_testing/basic_steps_example.html" },
-                    { html: "public/assets/slides/energy_testing/basic_steps_example_2.html" },
-                    { html: "public/assets/slides/energy_testing/binary_search_method.html" },
-                    { html: "public/assets/slides/energy_testing/binary_search_method_2.html" },
-                    { html: "public/assets/slides/energy_testing/energy_testing_in_because_reasons.html" },
-                    { html: "public/assets/slides/energy_testing/example_statements.html" },
-                    { html: "public/assets/slides/energy_testing/history.html" },
-                    { html: "public/assets/slides/energy_testing/improving_responses.html" },
-                    { html: "public/assets/slides/energy_testing/methods_and_practitioners.html" },
-                    { html: "public/assets/slides/energy_testing/number_comparison.html" },
-                    { html: "public/assets/slides/energy_testing/number_comparison_2.html" },
-                    { html: "public/assets/slides/energy_testing/overview.html" },
-                    { html: "public/assets/slides/energy_testing/overview_2.html" },
-                    { html: "public/assets/slides/energy_testing/scientific_basis.html" },
-                    { html: "public/assets/slides/energy_testing/statement_semantics.html" },
-                    { html: "public/assets/slides/energy_testing/statement_semantics_2.html" },
-                    { html: "public/assets/slides/energy_testing/the_eye_method_2.html" },
-                    { html: "public/assets/slides/energy_testing/the_eye_method_3.html" },
-                    { html: "public/assets/slides/energy_testing/the_eye_testing_method.html" },
-                    { html: "public/assets/slides/energy_testing/truth_and_falsity.html" },
-                    { html: "public/assets/slides/energy_testing/truth_and_falsity_2.html" },
-                    { html: "public/assets/slides/energy_testing/what_is_because_reasons.html" }
+                    { html: "energy_testing/adjusting_statements.html" },
+                    { html: "energy_testing/advanced_responses.html" },
+                    { html: "energy_testing/avoiding_influence.html" },
+                    { html: "energy_testing/basic_steps.html" },
+                    { html: "energy_testing/basic_steps_example.html" },
+                    { html: "energy_testing/basic_steps_example_2.html" },
+                    { html: "energy_testing/binary_search_method.html" },
+                    { html: "energy_testing/binary_search_method_2.html" },
+                    { html: "energy_testing/energy_testing_in_because_reasons.html" },
+                    { html: "energy_testing/example_statements.html" },
+                    { html: "energy_testing/history.html" },
+                    { html: "energy_testing/improving_responses.html" },
+                    { html: "energy_testing/methods_and_practitioners.html" },
+                    { html: "energy_testing/number_comparison.html" },
+                    { html: "energy_testing/number_comparison_2.html" },
+                    { html: "energy_testing/overview.html" },
+                    { html: "energy_testing/overview_2.html" },
+                    { html: "energy_testing/scientific_basis.html" },
+                    { html: "energy_testing/statement_semantics.html" },
+                    { html: "energy_testing/statement_semantics_2.html" },
+                    { html: "energy_testing/the_eye_method_2.html" },
+                    { html: "energy_testing/the_eye_method_3.html" },
+                    { html: "energy_testing/the_eye_testing_method.html" },
+                    { html: "energy_testing/truth_and_falsity.html" },
+                    { html: "energy_testing/truth_and_falsity_2.html" },
+                    { html: "energy_testing/what_is_because_reasons.html" }
                 ]
             },
             {
                 name: "Resolution",
                 children: [
-                    { html: "public/assets/slides/resolution/a_yawn_or_deep_breath.html" },
-                    { html: "public/assets/slides/resolution/energy_test_response.html" },
-                    { html: "public/assets/slides/resolution/overview.html" },
-                    { html: "public/assets/slides/resolution/resolution_command.html" },
-                    { html: "public/assets/slides/resolution/somatic_or_cognitive_response.html" },
-                    { html: "public/assets/slides/resolution/subconscious_work.html" },
-                    { html: "public/assets/slides/resolution/sufficient_determination.html" },
-                    { html: "public/assets/slides/resolution/what_is_because_reasons.html" }
+                    { html: "resolution/a_yawn_or_deep_breath.html" },
+                    { html: "resolution/energy_test_response.html" },
+                    { html: "resolution/overview.html" },
+                    { html: "resolution/resolution_command.html" },
+                    { html: "resolution/somatic_or_cognitive_response.html" },
+                    { html: "resolution/subconscious_work.html" },
+                    { html: "resolution/sufficient_determination.html" },
+                    { html: "resolution/what_is_because_reasons.html" }
                 ]
             },
             {
                 name: "Determination",
                 children: [
-                    { html: "public/assets/slides/determination/what_is_because_reasons.html" },
-                    { html: "public/assets/slides/determination/overview_1.html" },
-                    { html: "public/assets/slides/determination/overview_2.html" },
-                    { html: "public/assets/slides/determination/overview_3.html" },
-                    { html: "public/assets/slides/determination/overview_4.html" },
-                    { html: "public/assets/slides/determination/ascended_masters.html" },
-                    { html: "public/assets/slides/determination/characteristics.html" },
-                    { html: "public/assets/slides/determination/low_level_energies.html" },
-                    { html: "public/assets/slides/determination/numbers.html" },
-                    { html: "public/assets/slides/determination/parts.html" },
-                    { html: "public/assets/slides/determination/physical_body.html" },
-                    { html: "public/assets/slides/determination/physical_body_2.html" },
-                    { html: "public/assets/slides/determination/senses.html" },
-                    { html: "public/assets/slides/determination/states.html" },
+                    { html: "determination/what_is_because_reasons.html" },
+                    { html: "determination/overview_1.html" },
+                    { html: "determination/overview_2.html" },
+                    { html: "determination/overview_3.html" },
+                    { html: "determination/overview_4.html" },
+                    { html: "determination/ascended_masters.html" },
+                    { html: "determination/characteristics.html" },
+                    { html: "determination/low_level_energies.html" },
+                    { html: "determination/numbers.html" },
+                    { html: "determination/parts.html" },
+                    { html: "determination/physical_body.html" },
+                    { html: "determination/physical_body_2.html" },
+                    { html: "determination/senses.html" },
+                    { html: "determination/states.html" },
                     {
                         name: "Conjunctions",
                         children: [
-                            { html: "public/assets/slides/determination/conjunctions/overview.html" },
-                            { html: "public/assets/slides/determination/conjunctions/overview_2.html" },
-                            { html: "public/assets/slides/determination/conjunctions/overview_3.html" }
+                            { html: "determination/conjunctions/overview.html" },
+                            { html: "determination/conjunctions/overview_2.html" },
+                            { html: "determination/conjunctions/overview_3.html" }
                         ]
                     },
                     {
                         name: "Consciousness Levels",
                         children: [
-                            { html: "public/assets/slides/determination/consciousness_levels/david_hawkins_quote_1.html" },
-                            { html: "public/assets/slides/determination/consciousness_levels/david_hawkins_quote_2.html" },
-                            { html: "public/assets/slides/determination/consciousness_levels/level_connections.html" },
-                            { html: "public/assets/slides/determination/consciousness_levels/level_connections_2.html" },
-                            { html: "public/assets/slides/determination/consciousness_levels/level_of_consciousness.html" },
-                            { html: "public/assets/slides/determination/consciousness_levels/overview.html" },
-                            { html: "public/assets/slides/determination/consciousness_levels/richard_rudd_quote.html" }
+                            { html: "determination/consciousness_levels/david_hawkins_quote_1.html" },
+                            { html: "determination/consciousness_levels/david_hawkins_quote_2.html" },
+                            { html: "determination/consciousness_levels/level_connections.html" },
+                            { html: "determination/consciousness_levels/level_connections_2.html" },
+                            { html: "determination/consciousness_levels/level_of_consciousness.html" },
+                            { html: "determination/consciousness_levels/overview.html" },
+                            { html: "determination/consciousness_levels/richard_rudd_quote.html" }
                         ]
                     },
                     {
                         name: "Emotions",
                         children: [
-                            { html: "public/assets/slides/determination/emotions/emotions_1.html" },
-                            { html: "public/assets/slides/determination/emotions/emotions_2.html" },
-                            { html: "public/assets/slides/determination/emotions/emotions_3.html" }
+                            { html: "determination/emotions/emotions_1.html" },
+                            { html: "determination/emotions/emotions_2.html" },
+                            { html: "determination/emotions/emotions_3.html" }
                         ]
                     },
                     {
                         name: "Energy System",
                         children: [
-                            { html: "public/assets/slides/determination/energy_system/aura.html" },
-                            { html: "public/assets/slides/determination/energy_system/chakras.html" },
-                            { html: "public/assets/slides/determination/energy_system/chakras_2.html" },
-                            { html: "public/assets/slides/determination/energy_system/hara_line.html" },
-                            { html: "public/assets/slides/determination/energy_system/meridians.html" },
-                            { html: "public/assets/slides/determination/energy_system/overview.html" },
-                            { html: "public/assets/slides/determination/energy_system/subtle_energy_bodies.html" }
+                            { html: "determination/energy_system/aura.html" },
+                            { html: "determination/energy_system/chakras.html" },
+                            { html: "determination/energy_system/chakras_2.html" },
+                            { html: "determination/energy_system/hara_line.html" },
+                            { html: "determination/energy_system/meridians.html" },
+                            { html: "determination/energy_system/overview.html" },
+                            { html: "determination/energy_system/subtle_energy_bodies.html" }
                         ]
                     },
                     {
                         name: "Events",
                         children: [
-                            { html: "public/assets/slides/determination/events/actions.html" },
-                            { html: "public/assets/slides/determination/events/characteristics.html" },
-                            { html: "public/assets/slides/determination/events/individuals.html" },
-                            { html: "public/assets/slides/determination/events/items.html" },
-                            { html: "public/assets/slides/determination/events/location_types.html" },
-                            { html: "public/assets/slides/determination/events/overview.html" },
-                            { html: "public/assets/slides/determination/events/time.html" },
-                            { html: "public/assets/slides/determination/events/time_life_instance.html" }
+                            { html: "determination/events/actions.html" },
+                            { html: "determination/events/characteristics.html" },
+                            { html: "determination/events/individuals.html" },
+                            { html: "determination/events/items.html" },
+                            { html: "determination/events/location_types.html" },
+                            { html: "determination/events/overview.html" },
+                            { html: "determination/events/time.html" },
+                            { html: "determination/events/time_life_instance.html" }
 
                         ]
                     },
                     {
                         name: "Patterns",
                         children: [
-                            { html: "public/assets/slides/determination/patterns/attachment.html" },
-                            { html: "public/assets/slides/determination/patterns/identification.html" },
-                            { html: "public/assets/slides/determination/patterns/overview.html" },
-                            { html: "public/assets/slides/determination/patterns/resistance.html" }
+                            { html: "determination/patterns/attachment.html" },
+                            { html: "determination/patterns/identification.html" },
+                            { html: "determination/patterns/overview.html" },
+                            { html: "determination/patterns/resistance.html" }
                         ]
                     },
                     {
                         name: "Psychological Reversals",
                         children: [
-                            { html: "public/assets/slides/determination/psychological_reversals/psychological_reversals_1.html" },
-                            { html: "public/assets/slides/determination/psychological_reversals/psychological_reversals_2.html" },
-                            { html: "public/assets/slides/determination/psychological_reversals/psychological_reversals_3.html" },
-                            { html: "public/assets/slides/determination/psychological_reversals/psychological_reversals_4.html" }
+                            { html: "determination/psychological_reversals/psychological_reversals_1.html" },
+                            { html: "determination/psychological_reversals/psychological_reversals_2.html" },
+                            { html: "determination/psychological_reversals/psychological_reversals_3.html" },
+                            { html: "determination/psychological_reversals/psychological_reversals_4.html" }
                         ]
                     },
                     {
                         name: "Source Creator System",
                         children: [
-                            { html: "public/assets/slides/determination/source_creator_system/child_selves.html" },
-                            { html: "public/assets/slides/determination/source_creator_system/overview.html" },
-                            { html: "public/assets/slides/determination/source_creator_system/overview_2.html" }
+                            { html: "determination/source_creator_system/child_selves.html" },
+                            { html: "determination/source_creator_system/overview.html" },
+                            { html: "determination/source_creator_system/overview_2.html" }
                         ]
                     }
                 ]
@@ -354,35 +364,35 @@ class InfoUtility {
             {
                 name: "Process",
                 children: [
-                    { html: "public/assets/slides/process/albert_einstein_quote.html" },
-                    { html: "public/assets/slides/process/changes_in_symptoms.html" },
-                    { html: "public/assets/slides/process/divination.html" },
-                    { html: "public/assets/slides/process/divination_examples.html" },
-                    { html: "public/assets/slides/process/gameplay.html" },
-                    { html: "public/assets/slides/process/ongoing_issues.html" },
-                    { html: "public/assets/slides/process/overview.html" },
-                    { html: "public/assets/slides/process/what_is_because_reasons.html" },
-                    { html: "public/assets/slides/process/working_with_others.html" },
-                    { html: "public/assets/slides/process/working_with_others_2.html" }
+                    { html: "process/albert_einstein_quote.html" },
+                    { html: "process/changes_in_symptoms.html" },
+                    { html: "process/divination.html" },
+                    { html: "process/divination_examples.html" },
+                    { html: "process/gameplay.html" },
+                    { html: "process/ongoing_issues.html" },
+                    { html: "process/overview.html" },
+                    { html: "process/what_is_because_reasons.html" },
+                    { html: "process/working_with_others.html" },
+                    { html: "process/working_with_others_2.html" }
                 ]
             },
             {
                 name: "Example Session",
                 children: [
-                    { html: "public/assets/slides/example_session/what_is_because_reasons.html" }
+                    { html: "example_session/what_is_because_reasons.html" }
                 ]
             },
             {
                 name: "Final Thoughts",
                 children: [
-                    { html: "public/assets/slides/final_thoughts/basic_principals_for_letting_go.html" },
-                    { html: "public/assets/slides/final_thoughts/closing_remarks_1.html" },
-                    { html: "public/assets/slides/final_thoughts/closing_remarks_2.html" },
-                    { html: "public/assets/slides/final_thoughts/closing_remarks_3.html" },
-                    { html: "public/assets/slides/final_thoughts/closing_remarks_4.html" },
-                    { html: "public/assets/slides/final_thoughts/closing_remarks_5.html" },
-                    { html: "public/assets/slides/final_thoughts/martin_luther_king_jr_quote.html" },
-                    { html: "public/assets/slides/final_thoughts/overview.html" }
+                    { html: "final_thoughts/basic_principals_for_letting_go.html" },
+                    { html: "final_thoughts/closing_remarks_1.html" },
+                    { html: "final_thoughts/closing_remarks_2.html" },
+                    { html: "final_thoughts/closing_remarks_3.html" },
+                    { html: "final_thoughts/closing_remarks_4.html" },
+                    { html: "final_thoughts/closing_remarks_5.html" },
+                    { html: "final_thoughts/martin_luther_king_jr_quote.html" },
+                    { html: "final_thoughts/overview.html" }
                 ]
             }
             
@@ -391,8 +401,8 @@ class InfoUtility {
         const parentId = data.import({});
         slides.forEach(slide => { this.importSlide(parentId, slide); });
 
-//        public/assets/slides/about_me.html
-//        public/assets/slides/disclaimer.html
+//        about_me.html
+//        disclaimer.html
     }
 
     importSlide(parentId, slide) {
