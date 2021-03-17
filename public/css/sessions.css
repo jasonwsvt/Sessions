@@ -184,7 +184,7 @@
     opacity: 1;
 }
 
-.infoUtility {
+#infoUtilityWindow {
     z-index: 2;
     position: absolute;
     display: flex;
@@ -198,10 +198,22 @@
     width: 100%;
 }
 
-.infoUtility_media {
+#infoUtilityWindow .btn-group-sm {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 0 0 auto;
+}
+
+
+#infoUtility_media {
     overflow-y: auto;
     width: 100%;
     height: 100%;    
+}
+
+#infoUtility_media div {
+    height: 100%;
+    width: 100% !important;
 }
 
 .btn-group-sm {

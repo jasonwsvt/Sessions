@@ -1,6 +1,3 @@
-/* utilities class links to sessions class
-*/
-
 class InfoUtility {
     _utilities = null;
     _utilityID = "infoUtility";
@@ -38,9 +35,9 @@ class InfoUtility {
         }); 
     }
 
-    get utilityDiv()         { return $("#" + this._utilityID); }
-    get utilities()          { return this._utilities; }
     get app()                { return this._utilities.app; }
+    get utilities()          { return this._utilities; }
+    get utilityDiv()         { return $("#" + this._utilityID); }
     get button()             { return $("#" + this._buttonID); }
     get div()                { return $("#" + this._divID); }
     get contentsDiv()        { return $("#" + this._contentsDivID); }
@@ -61,9 +58,9 @@ class InfoUtility {
         const infoIcon = this._infoIcon;
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + infoIcon + "</button>";
-        const div = "<div id = '" + this._divID + "' class = 'infoUtility hidden'></div>";
-        const pathDiv = "<div id = '" + this._pathDivID + "'></div>";
-        const contentsDiv = "<div id = '" + this._contentsDivID + "'></div>";
+        const div = "<div id = '" + this._divID + "' class = 'hidden'></div>";
+        const pathDiv = "<div id = '" + this._pathDivID + "' class = 'btn-group-sm' role = 'group'></div>";
+        const contentsDiv = "<div id = '" + this._contentsDivID + "' class = 'btn-group-sm' role = 'group'></div>";
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
 
         this.utilityDiv.append(button + div);
@@ -109,7 +106,7 @@ class InfoUtility {
         path.forEach(id => {
             this.pathDiv.append("<div id = '" + this.siblingsDivId(id) + "'></div>");
             data.siblings(id).forEach((sId, index) => {
-                var button = "<button id = '" + this.siblingButtonId(sId) + "' class = 'btn ";
+                var button = "<button id = '" + this.siblingButtonId(sId) + "' class = 'btn btn-sm ";
                 button += (sId == id) ? "btn-primary" : "btn-secondary";
                 button += "'";
                 if (sId == id) { button += " disabled"; }
@@ -137,19 +134,20 @@ class InfoUtility {
             const item = ary[1];
             const value = ary[2];
             this.contentsDiv.append("<button id = '" + this.itemButtonId(id, item) + "' type = 'button' class = 'btn bth-primary btn-sm'>" + item + "</button>");
+            this.mediaDiv.append("<div id = '" + this.itemDivId(id, item) + "' class = 'hidden'></div>");
             switch (item) {
                 case "video":
-                    code += "<iframe width = 100% src='https://www.youtube.com/embed/" + value + "'></iframe>";
+                    this.itemDiv(id, item).append("<iframe width = 100% src='https://www.youtube.com/embed/" + value + "'></iframe>");
                     break;
                 case "slide":
-                    code += "<object data = 'assets/slides/" + value + " '>";
+                    $.get("assets/slides/" + value, (code) => this.itemDiv(id, item).append(code));
+                    //code = "<object data = 'assets/slides/" + value + " '>";
                     break;
             }
             console.log("id:", id);
             console.log("item:", item);
             console.log("value:", value);
-            this.mediaDiv.append("<div id = '" + this.itemDivId(id, item) + "' class = 'hidden'></div>");
-            this.itemDiv(id, item).append(code);
+            //this.itemDiv(id, item).append(code);
             
             //If no item selected, default to first.  Otherwise, hide all unselected items and show selected one.
             this.itemButton(id).on("click", (e) => {
