@@ -5,6 +5,8 @@ class InfoUtility {
     _data = null;
 
     _infoIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-info-square' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path d='M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z'/><circle cx='8' cy='4.5' r='1'/></svg>";
+    _leftArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='currentColor' class='bi bi-arrow-left' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z'/></svg>";
+    _rightArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='currentColor' class='bi bi-arrow-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z'/></svg>";
 
     _buttonID = "infoUtilityButton";
     _divID = "infoUtilityWindow";
@@ -70,6 +72,8 @@ class InfoUtility {
         const pathDiv = "<div id = '" + this._pathDivID + "' class = 'btn-group-sm' role = 'group'></div>";
         const contentsDiv = "<div id = '" + this._contentsDivID + "' class = 'btn-group-sm' role = 'group'></div>";
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
+        const leftArrowDiv = "<div id = '" + this._leftArrowButtonId + "'><img src = '" + this._leftArrow + "'></div>";
+        const rightArrowDiv = "<div id = '" + this._rightArrowButtonId + "'><img src = '" + this._rightArrow + "'></div>";
 
         this.utilityDiv.append(button + div);
 
@@ -77,7 +81,7 @@ class InfoUtility {
         this.div.css("top", String(this.utilityDiv.position().top + 32) + "px");
         this.resize();
 
-        this.div.append(pathDiv + contentsDiv + mediaDiv);
+        this.div.append(pathDiv + contentsDiv + "<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
 
         this.init();
         
@@ -442,13 +446,18 @@ class InfoUtility {
             {
                 name: "Final Thoughts",
                 children: [
-                    { name: "", slide: "final_thoughts/overview.html" },
+                    { name: "Continual Use", slide: "final_thoughts/overview.html" },
                     { name: "Letting Go", slide: "final_thoughts/basic_principals_for_letting_go.html" },
-                    { name: "To Health", slide: "final_thoughts/closing_remarks_1.html" },
-                    { name: "", slide: "final_thoughts/closing_remarks_2.html" },
-                    { name: "", slide: "final_thoughts/closing_remarks_3.html" },
-                    { name: "", slide: "final_thoughts/closing_remarks_4.html" },
-                    { name: "", slide: "final_thoughts/closing_remarks_5.html" },
+                    {
+                        name: "The Consciousness Level of Health",
+                        children: [
+                            { slide: "final_thoughts/closing_remarks_1.html" },
+                            { slide: "final_thoughts/closing_remarks_2.html" },
+                            { slide: "final_thoughts/closing_remarks_3.html" },
+                            { slide: "final_thoughts/closing_remarks_4.html" },
+                            { slide: "final_thoughts/closing_remarks_5.html" }
+                        ]
+                    },
                     { name: "MLK Quote", slide: "final_thoughts/martin_luther_king_jr_quote.html" }
                 ]
             }
