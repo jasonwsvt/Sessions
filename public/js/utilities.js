@@ -41,5 +41,6 @@ class Utilities {
         this.client.close(except);
         this.issue.close(except);
         this.session.close(except);
+        this.info.close(except);
     }
 }

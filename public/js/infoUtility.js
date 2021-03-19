@@ -32,6 +32,14 @@ class InfoUtility {
                 }
                 e.stopPropagation();
             });
+
+            $(window).resize(function(e) {
+                self.resize();
+            });
+
+            self.div.on("click", function(e) {
+                e.stopPropagation();
+            });
         }); 
     }
 
@@ -47,7 +55,7 @@ class InfoUtility {
     siblingsDivId(id)        { return this._utilityID + "_" + id + "_siblings"; }
     siblingsDiv(id)          { return $("#" + this.siblingsDivId(id)); }
     siblingButtonId(id)      { return this._utilityID + "_" + id + "_button"; }
-    siblingButton(id)        { return $("#" + this.siblingsButtonId(id)); }
+    siblingButton(id)        { return $("#" + this.siblingButtonId(id)); }
     itemDivId(id, item)      { return this._utilityID + "_"  + id + "_" + item; }
     itemDiv(id, item)        { return $("#" + this.itemDivId(id, item)); }
     itemButtonId(id, item)   { return this._utilityID + "_"  + id + "_" + item + "_button"; }
@@ -64,9 +72,11 @@ class InfoUtility {
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
 
         this.utilityDiv.append(button + div);
+
         this.div.css("left", "0px");
         this.div.css("top", String(this.utilityDiv.position().top + 32) + "px");
-        this.div.css("height", String($(window).height() - 32));
+        this.resize();
+
         this.div.append(pathDiv + contentsDiv + mediaDiv);
 
         this.init();
@@ -74,7 +84,13 @@ class InfoUtility {
         this.manage(this._data.tierIds(0)[0]);
     }
 
+    resize() {
+        this.div.css("height", String($(window).height() - 32));
+        this.div.css("width", String($(window).width()));
+    }
+
     manage(picked) {
+        const self = this;
         const data = this._data;
         const selected = data.selected();
         if (selected == picked) { return; }
@@ -95,7 +111,7 @@ class InfoUtility {
         }
         
         //If any sibling of picked is selected, unselect it.  Then select picked.
-        data.siblings(picked).filter(id => selected.includes(id)).forEach(id => data.unSelect(id));
+        data.siblings(picked).filter(id => selected.includes(id)).forEach(id => data.unselect(id));
         data.select(picked);
 
         const path = data.idPath(picked).filter((item, index) => index != 0);
@@ -108,13 +124,18 @@ class InfoUtility {
             data.siblings(id).forEach((sId, index) => {
                 var button = "<button id = '" + this.siblingButtonId(sId) + "' class = 'btn btn-sm ";
                 button += (sId == id) ? "btn-primary" : "btn-secondary";
-                button += "'";
+                button += "' value = " + sId;
                 if (sId == id) { button += " disabled"; }
                 button += ">";
                 button += data.hasKey(sId, "name") ? data.value(sId, "name") : index + 1;
                 button += "</button>";
                 this.siblingsDiv(id).append(button);
+                this.siblingButton(sId).on("click", function(e) {
+                    console.log("clicked", this.value);
+                    self.manage(parseInt(this.value));
+                });
             });
+
             const record = data.record(id);
             media = media.concat(data.keys(id).filter(item => !["id", "children", "name", "creation", "lastOpened", "lastEdited"].includes(item)).map(item => [id, item, record[item]]));
         });
@@ -133,7 +154,9 @@ class InfoUtility {
             const id = ary[0];
             const item = ary[1];
             const value = ary[2];
-            this.contentsDiv.append("<button id = '" + this.itemButtonId(id, item) + "' type = 'button' class = 'btn bth-primary btn-sm'>" + item + "</button>");
+            if (media.length > 1) {
+                this.contentsDiv.append("<button id = '" + this.itemButtonId(id, item) + "' type = 'button' class = 'btn bth-primary btn-sm'>" + item + "</button>");
+            }
             this.mediaDiv.append("<div id = '" + this.itemDivId(id, item) + "' class = 'hidden'></div>");
             switch (item) {
                 case "video":
@@ -147,23 +170,17 @@ class InfoUtility {
             console.log("id:", id);
             console.log("item:", item);
             console.log("value:", value);
-            //this.itemDiv(id, item).append(code);
             
             //If no item selected, default to first.  Otherwise, hide all unselected items and show selected one.
             this.itemButton(id).on("click", (e) => {
+                console.log("clicked", id, item, value);
                 const index = $(this).parent().index();
                 this.mediaDiv.children().addClass("hidden");
                 this.itemDiv(id, item).show();
                 e.stopPropagation();
             });
-        });
 
-        if (media.length == 1) {
-            this.contentsDiv.addClass("hidden");
-        }
-        else {
-            this.contentsDiv.removeClass("hidden");
-        }
+        });
 
         if (this.mediaDiv.children().not(".hidden").length == 0) {
             console.log(this.mediaDiv, this.mediaDiv.children(), this.mediaDiv.children().eq(1));
@@ -185,23 +202,39 @@ class InfoUtility {
             {
                 name: "Introduction",
                 children: [
-                    { slide: "introduction/invitation.html" },
-                    { slide: "introduction/because_reasons_example_1.html" },
-                    { slide: "introduction/because_reasons_example_2.html" },
-                    { slide: "introduction/because_reasons_example_3.html" },
-                    { slide: "introduction/david_hawkins_quote.html" },
-                    { slide: "introduction/dawson_church_quote.html" },
-                    { slide: "introduction/eckhart_tolle_quote.html" },
-                    { slide: "introduction/emiliana_simon-thomas_quote.html" },
-                    { slide: "introduction/energy_healing_techniques_1.html" },
-                    { slide: "introduction/energy_healing_techniques_2.html" },
-                    { slide: "introduction/mind_body_connection_article.html" },
-                    { slide: "introduction/natalie_marchant_quote.html" },
-                    { slide: "introduction/sadhguru_quote.html" },
-                    { slide: "introduction/what_are_unhealthy_emotions_1.html" },
-                    { slide: "introduction/what_are_unhealthy_emotions_2.html" },
-                    { slide: "introduction/what_is_because_reasons.html" },
-                    { slide: "introduction/william_buhlman_quote.html" }
+                    { name: "Invitation", slide: "introduction/invitation.html" },
+                    { name: "Example",
+                      children: [
+                        { slide: "introduction/because_reasons_example_1.html" },
+                        { slide: "introduction/because_reasons_example_2.html" },
+                        { slide: "introduction/because_reasons_example_3.html" }
+                      ]
+                    },
+                    { name: "Quotes",
+                      children: [
+                        { name: "David Hawkins", slide: "introduction/david_hawkins_quote.html" },
+                        { name: "Dawson Church", slide: "introduction/dawson_church_quote.html" },
+                        { name: "Eckhart Tolle", slide: "introduction/eckhart_tolle_quote.html" },
+                        { name: "Emiliana Simon-Thomas", slide: "introduction/emiliana_simon-thomas_quote.html" },
+                        { name: "Natalie Marchant", slide: "introduction/natalie_marchant_quote.html" },
+                        { name: "Sadhguru", slide: "introduction/sadhguru_quote.html" },
+                        { name: "William Buhlman", slide: "introduction/william_buhlman_quote.html" }
+                    ]
+                    },
+                    { name: "What Are Unhealthy Emotions?",
+                      children: [
+                        { slide: "introduction/what_are_unhealthy_emotions_1.html" },
+                        { slide: "introduction/what_are_unhealthy_emotions_2.html" },
+                      ]
+                    },
+                    { name: "Energy Healing Techniques",
+                      children: [
+                        { slide: "introduction/energy_healing_techniques_1.html" },
+                        { slide: "introduction/energy_healing_techniques_2.html" },
+                      ]
+                    },
+                    { name: "Mind-Body Connection", slide: "introduction/mind_body_connection_article.html" },
+                    { name: "What Is Because Reasons?", slide: "introduction/what_is_because_reasons.html" },
                 ]
             },
             {
