@@ -93,7 +93,7 @@ class InfoUtility {
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
         const leftArrowDiv = "<div id = '" + this._leftArrowButtonID + "'>" + this._leftArrow + "</div>";
         const rightArrowDiv = "<div id = '" + this._rightArrowButtonID + "'>" + this._rightArrow + "</div>";
-        
+
 
         this.utilityDiv.append(button + div);
 
@@ -355,29 +355,29 @@ class InfoUtility {
                         name: "Consciousness Levels",
                         children: [
                             { name: "Overview", slide: "determination/consciousness_levels/overview.html" },
-                            { name: "", slide: "determination/consciousness_levels/david_hawkins_quote_1.html" },
-                            { name: "", slide: "determination/consciousness_levels/david_hawkins_quote_2.html" },
-                            { name: "", slide: "determination/consciousness_levels/level_of_consciousness.html" },
-                            { name: "", slide: "determination/consciousness_levels/richard_rudd_quote.html" },
+                            { name: "Dr. Hawkins Quote 1", slide: "determination/consciousness_levels/david_hawkins_quote_1.html" },
+                            { name: "Dr. Hawkins Quote 2", slide: "determination/consciousness_levels/david_hawkins_quote_2.html" },
+                            { name: "A Definition", slide: "determination/consciousness_levels/level_of_consciousness.html" },
                             { name: "", slide: "determination/consciousness_levels/level_connections.html" },
-                            { name: "", slide: "determination/consciousness_levels/level_connections_2.html" }
+                            { name: "Implicit Lower Groups", slide: "determination/consciousness_levels/level_connections_2.html" },
+                            { name: "Richard Rudd Quote", slide: "determination/consciousness_levels/richard_rudd_quote.html" }
                         ]
                     },
                     {
                         name: "Emotions",
                         children: [
-                            { name: "", slide: "determination/emotions/emotions_1.html" },
-                            { name: "", slide: "determination/emotions/emotions_2.html" },
-                            { name: "", slide: "determination/emotions/emotions_3.html" }
+                            { name: "Overview", slide: "determination/emotions/emotions_1.html" },
+                            { name: "List", slide: "determination/emotions/emotions_2.html" },
+                            { name: "Characteristics", slide: "determination/emotions/emotions_3.html" }
                         ]
                     },
                     {
                         name: "Psychological Reversals",
                         children: [
-                            { name: "", slide: "determination/psychological_reversals/psychological_reversals_1.html" },
-                            { name: "", slide: "determination/psychological_reversals/psychological_reversals_2.html" },
-                            { name: "", slide: "determination/psychological_reversals/psychological_reversals_3.html" },
-                            { name: "", slide: "determination/psychological_reversals/psychological_reversals_4.html" }
+                            { name: "Overview", slide: "determination/psychological_reversals/psychological_reversals_1.html" },
+                            { name: "Characteristics", slide: "determination/psychological_reversals/psychological_reversals_2.html" },
+                            { name: "Example", slide: "determination/psychological_reversals/psychological_reversals_3.html" },
+                            { name: "Example", slide: "determination/psychological_reversals/psychological_reversals_4.html" }
                         ]
                     },
                     {
@@ -406,13 +406,13 @@ class InfoUtility {
                     {
                         name: "Energy System",
                         children: [
-                            { slide: "determination/energy_system/overview.html" },
-                            { slide: "determination/energy_system/aura.html" },
-                            { slide: "determination/energy_system/subtle_energy_bodies.html" },
-                            { slide: "determination/energy_system/chakras.html" },
-                            { slide: "determination/energy_system/chakras_2.html" },
-                            { slide: "determination/energy_system/hara_line.html" },
-                            { slide: "determination/energy_system/meridians.html" },
+                            { name: "Overview", slide: "determination/energy_system/overview.html" },
+                            { name: "Aura", slide: "determination/energy_system/aura.html" },
+                            { name: "Subtle Energy Bodies", slide: "determination/energy_system/subtle_energy_bodies.html" },
+                            { name: "Chakras", slide: "determination/energy_system/chakras.html" },
+                            { name: "Typical Chakra Components", slide: "determination/energy_system/chakras_2.html" },
+                            { name: "Hara Line", slide: "determination/energy_system/hara_line.html" },
+                            { name: "Meridians", slide: "determination/energy_system/meridians.html" },
                         ]
                     },
                     { name: "Low-Level Energies", slide: "determination/low_level_energies.html" },
