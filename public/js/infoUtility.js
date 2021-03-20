@@ -5,8 +5,8 @@ class InfoUtility {
     _data = null;
 
     _infoIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-info-square' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path d='M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z'/><circle cx='8' cy='4.5' r='1'/></svg>";
-    _leftArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='currentColor' class='bi bi-arrow-left' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z'/></svg>";
-    _rightArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='currentColor' class='bi bi-arrow-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z'/></svg>";
+    _leftArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-arrow-left' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z'/></svg>";
+    _rightArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-arrow-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z'/></svg>";
 
     _buttonID = "infoUtilityButton";
     _divID = "infoUtilityWindow";
@@ -14,6 +14,8 @@ class InfoUtility {
     _pathDivID = this._utilityID + "_path";
     _contentsDivID = this._utilityID + "_contents";
     _mediaDivID = this._utilityID + "_media";
+    _leftArrowButtonID = this._utilityID + "_prev";
+    _rightArrowButtonID = this._utilityID + "_next";
 
     constructor (utilities) {
         const self = this;
@@ -42,6 +44,22 @@ class InfoUtility {
             self.div.on("click", function(e) {
                 e.stopPropagation();
             });
+
+            self.leftArrowDiv.hover(function(e) {
+
+            });
+
+            self.leftArrowDiv.on("click", function(e) {
+
+            });
+ 
+            self.rightArrowDiv.hover(function(e) {
+
+            });
+
+            self.rightArrowDiv.on("click", function(e) {
+
+            });
         }); 
     }
 
@@ -62,7 +80,8 @@ class InfoUtility {
     itemDiv(id, item)        { return $("#" + this.itemDivId(id, item)); }
     itemButtonId(id, item)   { return this._utilityID + "_"  + id + "_" + item + "_button"; }
     itemButton(id, item)     { return $("#" + this.itemButtonId(id, item)); }
-
+    get leftArrowButton()    { return $("#" + this._leftArrowButtonID); }
+    get rightArrowButton()   { return $("#" + this._rightArrowButtonID); }
 
     _build() {
         const infoIcon = this._infoIcon;
@@ -72,8 +91,9 @@ class InfoUtility {
         const pathDiv = "<div id = '" + this._pathDivID + "' class = 'btn-group-sm' role = 'group'></div>";
         const contentsDiv = "<div id = '" + this._contentsDivID + "' class = 'btn-group-sm' role = 'group'></div>";
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
-        const leftArrowDiv = "<div id = '" + this._leftArrowButtonId + "'><img src = '" + this._leftArrow + "'></div>";
-        const rightArrowDiv = "<div id = '" + this._rightArrowButtonId + "'><img src = '" + this._rightArrow + "'></div>";
+        const leftArrowDiv = "<div id = '" + this._leftArrowButtonID + "'>" + this._leftArrow + "</div>";
+        const rightArrowDiv = "<div id = '" + this._rightArrowButtonID + "'>" + this._rightArrow + "</div>";
+        
 
         this.utilityDiv.append(button + div);
 
@@ -313,14 +333,14 @@ class InfoUtility {
             {
                 name: "Resolution",
                 children: [
-                    { slide: "resolution/what_is_because_reasons.html" },
-                    { slide: "resolution/overview.html" },
-                    { slide: "resolution/sufficient_determination.html" },
-                    { slide: "resolution/resolution_command.html" },
-                    { slide: "resolution/subconscious_work.html" },
-                    { slide: "resolution/energy_test_response.html" },
-                    { slide: "resolution/a_yawn_or_deep_breath.html" },
-                    { slide: "resolution/somatic_or_cognitive_response.html" },
+                    { name: "What is Because Reasons?", slide: "resolution/what_is_because_reasons.html" },
+                    { name: "Overview", slide: "resolution/overview.html" },
+                    { name: "Sufficient Determination", slide: "resolution/sufficient_determination.html" },
+                    { name: "Resolution Command", slide: "resolution/resolution_command.html" },
+                    { name: "Subconscious Work", slide: "resolution/subconscious_work.html" },
+                    { name: "Energy Test Response", slide: "resolution/energy_test_response.html" },
+                    { name: "Inhalation", slide: "resolution/a_yawn_or_deep_breath.html" },
+                    { name: "Observed Response", slide: "resolution/somatic_or_cognitive_response.html" },
                 ]
             },
             {
@@ -334,30 +354,30 @@ class InfoUtility {
                     {
                         name: "Consciousness Levels",
                         children: [
-                            { slide: "determination/consciousness_levels/overview.html" },
-                            { slide: "determination/consciousness_levels/david_hawkins_quote_1.html" },
-                            { slide: "determination/consciousness_levels/david_hawkins_quote_2.html" },
-                            { slide: "determination/consciousness_levels/level_of_consciousness.html" },
-                            { slide: "determination/consciousness_levels/richard_rudd_quote.html" },
-                            { slide: "determination/consciousness_levels/level_connections.html" },
-                            { slide: "determination/consciousness_levels/level_connections_2.html" }
+                            { name: "Overview", slide: "determination/consciousness_levels/overview.html" },
+                            { name: "", slide: "determination/consciousness_levels/david_hawkins_quote_1.html" },
+                            { name: "", slide: "determination/consciousness_levels/david_hawkins_quote_2.html" },
+                            { name: "", slide: "determination/consciousness_levels/level_of_consciousness.html" },
+                            { name: "", slide: "determination/consciousness_levels/richard_rudd_quote.html" },
+                            { name: "", slide: "determination/consciousness_levels/level_connections.html" },
+                            { name: "", slide: "determination/consciousness_levels/level_connections_2.html" }
                         ]
                     },
                     {
                         name: "Emotions",
                         children: [
-                            { slide: "determination/emotions/emotions_1.html" },
-                            { slide: "determination/emotions/emotions_2.html" },
-                            { slide: "determination/emotions/emotions_3.html" }
+                            { name: "", slide: "determination/emotions/emotions_1.html" },
+                            { name: "", slide: "determination/emotions/emotions_2.html" },
+                            { name: "", slide: "determination/emotions/emotions_3.html" }
                         ]
                     },
                     {
                         name: "Psychological Reversals",
                         children: [
-                            { slide: "determination/psychological_reversals/psychological_reversals_1.html" },
-                            { slide: "determination/psychological_reversals/psychological_reversals_2.html" },
-                            { slide: "determination/psychological_reversals/psychological_reversals_3.html" },
-                            { slide: "determination/psychological_reversals/psychological_reversals_4.html" }
+                            { name: "", slide: "determination/psychological_reversals/psychological_reversals_1.html" },
+                            { name: "", slide: "determination/psychological_reversals/psychological_reversals_2.html" },
+                            { name: "", slide: "determination/psychological_reversals/psychological_reversals_3.html" },
+                            { name: "", slide: "determination/psychological_reversals/psychological_reversals_4.html" }
                         ]
                     },
                     {
