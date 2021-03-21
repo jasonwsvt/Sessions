@@ -29,6 +29,7 @@ class InfoUtility {
                 self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
+                    self.manageArrows();
                     this.blur();
                 }
                 else {
@@ -119,7 +120,6 @@ class InfoUtility {
         this.div.append(pathDiv + contentsDiv + "<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
         this.leftArrowDiv.css("left", "0px");
         console.log(this.rightArrowDiv);
-        this.rightArrowDiv.css("left", String(this.div.width() - this.rightArrowDiv.width()) + "px");
 
         this.init();
         
@@ -129,6 +129,8 @@ class InfoUtility {
     resize() {
         this.div.css("height", String($(window).height() - 32));
         this.div.css("width", String($(window).width()));
+
+        this.manageArrows();
     }
 
     manage(picked) {
@@ -228,12 +230,20 @@ class InfoUtility {
             console.log(this.mediaDiv, this.mediaDiv.children(), this.mediaDiv.children().eq(1));
             this.mediaDiv.children().eq(0).removeClass("hidden");
         }
+        this.manageArrows();
+    }
 
-        console.log(this.mediaDiv.height());
-        this.leftArrowDiv.css("top", String(this.mediaDiv.position().top) + "px");
-        this.leftArrowDiv.css("height", String(this.mediaDiv.height()) + "px");
-        this.rightArrowDiv.css("top", String(this.mediaDiv.position().top) + "px");
-        this.rightArrowDiv.css("height", String(this.mediaDiv.height()) + "px");
+    manageArrows() {
+        if (this.mediaDiv.length == 0 || this.mediaDiv.hasClass("hidden")) { return; }
+        const height = this.mediaDiv[0].clientHeight;
+        const top = this.mediaDiv.position().top;
+        const width = this.mediaDiv[0].clientWidth;
+        const posY = Math.round(top + (height / 2) - 25);
+        //console.trace();
+        console.log(height, top, width, posY);
+        this.leftArrowDiv.css("top", String(posY) + "px");
+        this.rightArrowDiv.css("top", String(posY) + "px");
+        this.rightArrowDiv.css("left", String(width - 50) + "px");
     }
 
     close(except) {
