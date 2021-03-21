@@ -14,8 +14,8 @@ class InfoUtility {
     _pathDivID = this._utilityID + "_path";
     _contentsDivID = this._utilityID + "_contents";
     _mediaDivID = this._utilityID + "_media";
-    _leftArrowButtonID = this._utilityID + "_prev";
-    _rightArrowButtonID = this._utilityID + "_next";
+    _leftArrowDivID = this._utilityID + "_prev";
+    _rightArrowDivID = this._utilityID + "_next";
 
     constructor (utilities) {
         const self = this;
@@ -45,18 +45,33 @@ class InfoUtility {
                 e.stopPropagation();
             });
 
-            self.leftArrowDiv.hover(function(e) {
-
+            self.mediaDiv.on('mousemove', function(e) {
+                const width = $(this).outerWidth();
+                const third = width / 3;
+                const height = $(this).outerHeight();
+                const xPos = e.pageX - this.offsetLeft;
+                const pageY = e.pageY;            //for some reason, yPos = e.pageY - this.offsetTop doesn't work
+                const offsetTop = this.offsetTop;
+                const yPos = pageY - offsetTop;
+                const leftHidden = self.leftArrowDiv.hasClass("hidden");
+                const rightHidden = self.rightArrowDiv.hasClass("hidden");
+                const betweenTopAndBottom = yPos >= 0 && yPos <= height;
+                const inLeftThird = (xPos >= 0 && xPos <= third && betweenTopAndBottom);
+                const inRightThird = (xPos <= width && xPos >= (width - third) && betweenTopAndBottom)
+                if      (!inLeftThird && !inRightThird) { self.mediaDiv.trigger("mouseout"); }
+                else if (leftHidden   && inLeftThird)   { self.leftArrowDiv.removeClass("hidden"); }
+                else if (rightHidden  && inRightThird)  { self.rightArrowDiv.removeClass("hidden"); }
             });
 
+            self.mediaDiv.on('mouseout', function(e) {
+                if (!self.leftArrowDiv.hasClass("hidden"))  { self.leftArrowDiv.addClass("hidden"); }
+                else if (!self.rightArrowDiv.hasClass("hidden")) { self.rightArrowDiv.addClass("hidden"); }
+            });
+            
             self.leftArrowDiv.on("click", function(e) {
 
             });
  
-            self.rightArrowDiv.hover(function(e) {
-
-            });
-
             self.rightArrowDiv.on("click", function(e) {
 
             });
@@ -80,8 +95,8 @@ class InfoUtility {
     itemDiv(id, item)        { return $("#" + this.itemDivId(id, item)); }
     itemButtonId(id, item)   { return this._utilityID + "_"  + id + "_" + item + "_button"; }
     itemButton(id, item)     { return $("#" + this.itemButtonId(id, item)); }
-    get leftArrowButton()    { return $("#" + this._leftArrowButtonID); }
-    get rightArrowButton()   { return $("#" + this._rightArrowButtonID); }
+    get leftArrowDiv()       { return $("#" + this._leftArrowDivID); }
+    get rightArrowDiv()      { return $("#" + this._rightArrowDivID); }
 
     _build() {
         const infoIcon = this._infoIcon;
@@ -91,17 +106,20 @@ class InfoUtility {
         const pathDiv = "<div id = '" + this._pathDivID + "' class = 'btn-group-sm' role = 'group'></div>";
         const contentsDiv = "<div id = '" + this._contentsDivID + "' class = 'btn-group-sm' role = 'group'></div>";
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
-        const leftArrowDiv = "<div id = '" + this._leftArrowButtonID + "'>" + this._leftArrow + "</div>";
-        const rightArrowDiv = "<div id = '" + this._rightArrowButtonID + "'>" + this._rightArrow + "</div>";
+        const leftArrowDiv = "<div id = '" + this._leftArrowDivID + "' class = 'hidden'>" + this._leftArrow + "</div>";
+        const rightArrowDiv = "<div id = '" + this._rightArrowDivID + "' class = 'hidden'>" + this._rightArrow + "</div>";
 
 
         this.utilityDiv.append(button + div);
 
         this.div.css("left", "0px");
-        this.div.css("top", String(this.utilityDiv.position().top + 32) + "px");
+        this.div.css("top", String(this.utilityDiv.position().top + 31) + "px");
         this.resize();
 
         this.div.append(pathDiv + contentsDiv + "<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
+        this.leftArrowDiv.css("left", "0px");
+        console.log(this.rightArrowDiv);
+        this.rightArrowDiv.css("left", String(this.div.width() - this.rightArrowDiv.width()) + "px");
 
         this.init();
         
@@ -210,6 +228,12 @@ class InfoUtility {
             console.log(this.mediaDiv, this.mediaDiv.children(), this.mediaDiv.children().eq(1));
             this.mediaDiv.children().eq(0).removeClass("hidden");
         }
+
+        console.log(this.mediaDiv.height());
+        this.leftArrowDiv.css("top", String(this.mediaDiv.position().top) + "px");
+        this.leftArrowDiv.css("height", String(this.mediaDiv.height()) + "px");
+        this.rightArrowDiv.css("top", String(this.mediaDiv.position().top) + "px");
+        this.rightArrowDiv.css("height", String(this.mediaDiv.height()) + "px");
     }
 
     close(except) {
