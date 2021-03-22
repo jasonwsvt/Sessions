@@ -29,7 +29,7 @@ class InfoUtility {
                 self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
-                    self.manageArrows();
+                    //self.adjustArrowPositions();
                     this.blur();
                 }
                 else {
@@ -47,26 +47,15 @@ class InfoUtility {
             });
 
             self.mediaDiv.on('mousemove', function(e) {
-                const width = $(this).outerWidth();
-                const third = width / 3;
-                const height = $(this).outerHeight();
-                const xPos = e.pageX - this.offsetLeft;
-                const pageY = e.pageY;            //for some reason, yPos = e.pageY - this.offsetTop doesn't work
-                const offsetTop = this.offsetTop;
-                const yPos = pageY - offsetTop;
-                const leftHidden = self.leftArrowDiv.hasClass("hidden");
-                const rightHidden = self.rightArrowDiv.hasClass("hidden");
-                const betweenTopAndBottom = yPos >= 0 && yPos <= height;
-                const inLeftThird = (xPos >= 0 && xPos <= third && betweenTopAndBottom);
-                const inRightThird = (xPos <= width && xPos >= (width - third) && betweenTopAndBottom)
-                if      (!inLeftThird && !inRightThird) { self.mediaDiv.trigger("mouseout"); }
-                else if (leftHidden   && inLeftThird)   { self.leftArrowDiv.removeClass("hidden"); }
-                else if (rightHidden  && inRightThird)  { self.rightArrowDiv.removeClass("hidden"); }
+                self.mouseMove(e.pageX, e.pageY);
             });
 
             self.mediaDiv.on('mouseout', function(e) {
-                if (!self.leftArrowDiv.hasClass("hidden"))  { self.leftArrowDiv.addClass("hidden"); }
-                else if (!self.rightArrowDiv.hasClass("hidden")) { self.rightArrowDiv.addClass("hidden"); }
+                self.mouseOut();
+            });
+
+            self.mediaDiv.on('resize', function(e) {
+                self.adjustArrowPositions();
             });
             
             self.leftArrowDiv.on("click", function(e) {
@@ -130,7 +119,34 @@ class InfoUtility {
         this.div.css("height", String($(window).height() - 32));
         this.div.css("width", String($(window).width()));
 
-        this.manageArrows();
+        this.adjustArrowPositions();
+    }
+
+    mouseMove(pageX, pageY) {
+        const leftHidden = this.leftArrowDiv.hasClass("hidden");
+        const rightHidden = this.rightArrowDiv.hasClass("hidden");
+        switch (this.mouseInThird(pageX, pageY)) {
+            case -1: this.leftArrowDiv.removeClass("hidden");  break;
+            case 0:  this.mouseOut();                          break;
+            case 1:  this.rightArrowDiv.removeClass("hidden"); break;
+        }
+    }
+
+    mouseInThird(pageX, pageY) {
+        const xPos = pageX - this.mediaDiv.position().left;
+        const yPos = pageY - this.mediaDiv.position().top;
+        const width = this.mediaDiv.outerWidth();
+        const third = width / 3;
+        const height = this.mediaDiv.outerHeight();
+        const betweenTopAndBottom = yPos >= 0 && yPos <= height;
+        const inLeftThird = (xPos >= 0 && xPos <= third && betweenTopAndBottom);
+        const inRightThird = (xPos <= width && xPos >= (width - third) && betweenTopAndBottom)
+        return inLeftThird ? -1 : inRightThird ? 1 : 0;
+    }
+
+    mouseOut() {
+        if (!this.leftArrowDiv.hasClass("hidden"))  { this.leftArrowDiv.addClass("hidden"); }
+        else if (!this.rightArrowDiv.hasClass("hidden")) { this.rightArrowDiv.addClass("hidden"); }
     }
 
     manage(picked) {
@@ -227,20 +243,24 @@ class InfoUtility {
         });
 
         if (this.mediaDiv.children().not(".hidden").length == 0) {
-            console.log(this.mediaDiv, this.mediaDiv.children(), this.mediaDiv.children().eq(1));
             this.mediaDiv.children().eq(0).removeClass("hidden");
         }
-        this.manageArrows();
+        //this.adjustArrowPositions();
     }
 
-    manageArrows() {
+    adjustArrowPositions() {
         if (this.mediaDiv.length == 0 || this.mediaDiv.hasClass("hidden")) { return; }
-        const height = this.mediaDiv[0].clientHeight;
+        console.log(this.mediaDiv.height());
+        while (this.mediaDiv.height() == 2) {
+            console.log(this.mediaDiv.height());
+        }
+        const height = this.mediaDiv.outerHeight();
         const top = this.mediaDiv.position().top;
-        const width = this.mediaDiv[0].clientWidth;
+        const width = this.mediaDiv.outerWidth();
         const posY = Math.round(top + (height / 2) - 25);
         //console.trace();
-        console.log(height, top, width, posY);
+        console.log(this.mediaDiv.outerHeight(), this.mediaDiv.height(), this.mediaDiv[0].clientHeight);
+        console.log(height, this.mediaDiv.not(".hidden").length, this.mediaDiv.length);
         this.leftArrowDiv.css("top", String(posY) + "px");
         this.rightArrowDiv.css("top", String(posY) + "px");
         this.rightArrowDiv.css("left", String(width - 50) + "px");
