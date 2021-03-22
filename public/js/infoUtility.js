@@ -8,9 +8,9 @@ class InfoUtility {
     _leftArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-arrow-left' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z'/></svg>";
     _rightArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-arrow-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z'/></svg>";
 
-    _buttonID = "infoUtilityButton";
-    _divID = "infoUtilityWindow";
-    _contentsDivID = "infoUtility_contents";
+    _buttonID = this._utilityID + "Button";
+    _divID = this._utilityID + "Window";
+    _contentsDivID = this._utilityID + "_contents";
     _pathDivID = this._utilityID + "_path";
     _contentsDivID = this._utilityID + "_contents";
     _mediaDivID = this._utilityID + "_media";
@@ -38,26 +38,19 @@ class InfoUtility {
                 e.stopPropagation();
             });
 
-            $(window).resize(function(e) {
-                self.resize();
-            });
+            $(window).resize(function()                     { self.resize(); });
+            self.div.on("click", function(e)                { e.stopPropagation(); });
 
-            self.div.on("click", function(e) {
-                e.stopPropagation();
-            });
+            self.mediaDiv.on('mousemove', function(e)       { self.mouseMove(e.pageX, e.pageY); });
+            self.leftArrowDiv.on("mousemove", function (e)  { self.mouseMove(e.pageX, e.pageY); });
+            self.rightArrowDiv.on("mousemove", function (e) { self.mouseMove(e.pageX, e.pageY); });
 
-            self.mediaDiv.on('mousemove', function(e) {
-                self.mouseMove(e.pageX, e.pageY);
-            });
+            self.mediaDiv.on('mouseout', function(e)        { self.mouseMove(e.pageX, e.pageY); });
+            self.leftArrowDiv.on('mouseout', function(e)    { self.mouseMove(e.pageX, e.pageY); });
+            self.rightArrowDiv.on('mouseout', function(e)   { self.mouseMove(e.pageX, e.pageY); });
 
-            self.mediaDiv.on('mouseout', function(e) {
-                self.mouseOut();
-            });
+            self.mediaDiv.on('resize', function()           { self.adjustArrowPositions(); });
 
-            self.mediaDiv.on('resize', function(e) {
-                self.adjustArrowPositions();
-            });
-            
             self.leftArrowDiv.on("click", function(e) {
 
             });
@@ -106,7 +99,7 @@ class InfoUtility {
         this.div.css("top", String(this.utilityDiv.position().top + 31) + "px");
         this.resize();
 
-        this.div.append(pathDiv + contentsDiv + "<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
+        this.div.append(pathDiv + contentsDiv + leftArrowDiv + mediaDiv + rightArrowDiv);
         this.leftArrowDiv.css("left", "0px");
         console.log(this.rightArrowDiv);
 
@@ -119,34 +112,7 @@ class InfoUtility {
         this.div.css("height", String($(window).height() - 32));
         this.div.css("width", String($(window).width()));
 
-        this.adjustArrowPositions();
-    }
-
-    mouseMove(pageX, pageY) {
-        const leftHidden = this.leftArrowDiv.hasClass("hidden");
-        const rightHidden = this.rightArrowDiv.hasClass("hidden");
-        switch (this.mouseInThird(pageX, pageY)) {
-            case -1: this.leftArrowDiv.removeClass("hidden");  break;
-            case 0:  this.mouseOut();                          break;
-            case 1:  this.rightArrowDiv.removeClass("hidden"); break;
-        }
-    }
-
-    mouseInThird(pageX, pageY) {
-        const xPos = pageX - this.mediaDiv.position().left;
-        const yPos = pageY - this.mediaDiv.position().top;
-        const width = this.mediaDiv.outerWidth();
-        const third = width / 3;
-        const height = this.mediaDiv.outerHeight();
-        const betweenTopAndBottom = yPos >= 0 && yPos <= height;
-        const inLeftThird = (xPos >= 0 && xPos <= third && betweenTopAndBottom);
-        const inRightThird = (xPos <= width && xPos >= (width - third) && betweenTopAndBottom)
-        return inLeftThird ? -1 : inRightThird ? 1 : 0;
-    }
-
-    mouseOut() {
-        if (!this.leftArrowDiv.hasClass("hidden"))  { this.leftArrowDiv.addClass("hidden"); }
-        else if (!this.rightArrowDiv.hasClass("hidden")) { this.rightArrowDiv.addClass("hidden"); }
+        if (!this.div.hasClass("hidden")) { this.adjustArrowPositions(); }
     }
 
     manage(picked) {
@@ -245,15 +211,59 @@ class InfoUtility {
         if (this.mediaDiv.children().not(".hidden").length == 0) {
             this.mediaDiv.children().eq(0).removeClass("hidden");
         }
-        //this.adjustArrowPositions();
+        this.adjustArrowPositions();
+    }
+
+    mouseMove(pageX, pageY) {
+        switch (this.mouseInThird(pageX, pageY)) {
+            case -1:
+                if (this.leftArrowDiv.hasClass("hidden")) {
+                    this.leftArrowDiv.removeClass("hidden");
+                }
+                break;
+            case 0:
+                this.mouseOut();
+                break;
+            case 1: 
+            if (this.rightArrowDiv.hasClass("hidden")) {
+                this.rightArrowDiv.removeClass("hidden");
+                }
+                break;
+        }
+    }
+
+    mouseClick(pageX, pageY) {
+        switch (this.mouseInThird(pageX, pageY)) {
+            case -1:
+                break;
+            case 0:
+                break;
+            case 1: 
+                break;
+        }
+    }
+
+    mouseInThird(pageX, pageY) {
+        const xPos = pageX - this.mediaDiv.position().left;
+        const yPos = pageY - this.mediaDiv.position().top;
+        const width = this.mediaDiv.outerWidth();
+        const third = width / 3;
+        const height = this.mediaDiv.outerHeight();
+        const betweenTopAndBottom = yPos >= 0 && yPos <= height;
+        const inLeftThird = (xPos >= 0 && xPos <= third && betweenTopAndBottom);
+        const inRightThird = (xPos <= width && xPos >= (width - third) && betweenTopAndBottom)
+        return inLeftThird ? -1 : inRightThird ? 1 : 0;
+    }
+
+    mouseOut() {
+        if (!this.leftArrowDiv.hasClass("hidden"))  { this.leftArrowDiv.addClass("hidden"); }
+        else if (!this.rightArrowDiv.hasClass("hidden")) { this.rightArrowDiv.addClass("hidden"); }
     }
 
     adjustArrowPositions() {
-        if (this.mediaDiv.length == 0 || this.mediaDiv.hasClass("hidden")) { return; }
-        console.log(this.mediaDiv.height());
-        while (this.mediaDiv.height() == 2) {
-            console.log(this.mediaDiv.height());
-        }
+        console.log(this._mediaDivID, $("#infoUtility_media").outerHeight());
+        if (this.mediaDiv.length == 0) { console.trace(); return; } 
+        if (this.mediaDiv.not(">.hidden").length) { console.trace(); return; }
         const height = this.mediaDiv.outerHeight();
         const top = this.mediaDiv.position().top;
         const width = this.mediaDiv.outerWidth();
