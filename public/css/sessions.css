@@ -210,13 +210,10 @@
 }
 
 #infoUtility_prev, #infoUtility_next {
-    z-index: 3;
-    position: absolute;
     margin-top: auto;
     margin-bottom: auto;
+    width: 52px !important;
     visibility: visible;
-    transition-property: display, visibility;
-    transition-duration: .4s;
 }
 
 #infoUtilityWindow .btn-group-sm {
@@ -233,11 +230,10 @@
     display: inline-block;
     overflow-y: auto;
     width: 100%;
-    height: 100%;
     padding-top: 20px !important;
     padding-bottom: 20px !important;
-    padding-left: 70px !important;
-    padding-right: 70px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
 }
 
 #infoUtility_media div {

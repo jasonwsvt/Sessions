@@ -38,18 +38,12 @@ class InfoUtility {
                 e.stopPropagation();
             });
 
-            $(window).resize(function()                     { self.resize(); });
-            self.div.on("click", function(e)                { e.stopPropagation(); });
+            $(window).resize(function()                        { self.resize(); });
+            self.div.on("click", function(e)                   { e.stopPropagation(); });
 
-            self.mediaDiv.on('mousemove', function(e)       { self.mouseMove(e.pageX, e.pageY); });
-            self.leftArrowDiv.on("mousemove", function (e)  { self.mouseMove(e.pageX, e.pageY); });
-            self.rightArrowDiv.on("mousemove", function (e) { self.mouseMove(e.pageX, e.pageY); });
+            self.mediaDiv.parent().on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
 
-            self.mediaDiv.on('mouseout', function(e)        { self.mouseMove(e.pageX, e.pageY); });
-            self.leftArrowDiv.on('mouseout', function(e)    { self.mouseMove(e.pageX, e.pageY); });
-            self.rightArrowDiv.on('mouseout', function(e)   { self.mouseMove(e.pageX, e.pageY); });
-
-            self.mediaDiv.on('resize', function()           { self.adjustArrowPositions(); });
+            self.mediaDiv.parent().on('mouseout', function(e)  { self.mouseOut(); });
 
             self.leftArrowDiv.on("click", function(e) {
 
@@ -89,8 +83,8 @@ class InfoUtility {
         const pathDiv = "<div id = '" + this._pathDivID + "' class = 'btn-group-sm' role = 'group'></div>";
         const contentsDiv = "<div id = '" + this._contentsDivID + "' class = 'btn-group-sm' role = 'group'></div>";
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
-        const leftArrowDiv = "<div id = '" + this._leftArrowDivID + "' class = 'hidden'>" + this._leftArrow + "</div>";
-        const rightArrowDiv = "<div id = '" + this._rightArrowDivID + "' class = 'hidden'>" + this._rightArrow + "</div>";
+        const leftArrowDiv = "<div id = '" + this._leftArrowDivID + "'>" + this._leftArrow + "</div>";
+        const rightArrowDiv = "<div id = '" + this._rightArrowDivID + "'>" + this._rightArrow + "</div>";
 
 
         this.utilityDiv.append(button + div);
@@ -99,11 +93,12 @@ class InfoUtility {
         this.div.css("top", String(this.utilityDiv.position().top + 31) + "px");
         this.resize();
 
-        this.div.append(pathDiv + contentsDiv + leftArrowDiv + mediaDiv + rightArrowDiv);
+        this.div.append(pathDiv + contentsDiv + "<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
         this.leftArrowDiv.css("left", "0px");
         console.log(this.rightArrowDiv);
 
         this.init();
+        this.mouseOut();
         
         this.manage(this._data.tierIds(0)[0]);
     }
@@ -112,7 +107,7 @@ class InfoUtility {
         this.div.css("height", String($(window).height() - 32));
         this.div.css("width", String($(window).width()));
 
-        if (!this.div.hasClass("hidden")) { this.adjustArrowPositions(); }
+        //if (!this.div.hasClass("hidden")) { this.adjustArrowPositions(); }
     }
 
     manage(picked) {
@@ -211,22 +206,22 @@ class InfoUtility {
         if (this.mediaDiv.children().not(".hidden").length == 0) {
             this.mediaDiv.children().eq(0).removeClass("hidden");
         }
-        this.adjustArrowPositions();
+        //this.adjustArrowPositions();
     }
 
     mouseMove(pageX, pageY) {
         switch (this.mouseInThird(pageX, pageY)) {
             case -1:
-                if (this.leftArrowDiv.hasClass("hidden")) {
-                    this.leftArrowDiv.removeClass("hidden");
+                if (this.leftArrowDiv.find("svg").hasClass("invisible")) {
+                    this.leftArrowDiv.find("svg").removeClass("invisible");
                 }
                 break;
             case 0:
                 this.mouseOut();
                 break;
             case 1: 
-            if (this.rightArrowDiv.hasClass("hidden")) {
-                this.rightArrowDiv.removeClass("hidden");
+            if (this.rightArrowDiv.find("svg").hasClass("invisible")) {
+                this.rightArrowDiv.find("svg").removeClass("invisible");
                 }
                 break;
         }
@@ -244,27 +239,33 @@ class InfoUtility {
     }
 
     mouseInThird(pageX, pageY) {
-        const xPos = pageX - this.mediaDiv.position().left;
-        const yPos = pageY - this.mediaDiv.position().top;
-        const width = this.mediaDiv.outerWidth();
+        const div = this.mediaDiv.parent();
+        const xPos = pageX - div.position().left;
+        const yPos = pageY - div.position().top;
+        const width = div.outerWidth();
         const third = width / 3;
-        const height = this.mediaDiv.outerHeight();
+        const height = div.outerHeight();
         const betweenTopAndBottom = yPos >= 0 && yPos <= height;
         const inLeftThird = (xPos >= 0 && xPos <= third && betweenTopAndBottom);
-        const inRightThird = (xPos <= width && xPos >= (width - third) && betweenTopAndBottom)
+        const inRightThird = (xPos <= width && xPos >= (width - third) && betweenTopAndBottom);
         return inLeftThird ? -1 : inRightThird ? 1 : 0;
     }
 
     mouseOut() {
-        if (!this.leftArrowDiv.hasClass("hidden"))  { this.leftArrowDiv.addClass("hidden"); }
-        else if (!this.rightArrowDiv.hasClass("hidden")) { this.rightArrowDiv.addClass("hidden"); }
+//        if (!this.leftArrowDiv.find("svg").hasClass("invisible"))  {
+            this.leftArrowDiv.find("svg").addClass("invisible");
+//        }
+//        else if (!this.rightArrowDiv.find("svg").hasClass("invisible")) {
+            this.rightArrowDiv.find("svg").addClass("invisible");
+//        }
     }
 
-    adjustArrowPositions() {
-        console.log(this._mediaDivID, $("#infoUtility_media").outerHeight());
-        if (this.mediaDiv.length == 0) { console.trace(); return; } 
-        if (this.mediaDiv.not(">.hidden").length) { console.trace(); return; }
+/*    adjustArrowPositions() {
+        console.log(this.mediaDiv.children().not(".hidden").outerHeight());
+        console.log(this.mediaDiv.outerHeight(), $("#infoUtility_media").outerHeight());
+        if (this.mediaDiv.length == 0) { console.trace(); return; }
         const height = this.mediaDiv.outerHeight();
+        if (height < 5) { console.trace(); return; }
         const top = this.mediaDiv.position().top;
         const width = this.mediaDiv.outerWidth();
         const posY = Math.round(top + (height / 2) - 25);
@@ -274,7 +275,7 @@ class InfoUtility {
         this.leftArrowDiv.css("top", String(posY) + "px");
         this.rightArrowDiv.css("top", String(posY) + "px");
         this.rightArrowDiv.css("left", String(width - 50) + "px");
-    }
+    } */
 
     close(except) {
         if (except != this._buttonID)   {
