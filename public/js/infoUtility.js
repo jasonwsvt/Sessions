@@ -29,7 +29,6 @@ class InfoUtility {
                 self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
-                    //self.adjustArrowPositions();
                     this.blur();
                 }
                 else {
@@ -45,11 +44,7 @@ class InfoUtility {
 
             self.mediaDiv.parent().on('mouseout', function(e)  { self.mouseOut(); });
 
-            self.leftArrowDiv.on("click", function(e) {
-
-            });
- 
-            self.rightArrowDiv.on("click", function(e) {
+            self.mediaDiv.parent().on("click", function(e)     { self.mouseClick(e.pageX, e.pageY);
 
             });
         }); 
@@ -106,8 +101,6 @@ class InfoUtility {
     resize() {
         this.div.css("height", String($(window).height() - 32));
         this.div.css("width", String($(window).width()));
-
-        //if (!this.div.hasClass("hidden")) { this.adjustArrowPositions(); }
     }
 
     manage(picked) {
@@ -206,7 +199,8 @@ class InfoUtility {
         if (this.mediaDiv.children().not(".hidden").length == 0) {
             this.mediaDiv.children().eq(0).removeClass("hidden");
         }
-        //this.adjustArrowPositions();
+
+        this.mediaDiv.parent().trigger("mousemove");
     }
 
     mouseMove(pageX, pageY) {
@@ -230,10 +224,12 @@ class InfoUtility {
     mouseClick(pageX, pageY) {
         switch (this.mouseInThird(pageX, pageY)) {
             case -1:
+                this.manage(this.previous());
                 break;
             case 0:
                 break;
             case 1: 
+                this.manage(this.next());
                 break;
         }
     }
@@ -260,22 +256,22 @@ class InfoUtility {
 //        }
     }
 
-/*    adjustArrowPositions() {
-        console.log(this.mediaDiv.children().not(".hidden").outerHeight());
-        console.log(this.mediaDiv.outerHeight(), $("#infoUtility_media").outerHeight());
-        if (this.mediaDiv.length == 0) { console.trace(); return; }
-        const height = this.mediaDiv.outerHeight();
-        if (height < 5) { console.trace(); return; }
-        const top = this.mediaDiv.position().top;
-        const width = this.mediaDiv.outerWidth();
-        const posY = Math.round(top + (height / 2) - 25);
-        //console.trace();
-        console.log(this.mediaDiv.outerHeight(), this.mediaDiv.height(), this.mediaDiv[0].clientHeight);
-        console.log(height, this.mediaDiv.not(".hidden").length, this.mediaDiv.length);
-        this.leftArrowDiv.css("top", String(posY) + "px");
-        this.rightArrowDiv.css("top", String(posY) + "px");
-        this.rightArrowDiv.css("left", String(width - 50) + "px");
-    } */
+    previous() {
+        const data = this._data;
+        const current = parseInt(this.mediaDiv.children().not(".hidden").attr("id").split("_")[1]);
+        const ids = data.sortByCreation(data.descendants(data.tierIds(0)[0]));
+        const index = ids.findIndex(id => id == current);
+        return index == 0 ? ids[ids.length - 1] : ids[index - 1];
+    }
+
+    next() {
+        const data = this._data;
+        const current = parseInt(this.mediaDiv.children().not(".hidden").attr("id").split("_")[1]);
+        const ids = data.sortByCreation(data.descendants(data.tierIds(0)[0]));
+        console.log(current, ids);
+        const index = ids.findIndex(id => id == current);
+        return index == ids.length - 1 ? ids[0] : ids[index + 1];
+    }
 
     close(except) {
         if (except != this._buttonID)   {
