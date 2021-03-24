@@ -214,6 +214,7 @@
     margin-bottom: auto;
     width: 52px !important;
     visibility: visible;
+    background-color: rgba(238, 238, 238, 0);
 }
 
 #infoUtilityWindow .btn-group-sm {
@@ -247,7 +248,7 @@
 }
 
 #infoUtility_media div table th, #infoUtility_media div table td {
-    padding: 15px;
+    padding: 5px;
 }
 
 #infoUtility_media img {

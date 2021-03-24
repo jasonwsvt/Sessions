@@ -418,10 +418,9 @@ class InfoUtility {
                             { name: "Overview", slide: "determination/consciousness_levels/overview.html" },
                             { name: "Dr. Hawkins Quote 1", slide: "determination/consciousness_levels/david_hawkins_quote_1.html" },
                             { name: "Dr. Hawkins Quote 2", slide: "determination/consciousness_levels/david_hawkins_quote_2.html" },
-                            { name: "A Definition", slide: "determination/consciousness_levels/level_of_consciousness.html" },
-                            { name: "", slide: "determination/consciousness_levels/level_connections.html" },
-                            { name: "Implicit Lower Groups", slide: "determination/consciousness_levels/level_connections_2.html" },
-                            { name: "Richard Rudd Quote", slide: "determination/consciousness_levels/richard_rudd_quote.html" }
+                            { name: "Implicit Lower Groups", slide: "determination/consciousness_levels/implicit_lower_groups.html" },
+                            { name: "Richard Rudd Quote", slide: "determination/consciousness_levels/richard_rudd_quote.html" },
+                            { name: "A Definition", slide: "determination/consciousness_levels/level_of_consciousness.html" }
                         ]
                     },
                     {
@@ -429,7 +428,8 @@ class InfoUtility {
                         children: [
                             { name: "Overview", slide: "determination/emotions/emotions_1.html" },
                             { name: "List", slide: "determination/emotions/emotions_2.html" },
-                            { name: "Characteristics", slide: "determination/emotions/emotions_3.html" }
+                            { name: "Observations", slide: "determination/emotions/emotions_3.html" },
+                            { name: "Characteristics", slide: "determination/emotions/emotions_4.html" }
                         ]
                     },
                     {
@@ -478,22 +478,15 @@ class InfoUtility {
                     },
                     { name: "Low-Level Energies", slide: "determination/low_level_energies.html" },
                     { name: "Ascended Masters", slide: "determination/ascended_masters.html" },
-                    {
-                        name: "Source Creator System",
-                        children: [
-                            { slide: "determination/source_creator_system/overview.html" },
-                            { slide: "determination/source_creator_system/overview_2.html" },
-                            { slide: "determination/source_creator_system/child_selves.html" }
-                        ]
-                    },
+                    { name: "Source Creator System", slide: "determination/source_creator_system.html" },
                     { name: "Numbers", slide: "determination/numbers.html" },
                     { name: "Characteristics", slide: "determination/characteristics.html" },
                     {
                         name: "Conjunctions",
                         children: [
-                            { slide: "determination/conjunctions/overview.html" },
-                            { slide: "determination/conjunctions/overview_2.html" },
-                            { slide: "determination/conjunctions/overview_3.html" }
+                            { name: "Overview", slide: "determination/conjunctions/overview.html" },
+                            { name: "Chart", slide: "determination/conjunctions/overview_2.html" },
+                            { name: "Discussion", slide: "determination/conjunctions/overview_3.html" }
                         ]
                     },
                     { name: "States", slide: "determination/states.html" }
