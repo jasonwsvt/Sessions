@@ -332,25 +332,24 @@ class InfoUtility {
             {
                 name: "Beginner",
                 children: [
+                    { name: "Overview", slide: "beginner/overview.html" },
                     {
                         name: "Issues",
                         children: [
-                            { name: "Introduction", slide: "beginner/issues/what_is_because_reasons.html" },
                             { name: "Overview", slide: "beginner/issues/overview.html" },
-                            { name: "Symptoms", slide: "beginner/issues/symptoms.html" },
+                            { name: "Internal Conflict", slide: "beginner/issues/internal_conflict.html" },
+                            { name: "Sensations", slide: "beginner/issues/negative_sensations.html" },
+                            { name: "Thoughts", slide: "beginner/issues/negative_thoughts.html" },
+                            { name: "Emotions", slide: "beginner/issues/negative_emotions.html" },
                             { name: "Identification", slide: "beginner/issues/identification.html" },
-                            { name: "Negative Sensations", slide: "beginner/issues/negative_sensations.html" },
-                            { name: "Negative Thoughts", slide: "beginner/issues/negative_thoughts.html" },
-                            { name: "Examples", slide: "beginner/issues/examples.html" },
+                            { name: "Secondary Gain", slide: "beginner/issues/secondary_gain.html" },
                             { name: "Review", slide: "beginner/issues/review.html" }
                         ]
                     },
                     {
                         name: "Energy Testing",
                         children: [
-                            { name: "What is Because Reasons", slide: "beginner/energy_testing/what_is_because_reasons.html" },
-                            { name: "Introduction", slide: "beginner/energy_testing/overview.html" },
-                            { name: "Overview", slide: "beginner/energy_testing/overview_2.html" },
+                            { name: "Overview", slide: "beginner/energy_testing/overview.html" },
                             { name: "Scientific Basis", slide: "beginner/energy_testing/scientific_basis.html" },
                             { name: "History", slide: "beginner/energy_testing/history.html" },
                             { name: "Methods and Practitioners", slide: "beginner/energy_testing/methods_and_practitioners.html" },
@@ -364,15 +363,15 @@ class InfoUtility {
                                 ]
                             },
                             { name: "Example Statements", slide: "beginner/energy_testing/example_statements.html" },
-                            { name: "Energy Testing in Because Reasons", slide: "beginner/energy_testing/energy_testing_in_because_reasons.html" },
                             {
                                 name: "The Eye Method",
                                 children: [
-                                    { slide: "beginner/energy_testing/the_eye_testing_method.html" },
-                                    { slide: "beginner/energy_testing/the_eye_method_2.html" },
-                                    { slide: "beginner/energy_testing/the_eye_method_3.html" }
+                                    { name: "Benefits", slide: "beginner/energy_testing/the_eye_testing_method.html" },
+                                    { name: "Preparation", slide: "beginner/energy_testing/the_eye_method_2.html" },
+                                    { name: "Steps", slide: "beginner/energy_testing/the_eye_method_3.html" }
                                 ]
                             },
+                            { name: "Energy Testing in Because Reasons", slide: "beginner/energy_testing/energy_testing_in_because_reasons.html" },
                             { name: "Review", slide: "beginner/determination/psychological_reversals/review.html" }
                         ]
                     },
@@ -384,17 +383,6 @@ class InfoUtility {
                             { name: "Sections", slide: "beginner/determination/sections.html" },
                             { name: "Physical Body", slide: "beginner/determination/physical_body.html" },
                             { name: "Senses", slide: "beginner/determination/senses.html" },
-                            {
-                                name: "Consciousness Levels",
-                                children: [
-                                    { name: "Overview", slide: "beginner/determination/consciousness_levels/overview.html" },
-                                    { name: "Dr. Hawkins Quote 1", slide: "beginner/determination/consciousness_levels/david_hawkins_quote_1.html" },
-                                    { name: "Dr. Hawkins Quote 2", slide: "beginner/determination/consciousness_levels/david_hawkins_quote_2.html" },
-                                    { name: "Implicit Lower Groups", slide: "beginner/determination/consciousness_levels/implicit_lower_groups.html" },
-                                    { name: "Richard Rudd Quote", slide: "beginner/determination/consciousness_levels/richard_rudd_quote.html" },
-                                    { name: "A Definition", slide: "beginner/determination/consciousness_levels/level_of_consciousness.html" }
-                                ]
-                            },
                             {
                                 name: "Emotions",
                                 children: [
@@ -436,6 +424,7 @@ class InfoUtility {
             {
                 name: "Intermediate",
                 children: [
+                    { name: "Overview", slide: "intermediate/overview.html" },
                     {
                         name: "Issues",
                         children: [
@@ -466,6 +455,17 @@ class InfoUtility {
                             { name: "What is Because Reasons?", slide: "intermediate/determination/what_is_because_reasons.html" },
                             { name: "Overview", slide: "intermediate/determination/overview.html" },
                             { name: "Sections", slide: "intermediate/determination/sections.html" },
+                            {
+                                name: "Consciousness Levels",
+                                children: [
+                                    { name: "Overview", slide: "intermediate/determination/consciousness_levels/overview.html" },
+                                    { name: "Dr. Hawkins Quote 1", slide: "intermediate/determination/consciousness_levels/david_hawkins_quote_1.html" },
+                                    { name: "Dr. Hawkins Quote 2", slide: "intermediate/determination/consciousness_levels/david_hawkins_quote_2.html" },
+                                    { name: "Implicit Lower Groups", slide: "intermediate/determination/consciousness_levels/implicit_lower_groups.html" },
+                                    { name: "Richard Rudd Quote", slide: "intermediate/determination/consciousness_levels/richard_rudd_quote.html" },
+                                    { name: "A Definition", slide: "intermediate/determination/consciousness_levels/level_of_consciousness.html" }
+                                ]
+                            },
                             {
                                 name: "Patterns",
                                 children: [
@@ -503,7 +503,6 @@ class InfoUtility {
                             },
                             { name: "Numbers", slide: "intermediate/determination/numbers.html" },
                             { name: "Characteristics", slide: "intermediate/determination/characteristics.html" },
-                            { name: "States", slide: "intermediate/determination/states.html" },
                             { name: "Review", slide: "intermediate/determination/review.html" }
                         ]
                     },
@@ -513,6 +512,7 @@ class InfoUtility {
             {
                 name: "Advanced",
                 children: [
+                    { name: "Overview", slide: "advanced/overview.html" },
                     {
                         name: "Issues",
                         children: [
