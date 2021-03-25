@@ -288,13 +288,7 @@ class InfoUtility {
                 name: "Introduction",
                 children: [
                     { name: "Invitation", slide: "introduction/invitation.html" },
-                    { name: "Example",
-                      children: [
-                        { slide: "introduction/because_reasons_example_1.html" },
-                        { slide: "introduction/because_reasons_example_2.html" },
-                        { slide: "introduction/because_reasons_example_3.html" }
-                      ]
-                    },
+                    { name: "Mind-Body Connection", slide: "introduction/mind_body_connection_article.html" },
                     {
                         name: "Quotes",
                         children: [
@@ -307,7 +301,6 @@ class InfoUtility {
                             { name: "David Hawkins", slide: "introduction/david_hawkins_quote.html" },
                         ]
                     },
-                    { name: "Mind-Body Connection", slide: "introduction/mind_body_connection_article.html" },
                     {
                         name: "What Are Unhealthy Emotions?",
                         children: [
@@ -317,179 +310,274 @@ class InfoUtility {
                     },
                     { name: "Energy Healing Techniques", slide: "introduction/energy_healing_techniques.html" },
                     { name: "Why Another Healing Technique",  slide: "introduction/why_another_healing_technique.html" },
+                ]
+            },
+            {
+                name: "Overview",
+                children: [
                     { name: "What Is Because Reasons?", slide: "introduction/what_is_because_reasons.html" },
+                    { name: "Issues", slide: "introduction/what_is_because_reasons.html" },
+                    { name: "Energy Testing", slide: "introduction/what_is_because_reasons.html" },
+                    { name: "Determination", slide: "introduction/what_is_because_reasons.html" },
+                    { name: "Resolution", slide: "introduction/what_is_because_reasons.html" },
+                    { name: "Process", slide: "introduction/what_is_because_reasons.html" },
+                    { name: "Example",
+                      children: [
+                        { slide: "introduction/because_reasons_example_1.html" },
+                        { slide: "introduction/because_reasons_example_2.html" },
+                        { slide: "introduction/because_reasons_example_3.html" }
+                      ]
+                    },
+                    { name: "Review", slide: "introduction/what_is_because_reasons.html" },
                 ]
             },
             {
-                name: "Issues",
+                name: "Basics",
                 children: [
-                    { name: "Introduction", slide: "issues/what_is_because_reasons.html" },
-                    { name: "Overview", slide: "issues/overview.html" },
-                    { name: "Symptoms", slide: "issues/symptoms.html" },
-                    { name: "Aspirations", slide: "issues/aspirations.html" },
-                    { name: "Affirmations", slide: "issues/affirmations.html" },
-                    { name: "Negative Sensations", slide: "issues/negative_sensations.html" },
-                    { name: "Identification", slide: "issues/identification.html" },
-                    { name: "Negative Thoughts", slide: "issues/negative_thoughts.html" },
-                    { name: "Tail-Enders", slide: "issues/tail_enders.html" },
-                    { name: "Secondary Gain", slide: "issues/secondary_gain.html" },
-                    { name: "Examples", slide: "issues/examples.html" }
+                    {
+                        name: "Issues",
+                        children: [
+                            { name: "Introduction", slide: "issues/what_is_because_reasons.html" },
+                            { name: "Overview", slide: "issues/overview.html" },
+                            { name: "Symptoms", slide: "issues/symptoms.html" },
+                            { name: "Identification", slide: "issues/identification.html" },
+                            { name: "Negative Sensations", slide: "issues/negative_sensations.html" },
+                            { name: "Negative Thoughts", slide: "issues/negative_thoughts.html" },
+                            { name: "Examples", slide: "issues/examples.html" },
+                            { name: "Review", slide: "issues/secondary_gain.html" }
+                        ]
+                    },
+                    {
+                        name: "Energy Testing",
+                        children: [
+                            { name: "What is Because Reasons", slide: "energy_testing/what_is_because_reasons.html" },
+                            { name: "Introduction", slide: "energy_testing/overview.html" },
+                            { name: "Overview", slide: "energy_testing/overview_2.html" },
+                            { name: "Scientific Basis", slide: "energy_testing/scientific_basis.html" },
+                            { name: "History", slide: "energy_testing/history.html" },
+                            { name: "Methods and Practitioners", slide: "energy_testing/methods_and_practitioners.html" },
+                            { name: "Truth and Falsity", slide: "energy_testing/truth_and_falsity.html" },
+                            {
+                                name: "Basic Steps",
+                                children: [
+                                    { slide: "energy_testing/basic_steps.html" },
+                                    { slide: "energy_testing/basic_steps_example.html" },
+                                    { slide: "energy_testing/basic_steps_example_2.html" }
+                                ]
+                            },
+                            { name: "Example Statements", slide: "energy_testing/example_statements.html" },
+                            { name: "Energy Testing in Because Reasons", slide: "energy_testing/energy_testing_in_because_reasons.html" },
+                            {
+                                name: "The Eye Method",
+                                children: [
+                                    { slide: "energy_testing/the_eye_testing_method.html" },
+                                    { slide: "energy_testing/the_eye_method_2.html" },
+                                    { slide: "energy_testing/the_eye_method_3.html" }
+                                ]
+                            },
+                            { name: "Review", slide: "determination/psychological_reversals/psychological_reversals_4.html" }
+                        ]
+                    },
+                    {
+                        name: "Determination",
+                        children: [
+                            { name: "What is Because Reasons?", slide: "determination/what_is_because_reasons.html" },
+                            { name: "Overview", slide: "determination/overview.html" },
+                            { name: "Sections", slide: "determination/sections.html" },
+                            { name: "Physical Body", slide: "determination/physical_body.html" },
+                            { name: "Senses", slide: "determination/senses.html" },
+                            {
+                                name: "Consciousness Levels",
+                                children: [
+                                    { name: "Overview", slide: "determination/consciousness_levels/overview.html" },
+                                    { name: "Dr. Hawkins Quote 1", slide: "determination/consciousness_levels/david_hawkins_quote_1.html" },
+                                    { name: "Dr. Hawkins Quote 2", slide: "determination/consciousness_levels/david_hawkins_quote_2.html" },
+                                    { name: "Implicit Lower Groups", slide: "determination/consciousness_levels/implicit_lower_groups.html" },
+                                    { name: "Richard Rudd Quote", slide: "determination/consciousness_levels/richard_rudd_quote.html" },
+                                    { name: "A Definition", slide: "determination/consciousness_levels/level_of_consciousness.html" }
+                                ]
+                            },
+                            {
+                                name: "Emotions",
+                                children: [
+                                    { name: "Overview", slide: "determination/emotions/emotions_1.html" },
+                                    { name: "List", slide: "determination/emotions/emotions_2.html" },
+                                    { name: "Observations", slide: "determination/emotions/emotions_3.html" },
+                                    { name: "Characteristics", slide: "determination/emotions/emotions_4.html" }
+                                ]
+                            },
+                            {
+                                name: "Psychological Reversals",
+                                children: [
+                                    { name: "Overview", slide: "determination/psychological_reversals/psychological_reversals_1.html" },
+                                    { name: "Characteristics", slide: "determination/psychological_reversals/psychological_reversals_2.html" },
+                                    { name: "Example", slide: "determination/psychological_reversals/psychological_reversals_3.html" },
+                                    { name: "Example", slide: "determination/psychological_reversals/psychological_reversals_4.html" }
+                                ]
+                            },
+                            { name: "Review", slide: "determination/psychological_reversals/psychological_reversals_4.html" }
+                        ]
+                    },
+                    {
+                        name: "Resolution",
+                        children: [
+                            { name: "What is Because Reasons?", slide: "resolution/what_is_because_reasons.html" },
+                            { name: "Overview", slide: "resolution/overview.html" },
+                            { name: "Sufficient Determination", slide: "resolution/sufficient_determination.html" },
+                            { name: "Resolution Command", slide: "resolution/resolution_command.html" },
+                            { name: "Subconscious Work", slide: "resolution/subconscious_work.html" },
+                            { name: "Energy Test Response", slide: "resolution/energy_test_response.html" },
+                            { name: "Inhalation", slide: "resolution/a_yawn_or_deep_breath.html" },
+                            { name: "Observed Response", slide: "resolution/somatic_or_cognitive_response.html" },
+                            { name: "Review", slide: "resolution/somatic_or_cognitive_response.html" },
+                        ]
+                    },
                 ]
             },
             {
-                name: "Energy Testing",
+                name: "Intermediate",
                 children: [
-                    { name: "What is Because Reasons", slide: "energy_testing/what_is_because_reasons.html" },
-                    { name: "Introduction", slide: "energy_testing/overview.html" },
-                    { name: "Overview", slide: "energy_testing/overview_2.html" },
-                    { name: "Scientific Basis", slide: "energy_testing/scientific_basis.html" },
-                    { name: "History", slide: "energy_testing/history.html" },
-                    { name: "Methods and Practitioners", slide: "energy_testing/methods_and_practitioners.html" },
-                    { name: "Truth and Falsity", slide: "energy_testing/truth_and_falsity.html" },
                     {
-                        name: "Basic Steps",
+                        name: "Issues",
                         children: [
-                            { slide: "energy_testing/basic_steps.html" },
-                            { slide: "energy_testing/basic_steps_example.html" },
-                            { slide: "energy_testing/basic_steps_example_2.html" }
+                            { name: "Introduction", slide: "issues/what_is_because_reasons.html" },
+                            { name: "Overview", slide: "issues/overview.html" },
+                            { name: "Aspirations", slide: "issues/aspirations.html" },
+                            { name: "Affirmations", slide: "issues/affirmations.html" },
+                            { name: "Secondary Gain", slide: "issues/secondary_gain.html" },
+                            { name: "Examples", slide: "issues/examples.html" },
+                            { name: "Review", slide: "issues/secondary_gain.html" }
                         ]
                     },
                     {
-                        name: "The Eye Method",
+                        name: "Energy Testing",
                         children: [
-                            { slide: "energy_testing/the_eye_testing_method.html" },
-                            { slide: "energy_testing/the_eye_method_2.html" },
-                            { slide: "energy_testing/the_eye_method_3.html" }
-                        ]
-                    },
-                    { name: "Avoiding Influence", slide: "energy_testing/avoiding_influence.html" },
-                    { name: "Example Statements", slide: "energy_testing/example_statements.html" },
-                    { name: "Improving Responses", slide: "energy_testing/improving_responses.html" },
-                    { name: "Advanced Responses", slide: "energy_testing/advanced_responses.html" },
-                    {
-                        name: "Statement Semantics",
-                        children: [
-                            { slide: "energy_testing/statement_semantics.html" },
-                            { slide: "energy_testing/statement_semantics_2.html" },
+                            { name: "What is Because Reasons", slide: "energy_testing/what_is_because_reasons.html" },
+                            { name: "Introduction", slide: "energy_testing/overview.html" },
+                            { name: "Overview", slide: "energy_testing/overview_2.html" },
+                            { name: "Avoiding Influence", slide: "energy_testing/avoiding_influence.html" },
+                            { name: "Example Statements", slide: "energy_testing/example_statements.html" },
+                            { name: "Energy Testing in Because Reasons", slide: "energy_testing/energy_testing_in_because_reasons.html" },
+                            { name: "Review", slide: "determination/psychological_reversals/psychological_reversals_4.html" }
                         ]
                     },
                     {
-                        name: "Number Comparison",
+                        name: "Determination",
                         children: [
-                            { slide: "energy_testing/number_comparison.html" },
-                            { slide: "energy_testing/number_comparison_2.html" },
+                            { name: "What is Because Reasons?", slide: "determination/what_is_because_reasons.html" },
+                            { name: "Overview", slide: "determination/overview.html" },
+                            { name: "Sections", slide: "determination/sections.html" },
+                            {
+                                name: "Patterns",
+                                children: [
+                                    { name: "Overview", slide: "determination/patterns/overview.html" },
+                                    { name: "Attachment", slide: "determination/patterns/attachment.html" },
+                                    { name: "Identification", slide: "determination/patterns/identification.html" },
+                                    { name: "Resistance", slide: "determination/patterns/resistance.html" }
+                                ]
+                            },
+                            { name: "Parts", slide: "determination/parts.html" },
+                            {
+                                name: "Components of Events",
+                                children: [
+                                    { name: "Overview", slide: "determination/events/overview.html" },
+                                    { name: "Time", slide: "determination/events/time.html" },
+                                    { name: "Time Life Instance", slide: "determination/events/time_life_instance.html" },
+                                    { name: "Actions", slide: "determination/events/actions.html" },
+                                    { name: "Location Types", slide: "determination/events/location_types.html" },
+                                    { name: "Individual Types", slide: "determination/events/individuals.html" },
+                                    { name: "Item Types", slide: "determination/events/items.html" },
+                                    { name: "Characteristics", slide: "determination/events/characteristics.html" }
+                                ]
+                            },
+                            {
+                                name: "Energy System",
+                                children: [
+                                    { name: "Overview", slide: "determination/energy_system/overview.html" },
+                                    { name: "Aura", slide: "determination/energy_system/aura.html" },
+                                    { name: "Subtle Energy Bodies", slide: "determination/energy_system/subtle_energy_bodies.html" },
+                                    { name: "Chakras", slide: "determination/energy_system/chakras.html" },
+                                    { name: "Typical Chakra Components", slide: "determination/energy_system/chakras_2.html" },
+                                    { name: "Hara Line", slide: "determination/energy_system/hara_line.html" },
+                                    { name: "Meridians", slide: "determination/energy_system/meridians.html" },
+                                ]
+                            },
+                            { name: "Numbers", slide: "determination/numbers.html" },
+                            { name: "Characteristics", slide: "determination/characteristics.html" },
+                            { name: "States", slide: "determination/states.html" },
+                            { name: "Review", slide: "determination/states.html" }
                         ]
                     },
-                    {
-                        name: "Binary Search Method",
-                        children: [
-                            { slide: "energy_testing/binary_search_method.html" },
-                            { slide: "energy_testing/binary_search_method_2.html" }
-                        ]
-                    },
-                    { name: "Adjusting Statements", slide: "energy_testing/adjusting_statements.html" },
-                    { name: "Energy Testing in Because Reasons", slide: "energy_testing/energy_testing_in_because_reasons.html" }
                 ]
             },
             {
-                name: "Resolution",
+                name: "Advanced",
                 children: [
-                    { name: "What is Because Reasons?", slide: "resolution/what_is_because_reasons.html" },
-                    { name: "Overview", slide: "resolution/overview.html" },
-                    { name: "Sufficient Determination", slide: "resolution/sufficient_determination.html" },
-                    { name: "Resolution Command", slide: "resolution/resolution_command.html" },
-                    { name: "Subconscious Work", slide: "resolution/subconscious_work.html" },
-                    { name: "Energy Test Response", slide: "resolution/energy_test_response.html" },
-                    { name: "Inhalation", slide: "resolution/a_yawn_or_deep_breath.html" },
-                    { name: "Observed Response", slide: "resolution/somatic_or_cognitive_response.html" },
-                ]
-            },
-            {
-                name: "Determination",
-                children: [
-                    { name: "What is Because Reasons?", slide: "determination/what_is_because_reasons.html" },
-                    { name: "Overview", slide: "determination/overview.html" },
-                    { name: "Sections", slide: "determination/sections.html" },
-                    { name: "Physical Body", slide: "determination/physical_body.html" },
-                    { name: "Senses", slide: "determination/senses.html" },
                     {
-                        name: "Consciousness Levels",
+                        name: "Issues",
                         children: [
-                            { name: "Overview", slide: "determination/consciousness_levels/overview.html" },
-                            { name: "Dr. Hawkins Quote 1", slide: "determination/consciousness_levels/david_hawkins_quote_1.html" },
-                            { name: "Dr. Hawkins Quote 2", slide: "determination/consciousness_levels/david_hawkins_quote_2.html" },
-                            { name: "Implicit Lower Groups", slide: "determination/consciousness_levels/implicit_lower_groups.html" },
-                            { name: "Richard Rudd Quote", slide: "determination/consciousness_levels/richard_rudd_quote.html" },
-                            { name: "A Definition", slide: "determination/consciousness_levels/level_of_consciousness.html" }
+                            { name: "Introduction", slide: "issues/what_is_because_reasons.html" },
+                            { name: "Overview", slide: "issues/overview.html" },
+                            { name: "Tail-Enders", slide: "issues/tail_enders.html" },
+                            { name: "Triggers", slide: "issues/examples.html" },
+                            { name: "Examples", slide: "issues/examples.html" },
+                            { name: "Review", slide: "issues/secondary_gain.html" }
                         ]
                     },
                     {
-                        name: "Emotions",
+                        name: "Energy Testing",
                         children: [
-                            { name: "Overview", slide: "determination/emotions/emotions_1.html" },
-                            { name: "List", slide: "determination/emotions/emotions_2.html" },
-                            { name: "Observations", slide: "determination/emotions/emotions_3.html" },
-                            { name: "Characteristics", slide: "determination/emotions/emotions_4.html" }
+                            { name: "What is Because Reasons", slide: "energy_testing/what_is_because_reasons.html" },
+                            { name: "Introduction", slide: "energy_testing/overview.html" },
+                            { name: "Overview", slide: "energy_testing/overview_2.html" },
+                            { name: "Improving Responses", slide: "energy_testing/improving_responses.html" },
+                            { name: "Advanced Responses", slide: "energy_testing/advanced_responses.html" },
+                            {
+                                name: "Statement Semantics",
+                                children: [
+                                    { slide: "energy_testing/statement_semantics.html" },
+                                    { slide: "energy_testing/statement_semantics_2.html" },
+                                ]
+                            },
+                            {
+                                name: "Number Comparison",
+                                children: [
+                                    { slide: "energy_testing/number_comparison.html" },
+                                    { slide: "energy_testing/number_comparison_2.html" },
+                                ]
+                            },
+                            {
+                                name: "Binary Search Method",
+                                children: [
+                                    { slide: "energy_testing/binary_search_method.html" },
+                                    { slide: "energy_testing/binary_search_method_2.html" }
+                                ]
+                            },
+                            { name: "Adjusting Statements", slide: "energy_testing/adjusting_statements.html" },
+                            { name: "Review", slide: "energy_testing/energy_testing_in_because_reasons.html" }
                         ]
                     },
                     {
-                        name: "Psychological Reversals",
+                        name: "Determination",
                         children: [
-                            { name: "Overview", slide: "determination/psychological_reversals/psychological_reversals_1.html" },
-                            { name: "Characteristics", slide: "determination/psychological_reversals/psychological_reversals_2.html" },
-                            { name: "Example", slide: "determination/psychological_reversals/psychological_reversals_3.html" },
-                            { name: "Example", slide: "determination/psychological_reversals/psychological_reversals_4.html" }
+                            { name: "What is Because Reasons?", slide: "determination/what_is_because_reasons.html" },
+                            { name: "Overview", slide: "determination/overview.html" },
+                            { name: "Sections", slide: "determination/sections.html" },
+                            { name: "Low-Level Energies", slide: "determination/low_level_energies.html" },
+                            { name: "Ascended Masters", slide: "determination/ascended_masters.html" },
+                            { name: "Source Creator System", slide: "determination/source_creator_system.html" },
+                            {
+                                name: "Conjunctions",
+                                children: [
+                                    { name: "Overview", slide: "determination/conjunctions/overview.html" },
+                                    { name: "Chart", slide: "determination/conjunctions/overview_2.html" },
+                                    { name: "Discussion", slide: "determination/conjunctions/overview_3.html" }
+                                ]
+                            },
+                            { name: "States", slide: "determination/states.html" },
+                            { name: "Review", slide: "determination/states.html" }
                         ]
                     },
-                    {
-                        name: "Patterns",
-                        children: [
-                            { name: "Overview", slide: "determination/patterns/overview.html" },
-                            { name: "Attachment", slide: "determination/patterns/attachment.html" },
-                            { name: "Identification", slide: "determination/patterns/identification.html" },
-                            { name: "Resistance", slide: "determination/patterns/resistance.html" }
-                        ]
-                    },
-                    { name: "Parts", slide: "determination/parts.html" },
-                    {
-                        name: "Events",
-                        children: [
-                            { name: "Overview", slide: "determination/events/overview.html" },
-                            { name: "Time", slide: "determination/events/time.html" },
-                            { name: "Time Life Instance", slide: "determination/events/time_life_instance.html" },
-                            { name: "Actions", slide: "determination/events/actions.html" },
-                            { name: "Location Types", slide: "determination/events/location_types.html" },
-                            { name: "Individual Types", slide: "determination/events/individuals.html" },
-                            { name: "Item Types", slide: "determination/events/items.html" },
-                            { name: "Characteristics", slide: "determination/events/characteristics.html" }
-                        ]
-                    },
-                    {
-                        name: "Energy System",
-                        children: [
-                            { name: "Overview", slide: "determination/energy_system/overview.html" },
-                            { name: "Aura", slide: "determination/energy_system/aura.html" },
-                            { name: "Subtle Energy Bodies", slide: "determination/energy_system/subtle_energy_bodies.html" },
-                            { name: "Chakras", slide: "determination/energy_system/chakras.html" },
-                            { name: "Typical Chakra Components", slide: "determination/energy_system/chakras_2.html" },
-                            { name: "Hara Line", slide: "determination/energy_system/hara_line.html" },
-                            { name: "Meridians", slide: "determination/energy_system/meridians.html" },
-                        ]
-                    },
-                    { name: "Low-Level Energies", slide: "determination/low_level_energies.html" },
-                    { name: "Ascended Masters", slide: "determination/ascended_masters.html" },
-                    { name: "Source Creator System", slide: "determination/source_creator_system.html" },
-                    { name: "Numbers", slide: "determination/numbers.html" },
-                    { name: "Characteristics", slide: "determination/characteristics.html" },
-                    {
-                        name: "Conjunctions",
-                        children: [
-                            { name: "Overview", slide: "determination/conjunctions/overview.html" },
-                            { name: "Chart", slide: "determination/conjunctions/overview_2.html" },
-                            { name: "Discussion", slide: "determination/conjunctions/overview_3.html" }
-                        ]
-                    },
-                    { name: "States", slide: "determination/states.html" }
                 ]
             },
             {
