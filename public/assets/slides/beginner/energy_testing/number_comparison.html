@@ -1,0 +1,61 @@
+<html>
+    <body>
+        <h1>Energy Testing - Statement Semantics</h1>
+        <p>Number comparison is another area of statement semantics that’s a little confusing but makes some sense if you know what to look out for.</p>
+        <p>While it may test true that a given value is less than another (for example, one is less than four), another may test true to be only a little less (one is a little less than two).  The same is true for other subjective comparisons like greater (9 is greater than 5, and 9 is a little greater than 8), and other magnitudes (1 is a little less than 1.1, and 9 is a little greater than 8.9).</p>
+        <p>What makes things even more confusing is that the delineation between less and a little less, for example, may change.  A number may be less than another on one day, but a little less on another.  Why they change I have no idea.  The examples shown here were true for me at one point, but may become false later on.</p>
+        <p>The takeaway here is to remember that subjective magnitude may be important when determining sufficient truthfulness of comparison between numbers, but it’s important to not attach a value comparison to a particular subjective magnitude.  For example, don’t become too attached to 1 being less than 900 but a lot less than 901, because tomorrow those values will likely be different.</p>
+        <p>Interestingly, the mathematical less than and greater than signs are not bound to the limitations of subjective magnitude.  In other words, regardless of the difference in magnitude, the response makes sense.  1 < 2, 3, 4, 1 thousand, 1 billion, etc.  They all test true.</p>
+        <table>
+            <tr><th>Statement</th><th>Response</th><th>Statement</th><th>Response</th></tr>
+            <tr>
+                <td>1 is less than 4</td>
+                <td>True</td>
+                <td>9 is a <i>little</i> greater than 8.9</td>
+                <td>False</td>
+            </tr>
+            <tr>
+                <td>1 is less than 2</td>
+                <td>False</td>
+                <td>9 is a little greater than 8.9</td>
+                <td>True</td>
+            </tr>
+            <tr>
+                <td>1 is a little less than 2</td>
+                <td>True</td>
+                <td>1 is less than 900</td>
+                <td>True</td>
+            </tr>
+            <tr>
+                <td>9 is greater than 5</td>
+                <td>True</td>
+                <td>1 is less than 901</td>
+                <td>False</td>
+            </tr>
+            <tr>
+                <td>9 is greater than 8</td>
+                <td>False</td>
+                <td>1 is a lot less than 901</td>
+                <td>True</td>
+            </tr>
+            <tr>
+                <td>9 is a little greater than 8</td>
+                <td>True</td>
+                <td>1 is a lot less than 799,653</td>
+                <td>False</td>
+            </tr>
+            <tr>
+                <td>1 is a little less than 1.1</td>
+                <td>False</td>
+                <td>1 is a <i>lot</i> less than 799,653</td>
+                <td>True</td>
+            </tr>
+            <tr>
+                <td>1 is a <i>little</i> less than 1.1</td>
+                <td>True</td>
+                <td>1 < 2,3,4,1 thousand, 1 billion</td>
+                <td>True</td>
+            </tr>
+        </table>
+    </body>
+</html>
