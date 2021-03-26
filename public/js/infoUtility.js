@@ -343,9 +343,7 @@ class InfoUtility {
                             { name: "Becoming the Witness", slide: "beginner/issues/buddha_quote.html" },
                             { name: "Overview", slide: "beginner/issues/overview.html" },
                             { name: "Internal Conflict", slide: "beginner/issues/internal_conflict.html" },
-                            { name: "Sensations", slide: "beginner/issues/negative_sensations.html" },
-                            { name: "Thoughts", slide: "beginner/issues/negative_thoughts.html" },
-                            { name: "Emotions", slide: "beginner/issues/negative_emotions.html" },
+                            { name: "Sensations, Emotions, and Thoughts", slide: "beginner/issues/components.html" },
                             { name: "Identification", slide: "beginner/issues/identification.html" },
                             { name: "Secondary Gain", slide: "beginner/issues/secondary_gain.html" },
                             { name: "Review", slide: "beginner/issues/review.html" }
@@ -383,9 +381,7 @@ class InfoUtility {
                     {
                         name: "Determination",
                         children: [
-                            { name: "What is Because Reasons?", slide: "beginner/determination/what_is_because_reasons.html" },
                             { name: "Overview", slide: "beginner/determination/overview.html" },
-                            { name: "Sections", slide: "beginner/determination/sections.html" },
                             { name: "Physical Body", slide: "beginner/determination/physical_body.html" },
                             { name: "Senses", slide: "beginner/determination/senses.html" },
                             {
@@ -421,7 +417,6 @@ class InfoUtility {
                     {
                         name: "Resolution",
                         children: [
-                            { name: "What is Because Reasons?", slide: "beginner/resolution/what_is_because_reasons.html" },
                             { name: "Overview", slide: "beginner/resolution/overview.html" },
                             { name: "Sufficient Determination", slide: "beginner/resolution/sufficient_determination.html" },
                             { name: "Resolution Command", slide: "beginner/resolution/resolution_command.html" },
