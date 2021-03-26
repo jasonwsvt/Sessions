@@ -133,6 +133,7 @@ class InfoUtility {
         //Create all sibling divs for ids in the path.
         this.pathDiv.empty();
         var media = [];
+        //var title = [];
         path.forEach(id => {
             this.pathDiv.append("<div id = '" + this.siblingsDivId(id) + "'></div>");
             data.siblings(id).forEach((sId, index) => {
@@ -148,6 +149,7 @@ class InfoUtility {
                     console.log("clicked", this.value);
                     self.manage(parseInt(this.value));
                 });
+                //if (sId == id) { title.push(data.hasKey(sId, "name") ? data.value(sId, "name") : index + 1); }
             });
 
             const record = data.record(id);
@@ -168,10 +170,12 @@ class InfoUtility {
             const id = ary[0];
             const item = ary[1];
             const value = ary[2];
+            //const name = title.join(" ― ");
             if (media.length > 1) {
                 this.contentsDiv.append("<button id = '" + this.itemButtonId(id, item) + "' type = 'button' class = 'btn bth-primary btn-sm'>" + item + "</button>");
             }
             this.mediaDiv.append("<div id = '" + this.itemDivId(id, item) + "' class = 'hidden'></div>");
+            //this.itemDiv(id, item).append("<h1>" + name + "</h1>");
             switch (item) {
                 case "video":
                     this.itemDiv(id, item).append("<iframe width = 100% src='https://www.youtube.com/embed/" + value + "'></iframe>");
@@ -336,6 +340,7 @@ class InfoUtility {
                     {
                         name: "Issues",
                         children: [
+                            { name: "Becoming the Witness", slide: "beginner/issues/buddha_quote.html" },
                             { name: "Overview", slide: "beginner/issues/overview.html" },
                             { name: "Internal Conflict", slide: "beginner/issues/internal_conflict.html" },
                             { name: "Sensations", slide: "beginner/issues/negative_sensations.html" },
@@ -401,6 +406,15 @@ class InfoUtility {
                                     { name: "Example", slide: "beginner/determination/psychological_reversals/psychological_reversals_4.html" }
                                 ]
                             },
+                            {
+                                name: "Patterns",
+                                children: [
+                                    { name: "Overview", slide: "beginner/determination/patterns/overview.html" },
+                                    { name: "Attachment", slide: "beginner/determination/patterns/attachment.html" },
+                                    { name: "Identification", slide: "beginner/determination/patterns/identification.html" },
+                                    { name: "Resistance", slide: "beginner/determination/patterns/resistance.html" }
+                                ]
+                            },
                             { name: "Review", slide: "beginner/determination/psychological_reversals/review.html" }
                         ]
                     },
@@ -464,15 +478,6 @@ class InfoUtility {
                                     { name: "Implicit Lower Groups", slide: "intermediate/determination/consciousness_levels/implicit_lower_groups.html" },
                                     { name: "Richard Rudd Quote", slide: "intermediate/determination/consciousness_levels/richard_rudd_quote.html" },
                                     { name: "A Definition", slide: "intermediate/determination/consciousness_levels/level_of_consciousness.html" }
-                                ]
-                            },
-                            {
-                                name: "Patterns",
-                                children: [
-                                    { name: "Overview", slide: "intermediate/determination/patterns/overview.html" },
-                                    { name: "Attachment", slide: "intermediate/determination/patterns/attachment.html" },
-                                    { name: "Identification", slide: "intermediate/determination/patterns/identification.html" },
-                                    { name: "Resistance", slide: "intermediate/determination/patterns/resistance.html" }
                                 ]
                             },
                             { name: "Parts", slide: "intermediate/determination/parts.html" },
