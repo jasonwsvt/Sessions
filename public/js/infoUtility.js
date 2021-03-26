@@ -437,24 +437,34 @@ class InfoUtility {
                     {
                         name: "Issues",
                         children: [
-                            { name: "Introduction", slide: "intermediate/issues/what_is_because_reasons.html" },
                             { name: "Overview", slide: "intermediate/issues/overview.html" },
                             { name: "Aspirations", slide: "intermediate/issues/aspirations.html" },
                             { name: "Affirmations", slide: "intermediate/issues/affirmations.html" },
-                            { name: "Secondary Gain", slide: "intermediate/issues/secondary_gain.html" },
-                            { name: "Examples", slide: "intermediate/issues/examples.html" },
+                            { name: "Tail-Enders", slide: "intermediate/issues/tail_enders.html" },
+                            { name: "Triggers", slide: "intermediate/issues/triggers.html" },
                             { name: "Review", slide: "intermediate/issues/review.html" }
                         ]
                     },
                     {
                         name: "Energy Testing",
                         children: [
-                            { name: "What is Because Reasons", slide: "intermediate/energy_testing/what_is_because_reasons.html" },
-                            { name: "Introduction", slide: "intermediate/energy_testing/overview.html" },
-                            { name: "Overview", slide: "intermediate/energy_testing/overview_2.html" },
+                            { name: "Overview", slide: "intermediate/energy_testing/overview.html" },
+                            {
+                                name: "Statement Semantics",
+                                children: [
+                                    { slide: "intermediate/energy_testing/statement_semantics.html" },
+                                    { slide: "intermediate/energy_testing/statement_semantics_2.html" },
+                                ]
+                            },
                             { name: "Avoiding Influence", slide: "intermediate/energy_testing/avoiding_influence.html" },
-                            { name: "Example Statements", slide: "intermediate/energy_testing/example_statements.html" },
-                            { name: "Energy Testing in Because Reasons", slide: "intermediate/energy_testing/energy_testing_in_because_reasons.html" },
+                            { name: "Improving Responses", slide: "intermediate/energy_testing/improving_responses.html" },
+                            {
+                                name: "Binary Search Method",
+                                children: [
+                                    { slide: "intermediate/energy_testing/binary_search_method.html" },
+                                    { slide: "intermediate/energy_testing/binary_search_method_2.html" }
+                                ]
+                            },
                             { name: "Review", slide: "intermediate/determination/psychological_reversals/review.html" }
                         ]
                     },
@@ -514,31 +524,11 @@ class InfoUtility {
                 children: [
                     { name: "Overview", slide: "advanced/overview.html" },
                     {
-                        name: "Issues",
-                        children: [
-                            { name: "Introduction", slide: "advanced/issues/what_is_because_reasons.html" },
-                            { name: "Overview", slide: "advanced/issues/overview.html" },
-                            { name: "Tail-Enders", slide: "advanced/issues/tail_enders.html" },
-                            { name: "Triggers", slide: "advanced/issues/examples.html" },
-                            { name: "Examples", slide: "advanced/issues/examples.html" },
-                            { name: "Review", slide: "advanced/issues/review.html" }
-                        ]
-                    },
-                    {
                         name: "Energy Testing",
                         children: [
-                            { name: "What is Because Reasons", slide: "advanced/energy_testing/what_is_because_reasons.html" },
-                            { name: "Introduction", slide: "advanced/energy_testing/overview.html" },
-                            { name: "Overview", slide: "advanced/energy_testing/overview_2.html" },
-                            { name: "Improving Responses", slide: "advanced/energy_testing/improving_responses.html" },
+                            { name: "Overview", slide: "advanced/energy_testing/overview.html" },
                             { name: "Advanced Responses", slide: "advanced/energy_testing/advanced_responses.html" },
-                            {
-                                name: "Statement Semantics",
-                                children: [
-                                    { slide: "advanced/energy_testing/statement_semantics.html" },
-                                    { slide: "advanced/energy_testing/statement_semantics_2.html" },
-                                ]
-                            },
+                            { name: "Adjusting Statements", slide: "advanced/energy_testing/adjusting_statements.html" },
                             {
                                 name: "Number Comparison",
                                 children: [
@@ -546,14 +536,6 @@ class InfoUtility {
                                     { slide: "advanced/energy_testing/number_comparison_2.html" },
                                 ]
                             },
-                            {
-                                name: "Binary Search Method",
-                                children: [
-                                    { slide: "advanced/energy_testing/binary_search_method.html" },
-                                    { slide: "advanced/energy_testing/binary_search_method_2.html" }
-                                ]
-                            },
-                            { name: "Adjusting Statements", slide: "advanced/energy_testing/adjusting_statements.html" },
                             { name: "Review", slide: "advanced/energy_testing/review.html" }
                         ]
                     },
