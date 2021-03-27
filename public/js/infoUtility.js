@@ -542,6 +542,9 @@ class InfoUtility {
                         name: "Determination",
                         children: [
                             { name: "Overview", slide: "advanced/determination/overview.html" },
+                            { name: "Low-Level Energies", slide: "advanced/determination/low_level_energies.html" },
+                            { name: "Ascended Masters", slide: "advanced/determination/ascended_masters.html" },
+                            { name: "Source Creator System", slide: "advanced/determination/source_creator_system.html" },
                             {
                                 name: "Energy System",
                                 children: [
@@ -549,9 +552,6 @@ class InfoUtility {
                                     { name: "Chart", slide: "advanced/determination/energy_system/chart.html" },
                                 ]
                             },
-                            { name: "Low-Level Energies", slide: "advanced/determination/low_level_energies.html" },
-                            { name: "Ascended Masters", slide: "advanced/determination/ascended_masters.html" },
-                            { name: "Source Creator System", slide: "advanced/determination/source_creator_system.html" },
                             {
                                 name: "Conjunctions",
                                 children: [
