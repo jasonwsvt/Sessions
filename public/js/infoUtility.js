@@ -336,16 +336,16 @@ class InfoUtility {
             {
                 name: "Beginner",
                 children: [
+                    { name: "Becoming the Witness", slide: "beginner/issues/buddha_quote.html" },
                     { name: "Overview", slide: "beginner/overview.html" },
                     {
                         name: "Issues",
                         children: [
-                            { name: "Becoming the Witness", slide: "beginner/issues/buddha_quote.html" },
                             { name: "Overview", slide: "beginner/issues/overview.html" },
                             { name: "Internal Conflict", slide: "beginner/issues/internal_conflict.html" },
-                            { name: "Sensations, Emotions, and Thoughts", slide: "beginner/issues/components.html" },
                             { name: "Identification", slide: "beginner/issues/identification.html" },
                             { name: "Secondary Gain", slide: "beginner/issues/secondary_gain.html" },
+                            { name: "Sensations, Emotions, and Thoughts", slide: "beginner/issues/components.html" },
                             { name: "Review", slide: "beginner/issues/review.html" }
                         ]
                     },
@@ -357,6 +357,7 @@ class InfoUtility {
                             { name: "History", slide: "beginner/energy_testing/history.html" },
                             { name: "Methods and Practitioners", slide: "beginner/energy_testing/methods_and_practitioners.html" },
                             { name: "Truth and Falsity", slide: "beginner/energy_testing/truth_and_falsity.html" },
+                            { name: "Energy Testing in Because Reasons", slide: "beginner/energy_testing/energy_testing_in_because_reasons.html" },
                             {
                                 name: "Basic Steps",
                                 children: [
@@ -374,7 +375,6 @@ class InfoUtility {
                                     { name: "Steps", slide: "beginner/energy_testing/the_eye_method_3.html" }
                                 ]
                             },
-                            { name: "Energy Testing in Because Reasons", slide: "beginner/energy_testing/energy_testing_in_because_reasons.html" },
                             { name: "Review", slide: "beginner/determination/psychological_reversals/review.html" }
                         ]
                     },
@@ -431,6 +431,7 @@ class InfoUtility {
             {
                 name: "Intermediate",
                 children: [
+                    { name: "Letting Go", slide: "intermediate/basic_principals_for_letting_go.html" },
                     { name: "Overview", slide: "intermediate/overview.html" },
                     {
                         name: "Issues",
@@ -471,8 +472,6 @@ class InfoUtility {
                                     { name: "Overview", slide: "intermediate/determination/consciousness_levels/overview.html" },
                                     { name: "Dr. Hawkins Quote 1", slide: "intermediate/determination/consciousness_levels/david_hawkins_quote_1.html" },
                                     { name: "Dr. Hawkins Quote 2", slide: "intermediate/determination/consciousness_levels/david_hawkins_quote_2.html" },
-                                    { name: "Implicit Lower Groups", slide: "intermediate/determination/consciousness_levels/implicit_lower_groups.html" },
-                                    { name: "Richard Rudd Quote", slide: "intermediate/determination/consciousness_levels/richard_rudd_quote.html" },
                                     { name: "A Definition", slide: "intermediate/determination/consciousness_levels/level_of_consciousness.html" }
                                 ]
                             },
@@ -505,8 +504,6 @@ class InfoUtility {
                                     { name: "Overview", slide: "intermediate/determination/energy_system/overview.html" },
                                     { name: "Aura", slide: "intermediate/determination/energy_system/aura.html" },
                                     { name: "Subtle Energy Bodies", slide: "intermediate/determination/energy_system/subtle_energy_bodies.html" },
-                                    { name: "Chakras", slide: "intermediate/determination/energy_system/chakras.html" },
-                                    { name: "Typical Chakra Components", slide: "intermediate/determination/energy_system/chakras_2.html" },
                                     { name: "Hara Line", slide: "intermediate/determination/energy_system/hara_line.html" },
                                     { name: "Meridians", slide: "intermediate/determination/energy_system/meridians.html" },
                                 ]
@@ -527,6 +524,13 @@ class InfoUtility {
                         name: "Energy Testing",
                         children: [
                             { name: "Overview", slide: "advanced/energy_testing/overview.html" },
+                            {
+                                name: "Consciousness Levels",
+                                children: [
+                                    { name: "Implicit Lower Groups", slide: "intermediate/determination/consciousness_levels/implicit_lower_groups.html" },
+                                    { name: "Richard Rudd Quote", slide: "intermediate/determination/consciousness_levels/richard_rudd_quote.html" },
+                                ]
+                            },
                             { name: "Complex Responses", slide: "advanced/energy_testing/complex_responses.html" },
                             { name: "Statement Semantics", slide: "intermediate/energy_testing/statement_semantics_2.html" },
                             { name: "Number Comparison", slide: "advanced/energy_testing/number_comparison.html" },
@@ -538,6 +542,14 @@ class InfoUtility {
                         name: "Determination",
                         children: [
                             { name: "Overview", slide: "advanced/determination/overview.html" },
+                            {
+                                name: "Energy System",
+                                children: [
+                                    { name: "Overview", slide: "advanced/determination/energy_system/overview.html" },
+                                    { name: "Chakras", slide: "advanced/determination/energy_system/chakras.html" },
+                                    { name: "Chakras", slide: "advanced/determination/energy_system/chakras_2.html" },
+                                ]
+                            },
                             { name: "Low-Level Energies", slide: "advanced/determination/low_level_energies.html" },
                             { name: "Ascended Masters", slide: "advanced/determination/ascended_masters.html" },
                             { name: "Source Creator System", slide: "advanced/determination/source_creator_system.html" },
@@ -585,7 +597,6 @@ class InfoUtility {
                 name: "Final Thoughts",
                 children: [
                     { name: "Continual Use", slide: "final_thoughts/overview.html" },
-                    { name: "Letting Go", slide: "final_thoughts/basic_principals_for_letting_go.html" },
                     {
                         name: "The Consciousness Level of Health",
                         children: [
