@@ -389,8 +389,6 @@ class InfoUtility {
                                 children: [
                                     { name: "Overview", slide: "beginner/determination/emotions/emotions_1.html" },
                                     { name: "List", slide: "beginner/determination/emotions/emotions_2.html" },
-                                    { name: "Observations", slide: "beginner/determination/emotions/emotions_3.html" },
-                                    { name: "Characteristics", slide: "beginner/determination/emotions/emotions_4.html" }
                                 ]
                             },
                             {
@@ -449,15 +447,10 @@ class InfoUtility {
                         name: "Energy Testing",
                         children: [
                             { name: "Overview", slide: "intermediate/energy_testing/overview.html" },
-                            {
-                                name: "Statement Semantics",
-                                children: [
-                                    { slide: "intermediate/energy_testing/statement_semantics.html" },
-                                    { slide: "intermediate/energy_testing/statement_semantics_2.html" },
-                                ]
-                            },
+                            { name: "Statement Semantics", slide: "intermediate/energy_testing/statement_semantics.html" },
                             { name: "Avoiding Influence", slide: "intermediate/energy_testing/avoiding_influence.html" },
                             { name: "Improving Responses", slide: "intermediate/energy_testing/improving_responses.html" },
+                            { name: "Adjusting Statements", slide: "intermediate/energy_testing/adjusting_statements.html" },
                             {
                                 name: "Binary Search Method",
                                 children: [
@@ -471,9 +464,7 @@ class InfoUtility {
                     {
                         name: "Determination",
                         children: [
-                            { name: "What is Because Reasons?", slide: "intermediate/determination/what_is_because_reasons.html" },
                             { name: "Overview", slide: "intermediate/determination/overview.html" },
-                            { name: "Sections", slide: "intermediate/determination/sections.html" },
                             {
                                 name: "Consciousness Levels",
                                 children: [
@@ -483,6 +474,15 @@ class InfoUtility {
                                     { name: "Implicit Lower Groups", slide: "intermediate/determination/consciousness_levels/implicit_lower_groups.html" },
                                     { name: "Richard Rudd Quote", slide: "intermediate/determination/consciousness_levels/richard_rudd_quote.html" },
                                     { name: "A Definition", slide: "intermediate/determination/consciousness_levels/level_of_consciousness.html" }
+                                ]
+                            },
+                            {
+                                name: "Emotions",
+                                children: [
+                                    { name: "Overview", slide: "intermediate/determination/emotions/emotions_1.html" },
+                                    { name: "List", slide: "intermediate/determination/emotions/emotions_2.html" },
+                                    { name: "Observations", slide: "intermediate/determination/emotions/emotions_3.html" },
+                                    { name: "Characteristics", slide: "intermediate/determination/emotions/emotions_4.html" }
                                 ]
                             },
                             { name: "Parts", slide: "intermediate/determination/parts.html" },
@@ -527,24 +527,17 @@ class InfoUtility {
                         name: "Energy Testing",
                         children: [
                             { name: "Overview", slide: "advanced/energy_testing/overview.html" },
-                            { name: "Advanced Responses", slide: "advanced/energy_testing/advanced_responses.html" },
-                            { name: "Adjusting Statements", slide: "advanced/energy_testing/adjusting_statements.html" },
-                            {
-                                name: "Number Comparison",
-                                children: [
-                                    { slide: "advanced/energy_testing/number_comparison.html" },
-                                    { slide: "advanced/energy_testing/number_comparison_2.html" },
-                                ]
-                            },
+                            { name: "Complex Responses", slide: "advanced/energy_testing/complex_responses.html" },
+                            { name: "Statement Semantics", slide: "intermediate/energy_testing/statement_semantics_2.html" },
+                            { name: "Number Comparison", slide: "advanced/energy_testing/number_comparison.html" },
+                            { name: "Ranges and Limits", slide: "advanced/energy_testing/ranges_and_limits.html" },
                             { name: "Review", slide: "advanced/energy_testing/review.html" }
                         ]
                     },
                     {
                         name: "Determination",
                         children: [
-                            { name: "What is Because Reasons?", slide: "advanced/determination/what_is_because_reasons.html" },
                             { name: "Overview", slide: "advanced/determination/overview.html" },
-                            { name: "Sections", slide: "advanced/determination/sections.html" },
                             { name: "Low-Level Energies", slide: "advanced/determination/low_level_energies.html" },
                             { name: "Ascended Masters", slide: "advanced/determination/ascended_masters.html" },
                             { name: "Source Creator System", slide: "advanced/determination/source_creator_system.html" },

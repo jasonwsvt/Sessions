@@ -1,6 +1,6 @@
 <html>
     <body>
-        <h1>Energy Testing - Statement Semantics</h1>
+        <h1>Energy Testing - Number Comparison</h1>
         <p>Number comparison is another area of statement semantics that’s a little confusing but makes some sense if you know what to look out for.</p>
         <p>While it may test true that a given value is less than another (for example, one is less than four), another may test true to be only a little less (one is a little less than two).  The same is true for other subjective comparisons like greater (9 is greater than 5, and 9 is a little greater than 8), and other magnitudes (1 is a little less than 1.1, and 9 is a little greater than 8.9).</p>
         <p>What makes things even more confusing is that the delineation between less and a little less, for example, may change.  A number may be less than another on one day, but a little less on another.  Why they change I have no idea.  The examples shown here were true for me at one point, but may become false later on.</p>
@@ -11,13 +11,13 @@
             <tr>
                 <td>1 is less than 4</td>
                 <td>True</td>
-                <td>9 is a <i>little</i> greater than 8.9</td>
+                <td>9 is a little greater than 8.9</td>
                 <td>False</td>
             </tr>
             <tr>
                 <td>1 is less than 2</td>
                 <td>False</td>
-                <td>9 is a little greater than 8.9</td>
+                <td>9 is a <i>little</i> greater than 8.9</td>
                 <td>True</td>
             </tr>
             <tr>
