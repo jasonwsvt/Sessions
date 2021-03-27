@@ -545,9 +545,8 @@ class InfoUtility {
                             {
                                 name: "Energy System",
                                 children: [
-                                    { name: "Overview", slide: "advanced/determination/energy_system/overview.html" },
                                     { name: "Chakras", slide: "advanced/determination/energy_system/chakras.html" },
-                                    { name: "Chakras", slide: "advanced/determination/energy_system/chakras_2.html" },
+                                    { name: "Chart", slide: "advanced/determination/energy_system/chart.html" },
                                 ]
                             },
                             { name: "Low-Level Energies", slide: "advanced/determination/low_level_energies.html" },
