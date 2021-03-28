@@ -257,6 +257,33 @@
     height: auto;
 }
 
+#infoUtility_footer {
+    z-index: 3;
+    position: absolute !important;
+    display: flex;
+    flex-direction: row;
+    visibility: visible;
+    opacity: 1;
+    background-color: rgba(238, 238, 238, 1);
+    text-align: center;
+    white-space: normal;
+}
+
+#infoUtility_footer_content {
+    z-index: 3;
+    position: absolute !important;
+    display: flex;
+    flex-direction: row;
+    visibility: visible;
+    opacity: 1;
+    width: 80%;
+    background-color: rgba(238, 238, 238, 1);
+    text-align: center;
+    white-space: normal;
+}
+
+
+
 .btn-group-sm {
     display: flex !important;
     flex-direction: row !important;

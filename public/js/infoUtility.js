@@ -8,14 +8,20 @@ class InfoUtility {
     _leftArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-arrow-left' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z'/></svg>";
     _rightArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-arrow-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z'/></svg>";
 
-    _buttonID = this._utilityID + "Button";
-    _divID = this._utilityID + "Window";
-    _contentsDivID = this._utilityID + "_contents";
-    _pathDivID = this._utilityID + "_path";
-    _contentsDivID = this._utilityID + "_contents";
-    _mediaDivID = this._utilityID + "_media";
-    _leftArrowDivID = this._utilityID + "_prev";
+    _buttonID        = this._utilityID + "Button";
+    _divID           = this._utilityID + "Window";
+    _contentsDivID   = this._utilityID + "_contents";
+    _pathDivID       = this._utilityID + "_path";
+    _contentsDivID   = this._utilityID + "_contents";
+    _mediaDivID      = this._utilityID + "_media";
+    _leftArrowDivID  = this._utilityID + "_prev";
     _rightArrowDivID = this._utilityID + "_next";
+    _disclaimerID    = this._utilityID + "_disclaimer";
+    _aboutMeID       = this._utilityID + "_aboutMe";
+    _licenseID       = this._utilityID + "_license";
+    _donateID        = this._utilityID + "_donate";
+    _footerID        = this._utilityID + "_footer";
+    _footerContentID = this._footerID + "_content";
 
     constructor (utilities) {
         const self = this;
@@ -29,6 +35,7 @@ class InfoUtility {
                 self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
+                    self.resize();
                     this.blur();
                 }
                 else {
@@ -44,8 +51,27 @@ class InfoUtility {
 
             self.mediaDiv.parent().on('mouseout', function(e)  { self.mouseOut(); });
 
-            self.mediaDiv.parent().on("click", function(e)     { self.mouseClick(e.pageX, e.pageY);
+            self.mediaDiv.parent().on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
 
+            self.footer.find("button").on("click", function(e) {
+                if ($(this).hasClass("btn-dark")) {
+                    $(this).removeClass("btn-dark");
+                    $(this).addClass("btn-light");
+                    self.footerButtonClick($(this).text());
+                    self.footer.find("button").each(button => {
+                        console.log($(button).text(), $(button).hasClass("btn-light"));
+                        if ($(button).text() != $(this).text() && $(button).hasClass("btn-light")) {
+                            $(button).removeClass("btn-light");
+                            $(button).addClass("btn-dark");
+                        }
+                    });
+                }
+                else {
+                    $(this).removeClass("btn-light");
+                    $(this).addClass("btn-dark");
+                    self.footerContent.remove();
+                }
+                this.blur();
             });
         }); 
     }
@@ -69,6 +95,12 @@ class InfoUtility {
     itemButton(id, item)     { return $("#" + this.itemButtonId(id, item)); }
     get leftArrowDiv()       { return $("#" + this._leftArrowDivID); }
     get rightArrowDiv()      { return $("#" + this._rightArrowDivID); }
+    get disclaimer()         { return $("#" + this._disclaimerID); }
+    get aboutMe()            { return $("#" + this._aboutMeID); }
+    get license()            { return $("#" + this._licenseID); }
+    get donate()             { return $("#" + this._donateID); }
+    get footer()             { return $("#" + this._footerID); }
+    get footerContent()      { return $("#" + this._footerContentID); }
 
     _build() {
         const infoIcon = this._infoIcon;
@@ -84,13 +116,12 @@ class InfoUtility {
         const aboutMe = "<button id = '" + this._aboutMeID + "' type = 'button' class = 'btn btn-dark btn-sm'>About Me</button>";
         const license = "<button id = '" + this._licenseID + "' type = 'button' class = 'btn btn-dark btn-sm'>License</button>";
         const donate = "<button id = '" + this._donateID + "' type = 'button' class = 'btn btn-dark btn-sm'>Donate</button>";
-        const footer = "<div id = '" + this._footerID + "'>" + disclaimer + aboutMe + license + donate + "</div>";
+        const footer = "<div id = '" + this._footerID + "'>" + disclaimer + license + aboutMe + donate + "</div>";
 
         this.utilityDiv.append(button + div);
 
         this.div.css("left", "0px");
         this.div.css("top", String(this.utilityDiv.position().top + 31) + "px");
-        this.resize();
 
         this.div.append(pathDiv + contentsDiv);
 
@@ -99,6 +130,7 @@ class InfoUtility {
 
         this.div.append(footer);
 
+        this.resize();
         this.init();
         this.mouseOut();
         
@@ -106,8 +138,16 @@ class InfoUtility {
     }
 
     resize() {
-        this.div.css("height", String($(window).height() - 32));
-        this.div.css("width", String($(window).width()));
+        const utilitiesHeight = this.utilityDiv.outerHeight();
+        const windowHeight = $(window).height();
+        const windowWidth = $(window).width();
+        const footerWidth = this.footer.outerWidth();
+        const footerHeight = this.footer.outerHeight();
+        console.log(windowHeight, windowWidth, footerHeight, footerWidth);
+        this.div.css("height", String(windowHeight - utilitiesHeight) + "px");
+        this.div.css("width", String(windowWidth) + "px");
+        this.footer.css("top", String(windowHeight - footerHeight - utilitiesHeight) + "px");
+        this.footer.css("left", String((windowWidth - footerWidth) / 2) + "px");
     }
 
     manage(picked) {
@@ -282,6 +322,19 @@ class InfoUtility {
         console.log(current, ids);
         const index = ids.findIndex(id => id == current);
         return index == ids.length - 1 ? ids[0] : ids[index + 1];
+    }
+
+    footerButtonClick(name) {
+        switch (name) {
+            case "Disclaimer": name = "disclaimer.html"; break;
+            case "License": name = "license.html"; break;
+            case "About Me": name = "about_me.html"; break;
+            case "Donate": name = "donate.html"; break;
+        }
+        this.div.append("<div id = '" + this._footerContentID + "'></div>");
+        $.get("assets/slides/" + name, (code) => this.footerContent.html(code));
+        console.log(this.footer.position().top, this.footerContent.outerHeight());
+        this.footerContent.css("top", String(this.footer.position().top - this.footerContent.height()) + "px");
     }
 
     close(except) {
@@ -531,13 +584,6 @@ class InfoUtility {
                         name: "Energy Testing",
                         children: [
                             { name: "Overview", slide: "advanced/energy_testing/overview.html" },
-                            {
-                                name: "Consciousness Levels",
-                                children: [
-                                    { name: "Implicit Lower Groups", slide: "intermediate/determination/consciousness_levels/implicit_lower_groups.html" },
-                                    { name: "Richard Rudd Quote", slide: "intermediate/determination/consciousness_levels/richard_rudd_quote.html" },
-                                ]
-                            },
                             { name: "Complex Responses", slide: "advanced/energy_testing/complex_responses.html" },
                             { name: "Statement Semantics", slide: "intermediate/energy_testing/statement_semantics_2.html" },
                             { name: "Number Comparison", slide: "advanced/energy_testing/number_comparison.html" },
@@ -549,6 +595,13 @@ class InfoUtility {
                         name: "Determination",
                         children: [
                             { name: "Overview", slide: "advanced/determination/overview.html" },
+                            {
+                                name: "Consciousness Levels",
+                                children: [
+                                    { name: "Richard Rudd Quote", slide: "advanced/determination/consciousness_levels/richard_rudd_quote.html" },
+                                    { name: "Implicit Lower Groups", slide: "advanced/determination/consciousness_levels/implicit_lower_groups.html" }
+                                ]
+                            },
                             { name: "Low-Level Energies", slide: "advanced/determination/low_level_energies.html" },
                             { name: "Ascended Masters", slide: "advanced/determination/ascended_masters.html" },
                             {
