@@ -80,7 +80,11 @@ class InfoUtility {
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
         const leftArrowDiv = "<div id = '" + this._leftArrowDivID + "'>" + this._leftArrow + "</div>";
         const rightArrowDiv = "<div id = '" + this._rightArrowDivID + "'>" + this._rightArrow + "</div>";
-
+        const disclaimer = "<button id = '" + this._disclaimerID + "' type = 'button' class = 'btn btn-dark btn-sm'>Disclaimer</button>";
+        const aboutMe = "<button id = '" + this._aboutMeID + "' type = 'button' class = 'btn btn-dark btn-sm'>About Me</button>";
+        const license = "<button id = '" + this._licenseID + "' type = 'button' class = 'btn btn-dark btn-sm'>License</button>";
+        const donate = "<button id = '" + this._donateID + "' type = 'button' class = 'btn btn-dark btn-sm'>Donate</button>";
+        const footer = "<div id = '" + this._footerID + "'>" + disclaimer + aboutMe + license + donate + "</div>";
 
         this.utilityDiv.append(button + div);
 
@@ -88,9 +92,12 @@ class InfoUtility {
         this.div.css("top", String(this.utilityDiv.position().top + 31) + "px");
         this.resize();
 
-        this.div.append(pathDiv + contentsDiv + "<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
+        this.div.append(pathDiv + contentsDiv);
+
+        this.div.append("<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
         this.leftArrowDiv.css("left", "0px");
-        console.log(this.rightArrowDiv);
+
+        this.div.append(footer);
 
         this.init();
         this.mouseOut();
@@ -263,7 +270,7 @@ class InfoUtility {
     previous() {
         const data = this._data;
         const current = parseInt(this.mediaDiv.children().not(".hidden").attr("id").split("_")[1]);
-        const ids = data.sortByCreation(data.descendants(data.tierIds(0)[0]));
+        const ids = data.sortByCreation(data.descendants(data.tierIds(0)[0]).filter(id => !data.hasChildren(id)));
         const index = ids.findIndex(id => id == current);
         return index == 0 ? ids[ids.length - 1] : ids[index - 1];
     }
@@ -544,23 +551,17 @@ class InfoUtility {
                             { name: "Overview", slide: "advanced/determination/overview.html" },
                             { name: "Low-Level Energies", slide: "advanced/determination/low_level_energies.html" },
                             { name: "Ascended Masters", slide: "advanced/determination/ascended_masters.html" },
-                            { name: "Source Creator System", slide: "advanced/determination/source_creator_system.html" },
                             {
-                                name: "Energy System",
+                                name: "Planar Witness System",
                                 children: [
+                                    { name: "Source Creator System", slide: "advanced/determination/energy_system/source_creator_system.html" },
                                     { name: "Chakras", slide: "advanced/determination/energy_system/chakras.html" },
-                                    { name: "Chart", slide: "advanced/determination/energy_system/chart.html" },
-                                ]
-                            },
-                            {
-                                name: "Conjunctions",
-                                children: [
-                                    { name: "Overview", slide: "advanced/determination/conjunctions/overview.html" },
-                                    { name: "Chart", slide: "advanced/determination/conjunctions/overview_2.html" },
-                                    { name: "Discussion", slide: "advanced/determination/conjunctions/overview_3.html" }
+                                    { name: "Discussion", slide: "advanced/determination/energy_system/chart_notes.html" },
+                                    { name: "Chart", slide: "advanced/determination/energy_system/planar_witness_system.html" },
                                 ]
                             },
                             { name: "States", slide: "advanced/determination/states.html" },
+                            { name: "Conjunctions", slide: "advanced/determination/conjunctions.html" },
                             { name: "Review", slide: "advanced/determination/review.html" }
                         ]
                     },
