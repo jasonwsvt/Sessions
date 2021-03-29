@@ -44,14 +44,14 @@ class InfoUtility {
                 e.stopPropagation();
             });
 
-            $(window).resize(function()                        { self.resize(); });
-            self.div.on("click", function(e)                   { e.stopPropagation(); });
+            $(window).resize(function()          { self.resize(); });
+            self.div.on("click", function(e)     { e.stopPropagation(); });
 
-            self.mediaDiv.parent().on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
+            self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
 
-            self.mediaDiv.parent().on('mouseout', function(e)  { self.mouseOut(); });
+            self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on('mouseout', function(e)  { self.mouseOut(); });
 
-            self.mediaDiv.parent().on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
+            self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
 
             self.footer.find("button").on("click", function(e) {
                 if ($(this).hasClass("btn-dark")) {
@@ -296,7 +296,7 @@ class InfoUtility {
     }
 
     mouseInThird(pageX, pageY) {
-        const div = this.mediaDiv.parent();
+        const div = this.div.not("#" + this._pathDivID, "#" + this._contentsDivID);
         const xPos = pageX - div.position().left;
         const yPos = pageY - div.position().top;
         const width = div.outerWidth(true);
