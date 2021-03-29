@@ -257,6 +257,11 @@
     height: auto;
 }
 
+#infoUtility_media ol,ul {
+    display: table;
+    margin: 0 auto;
+}
+
 #infoUtility_footer {
     z-index: 3;
     position: absolute !important;

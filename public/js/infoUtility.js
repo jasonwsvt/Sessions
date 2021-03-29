@@ -70,6 +70,7 @@ class InfoUtility {
                     $(this).removeClass("btn-light");
                     $(this).addClass("btn-dark");
                     self.footerContent.addClass("hidden");
+                    self.footerContent.html("");
                 }
                 this.blur();
             });
@@ -149,6 +150,14 @@ class InfoUtility {
         this.div.css("width", String(windowWidth) + "px");
         this.footer.css("top", String(windowHeight - footerHeight - utilitiesHeight) + "px");
         this.footer.css("left", String((windowWidth - footerWidth) / 2) + "px");
+
+        const footerTop = this.footer.position().top;
+        const contentDiv = this.footerContent;
+        contentDiv.css("width", String(Math.round(windowWidth * .8)) + "px");
+        contentDiv.css("left", String(Math.round(windowWidth * .1)) + "px");
+        contentDiv.css("height", String((windowWidth > 1475) ? 100 : Math.ceil(118000 / contentDiv.outerWidth(true))) + "px");
+        contentDiv.css("top", String(footerTop - contentDiv.outerHeight(true)) + "px");
+        //console.log(windowWidth, footerTop, contentDiv.outerWidth(true), contentDiv.outerHeight(true))
     }
 
     manage(picked) {
@@ -335,13 +344,6 @@ class InfoUtility {
         const div = this.footerContent;
         $.get("assets/slides/" + name, (code) => div.html(code));
         div.removeClass("hidden");
-        const contentHeight = div.outerHeight(true);
-        const windowWidth = $(window).width();
-        const footerTop = this.footer.position().top;
-        console.log(div, contentHeight, windowWidth, footerTop);
-        div.css("top", String(footerTop - contentHeight) + "px");
-        div.css("left", String(Math.round(windowWidth * .1)) + "px")
-        div.css("width", String(Math.round(windowWidth * .8)) + "px")
     }
 
     close(except) {
