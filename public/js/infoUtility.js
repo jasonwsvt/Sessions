@@ -58,18 +58,18 @@ class InfoUtility {
                     $(this).removeClass("btn-dark");
                     $(this).addClass("btn-light");
                     self.footerButtonClick($(this).text());
-                    self.footer.find("button").each(button => {
-                        console.log($(button).text(), $(button).hasClass("btn-light"));
+                    for (var i = 0; i < self.footer.find("button").length; i++) {
+                        const button = self.footer.find("button").eq(i);
                         if ($(button).text() != $(this).text() && $(button).hasClass("btn-light")) {
                             $(button).removeClass("btn-light");
                             $(button).addClass("btn-dark");
                         }
-                    });
+                    }
                 }
                 else {
                     $(this).removeClass("btn-light");
                     $(this).addClass("btn-dark");
-                    self.footerContent.remove();
+                    self.footerContent.addClass("hidden");
                 }
                 this.blur();
             });
@@ -116,6 +116,7 @@ class InfoUtility {
         const aboutMe = "<button id = '" + this._aboutMeID + "' type = 'button' class = 'btn btn-dark btn-sm'>About Me</button>";
         const license = "<button id = '" + this._licenseID + "' type = 'button' class = 'btn btn-dark btn-sm'>License</button>";
         const donate = "<button id = '" + this._donateID + "' type = 'button' class = 'btn btn-dark btn-sm'>Donate</button>";
+        const footerContent = "<div id = '" + this._footerContentID + "' class = 'hidden'></div>";
         const footer = "<div id = '" + this._footerID + "'>" + disclaimer + license + aboutMe + donate + "</div>";
 
         this.utilityDiv.append(button + div);
@@ -128,7 +129,7 @@ class InfoUtility {
         this.div.append("<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
         this.leftArrowDiv.css("left", "0px");
 
-        this.div.append(footer);
+        this.div.append(footerContent + footer);
 
         this.resize();
         this.init();
@@ -138,12 +139,12 @@ class InfoUtility {
     }
 
     resize() {
-        const utilitiesHeight = this.utilityDiv.outerHeight();
+        const utilitiesHeight = this.utilityDiv.outerHeight(true);
         const windowHeight = $(window).height();
         const windowWidth = $(window).width();
-        const footerWidth = this.footer.outerWidth();
-        const footerHeight = this.footer.outerHeight();
-        console.log(windowHeight, windowWidth, footerHeight, footerWidth);
+        const footerWidth = this.footer.outerWidth(true);
+        const footerHeight = this.footer.outerHeight(true);
+
         this.div.css("height", String(windowHeight - utilitiesHeight) + "px");
         this.div.css("width", String(windowWidth) + "px");
         this.footer.css("top", String(windowHeight - footerHeight - utilitiesHeight) + "px");
@@ -289,9 +290,9 @@ class InfoUtility {
         const div = this.mediaDiv.parent();
         const xPos = pageX - div.position().left;
         const yPos = pageY - div.position().top;
-        const width = div.outerWidth();
+        const width = div.outerWidth(true);
         const third = width / 3;
-        const height = div.outerHeight();
+        const height = div.outerHeight(true);
         const betweenTopAndBottom = yPos >= 0 && yPos <= height;
         const inLeftThird = (xPos >= 0 && xPos <= third && betweenTopAndBottom);
         const inRightThird = (xPos <= width && xPos >= (width - third) && betweenTopAndBottom);
@@ -331,10 +332,16 @@ class InfoUtility {
             case "About Me": name = "about_me.html"; break;
             case "Donate": name = "donate.html"; break;
         }
-        this.div.append("<div id = '" + this._footerContentID + "'></div>");
-        $.get("assets/slides/" + name, (code) => this.footerContent.html(code));
-        console.log(this.footer.position().top, this.footerContent.outerHeight());
-        this.footerContent.css("top", String(this.footer.position().top - this.footerContent.height()) + "px");
+        const div = this.footerContent;
+        $.get("assets/slides/" + name, (code) => div.html(code));
+        div.removeClass("hidden");
+        const contentHeight = div.outerHeight(true);
+        const windowWidth = $(window).width();
+        const footerTop = this.footer.position().top;
+        console.log(div, contentHeight, windowWidth, footerTop);
+        div.css("top", String(footerTop - contentHeight) + "px");
+        div.css("left", String(Math.round(windowWidth * .1)) + "px")
+        div.css("width", String(Math.round(windowWidth * .8)) + "px")
     }
 
     close(except) {
