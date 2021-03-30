@@ -155,7 +155,7 @@ class InfoUtility {
         const contentDiv = this.footerContent;
         contentDiv.css("width", String(Math.round(windowWidth * .8)) + "px");
         contentDiv.css("left", String(Math.round(windowWidth * .1)) + "px");
-        contentDiv.css("height", String((windowWidth > 1475) ? 100 : Math.ceil(118000 / contentDiv.outerWidth(true))) + "px");
+        contentDiv.css("height", String((windowWidth > 1475) ? 110 : Math.ceil(118000 / contentDiv.outerWidth(true))) + "px");
         contentDiv.css("top", String(footerTop - contentDiv.outerHeight(true)) + "px");
         //console.log(windowWidth, footerTop, contentDiv.outerWidth(true), contentDiv.outerHeight(true))
     }
@@ -414,7 +414,7 @@ class InfoUtility {
                             { name: "Internal Conflict", slide: "beginner/issues/internal_conflict.html" },
                             { name: "Identification", slide: "beginner/issues/identification.html" },
                             { name: "Secondary Gain", slide: "beginner/issues/secondary_gain.html" },
-                            { name: "Sensations, Emotions, and Thoughts", slide: "beginner/issues/components.html" },
+                            { name: "Sensations, Feelings, and Thoughts", slide: "beginner/issues/components.html" },
                             { name: "Review", slide: "beginner/issues/review.html" }
                         ]
                     },
