@@ -229,7 +229,6 @@
 
 #infoUtility_media {
     display: inline-block;
-    overflow-y: auto;
     width: 100%;
     padding-top: 20px !important;
     padding-bottom: 20px !important;
@@ -238,8 +237,7 @@
 }
 
 #infoUtility_media div {
-    height: 100%;
-    width: 100% !important;
+    overflow-y: auto;
 }
 
 #infoUtility_media div table {
@@ -264,8 +262,6 @@
 }
 
 #infoUtility_footer {
-    z-index: 3;
-    position: absolute !important;
     display: flex;
     flex-direction: row;
     visibility: visible;
@@ -273,6 +269,7 @@
     background-color: rgba(238, 238, 238, 1);
     text-align: center;
     white-space: normal;
+    width: 100%;
 }
 
 #infoUtility_footer_content {

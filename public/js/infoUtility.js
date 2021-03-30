@@ -49,17 +49,20 @@ class InfoUtility {
 
             self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
 
-            self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on('mouseout', function(e)  { self.mouseOut(); });
+            self.pathDiv.on('mousemove', function(e) { self.mouseOut(); });
+            self.contentsDiv.on('mousemove', function(e) { self.mouseOut(); });
+            self.footerDiv.on('mousemove', function(e) { self.mouseOut(); });
+            self.div.on('mouseout', function(e)  { self.mouseOut(); });
 
             self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
 
-            self.footer.find("button").on("click", function(e) {
+            self.footerDiv.find("button").on("click", function(e) {
                 if ($(this).hasClass("btn-dark")) {
                     $(this).removeClass("btn-dark");
                     $(this).addClass("btn-light");
                     self.footerButtonClick($(this).text());
-                    for (var i = 0; i < self.footer.find("button").length; i++) {
-                        const button = self.footer.find("button").eq(i);
+                    for (var i = 0; i < self.footerDiv.find("button").length; i++) {
+                        const button = self.footerDiv.find("button").eq(i);
                         if ($(button).text() != $(this).text() && $(button).hasClass("btn-light")) {
                             $(button).removeClass("btn-light");
                             $(button).addClass("btn-dark");
@@ -69,8 +72,8 @@ class InfoUtility {
                 else {
                     $(this).removeClass("btn-light");
                     $(this).addClass("btn-dark");
-                    self.footerContent.addClass("hidden");
-                    self.footerContent.html("");
+                    self.footerContentDiv.addClass("hidden");
+                    self.footerContentDiv.html("");
                 }
                 this.blur();
             });
@@ -100,8 +103,8 @@ class InfoUtility {
     get aboutMe()            { return $("#" + this._aboutMeID); }
     get license()            { return $("#" + this._licenseID); }
     get donate()             { return $("#" + this._donateID); }
-    get footer()             { return $("#" + this._footerID); }
-    get footerContent()      { return $("#" + this._footerContentID); }
+    get footerDiv()          { return $("#" + this._footerID); }
+    get footerContentDiv()   { return $("#" + this._footerContentID); }
 
     _build() {
         const infoIcon = this._infoIcon;
@@ -118,7 +121,7 @@ class InfoUtility {
         const license = "<button id = '" + this._licenseID + "' type = 'button' class = 'btn btn-dark btn-sm'>License</button>";
         const donate = "<button id = '" + this._donateID + "' type = 'button' class = 'btn btn-dark btn-sm'>Donate</button>";
         const footerContent = "<div id = '" + this._footerContentID + "' class = 'hidden'></div>";
-        const footer = "<div id = '" + this._footerID + "'>" + disclaimer + license + aboutMe + donate + "</div>";
+        const footer = "<div id = '" + this._footerID + "' class = 'justify-content-center'>" + disclaimer + license + aboutMe + donate + "</div>";
 
         this.utilityDiv.append(button + div);
 
@@ -140,19 +143,22 @@ class InfoUtility {
     }
 
     resize() {
-        const utilitiesHeight = this.utilityDiv.outerHeight(true);
         const windowHeight = $(window).height();
         const windowWidth = $(window).width();
-        const footerWidth = this.footer.outerWidth(true);
-        const footerHeight = this.footer.outerHeight(true);
+        const utilitiesHeight = this.utilityDiv.outerHeight(true);
+        const pathHeight = this.pathDiv.outerHeight(true);
+        const contentsHeight = this.contentsDiv.outerHeight(true);
+        const footerHeight = this.footerDiv.outerHeight(true);
 
         this.div.css("height", String(windowHeight - utilitiesHeight) + "px");
         this.div.css("width", String(windowWidth) + "px");
-        this.footer.css("top", String(windowHeight - footerHeight - utilitiesHeight) + "px");
-        this.footer.css("left", String((windowWidth - footerWidth) / 2) + "px");
+        this.mediaDiv.parent().css("height", String(windowHeight - utilitiesHeight - pathHeight - contentsHeight - footerHeight));
+//        this.footerDiv.css("top", String(windowHeight - footerHeight - utilitiesHeight) + "px");
+//        this.footerDiv.css("left", String((windowWidth - footerWidth) / 2) + "px");
+        //this.footerDiv.width(windowWidth);
 
-        const footerTop = this.footer.position().top;
-        const contentDiv = this.footerContent;
+        const footerTop = this.footerDiv.position().top;
+        const contentDiv = this.footerContentDiv;
         contentDiv.css("width", String(Math.round(windowWidth * .8)) + "px");
         contentDiv.css("left", String(Math.round(windowWidth * .1)) + "px");
         contentDiv.css("height", String((windowWidth > 1475) ? 110 : Math.ceil(118000 / contentDiv.outerWidth(true))) + "px");
@@ -205,6 +211,7 @@ class InfoUtility {
                 this.siblingButton(sId).on("click", function(e) {
                     console.log("clicked", this.value);
                     self.manage(parseInt(this.value));
+                    e.stopPropagation();
                 });
                 //if (sId == id) { title.push(data.hasKey(sId, "name") ? data.value(sId, "name") : index + 1); }
             });
@@ -262,6 +269,7 @@ class InfoUtility {
         }
 
         this.mediaDiv.parent().trigger("mousemove");
+        this.resize();
     }
 
     mouseMove(pageX, pageY) {
@@ -341,7 +349,7 @@ class InfoUtility {
             case "About Me": name = "about_me.html"; break;
             case "Donate": name = "donate.html"; break;
         }
-        const div = this.footerContent;
+        const div = this.footerContentDiv;
         $.get("assets/slides/" + name, (code) => div.html(code));
         div.removeClass("hidden");
     }
@@ -428,6 +436,14 @@ class InfoUtility {
                             { name: "Truth and Falsity", slide: "beginner/energy_testing/truth_and_falsity.html" },
                             { name: "Energy Testing in Because Reasons", slide: "beginner/energy_testing/energy_testing_in_because_reasons.html" },
                             {
+                                name: "The Eye Method",
+                                children: [
+                                    { name: "Benefits", slide: "beginner/energy_testing/the_eye_testing_method.html" },
+                                    { name: "Preparation", slide: "beginner/energy_testing/the_eye_method_2.html" },
+                                    { name: "Steps", slide: "beginner/energy_testing/the_eye_method_3.html" }
+                                ]
+                            },
+                            {
                                 name: "Basic Steps",
                                 children: [
                                     { slide: "beginner/energy_testing/basic_steps.html" },
@@ -436,14 +452,6 @@ class InfoUtility {
                                 ]
                             },
                             { name: "Example Statements", slide: "beginner/energy_testing/example_statements.html" },
-                            {
-                                name: "The Eye Method",
-                                children: [
-                                    { name: "Benefits", slide: "beginner/energy_testing/the_eye_testing_method.html" },
-                                    { name: "Preparation", slide: "beginner/energy_testing/the_eye_method_2.html" },
-                                    { name: "Steps", slide: "beginner/energy_testing/the_eye_method_3.html" }
-                                ]
-                            },
                             { name: "Review", slide: "beginner/determination/psychological_reversals/review.html" }
                         ]
                     },
@@ -457,7 +465,7 @@ class InfoUtility {
                                 name: "Emotions",
                                 children: [
                                     { name: "Overview", slide: "beginner/determination/emotions/emotions_1.html" },
-                                    { name: "List", slide: "beginner/determination/emotions/emotions_2.html" },
+                                    { name: "List", slide: "beginner/determination/emotions/emotions_list.html" },
                                 ]
                             },
                             {
