@@ -413,7 +413,8 @@ class InfoUtility {
             {
                 name: "Beginner",
                 children: [
-                    { name: "Becoming the Witness", slide: "beginner/issues/buddha_quote.html" },
+                    { name: "Becoming the Witness", slide: "beginner/buddha_quote.html" },
+                    { name: "Observing your Thoughts", slide: "beginner/eckhart_tolle_quote.html" },
                     { name: "Overview", slide: "beginner/overview.html" },
                     {
                         name: "Issues",
