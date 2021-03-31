@@ -528,6 +528,7 @@ class InfoUtility {
                             { name: "Overview", slide: "intermediate/energy_testing/overview.html" },
                             { name: "Statement Semantics", slide: "intermediate/energy_testing/statement_semantics.html" },
                             { name: "Avoiding Influence", slide: "intermediate/energy_testing/avoiding_influence.html" },
+                            { name: "Multiple Component Responses", slide: "intermediate/energy_testing/multiple_component_responses.html" },
                             { name: "Improving Responses", slide: "intermediate/energy_testing/improving_responses.html" },
                             { name: "Adjusting Statements", slide: "intermediate/energy_testing/adjusting_statements.html" },
                             {
