@@ -565,10 +565,10 @@ class InfoUtility {
                             },
                             { name: "Low-Level Energies", slide: "advanced/determination/low_level_energies.html" },
                             { name: "Ascended Masters", slide: "advanced/determination/ascended_masters.html" },
+                            { name: "Source Creator System", slide: "advanced/determination/energy_system/source_creator_system.html" },
                             {
                                 name: "Planar Witness System",
                                 children: [
-                                    { name: "Source Creator System", slide: "advanced/determination/energy_system/source_creator_system.html" },
                                     { name: "Chakras", slide: "advanced/determination/energy_system/chakras.html" },
                                     { name: "Discussion", slide: "advanced/determination/energy_system/chart_notes.html" },
                                     { name: "Chart", slide: "advanced/determination/energy_system/planar_witness_system.html" },
@@ -600,17 +600,12 @@ class InfoUtility {
                     { name: "MLK Quote", slide: "final_thoughts/martin_luther_king_jr_quote.html" }
                 ]
             },
-            { name: "Disclaimer", slide: "disclaimer.html" },
-            { name: "License", slide: "license.html" },
-            { name: "Contact", slide: "about_me.html" },
-            { name: "Donate", slide: "donate.html" }    
+            { name: "Legal Stuff", slide: "legal_stuff.html" },
+            { name: "About Me", slide: "about_me.html" },
         ];
 
         const parentId = data.import({});
         slides.forEach(slide => { this.importSlide(parentId, slide); });
-
-//        about_me.html
-//        disclaimer.html
     }
 
     importSlide(parentId, slide) {
