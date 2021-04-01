@@ -16,12 +16,6 @@ class InfoUtility {
     _mediaDivID      = this._utilityID + "_media";
     _leftArrowDivID  = this._utilityID + "_prev";
     _rightArrowDivID = this._utilityID + "_next";
-    _disclaimerID    = this._utilityID + "_disclaimer";
-    _aboutMeID       = this._utilityID + "_aboutMe";
-    _licenseID       = this._utilityID + "_license";
-    _donateID        = this._utilityID + "_donate";
-    _footerID        = this._utilityID + "_footer";
-    _footerContentID = this._footerID + "_content";
 
     constructor (utilities) {
         const self = this;
@@ -51,32 +45,9 @@ class InfoUtility {
 
             self.pathDiv.on('mousemove', function(e) { self.mouseOut(); });
             self.contentsDiv.on('mousemove', function(e) { self.mouseOut(); });
-            self.footerDiv.on('mousemove', function(e) { self.mouseOut(); });
             self.div.on('mouseout', function(e)  { self.mouseOut(); });
 
             self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
-
-            self.footerDiv.find("button").on("click", function(e) {
-                if ($(this).hasClass("btn-dark")) {
-                    $(this).removeClass("btn-dark");
-                    $(this).addClass("btn-light");
-                    self.footerButtonClick($(this).text());
-                    for (var i = 0; i < self.footerDiv.find("button").length; i++) {
-                        const button = self.footerDiv.find("button").eq(i);
-                        if ($(button).text() != $(this).text() && $(button).hasClass("btn-light")) {
-                            $(button).removeClass("btn-light");
-                            $(button).addClass("btn-dark");
-                        }
-                    }
-                }
-                else {
-                    $(this).removeClass("btn-light");
-                    $(this).addClass("btn-dark");
-                    self.footerContentDiv.addClass("hidden");
-                    self.footerContentDiv.html("");
-                }
-                this.blur();
-            });
         }); 
     }
 
@@ -99,12 +70,6 @@ class InfoUtility {
     itemButton(id, item)     { return $("#" + this.itemButtonId(id, item)); }
     get leftArrowDiv()       { return $("#" + this._leftArrowDivID); }
     get rightArrowDiv()      { return $("#" + this._rightArrowDivID); }
-    get disclaimer()         { return $("#" + this._disclaimerID); }
-    get aboutMe()            { return $("#" + this._aboutMeID); }
-    get license()            { return $("#" + this._licenseID); }
-    get donate()             { return $("#" + this._donateID); }
-    get footerDiv()          { return $("#" + this._footerID); }
-    get footerContentDiv()   { return $("#" + this._footerContentID); }
 
     _build() {
         const infoIcon = this._infoIcon;
@@ -116,12 +81,6 @@ class InfoUtility {
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
         const leftArrowDiv = "<div id = '" + this._leftArrowDivID + "'>" + this._leftArrow + "</div>";
         const rightArrowDiv = "<div id = '" + this._rightArrowDivID + "'>" + this._rightArrow + "</div>";
-        const disclaimer = "<button id = '" + this._disclaimerID + "' type = 'button' class = 'btn btn-dark btn-sm'>Disclaimer</button>";
-        const aboutMe = "<button id = '" + this._aboutMeID + "' type = 'button' class = 'btn btn-dark btn-sm'>About Me</button>";
-        const license = "<button id = '" + this._licenseID + "' type = 'button' class = 'btn btn-dark btn-sm'>License</button>";
-        const donate = "<button id = '" + this._donateID + "' type = 'button' class = 'btn btn-dark btn-sm'>Donate</button>";
-        const footerContent = "<div id = '" + this._footerContentID + "' class = 'hidden'></div>";
-        const footer = "<div id = '" + this._footerID + "' class = 'justify-content-center'>" + disclaimer + license + aboutMe + donate + "</div>";
 
         this.utilityDiv.append(button + div);
 
@@ -132,8 +91,6 @@ class InfoUtility {
 
         this.div.append("<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
         this.leftArrowDiv.css("left", "0px");
-
-        this.div.append(footerContent + footer);
 
         this.resize();
         this.init();
@@ -148,22 +105,10 @@ class InfoUtility {
         const utilitiesHeight = this.utilityDiv.outerHeight(true);
         const pathHeight = this.pathDiv.outerHeight(true);
         const contentsHeight = this.contentsDiv.outerHeight(true);
-        const footerHeight = this.footerDiv.outerHeight(true);
 
         this.div.css("height", String(windowHeight - utilitiesHeight) + "px");
         this.div.css("width", String(windowWidth) + "px");
-        this.mediaDiv.parent().css("height", String(windowHeight - utilitiesHeight - pathHeight - contentsHeight - footerHeight));
-//        this.footerDiv.css("top", String(windowHeight - footerHeight - utilitiesHeight) + "px");
-//        this.footerDiv.css("left", String((windowWidth - footerWidth) / 2) + "px");
-        //this.footerDiv.width(windowWidth);
-
-        const footerTop = this.footerDiv.position().top;
-        const contentDiv = this.footerContentDiv;
-        contentDiv.css("width", String(Math.round(windowWidth * .8)) + "px");
-        contentDiv.css("left", String(Math.round(windowWidth * .1)) + "px");
-        contentDiv.css("height", String((windowWidth > 1475) ? 110 : Math.ceil(118000 / contentDiv.outerWidth(true))) + "px");
-        contentDiv.css("top", String(footerTop - contentDiv.outerHeight(true)) + "px");
-        //console.log(windowWidth, footerTop, contentDiv.outerWidth(true), contentDiv.outerHeight(true))
+        this.mediaDiv.parent().css("height", String(windowHeight - utilitiesHeight - pathHeight - contentsHeight));
     }
 
     manage(picked) {
@@ -342,18 +287,6 @@ class InfoUtility {
         return index == ids.length - 1 ? ids[0] : ids[index + 1];
     }
 
-    footerButtonClick(name) {
-        switch (name) {
-            case "Disclaimer": name = "disclaimer.html"; break;
-            case "License": name = "license.html"; break;
-            case "About Me": name = "about_me.html"; break;
-            case "Donate": name = "donate.html"; break;
-        }
-        const div = this.footerContentDiv;
-        $.get("assets/slides/" + name, (code) => div.html(code));
-        div.removeClass("hidden");
-    }
-
     close(except) {
         if (except != this._buttonID)   {
             this.div.addClass("hidden");
@@ -421,6 +354,7 @@ class InfoUtility {
                         children: [
                             { name: "Overview", slide: "beginner/issues/overview.html" },
                             { name: "Internal Conflict", slide: "beginner/issues/internal_conflict.html" },
+                            { name: "Symptoms and Aspirations", slide: "beginner/issues/symptoms_and_aspirations.html" },
                             { name: "Identification", slide: "beginner/issues/identification.html" },
                             { name: "Secondary Gain", slide: "beginner/issues/secondary_gain.html" },
                             { name: "Sensations, Feelings, and Thoughts", slide: "beginner/issues/components.html" },
@@ -503,6 +437,13 @@ class InfoUtility {
                             { name: "Review", slide: "beginner/resolution/review.html" },
                         ]
                     },
+                    {
+                        name: "Process",
+                        children: [
+                            { name: "Changes in Symptoms", slide: "process/changes_in_symptoms.html" },
+                            { name: "Ongoing Issues", slide: "process/ongoing_issues.html" },
+                        ]
+                    },
                     { name: "Review", slide: "beginner/review.html"}
                 ]
             },
@@ -510,12 +451,12 @@ class InfoUtility {
                 name: "Intermediate",
                 children: [
                     { name: "Letting Go", slide: "intermediate/basic_principals_for_letting_go.html" },
+                    { name: "Follow Your Intuition", slide: "process/albert_einstein_quote.html" },
                     { name: "Overview", slide: "intermediate/overview.html" },
                     {
                         name: "Issues",
                         children: [
                             { name: "Overview", slide: "intermediate/issues/overview.html" },
-                            { name: "Aspirations", slide: "intermediate/issues/aspirations.html" },
                             { name: "Affirmations", slide: "intermediate/issues/affirmations.html" },
                             { name: "Tail-Enders", slide: "intermediate/issues/tail_enders.html" },
                             { name: "Triggers", slide: "intermediate/issues/triggers.html" },
@@ -592,6 +533,7 @@ class InfoUtility {
                             { name: "Review", slide: "intermediate/determination/review.html" }
                         ]
                     },
+                    { name: "Continual Use", slide: "final_thoughts/overview.html" },
                     { name: "Review", slide: "intermediate/review.html"}
                 ]
             },
@@ -637,38 +579,14 @@ class InfoUtility {
                             { name: "Review", slide: "advanced/determination/review.html" }
                         ]
                     },
-                    { name: "Review", slide: "advanced/review.html"}
-                ]
-            },
-            {
-                name: "Web App",
-                children: [
-                    
-                ]
-            },
-            {
-                name: "Process",
-                children: [
-                    { name: "What is Because Reasons?", slide: "process/what_is_because_reasons.html" },
-                    { name: "Overview", slide: "process/overview.html" },
-                    { name: "Gameplay", slide: "process/gameplay.html" },
-                    { name: "Changes in Symptoms", slide: "process/changes_in_symptoms.html" },
-                    { name: "Ongoing Issues", slide: "process/ongoing_issues.html" },
-                    { name: "Follow Your Intuition", slide: "process/albert_einstein_quote.html" },
                     { name: "Divination", slide: "process/divination.html" },
-                    { name: "Working With Others", slide: "process/working_with_others.html" }
-                ]
-            },
-            {
-                name: "Example Session",
-                children: [
-                    { slide: "example_session/what_is_because_reasons.html" }
+                    { name: "Working With Others", slide: "process/working_with_others.html" },
+                    { name: "Review", slide: "advanced/review.html"}
                 ]
             },
             {
                 name: "Final Thoughts",
                 children: [
-                    { name: "Continual Use", slide: "final_thoughts/overview.html" },
                     {
                         name: "The Consciousness Level of Health",
                         children: [
@@ -681,7 +599,11 @@ class InfoUtility {
                     },
                     { name: "MLK Quote", slide: "final_thoughts/martin_luther_king_jr_quote.html" }
                 ]
-            }
+            },
+            { name: "Disclaimer", slide: "disclaimer.html" },
+            { name: "License", slide: "license.html" },
+            { name: "Contact", slide: "about_me.html" },
+            { name: "Donate", slide: "donate.html" }    
         ];
 
         const parentId = data.import({});
