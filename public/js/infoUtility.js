@@ -451,7 +451,7 @@ class InfoUtility {
                 name: "Intermediate",
                 children: [
                     { name: "Letting Go", slide: "intermediate/basic_principals_for_letting_go.html" },
-                    { name: "Follow Your Intuition", slide: "process/albert_einstein_quote.html" },
+                    { name: "Follow Your Intuition", slide: "intermediate/albert_einstein_quote.html" },
                     { name: "Overview", slide: "intermediate/overview.html" },
                     {
                         name: "Issues",
@@ -478,7 +478,7 @@ class InfoUtility {
                                     { slide: "intermediate/energy_testing/binary_search_method_2.html" }
                                 ]
                             },
-                            { name: "Review", slide: "intermediate/determination/psychological_reversals/review.html" }
+                            { name: "Review", slide: "intermediate/energy_testing/psychological_reversals/review.html" }
                         ]
                     },
                     {
@@ -532,7 +532,7 @@ class InfoUtility {
                             { name: "Review", slide: "intermediate/determination/review.html" }
                         ]
                     },
-                    { name: "Continual Use", slide: "final_thoughts/overview.html" },
+                    { name: "Continual Use", slide: "intermediate/continual_use.html" },
                     { name: "Review", slide: "intermediate/review.html"}
                 ]
             },
@@ -544,8 +544,7 @@ class InfoUtility {
                         name: "Energy Testing",
                         children: [
                             { name: "Overview", slide: "advanced/energy_testing/overview.html" },
-                            { name: "Complex Responses", slide: "advanced/energy_testing/complex_responses.html" },
-                            { name: "Statement Semantics", slide: "intermediate/energy_testing/statement_semantics_2.html" },
+                            { name: "Statement Semantics", slide: "advanced/energy_testing/statement_semantics_2.html" },
                             { name: "Number Comparison", slide: "advanced/energy_testing/number_comparison.html" },
                             { name: "Ranges and Limits", slide: "advanced/energy_testing/ranges_and_limits.html" },
                             { name: "Review", slide: "advanced/energy_testing/review.html" }
@@ -564,7 +563,7 @@ class InfoUtility {
                             },
                             { name: "Low-Level Energies", slide: "advanced/determination/low_level_energies.html" },
                             { name: "Ascended Masters", slide: "advanced/determination/ascended_masters.html" },
-                            { name: "Source Creator System", slide: "advanced/determination/energy_system/source_creator_system.html" },
+                            { name: "Source Creator System", slide: "advanced/determination/source_creator_system.html" },
                             {
                                 name: "Planar Witness System",
                                 children: [
@@ -578,8 +577,8 @@ class InfoUtility {
                             { name: "Review", slide: "advanced/determination/review.html" }
                         ]
                     },
-                    { name: "Divination", slide: "process/divination.html" },
-                    { name: "Working With Others", slide: "process/working_with_others.html" },
+                    { name: "Divination", slide: "advanced/divination.html" },
+                    { name: "Working With Others", slide: "advanced/working_with_others.html" },
                     { name: "Review", slide: "advanced/review.html"}
                 ]
             },
