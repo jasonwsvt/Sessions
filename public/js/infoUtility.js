@@ -437,14 +437,8 @@ class InfoUtility {
                             { name: "Review", slide: "beginner/resolution/review.html" },
                         ]
                     },
-                    {
-                        name: "Process",
-                        children: [
-                            { name: "Changes in Symptoms", slide: "process/changes_in_symptoms.html" },
-                            { name: "Ongoing Issues", slide: "process/ongoing_issues.html" },
-                        ]
-                    },
-                    { name: "Review", slide: "beginner/review.html"}
+                    { name: "Tips", slide: "beginner/tips.html" },
+                    { name: "Gameplay", slide: "beginner/review.html" }
                 ]
             },
             {

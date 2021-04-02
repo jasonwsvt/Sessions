@@ -236,8 +236,10 @@
     padding-right: 20px !important;
 }
 
-#infoUtility_media div {
+#infoUtility_media > div {
     overflow-y: auto;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 #infoUtility_media div table {
