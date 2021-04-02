@@ -365,9 +365,14 @@ class InfoUtility {
                         name: "Energy Testing",
                         children: [
                             { name: "Overview", slide: "beginner/energy_testing/overview.html" },
-                            { name: "Scientific Basis", slide: "beginner/energy_testing/scientific_basis.html" },
-                            { name: "History", slide: "beginner/energy_testing/history.html" },
-                            { name: "Methods and Practitioners", slide: "beginner/energy_testing/methods_and_practitioners.html" },
+                            {
+                                name: "History",
+                                children: [
+                                    { name: "Scientific Basis", slide: "beginner/energy_testing/scientific_basis.html" },
+                                    { name: "Foundations", slide: "beginner/energy_testing/history.html" },
+                                    { name: "Methods and Practitioners", slide: "beginner/energy_testing/methods_and_practitioners.html" },
+                                ]
+                            },
                             { name: "Truth and Falsity", slide: "beginner/energy_testing/truth_and_falsity.html" },
                             { name: "Energy Testing in Because Reasons", slide: "beginner/energy_testing/energy_testing_in_because_reasons.html" },
                             {
@@ -387,6 +392,7 @@ class InfoUtility {
                                 ]
                             },
                             { name: "Example Statements", slide: "beginner/energy_testing/example_statements.html" },
+                            { name: "Avoiding Influence", slide: "beginner/energy_testing/avoiding_influence.html" },
                             { name: "Review", slide: "beginner/determination/psychological_reversals/review.html" }
                         ]
                     },
@@ -462,7 +468,6 @@ class InfoUtility {
                         children: [
                             { name: "Overview", slide: "intermediate/energy_testing/overview.html" },
                             { name: "Statement Semantics", slide: "intermediate/energy_testing/statement_semantics.html" },
-                            { name: "Avoiding Influence", slide: "intermediate/energy_testing/avoiding_influence.html" },
                             { name: "Multiple Component Responses", slide: "intermediate/energy_testing/multiple_component_responses.html" },
                             { name: "Improving Responses", slide: "intermediate/energy_testing/improving_responses.html" },
                             { name: "Adjusting Statements", slide: "intermediate/energy_testing/adjusting_statements.html" },
