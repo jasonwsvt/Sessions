@@ -306,7 +306,6 @@ class InfoUtility {
                     {
                         name: "Quotes",
                         children: [
-                            { name: "William Buhlman", slide: "introduction/william_buhlman_quote.html" },
                             { name: "Sadhguru", slide: "introduction/sadhguru_quote.html" },
                             { name: "Eckhart Tolle", slide: "introduction/eckhart_tolle_quote.html" },
                             { name: "Dawson Church", slide: "introduction/dawson_church_quote.html" },
@@ -539,6 +538,7 @@ class InfoUtility {
             {
                 name: "Advanced",
                 children: [
+                    { name: "William Buhlman", slide: "advanced/william_buhlman_quote.html" },
                     { name: "Overview", slide: "advanced/overview.html" },
                     {
                         name: "Energy Testing",
