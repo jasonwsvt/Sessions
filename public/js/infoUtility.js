@@ -228,8 +228,8 @@ class InfoUtility {
                 this.mouseOut();
                 break;
             case 1: 
-            if (this.rightArrowDiv.find("svg").hasClass("invisible")) {
-                this.rightArrowDiv.find("svg").removeClass("invisible");
+                if (this.rightArrowDiv.find("svg").hasClass("invisible")) {
+                    this.rightArrowDiv.find("svg").removeClass("invisible");
                 }
                 break;
         }
@@ -262,12 +262,8 @@ class InfoUtility {
     }
 
     mouseOut() {
-//        if (!this.leftArrowDiv.find("svg").hasClass("invisible"))  {
-            this.leftArrowDiv.find("svg").addClass("invisible");
-//        }
-//        else if (!this.rightArrowDiv.find("svg").hasClass("invisible")) {
-            this.rightArrowDiv.find("svg").addClass("invisible");
-//        }
+        this.leftArrowDiv.find("svg").addClass("invisible");
+        this.rightArrowDiv.find("svg").addClass("invisible");
     }
 
     previous() {
