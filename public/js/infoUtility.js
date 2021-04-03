@@ -318,7 +318,7 @@ class InfoUtility {
                         ]
                     },
                     { name: "Energy Healing Techniques", slide: "introduction/energy_healing_techniques.html" },
-                    { name: "Why Another Healing Technique",  slide: "introduction/why_another_healing_technique.html" },
+                    { name: "Why Another Healing Technique?",  slide: "introduction/why_another_healing_technique.html" },
                 ]
             },
             {
