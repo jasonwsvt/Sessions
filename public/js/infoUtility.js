@@ -310,13 +310,7 @@ class InfoUtility {
                             { name: "David Hawkins", slide: "introduction/david_hawkins_quote.html" },
                         ]
                     },
-                    {
-                        name: "What Are Unhealthy Emotions?",
-                        children: [
-                            { slide: "introduction/what_are_unhealthy_emotions_1.html" },
-                            { slide: "introduction/what_are_unhealthy_emotions_2.html" }
-                        ]
-                    },
+                    { name: "What Are Unhealthy Emotions?", slide: "introduction/what_are_unhealthy_emotions.html" },
                     { name: "Energy Healing Techniques", slide: "introduction/energy_healing_techniques.html" },
                     { name: "Why Another Healing Technique?",  slide: "introduction/why_another_healing_technique.html" },
                 ]
