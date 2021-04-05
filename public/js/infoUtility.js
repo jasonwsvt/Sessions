@@ -407,15 +407,7 @@ class InfoUtility {
                                     { name: "Example", slide: "beginner/determination/psychological_reversals/psychological_reversals_4.html" }
                                 ]
                             },
-                            {
-                                name: "Patterns",
-                                children: [
-                                    { name: "Overview", slide: "beginner/determination/patterns/overview.html" },
-                                    { name: "Attachment", slide: "beginner/determination/patterns/attachment.html" },
-                                    { name: "Identification", slide: "beginner/determination/patterns/identification.html" },
-                                    { name: "Resistance", slide: "beginner/determination/patterns/resistance.html" }
-                                ]
-                            },
+                            { name: "Patterns", slide: "beginner/determination/patterns.html" },
                             { name: "Review", slide: "beginner/determination/psychological_reversals/review.html" }
                         ]
                     },

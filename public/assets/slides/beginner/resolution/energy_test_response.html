@@ -1,6 +1,26 @@
 <html>
+    <style>
+        td {
+            text-align: left !important;
+            padding-right: 20px !important;
+            padding-left: 20px !important;
+        }
+    </style>
     <body>
         <h1>Issue Resolution - Energy Test Response:</h1>
-        <p>The energy tested response to a resolution command provides information about the resolution’s success.  A true response indicates a successful resolution, and a false one indicates that further detail or specificity needs to be determined, likely in the form of underlying reasons.  Something other than true or false tends to mean that the resolution was partially successful, but more detail or specificity needs to be determined, likely in the form of underlying reasons.</p>
+        <p>The energy tested response to a resolution command provides information about the resolution’s success.</p>
+        <table>
+            <tr><th>Response</th><th>Meaning</th></tr>
+            <tr><td>True</td><td>The resolution completed successfully.</td></tr>
+            <tr><td>False /<br>Something other than True</td>
+                <td>
+                    <ul>
+                        <li>Further detail or specificity needs to be determined.</li>
+                        <li>Attachment or identification exists.</li>
+                        <li>Underlying reasons exist.</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
     </body>
 </html>
