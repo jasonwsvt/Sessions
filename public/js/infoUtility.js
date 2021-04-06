@@ -344,8 +344,7 @@ class InfoUtility {
                             { name: "Overview", slide: "beginner/issues/overview.html" },
                             { name: "Internal Conflict", slide: "beginner/issues/internal_conflict.html" },
                             { name: "Symptoms and Aspirations", slide: "beginner/issues/symptoms_and_aspirations.html" },
-                            { name: "Identification", slide: "beginner/issues/identification.html" },
-                            { name: "Secondary Gain", slide: "beginner/issues/secondary_gain.html" },
+                            { name: "Resistance", slide: "beginner/issues/resistance.html" },
                             { name: "Sensations, Feelings, and Thoughts", slide: "beginner/issues/components.html" },
                             { name: "Review", slide: "beginner/issues/review.html" }
                         ]
