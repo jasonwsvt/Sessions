@@ -400,13 +400,12 @@ class InfoUtility {
                             {
                                 name: "Psychological Reversals",
                                 children: [
-                                    { name: "Overview", slide: "beginner/determination/psychological_reversals/psychological_reversals_1.html" },
-                                    { name: "Characteristics", slide: "beginner/determination/psychological_reversals/psychological_reversals_2.html" },
-                                    { name: "Example", slide: "beginner/determination/psychological_reversals/psychological_reversals_3.html" },
-                                    { name: "Example", slide: "beginner/determination/psychological_reversals/psychological_reversals_4.html" }
+                                    { name: "Overview", slide: "beginner/determination/psychological_reversals/overview.html" },
+                                    { name: "Characteristics", slide: "beginner/determination/psychological_reversals/characteristics.html" },
+                                    { name: "Example", slide: "beginner/determination/psychological_reversals/example_1.html" },
+                                    { name: "Example", slide: "beginner/determination/psychological_reversals/example_2.html" }
                                 ]
                             },
-                            { name: "Patterns", slide: "beginner/determination/patterns.html" },
                             { name: "Review", slide: "beginner/determination/psychological_reversals/review.html" }
                         ]
                     },
@@ -507,7 +506,14 @@ class InfoUtility {
                                     { name: "Meridians", slide: "intermediate/determination/energy_system/meridians.html" },
                                 ]
                             },
-                            { name: "Numbers", slide: "intermediate/determination/numbers.html" },
+                            {
+                                name: "Numbers",
+                                children: [
+                                    { name: "Overview", slide: "intermediate/determination/numbers/overview.html" },
+                                    { name: "Searching", slide: "intermediate/determination/numbers/searching.html" },
+                                ]
+                            },
+                            { name: "Stacks", slide: "intermediate/determination/stacks.html" },
                             { name: "Characteristics", slide: "intermediate/determination/characteristics.html" },
                             { name: "Review", slide: "intermediate/determination/review.html" }
                         ]
