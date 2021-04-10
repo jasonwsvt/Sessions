@@ -9,14 +9,14 @@
         <p>3) Use binary search to find the number.</p>
         <p>Here are some examples:</p>
         <table>
-            <tr><th>Secret Number</th><th>Minimum</th><th>Maximum</th><th>Places</th><th>Range</th><th>Process</th></tr>
+            <tr><th>Secret Number</th><th>Minimum</th><th>Maximum</th><th>Precision</th><th>Range</th><th>Process</th></tr>
             <tr>
                 <td>(8)</td><td>1</td><td>10</td><td>1</td><td>1 <= X < 10</td>
                 <td>1-5: False; 6-8: True; 6: False; 7: False; 8: True </td>
             </tr>
             <tr>
                 <td>(23.9)</td><td>10</td><td>100</td><td>3</td><td>10.0 <= X < 100.0</td>
-                <td>10.0 - 45.0: True; 10.0 - 23.0: False; 23.1 - 45: True; 23.1 </td>
+                <td>10.0 - 45.0: True; 10.0 - 23.0: False; 23.1 - 45: True; 23.5 - 23.9: True; 23.8 - 23.9: True; 23.8: False; 23.9: True</td>
             </tr>
             <tr>
                 <td></td><td></td><td></td><td></td>
