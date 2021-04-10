@@ -1,0 +1,35 @@
+<html>
+    <body>
+        <h1>Numbers - Determining the number of places in a smaller number:</h1>
+        <p>When the range of a number is unknown, find the two entries in this list that are closest.</p>
+        <p>one, ten, hundred, thousand, million, billion, trillion, etc.</p>
+        <p>Here's the general process I use:</p>
+        <p>1) Determine the highest amount that's below the number being sought.  This number will serve as the minimum of the range.  The following entry is just above the maximum.</p>
+        <p>2) Determine the number of places necessary to be determined.</p>
+        <p>3) Use binary search to find the number.</p>
+        <p>Here are some examples:</p>
+        <table>
+            <tr><th>Secret Number</th><th>Minimum</th><th>Maximum</th><th>Places</th><th>Range</th><th>Process</th></tr>
+            <tr>
+                <td>(8)</td><td>1</td><td>10</td><td>1</td><td>1 <= X < 10</td>
+                <td>1-5: False; 6-8: True; 6: False; 7: False; 8: True </td>
+            </tr>
+            <tr>
+                <td>(23.9)</td><td>10</td><td>100</td><td>3</td><td>10.0 <= X < 100.0</td>
+                <td>10.0 - 45.0: True; 10.0 - 23.0: False; 23.1 - 45: True; 23.1 </td>
+            </tr>
+            <tr>
+                <td></td><td></td><td></td><td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td><td></td><td></td><td></td>
+                <td></td>
+            </tr>
+        </table>
+        <p>To determine the number 8, I would first determine the minimum and maximum for the range of the number - 1 and 10, and then finish by using the binary search method.</p>
+        <p>To determine the number 23, I would first determine the range - 100, and then I'd use the binary search method - below 50, below 25, above 12, above 18, above 22, 23.</p>
+        <p>To determine the number 52,340,000, I would first determine the range - million to billion.  Then I would then determine whether it's 1, 10, or 100 million, and find that it's 100 million.  I would then determine the number of places needed to determine - 4.  Then use the digit determination method on the previous slide for each of those places.</p>
+        <p>X - illion is short for billion, trillion, quadrillion, etc.</p>
+    </body>
+</html>
