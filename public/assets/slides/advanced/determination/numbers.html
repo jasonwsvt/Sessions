@@ -1,0 +1,30 @@
+<html>
+    <body>
+        <h1>Numbers - Determining the number of places in very big or small number:</h1>
+        <p>Previously we learned how to determine a number under a million or so.  What about an even larger number, or a number between 0 and 1?  For these I determine the precision, then use scientific notation, where the range would be X*10^N <= number < (X+1)*10^N.  Precision is a fancy word for the number of decimal places necessary for required accuracy.  For more about scientific notation, check out this link: <a href = "https://www.mathsisfun.com/numbers/scientific-notation.html">https://www.mathsisfun.com/numbers/scientific-notation.html</a></p>
+        <p>Here's the general process I use:</p>
+        <p>1) Determine the values for N, then X, then the sufficient precision.</p>
+        <p>2) Use the binary search method to determine the number.</p>
+        <p>Here are some examples:</p>
+        <table>
+            <tr><th>Secret Number</th><th>Precision</th><th>Minimum</th><th>Maximum</th>
+                <th>Process</th></tr>
+            <tr>
+                <td>5,865,459,347,082 (5.865459347082 * 10^12)</td><td>3</td><td>5.00</td><td>5.99</td>
+                <td>1-5: False; 6-8: True; 6: False; 7: False; 8: True </td>
+            </tr>
+            <tr>
+                <td>(23.9)</td><td>10</td><td>100</td><td>3</td>
+                <td>10.0-45.0: True; 10.0-23.0: False; 23.1-45: True; 23.5-23.9: True; 23.8-23.9: True; 23.8: False; 23.9: True</td>
+            </tr>
+            <tr>
+                <td>.00000000000999999999 (9.99999999 * 10^-12)</td><td>2</td><td>0.0</td><td>9.9</td>
+                <td>0-5: False; 5-7.5: False; 7.5-8.8: False; 8.8-9.4: False; 9.4-9.7: False; 9.8: False; 9.9: True</td>
+            </tr>
+            <tr>
+                <td></td><td></td><td></td><td></td>
+                <td></td>
+            </tr>
+        </table>
+    </body>
+</html>

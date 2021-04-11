@@ -506,13 +506,7 @@ class InfoUtility {
                                     { name: "Meridians", slide: "intermediate/determination/energy_system/meridians.html" },
                                 ]
                             },
-                            {
-                                name: "Numbers",
-                                children: [
-                                    { name: "Overview", slide: "intermediate/determination/numbers/overview.html" },
-                                    { name: "Searching", slide: "intermediate/determination/numbers/searching.html" },
-                                ]
-                            },
+                            { name: "Numbers", slide: "intermediate/determination/numbers.html" },
                             { name: "Stacks", slide: "intermediate/determination/stacks.html" },
                             { name: "Characteristics", slide: "intermediate/determination/characteristics.html" },
                             { name: "Review", slide: "intermediate/determination/review.html" }
@@ -541,6 +535,7 @@ class InfoUtility {
                         name: "Determination",
                         children: [
                             { name: "Overview", slide: "advanced/determination/overview.html" },
+                            { name: "Numbers", slide: "advanced/determination/numbers.html" },
                             {
                                 name: "Consciousness Levels",
                                 children: [
