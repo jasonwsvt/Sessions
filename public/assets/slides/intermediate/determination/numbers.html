@@ -1,12 +1,16 @@
 <html>
+    <style>
+        span { padding-left: auto; padding-right: auto; }
+    </style>
     <body>
         <h1>Numbers - Between One and a Million or so:</h1>
         <p>When I need to find a number and the range of that number is unknown, here's the general process I use:</p>
         <ol>
             <li>Determine the precision.</li>
             <li>From the following list, determine the minimum number of the range:
-                <br>one, ten, one hundred, one thousand, one million, etc.</li>
-            <li>The maximum number for the range is just below the following entry.</li>
+                <br><span>one, ten, one hundred, one thousand, one million, etc.</span></li>
+            <li>The maximum number for the range is just less than the following entry.
+                <br>For example, if the precision was 2 and the the minimum was 1 (really 1.0), the maximum would be 9.9.</li>
             <li>Use binary search to find the number.</li>
         </ol>
         <br>
