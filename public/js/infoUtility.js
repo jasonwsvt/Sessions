@@ -406,6 +406,13 @@ class InfoUtility {
                                     { name: "Example", slide: "beginner/determination/psychological_reversals/example_2.html" }
                                 ]
                             },
+                            {
+                                name: "Binary Search Method",
+                                children: [
+                                    { slide: "beginner/determination/binary_search_method.html" },
+                                    { slide: "beginner/determination/binary_search_method_2.html" }
+                                ]
+                            },
                             { name: "Review", slide: "beginner/determination/psychological_reversals/review.html" }
                         ]
                     },
@@ -450,13 +457,6 @@ class InfoUtility {
                             { name: "Multiple Component Responses", slide: "intermediate/energy_testing/multiple_component_responses.html" },
                             { name: "Improving Responses", slide: "intermediate/energy_testing/improving_responses.html" },
                             { name: "Adjusting Statements", slide: "intermediate/energy_testing/adjusting_statements.html" },
-                            {
-                                name: "Binary Search Method",
-                                children: [
-                                    { slide: "intermediate/energy_testing/binary_search_method.html" },
-                                    { slide: "intermediate/energy_testing/binary_search_method_2.html" }
-                                ]
-                            },
                             { name: "Review", slide: "intermediate/energy_testing/psychological_reversals/review.html" }
                         ]
                     },
@@ -509,8 +509,18 @@ class InfoUtility {
                             {
                                 name: "Numbers",
                                 children: [
-                                    { name: "Precision", slide: "intermediate/determination/precision.html" },
-                                    { name: "Smaller Numbers", slide: "intermediate/determination/numbers.html" }
+                                    {
+                                        name: "Binary Search Method",
+                                        children: [
+                                            { slide: "intermediate/determination/binary_search_method.html" },
+                                            { slide: "intermediate/determination/binary_search_method_2.html" }
+                                        ]
+                                    },
+                                    { name: "Precision", slide: "intermediate/determination/numbers/precision.html" },
+                                    { name: "Smaller Numbers", slide: "intermediate/determination/numbers/numbers.html" },
+                                    { name: "Example", slide: "advanced/determination/numbers/example_1.html" },
+                                    { name: "Example", slide: "advanced/determination/numbers/example_2.html" },
+                                    { name: "Example", slide: "advanced/determination/numbers/example_3.html" }
                                 ]
                             },
                             { name: "Stacks", slide: "intermediate/determination/stacks.html" },
@@ -544,8 +554,11 @@ class InfoUtility {
                             {
                                 name: "Numbers",
                                 children: [
-                                    { name: "Scientific Notation", slide: "advanced/determination/scientific_notation.html" },
-                                    { name: "Large and Small Numbers", slide: "advanced/determination/numbers.html" }
+                                    { name: "Scientific Notation", slide: "advanced/determination/numbers/scientific_notation.html" },
+                                    { name: "Large and Small Numbers", slide: "advanced/determination/numbers/numbers.html" },
+                                    { name: "Example", slide: "advanced/determination/numbers/example_1.html" },
+                                    { name: "Example", slide: "advanced/determination/numbers/example_2.html" },
+                                    { name: "Example", slide: "advanced/determination/numbers/example_3.html" }
                                 ]
                             },
                             {

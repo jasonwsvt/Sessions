@@ -6,22 +6,26 @@
         <h1>Numbers - Between One and a Million or so:</h1>
         <p>When I need to find a number and the range of that number is unknown, here's the general process I use:</p>
         <ol>
-            <li>Determine the precision.</li>
-            <li>From the following list, determine the minimum number of the range:
-                <br><span>one, ten, one hundred, one thousand, one million, etc.</span></li>
-            <li>The maximum number for the range is just less than the following entry.
+            <li>Determine the precision necessary for sufficient determination.</li>
+            <li>Determine the range maximum by finding the lowest number in following list that's above they one you're searching for:
+                <br><span>ten, one hundred, one thousand, ten thousand, one hundred thousand, one million, ten million, one hundred million, etc.</span></li>
+            <li>Determine the maximum number for the range by doing the following:
+                <ol>
+                    <li>Find the entry that follows the minimum number in the range.</li>
+                    <li></li>
+                </ol></li> is just less than the following entry.
                 <br>For example, if the precision was 2 and the the minimum was 1 (really 1.0), the maximum would be 9.9.</li>
-            <li>Use binary search to find the number.</li>
+            <li>Use the binary search method to find the number.</li>
         </ol>
         <br>
         <p>Here are some examples:</p>
         <table>
             <tr>
-                <th>Secret Number</th><th>Sufficient Precision</th><th>Range Minimum</th><th>Range Maximum</th>
+                <th>Number to be Determined</th><th>Sufficient Precision</th><th>Range Minimum</th><th>Range Maximum</th>
                 <th>Process</th></tr>
             <tr>
-                <td>8</td><td>1</td><td>1</td><td>9</td>
-                <td>1-5: False; 6-8: True; 6: False; 7: False; 8: True </td>
+                <td>8</td><td>1</td><td>0</td><td>9</td>
+                <td>0-5: False; 6-8: True; 6: False; 7: False; 8: True </td>
             </tr>
             <tr>
                 <td>23.9</td><td>3</td><td>10.0</td><td>99.9</td>
