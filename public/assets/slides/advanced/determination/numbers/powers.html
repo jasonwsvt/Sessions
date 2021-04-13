@@ -1,14 +1,14 @@
 <html>
     <body>
-        <h1>Numbers - Very Small and Large Numbers:</h1>
-        <p>Previously we learned how to determine a number between one and a million or so.</p>
-        <p>What about an especially large number, or a particularly small number between 0 and 1?</p>
-        <p>For these I use scientific notation, where the range is always 0 < X < 10.</p>
+        <h1>Numbers - Multiple Powers:</h1>
+        <p>So now we know how to determine numbers that can reasonably be expressed by a number multiplied by ten to the power of some relatively small integer.  What about even larger numbers?  Scientific notation utilizes a single expression of power.  To express even larger numbers, where the number used as the power is exceptionally high, a second power could be used.  A set of up to six powers might be necessary to express a number sufficiently.</p>
+        <p>The general format is A<sup>B<sup>C<sup>D<sup>E<sup>F</sup></sup></sup></sup></sup></p>
+        <p>This is read M times A to the B to the C to the D to the E to the F, where A is usually 10.</p>
         <p>Here's the general process I use:</p>
         <ol>
-            <li>Determine the power using this method (an integer that could be really high).</li>
-            <li>Determine the precision (an integer, pretty much always between 0 and 12).</li>
-            <li>Use the binary search method to determine the digit in each place of the number.</li>
+            <li>Determine whether 10 is sufficient to be used for A.  If not, determine what it is.</li>
+            <li>Determine the number of powers.</li>
+            <li>Determine the integer for each power.</li>
         </ol>
         <br>
         <p>Here are some examples:</p>

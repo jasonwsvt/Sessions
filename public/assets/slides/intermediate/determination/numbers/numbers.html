@@ -6,35 +6,17 @@
         <h1>Numbers - Between One and a Million or so:</h1>
         <p>When I need to find a number and the range of that number is unknown, here's the general process I use:</p>
         <ol>
-            <li>Determine the precision necessary for sufficient determination.</li>
-            <li>Determine the range maximum by finding the lowest number in following list that's above they one you're searching for:
-                <br><span>ten, one hundred, one thousand, ten thousand, one hundred thousand, one million, ten million, one hundred million, etc.</span></li>
-            <li>Determine the maximum number for the range by doing the following:
-                <ol>
-                    <li>Find the entry that follows the minimum number in the range.</li>
-                    <li></li>
-                </ol></li> is just less than the following entry.
-                <br>For example, if the precision was 2 and the the minimum was 1 (really 1.0), the maximum would be 9.9.</li>
-            <li>Use the binary search method to find the number.</li>
+            <li>Determine the precision necessary for sufficient determination.  The precision is always between 0 and 12.
+            </li>
+            <li>The range minimum is 0.  Determine the range maximum by energy testing the lowest number in following list that's above the one you're searching for:
+                <table>
+                    <tr><th>One</th><th>Thousand</th><th>Million</th></tr>
+                    <tr><td></td><td>1,000</td><td>1,000,000</td></tr>
+                    <tr><td>10</td><td>10,000</td><td>10,000,000</td></tr>
+                    <tr><td>100</td><td>100,000</td><td>100,000,000</td></tr>
+                </table>
+            </li>
+            <li>If the precision isn't 0, use the binary search method to find the number.</li>
         </ol>
-        <br>
-        <p>Here are some examples:</p>
-        <table>
-            <tr>
-                <th>Number to be Determined</th><th>Sufficient Precision</th><th>Range Minimum</th><th>Range Maximum</th>
-                <th>Process</th></tr>
-            <tr>
-                <td>8</td><td>1</td><td>0</td><td>9</td>
-                <td>0-5: False; 6-8: True; 6: False; 7: False; 8: True </td>
-            </tr>
-            <tr>
-                <td>23.9</td><td>3</td><td>10.0</td><td>99.9</td>
-                <td>10.0-45.0: True; 10.0-23.0: False; 23.1-45: True; 23.5-23.9: True; 23.8-23.9: True; 23.8: False; 23.9: True</td>
-            </tr>
-            <tr>
-                <td>86689.96</td><td>2</td><td>1000</td><td>990,000</td>
-                <td>1000-50000: False; 50000-75000: False; 75000-88000: True; 75000-82000: False; 82000-85000: False; 85000-86000: False; 86000: False; 87000: True</td>
-            </tr>
-        </table>
     </body>
 </html>
