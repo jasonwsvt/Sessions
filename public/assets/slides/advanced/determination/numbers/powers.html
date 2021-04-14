@@ -2,23 +2,20 @@
     <body>
         <h1>Numbers - Nonstandard Powers:</h1>
         <p>So now we know how to determine numbers that can reasonably be expressed by a number multiplied by ten to the power of some relatively small integer.  What about even larger numbers?  Scientific notation utilizes a single expression of power.  To express even larger numbers, where the number used as the power is exceptionally high, a second power could be used.  A set of up to six powers might be necessary to express a number sufficiently.</p>
-        <p>The general format is B<sup>P<sup>Q<sup>R<sup>S<sup>T<sup>U</sup></sup></sup></sup></sup></sup></p>
-        <p>This is read B to the P to the Q to the R to the S to the T to the U, where B is usually 10.</p>
+        <p>The general format is B<sup>P<sup>Q<sup>R<sup>S<sup>T<sup>U</sup></sup></sup></sup></sup></sup> (read B to the P to the Q to the R to the S to the T to the U), and would replace the 10<sup>P</sup> in the standard scientific notation.</p>
+        <p>Remember the important thing here is not that you understand what's going on, but that the number you determine is sufficiently true.</p>
         <p>Here's the general process I use:</p>
         <ol>
             <li>Determine whether 10 is sufficient to be used for A, or if another integer should be used.</li>
-            <li>Determine the number of powers.</li>
-            <li>Determine the integer for each power.</li>
+            <li>Determine the number of powers (typically between 0 and 6).</li>
+            <li>Determine the integer for each power (all are typically under 1000).</li>
         </ol>
         <br>
-        <p>Here are some examples:</p>
         <table>
-            <tr><th>Secret Number</th><th>Number of Powers</th><th>B</th>
-                <th>P</th><th>Q</th><th>R</th><th>S</th><th>T</th><th>U</th><th>Formula</th></tr>
+            <tr><th>B</th><th>Number of Powers</th><th>P</th><th>Q</th><th>R</th><th>S</th><th>T</th><th>U</th><th>Formula</th></tr>
             <tr>
-                <td>10000</td>
-                <td>2</td>
                 <td>10</td>
+                <td>2</td>
                 <td>2</td>
                 <td>2</td>
                 <td>N/A</td>
@@ -28,28 +25,26 @@
                 <td>10<sup>2<sup>2</sup></sup></td>
             </tr>
             <tr>
-                <td></td>
-                <td>3</td>
-                <td>96</td>
                 <td>9</td>
-                <td>8</td>
-                <td>6</td>
+                <td>3</td>
+                <td>786</td>
+                <td>93</td>
+                <td>971</td>
                 <td>N/A</td>
                 <td>N/A</td>
                 <td>N/A</td>
-                <td>96<sup>9<sup>8<sup>6</sup></sup></sup></td>
+                <td>9<sup>786<sup>93<sup>971</sup></sup></sup></td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>10</td>
+                <td>6</td>
+                <td>8</td>
+                <td>8</td>
+                <td>9</td>
+                <td>5</td>
+                <td>2</td>
+                <td>4</td>
+                <td>10<sup>8<sup>8<sup>9<sup>5<sup>2<sup>4</sup></sup></sup></sup></sup></sup></td>
             </tr>
         </table>
     </body>

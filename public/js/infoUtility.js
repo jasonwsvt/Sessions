@@ -555,11 +555,11 @@ class InfoUtility {
                                 name: "Numbers",
                                 children: [
                                     { name: "Scientific Notation", slide: "advanced/determination/numbers/scientific_notation.html" },
-                                    { name: "Multiple Powers", slide: "advanced/determination/numbers/powers.html" },
                                     { name: "Process", slide: "advanced/determination/numbers/numbers.html" },
                                     { name: "Example", slide: "advanced/determination/numbers/example_1.html" },
                                     { name: "Example", slide: "advanced/determination/numbers/example_2.html" },
                                     { name: "Example", slide: "advanced/determination/numbers/example_3.html" }
+                                    { name: "Nonstandard Powers", slide: "advanced/determination/numbers/powers.html" },
                                 ]
                             },
                             {

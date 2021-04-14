@@ -3,21 +3,37 @@
         <h1>Numbers - Scientific Notation:</h1>
         <p>Very large and very small numbers are often easier to display in scientific notation.</p>
         <p>Scientific notation uses the following format: M x 10<sup>P</sup>, where M is the mantissa, and P is the power.</p>
-        <p>Using this way of writing numbers, any number will be multiplied by P powers of ten so that M is between 0 and 10, but not equal to 0 or 10.</p>
+        <ul>
+            <li>Mantissa: An adjusted value of the actual number, where the decimal point is moved just after the first non-zero digit.
+                <br>Range: Real numbers between 0 and 10.</li></li>
+            <li>Power: The number of places the decimal point must move so that it's just after the first non-zero digit.</li>
+        </ul>
+        <br>
+        <p>Using this way of writing numbers, any number will be multiplied or divided by 10 P times so that M is always between 0 and 10 (as an open range where 0 or 10 are not included).</p>
         <p>Here are some examples:</p>
         <table>
-            <tr><th>Actual number</th><th>Number shown in scientific notation</th></tr>
-            <tr><td>0</td><td>0</td></tr>
-            <tr><td>.001</td><td>1 x 10<sup>-3</sup></td></tr>
-            <tr><td>.02</td><td>2 x 10<sup>-2</sup></td></tr>
-            <tr><td>.3</td><td>3 x 10<sup>-1</sup></td></tr>
-            <tr><td>4</td><td>4 x 10<sup>0</sup></td></tr>
-            <tr><td>50</td><td>5 x 10<sup>1</sup></td></tr>
-            <tr><td>600</td><td>6 x 10<sup>2</sup></td></tr>
-            <tr><td>3459225010</td><td>3.45922501 x 10<sup>9</sup></td></tr>
-            <tr><td>.00000000000009999</td><td>9.999 x 10<sup>-14</sup></td></tr>
+            <tr><th>Power</th><th>10<sup>P</sup></th><th>10<sup>P</sup> evaluated</th>
+                <th>Number shown in scientific notation</th><th>Example number</th></tr>
+            <tr><td>N/A</td><td>N/A</td><td>N/A</td><td>0</td><td>0</td></tr>
+            <tr><td>-3</td><td>10<sup>-3</sup></td><td>0.001</td>
+                <td>1 x 10<sup>-3</sup></td><td>0.001</td></tr>
+            <tr><td>-2</td><td>10<sup>-2</sup></td><td>0.01</td>
+                <td>2 x 10<sup>-2</sup></td><td>0.02</td></tr>
+            <tr><td>-1</td><td>10<sup>-1</sup></td><td>0.1</td>
+                <td>3 x 10<sup>-1</sup></td><td>0.3</td></tr>
+            <tr><td>0</td><td>10<sup>0</sup></td><td>1</td>
+                <td>4 x 10<sup>0</sup></td><td>4</td></tr>
+            <tr><td>1</td><td>10<sup>1</sup></td><td>10</td>
+                <td>5 x 10<sup>1</sup></td><td>50</td></tr>
+            <tr><td>2</td><td>10<sup>2</sup></td><td>100</td>
+                <td>6 x 10<sup>2</sup></td><td>600</td></tr>
+            <tr><td>9</td><td>10<sup>9</sup></td><td>1000000000</td>
+                <td>3.45922501 x 10<sup>9</sup></td><td>3459225010</td></tr>
+            <tr><td>-14</td><td>10<sup>-14</sup></td><td>0.00000000000001</td>
+                <td>9.999 x 10<sup>-14</sup></td><td>0.00000000000009999</td></tr>
         </table>
         <br>
         <p>Note how the range of the mantissa by itself is always between 0 and 10, and the power is the number of places the decimal point is moved (positive numbers indicate leftward movement, and negative numbers rightward movement).</p>
+        <p>If you'd like more clarification, check out <a href = "https://www.mathsisfun.com/numbers/scientific-notation.html">https://www.mathsisfun.com/numbers/scientific-notation.html</a>.</p>
     </body>
 </html>
