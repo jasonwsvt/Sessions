@@ -345,8 +345,7 @@ class InfoUtility {
                             { name: "Internal Conflict", slide: "beginner/issues/internal_conflict.html" },
                             { name: "Symptoms and Aspirations", slide: "beginner/issues/symptoms_and_aspirations.html" },
                             { name: "Resistance", slide: "beginner/issues/resistance.html" },
-                            { name: "Sensations, Feelings, and Thoughts", slide: "beginner/issues/components.html" },
-                            { name: "Review", slide: "beginner/issues/review.html" }
+                            { name: "Components", slide: "beginner/issues/components.html" }
                         ]
                     },
                     {
@@ -380,8 +379,7 @@ class InfoUtility {
                                 ]
                             },
                             { name: "Example Statements", slide: "beginner/energy_testing/example_statements.html" },
-                            { name: "Avoiding Influence", slide: "beginner/energy_testing/avoiding_influence.html" },
-                            { name: "Review", slide: "beginner/determination/psychological_reversals/review.html" }
+                            { name: "Avoiding Influence", slide: "beginner/energy_testing/avoiding_influence.html" }
                         ]
                     },
                     {
@@ -425,8 +423,7 @@ class InfoUtility {
                             { name: "Subconscious Work", slide: "beginner/resolution/subconscious_work.html" },
                             { name: "Energy Test Response", slide: "beginner/resolution/energy_test_response.html" },
                             { name: "Inhalation", slide: "beginner/resolution/a_yawn_or_deep_breath.html" },
-                            { name: "Observed Response", slide: "beginner/resolution/somatic_or_cognitive_response.html" },
-                            { name: "Review", slide: "beginner/resolution/review.html" },
+                            { name: "Observed Response", slide: "beginner/resolution/somatic_or_cognitive_response.html" }
                         ]
                     },
                     { name: "Tips", slide: "beginner/tips.html" },
@@ -438,32 +435,26 @@ class InfoUtility {
                 children: [
                     { name: "Letting Go", slide: "intermediate/basic_principals_for_letting_go.html" },
                     { name: "Follow Your Intuition", slide: "intermediate/albert_einstein_quote.html" },
-                    { name: "Overview", slide: "intermediate/overview.html" },
                     {
                         name: "Issues",
                         children: [
-                            { name: "Overview", slide: "intermediate/issues/overview.html" },
                             { name: "Affirmations", slide: "intermediate/issues/affirmations.html" },
                             { name: "Tail-Enders", slide: "intermediate/issues/tail_enders.html" },
                             { name: "Triggers", slide: "intermediate/issues/triggers.html" },
-                            { name: "Review", slide: "intermediate/issues/review.html" }
                         ]
                     },
                     {
                         name: "Energy Testing",
                         children: [
-                            { name: "Overview", slide: "intermediate/energy_testing/overview.html" },
                             { name: "Statement Semantics", slide: "intermediate/energy_testing/statement_semantics.html" },
                             { name: "Multiple Component Responses", slide: "intermediate/energy_testing/multiple_component_responses.html" },
                             { name: "Improving Responses", slide: "intermediate/energy_testing/improving_responses.html" },
                             { name: "Adjusting Statements", slide: "intermediate/energy_testing/adjusting_statements.html" },
-                            { name: "Review", slide: "intermediate/energy_testing/psychological_reversals/review.html" }
                         ]
                     },
                     {
                         name: "Determination",
                         children: [
-                            { name: "Overview", slide: "intermediate/determination/overview.html" },
                             {
                                 name: "Consciousness Levels",
                                 children: [
@@ -476,7 +467,6 @@ class InfoUtility {
                             {
                                 name: "Emotions",
                                 children: [
-                                    { name: "Overview", slide: "intermediate/determination/emotions/emotions_1.html" },
                                     { name: "List", slide: "intermediate/determination/emotions/emotions_2.html" },
                                     { name: "Observations", slide: "intermediate/determination/emotions/emotions_3.html" },
                                     { name: "Characteristics", slide: "intermediate/determination/emotions/emotions_4.html" }
@@ -524,33 +514,27 @@ class InfoUtility {
                                 ]
                             },
                             { name: "Stacks", slide: "intermediate/determination/stacks.html" },
-                            { name: "Characteristics", slide: "intermediate/determination/characteristics.html" },
-                            { name: "Review", slide: "intermediate/determination/review.html" }
+                            { name: "Characteristics", slide: "intermediate/determination/characteristics.html" }
                         ]
                     },
-                    { name: "Continual Use", slide: "intermediate/continual_use.html" },
-                    { name: "Review", slide: "intermediate/review.html"}
+                    { name: "Tips", slide: "intermediate/tips.html" },
                 ]
             },
             {
                 name: "Advanced",
                 children: [
                     { name: "William Buhlman", slide: "advanced/william_buhlman_quote.html" },
-                    { name: "Overview", slide: "advanced/overview.html" },
                     {
                         name: "Energy Testing",
                         children: [
-                            { name: "Overview", slide: "advanced/energy_testing/overview.html" },
                             { name: "Statement Semantics", slide: "advanced/energy_testing/statement_semantics_2.html" },
                             { name: "Number Comparison", slide: "advanced/energy_testing/number_comparison.html" },
                             { name: "Ranges and Limits", slide: "advanced/energy_testing/ranges_and_limits.html" },
-                            { name: "Review", slide: "advanced/energy_testing/review.html" }
                         ]
                     },
                     {
                         name: "Determination",
                         children: [
-                            { name: "Overview", slide: "advanced/determination/overview.html" },
                             {
                                 name: "Numbers",
                                 children: [
@@ -558,8 +542,8 @@ class InfoUtility {
                                     { name: "Process", slide: "advanced/determination/numbers/numbers.html" },
                                     { name: "Example", slide: "advanced/determination/numbers/example_1.html" },
                                     { name: "Example", slide: "advanced/determination/numbers/example_2.html" },
-                                    { name: "Example", slide: "advanced/determination/numbers/example_3.html" }
-                                    { name: "Nonstandard Powers", slide: "advanced/determination/numbers/powers.html" },
+                                    { name: "Example", slide: "advanced/determination/numbers/example_3.html" },
+                                    { name: "Nonstandard Powers", slide: "advanced/determination/numbers/powers.html" }
                                 ]
                             },
                             {
@@ -582,30 +566,24 @@ class InfoUtility {
                             },
                             { name: "States", slide: "advanced/determination/states.html" },
                             { name: "Conjunctions", slide: "advanced/determination/conjunctions.html" },
-                            { name: "Review", slide: "advanced/determination/review.html" }
                         ]
                     },
                     { name: "Divination", slide: "advanced/divination.html" },
                     { name: "Working With Others", slide: "advanced/working_with_others.html" },
-                    { name: "Review", slide: "advanced/review.html"}
+                    { name: "Tips", slide: "advanced/tips.html" },
                 ]
             },
             {
-                name: "Final Thoughts",
+                name: "Real Health",
                 children: [
-                    {
-                        name: "The Consciousness Level of Health",
-                        children: [
-                            { slide: "final_thoughts/closing_remarks_1.html" },
-                            { slide: "final_thoughts/closing_remarks_2.html" },
-                            { slide: "final_thoughts/closing_remarks_3.html" },
-                            { slide: "final_thoughts/closing_remarks_4.html" },
-                            { slide: "final_thoughts/closing_remarks_5.html" }
-                        ]
-                    },
-                    { name: "MLK Quote", slide: "final_thoughts/martin_luther_king_jr_quote.html" }
+                    { slide: "final_thoughts/closing_remarks_1.html" },
+                    { slide: "final_thoughts/closing_remarks_2.html" },
+                    { slide: "final_thoughts/closing_remarks_3.html" },
+                    { slide: "final_thoughts/closing_remarks_4.html" },
+                    { slide: "final_thoughts/closing_remarks_5.html" }
                 ]
             },
+            { name: "MLK Quote", slide: "final_thoughts/martin_luther_king_jr_quote.html" },
             { name: "Legal Stuff", slide: "legal_stuff.html" },
             { name: "About Me", slide: "about_me.html" },
         ];
