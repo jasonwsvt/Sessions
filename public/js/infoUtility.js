@@ -329,6 +329,7 @@ class InfoUtility {
                         { slide: "overview/because_reasons_example_3.html" }
                       ]
                     },
+                    { name: "Web App", slide: "overview/web_app.html" },
                     { name: "Review", slide: "overview/review.html" },
                 ]
             },
