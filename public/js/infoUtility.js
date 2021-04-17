@@ -572,19 +572,19 @@ class InfoUtility {
                     { name: "Divination", slide: "advanced/divination.html" },
                     { name: "Working With Others", slide: "advanced/working_with_others.html" },
                     { name: "Tips", slide: "advanced/tips.html" },
+                    {
+                        name: "Real Health",
+                        children: [
+                            { slide: "final_thoughts/closing_remarks_1.html" },
+                            { slide: "final_thoughts/closing_remarks_2.html" },
+                            { slide: "final_thoughts/closing_remarks_3.html" },
+                            { slide: "final_thoughts/closing_remarks_4.html" },
+                            { slide: "final_thoughts/closing_remarks_5.html" }
+                        ]
+                    },
+                    { name: "MLK Quote", slide: "final_thoughts/martin_luther_king_jr_quote.html" },
                 ]
             },
-            {
-                name: "Real Health",
-                children: [
-                    { slide: "final_thoughts/closing_remarks_1.html" },
-                    { slide: "final_thoughts/closing_remarks_2.html" },
-                    { slide: "final_thoughts/closing_remarks_3.html" },
-                    { slide: "final_thoughts/closing_remarks_4.html" },
-                    { slide: "final_thoughts/closing_remarks_5.html" }
-                ]
-            },
-            { name: "MLK Quote", slide: "final_thoughts/martin_luther_king_jr_quote.html" },
             { name: "Legal Stuff", slide: "legal_stuff.html" },
             { name: "About Me", slide: "about_me.html" },
         ];
