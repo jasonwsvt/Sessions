@@ -8,7 +8,7 @@
         <p>Below is an image and chart showing all the different parts of the web app.</p>
         <p><img src = "assets/images/web_app.png"></p>
         <table>
-            <tr><th>Section</th><th>Title</th><th>Description</th></tr>
+            <tr><th>Section</th><th>Title</th><th colspan=2>Description</th></tr>
             <tr>
                 <td>A</td>
                 <td>Utility Toolbar</td>
@@ -45,8 +45,10 @@
                             </td>
                             <td>Etc. Section
                                 <ol>
-                                    <li>Make the height of the current session textarea smaller</li>
-                                    <li>Make the height of the current session textarea larger</li>
+                                    <li>Make the height of the current session textarea smaller (Ctrl+Up)
+                                    </li>
+                                    <li>Make the height of the current session textarea larger (Ctrl+Down)
+                                    </li>
                                     <li>Open the information utility</li>
                                 </ol>
                             </td>
@@ -58,13 +60,20 @@
                 <td>B</td>
                 <td>Current Session Textarea</td>
                 <td colspan=2>This area is the editor for the currently selected session.
-                    <br>Acceptable keys are any letter, number, symbol, space, and enter.  Use tab and shift-tab to adjust indentation for the current line.
+                    <br>Any typed letter, number, symbol, space, and enter will add to the session at the cursor location.
+                    <br>Use tab and shift-tab to adjust indentation for the current line.
+                    <br>Move the cursor by pressing up, down, left, and right.
                 </td>
             </tr>
             <tr>
                 <td>C</td>
                 <td>Component Buttons</td>
-                <td>On the left is a list of component group buttons.  Clicking one will scroll the component list on the right to the selected group.</td>
+                <td width=50%>On the left is a list of component group buttons.
+                    <br>Click: Make the selected group visible.
+                    <br>Ctrl+Click: Toggle hidden the selected group.
+                    <br>Shift+Click: Toggle hidden all other groups.
+                    <br>If the selected group becomes visible, scroll to it.
+                </td>
                 <td>On the right is a long list of components.  Clicking one of these buttons will add the component in the current session textarea at the current cursor position.
                 </td>
             </tr>
