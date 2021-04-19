@@ -2,6 +2,9 @@
     <style>
         ol { margin-left: 10px !important; }
         td { vertical-align: top !important; }
+        img { max-width: 100% !important; }
+        table table td:nth-of-type(1) { width: 21% !important; }
+        table table td:last-of-type { width: 30% !important; }
     </style>
     <body>
         <h1>Overview of this web app</h1>
@@ -17,29 +20,29 @@
                         <tr>
                             <td>User Utility
                                 <ol>
-                                    <li>View or edit settings for the current user</li>
-                                    <li>View or modify records for the current user</li>
-                                    <li>Log in to a different account</li>
+                                    <li>View or edit settings</li>
+                                    <li>View or modify records</li>
+                                    <li>Log in to another account</li>
                                     <li>Create a new user account</li>
                                 </ol>
                             </td>
                             <td>Client Utility
                                 <ol>
-                                    <li>View all the clients for the current user</li>
+                                    <li>View all the clients</li>
                                     <li>Rename the currently selected client</li>
-                                    <li>Add a new client for the current user</li>
+                                    <li>Add a new client</li>
                                 </ol>
                             </td>
                             <td>Issue Utility
                                 <ol>
-                                    <li>View all the issues for the current client</li>
+                                    <li>View all the issues</li>
                                     <li>Rename the currently selected issue</li>
-                                    <li>Add a new issue for the current client</li>
+                                    <li>Add a new issue</li>
                                 </ol>
                             </td>
                             <td>Session Utility
                                 <ol>
-                                    <li>View all the sessions for the current issue</li>
+                                    <li>View all the sessions</li>
                                     <li>Add a new session for the current issue</li>
                                 </ol>
                             </td>
@@ -74,7 +77,7 @@
                     <br>Shift+Click: Toggle hidden all other groups.
                     <br>If the selected group becomes visible, scroll to it.
                 </td>
-                <td>On the right is a long list of components.  Clicking one of these buttons will add the component in the current session textarea at the current cursor position.
+                <td>On the right is a long list of components.  Clicking one of these buttons will add the component to the current session textarea at the current cursor position.
                 </td>
             </tr>
         </table>
