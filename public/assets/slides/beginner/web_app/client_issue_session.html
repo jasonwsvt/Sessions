@@ -1,6 +1,24 @@
 <html>
     <body>
         <h1>Web App - Client, Issue, and Session Utilities</h1>
-        <p>I've designed this web app to be fairly robust and straight-forward in operation.  A lot of effort went into ensuring functionality is disabled when using it would cause problems, for example.  For the most part it works well.  There are some bugs I'm aware of, however, and there are likely more I'm not.  </p>
+        <p>The utilities for clients, issues, and sessions are basically the same.</p>
+        <p>I guess the only concept you need to know is that there's a one-to-many relationship from users to clients, clients to issues, and issues to sessions.</p>
+        <p>Most people will not use any other client than Self, at least until they become more of an advanced user.</p>
+        <h2>The Picker Menu</h2>
+        <img src = "/assets/images/picker_menu.png">
+        <p>The sections for Clients, Issues, and Sessions all have a picker menu.</p>
+        <p>For example, the client picker shows all the clients for the current user.</p>
+        <p>Similarly, the session picker shows all the sessions for the current issue.</p>
+        <p>There are options to sort and search in each of these menus.</p>
+        <br>
+        <h2>The Rename Menu</h2>
+        <img src = "/assets/images/rename_menu.png">
+        <p>You can rename the currently select client or issue using the rename button in the client or issue session.</p>
+        <p>The sessions section doesn't have a rename button because the name is automatically generated from the time it was created.</p>
+        <br>
+        <h2>The New Button</h2>
+        <p>The new button will create a new client, issue, or session.</p>
+        <p>The default name for clients is New Client, and the default name for issues is New Issue.</p>
+        <p>If there is a client or issue with the default name, the new button for that section is disabled.  To re-enable it, rename the issue.</p>
     </body>
 </html>
