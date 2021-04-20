@@ -16,6 +16,7 @@
                     <p>For example, the client picker shows all the clients for the current user.</p>
                     <p>Similarly, the session picker shows all the sessions for the current issue.</p>
                     <p>There are options to sort and search in each of these menus.</p>
+                    <p>Until there is more than one record of a type, the picker menu will not show an arrow and won't open.  For instance, if you look at the image shown in the Rename Menu section, there is only one issue called New Issue.</p>
                 </td>
                 <td>
                     <h2>The Rename Menu</h2>
@@ -27,9 +28,12 @@
             <tr>
                 <td>
                     <h2>The New Button</h2>
-                    <p>The new button will create a new client, issue, or session.</p>
-                    <p>The default name for clients is New Client, and the default name for issues is New Issue.</p>
-                    <p>If there is a client or issue with the default name, the new button for that section is disabled.  To re-enable it, rename the issue.</p>
+                    <p>Each section has a <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                        <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                      </svg> button that will create a new user client, issue, or session.</p>
+                    <p>The default name for users is newuser, for clients it's New Client, and for issues it's New Issue.</p>
+                    <p>If there is a user, client, or issue with the default name, the new button for that section is disabled.  To re-enable it, rename the issue.</p>
                 </td>
             </tr>
         </table>
