@@ -1,16 +1,27 @@
 <html>
+    <style>
+        td { vertical-align: top; }
+    </style>
     <body>
         <h1>Web App - User Settings</h1>
-        <img src = "assets/images/user_settings_menu.png">
         <p>The User Settings menu is accessible by clicking the top left button on the screen.</p>
         <p>The text on the button is the username of the logged in user, and this defaults to newuser.</p>
-        <p>The fields in this menu are username, current password, new password, verified new password, and email address.</p>
-        <p>There are also drop-down lists for local and server storage frequencies.</p>
+        <table>
+            <tr>
+                <td><img src = "assets/images/user_settings_menu.png"></td>
+                <td>
+                    <p>The fields in this menu are username, current password, new password, verified new password, and email address.  The current password field isn't visible unless it hasn't yet been verified.</p>
+                    <p>There are also drop-down lists for local and server storage frequencies, as well as checkboxes for making the account hidden in the login menu, and automatically logging in (which is only useful if there are multiple users).</p>
+                    <p>The text in the bottom bar provides advice for fixing errors.</p>
+                    <p>Buttons appear when entry combinations are appropriate for specific actions.</p>
+                </td>
+            </tr>
+        </table>
         <p>When initially writing the app, I hoped to have a server-side database and allow users to have server-side accounts and store data that could be accessed by logging in from any computer.</p>
         <p>I then decided it was more important to get the app as quickly as possible into a functional state where users could learn the method and practice it, and later on, the app could then be improved based on the interests of the users.</p>
         <p>In any case, at this point there's no real need to modify an app account unless there are multiple people using the same computer account.</p>
-        <p>Maybe consider using a different browser or creating a private computer account you could use, as it would be more private and secure.</p>
+        <p>Alternatively, I'd recommend using a different browser or creating an individual computer account you could use, as it would be more private and secure.</p>
         <p>One nice feature here is that you can change the local storage frequency, or disable it.</p>
-        <p>It's important to note that if you disable the storage frequency, all the data is removed from storage, so if you want to save it you'll need to either set the storage frequency again or export it from the data manager.</p>
+        <p>It's important to note that if you disable the storage frequency, all the data is removed from storage, so if you want to save it you'll need to either set the storage frequency again or export it from the data manager.  Otherwise it'll be gone when you close the app.</p>
     </body>
 </html>

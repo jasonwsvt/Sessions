@@ -427,6 +427,18 @@ class InfoUtility {
                             { name: "Observed Response", slide: "beginner/resolution/somatic_or_cognitive_response.html" }
                         ]
                     },
+                    {
+                        name: "Web App",
+                        children: [
+                            { name: "Overview", slide: "beginner/web_app/overview.html" },
+                            { name: "User Settings", slide: "beginner/web_app/user_settings.html" },
+                            { name: "Data Manager", slide: "beginner/web_app/data_manager.html" },
+                            { name: "Account Switching / Creation", slide: "beginner/web_app/user_other.html" },
+                            { name: "Clients / Issues / Sessions", slide: "beginner/web_app/client_issue_session.html" },
+                            { name: "Session Editor", slide: "beginner/web_app/current_session_editor.html" },
+                            { name: "Component Buttons", slide: "beginner/web_app/component_buttons.html" }
+                        ]
+                    },
                     { name: "Tips", slide: "beginner/tips.html" },
                     { name: "Gameplay", slide: "beginner/review.html" }
                 ]
