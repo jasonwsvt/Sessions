@@ -30,11 +30,11 @@ class InfoUtility {
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
                     self.resize();
-                    this.blur();
                 }
                 else {
                     self.close();
                 }
+                this.blur();
                 e.stopPropagation();
             });
 
