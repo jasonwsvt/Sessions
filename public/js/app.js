@@ -1,9 +1,4 @@
 class App {
-    data = null;
-    utilities = null;
-    editor = null;
-    buttons = null;
-
     constructor() {
         this.data = new DataTree();
         this.utilities = new Utilities(this);
