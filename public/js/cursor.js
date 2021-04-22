@@ -83,7 +83,7 @@ class Cursor {
     get _lastElementIndex()  { return this._lineLength - 1; }
     get _lastLineIndex()     { return this.lines.numLines - 1; }
 
-    get _cursorX()           { return this._cursorX; }
+    //get _cursorX()           { return this._cursorX; }
     _setCursorX()            { this._cursorX = this.lines.distanceToElement(this._lineIndex, this._cursorIndex); }
 
     get _prevLineClosestIndex() {
