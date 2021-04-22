@@ -76,7 +76,7 @@ class UserSettingsUtility {
             });
 
             self.hidden.on("click", function (e) {
-                self.value("hidden") = $(this).prop("checked");
+                self.setKey("hidden", $(this).prop("checked"));
                 self.userUtilities.requestBackup();
                 e.stopPropagation();
             });
