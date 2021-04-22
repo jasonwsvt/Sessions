@@ -2,17 +2,13 @@
 */
 
 class Cursor {
-    _editor = null;
-//    _numVisibleLines = null;
-    _cursorID = "cursor";
-    _cursorCode = "<h2 id = '" + this._cursorID + "'>|</h2>";
-    _typedElementCode = "<button type='button' class='btn btn-light typed'></button>";
-    _cursorX = null;
-    _indent = 50;
-
     constructor(editor) {
         const self = this;
         this._editor = editor;
+        this._cursorID = "cursor";
+        this._cursorCode = "<h2 id = '" + this._cursorID + "'>|</h2>";
+        this._typedElementCode = "<button type='button' class='btn btn-light typed'></button>";
+        this._indent = 50;
         this.checkForCursor();
 
         $(document).ready(function() {

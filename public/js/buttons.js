@@ -4,16 +4,15 @@
 */
 
 class Buttons {
-    _buttonsNavID = "buttonsNav";
-    _buttonsID = "buttons";
-    _buttonCode = null;
-    _buttonsNav = null;
-    _buttons = null;
-
     constructor(app) {
         var self = this;
-        var buttonsJSON = this._getButtonsJSON();
         this._app = app;
+        this._buttonsNavID = "buttonsNav";
+        this._buttonsID = "buttons";
+        this._buttonCode = null;
+        this._buttonsNav = null;
+        this._buttons = null;
+        var buttonsJSON = this._getButtonsJSON();
         this.buttonsNav.append("<div style = 'display: grid'>" + this.createButtonsNav(buttonsJSON) + "</div>");
         this.buttons.append("<div class = 'container-fluid'>" + this.createButtons(buttonsJSON) + "</div>");
         this.adjustDivHeights();

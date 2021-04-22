@@ -5,12 +5,9 @@
 //_validateValue(value, items) returns whether or not the input is valid
 //By default, List is set up with automatically generated keys
 class List {
-    _items = [];
-    add = null;
-    _validateValue = null;
-    index = null;
-    
     constructor(validateValue, validateKey = false, index) {
+        this._items = [];
+
         if (validateValue != undefined) {
             this._validateValue = validateValue;
             if (validateKey == false) {

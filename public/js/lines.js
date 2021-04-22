@@ -3,13 +3,11 @@
 */
 
 class Lines {
-    _containerID = "lines";
-    _lineCode = "<div></div>";
-    editor = null;
-
     constructor(editor) {
         const self = this;
         this.editor = editor;
+        this._containerID = "lines";
+        this._lineCode = "<div></div>";
     }
 
     get ID()              { return this._containerID; }

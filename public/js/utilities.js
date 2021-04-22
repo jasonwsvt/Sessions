@@ -1,12 +1,4 @@
 class Utilities {
-    app = null;
-    user = null;
-    client = null;
-    issue = null;
-    session = null;
-    slider = null;
-    info = null;
-
     constructor(app) {
         var self = this;
         this.app = app;

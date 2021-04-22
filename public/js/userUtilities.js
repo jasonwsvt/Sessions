@@ -1,21 +1,16 @@
 class UserUtilities {
-    defaultUsername = "newuser";
-    backupRequested = false;
-    lastLocalBackup = null;
-    localBackupId   = null;
-    utilities       = null;
-    settings        = null;
-    data            = null;
-    login           = null;
-    new             = null;
-    _divID          = "userUtilities";
-
     constructor (utilities) {
         this.utilities = utilities;
-        this.settings  = new UserSettingsUtility(this);
-        this.data      = new UserDataUtility(this);
-        this.login     = new UserLoginUtility(this);
-        this.new       = new NewUserUtility(this);
+        this.defaultUsername = "newuser";
+        this.backupRequested = false;
+        this.lastLocalBackup = null;
+        this.localBackupId   = null;
+        this.settings        = null;
+        this._divID          = "userUtilities";
+        this.settings        = new UserSettingsUtility(this);
+        this.data            = new UserDataUtility(this);
+        this.login           = new UserLoginUtility(this);
+        this.new             = new NewUserUtility(this);
 
         this.div.addClass("btn-group");
         this.div.attr("role", "group");

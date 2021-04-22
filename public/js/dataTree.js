@@ -2,13 +2,14 @@
 // 1) .id that signifies the id,
 // 2) .children, if it exists, is an array of DataTrees, and
 class DataTree {
-    _data = {};
-    _deleted = [];
-    _indexPaths = [];
-    _idPaths = [];
-    _select = new List((value, items) => (isInteger(value)) && !items.find(item => item.value == value));
-    
-    constructor(data) { if (data) { this.import(data); } }
+    constructor(data) {
+        if (data) { this.import(data); } else { this._data = {}; }
+
+        this._deleted = [];
+        this._indexPaths = [];
+        this._idPaths = [];
+        this._select = new List((value, items) => (isInteger(value)) && !items.find(item => item.value == value));
+    }
 
     //DataTree methods
     size() { const ids = this.ids(); return (isArray(ids)) ? this.ids().length : 0; }

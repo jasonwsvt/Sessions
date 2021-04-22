@@ -1,15 +1,11 @@
 class Editor {
-    current = null;
-    app = null;
-    cursor = null;
-    lines = null;
-
     constructor(app) {
         const self = this;
         this.app = app;
+        this.current = null;
         this.lines = new Lines(this);
         this.cursor = new Cursor(this);
-        $(document).ready(function() {
+            $(document).ready(function() {
             $(document).on("keyup", function(e) {
                 self.app.data.setKey(self.current, "lines", self.lines.linesArray);
             });
