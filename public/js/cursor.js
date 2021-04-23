@@ -83,7 +83,6 @@ class Cursor {
     get _lastElementIndex()  { return this._lineLength - 1; }
     get _lastLineIndex()     { return this.lines.numLines - 1; }
 
-    //get _cursorX()           { return this._cursorX; }
     _setCursorX()            { this._cursorX = this.lines.distanceToElement(this._lineIndex, this._cursorIndex); }
 
     get _prevLineClosestIndex() {
@@ -97,8 +96,9 @@ class Cursor {
     }
 
     manageHiddenCursor() {
-        //return true if top of cursor is below the bottom of the lines div,
+        //if top of cursor is below the bottom of the lines div,
         //or the bottom of the cursor is above the top of the lines div
+        //scroll the cursor into view
         const container = $("#" + this.linesID);
         const containerTop = container.scrollTop();
         const containerBottom = containerTop + container.height();

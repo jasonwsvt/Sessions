@@ -3,13 +3,12 @@ class InfoUtility {
         const self = this;
         this._utilities = utilities;
         this._data = new DataTree;
-
-        this._utilityID = "infoUtility";
     
         this._infoIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-info-square' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path d='M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z'/><circle cx='8' cy='4.5' r='1'/></svg>";
         this._leftArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-arrow-left' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z'/></svg>";
         this._rightArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-arrow-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z'/></svg>";
     
+        this._utilityID = "infoUtility";
         this._buttonID        = this._utilityID + "Button";
         this._divID           = this._utilityID + "Window";
         this._contentsDivID   = this._utilityID + "_contents";
@@ -433,7 +432,8 @@ class InfoUtility {
                             { name: "Account Switching / Creation", slide: "beginner/web_app/user_other.html" },
                             { name: "Clients / Issues / Sessions", slide: "beginner/web_app/client_issue_session.html" },
                             { name: "Session Editor", slide: "beginner/web_app/current_session_editor.html" },
-                            { name: "Component Buttons", slide: "beginner/web_app/component_buttons.html" }
+                            { name: "Component Buttons", slide: "beginner/web_app/component_buttons.html" },
+                            { name: "Current Bugs", slide: "beginner/web_app/bugs.html" }
                         ]
                     },
                     { name: "Tips", slide: "beginner/tips.html" },
