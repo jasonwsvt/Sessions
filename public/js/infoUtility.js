@@ -533,7 +533,8 @@ class InfoUtility {
             {
                 name: "Advanced",
                 children: [
-                    { name: "William Buhlman", slide: "advanced/william_buhlman_quote.html" },
+                    { name: "William Buhlman Quote", slide: "advanced/william_buhlman_quote.html" },
+                    { name: "Issues", slide: "advanced/issues.html" },
                     {
                         name: "Energy Testing",
                         children: [
