@@ -446,14 +446,6 @@ class InfoUtility {
                     { name: "Letting Go", slide: "intermediate/basic_principals_for_letting_go.html" },
                     { name: "Follow Your Intuition", slide: "intermediate/albert_einstein_quote.html" },
                     {
-                        name: "Issues",
-                        children: [
-                            { name: "Affirmations", slide: "intermediate/issues/affirmations.html" },
-                            { name: "Tail-Enders", slide: "intermediate/issues/tail_enders.html" },
-                            { name: "Triggers", slide: "intermediate/issues/triggers.html" },
-                        ]
-                    },
-                    {
                         name: "Energy Testing",
                         children: [
                             { name: "Statement Semantics", slide: "intermediate/energy_testing/statement_semantics.html" },
@@ -477,6 +469,7 @@ class InfoUtility {
                             {
                                 name: "Emotions",
                                 children: [
+                                    { name: "Overview", slide: "intermediate/determination/emotions/emotions_1.html" },
                                     { name: "List", slide: "intermediate/determination/emotions/emotions_2.html" },
                                     { name: "Observations", slide: "intermediate/determination/emotions/emotions_3.html" },
                                     { name: "Characteristics", slide: "intermediate/determination/emotions/emotions_4.html" }
@@ -525,6 +518,22 @@ class InfoUtility {
                             },
                             { name: "Stacks", slide: "intermediate/determination/stacks.html" },
                             { name: "Characteristics", slide: "intermediate/determination/characteristics.html" }
+                        ]
+                    },
+                    {
+                        name: "Issues",
+                        children: [
+                            { name: "Affirmations", slide: "intermediate/issues/affirmations.html" },
+                            { name: "Tail-Enders", slide: "intermediate/issues/tail_enders.html" },
+                            { name: "Triggers", slide: "intermediate/issues/triggers.html" },
+                            {
+                                name: "Example",
+                                children: [
+                                    { slide: "intermediate/issues/example_1.html" },
+                                    { slide: "intermediate/issues/example_2.html" },
+                                    { slide: "intermediate/issues/example_3.html" }
+                                ]
+                            }
                         ]
                     },
                     { name: "Tips", slide: "intermediate/tips.html" },
