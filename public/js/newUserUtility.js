@@ -63,8 +63,10 @@ class NewUserUtility {
 
     manage() {
         const data = this.app.data;
-        const newuserExists = Object.keys(localStorage).includes(this.userUtilities.defaultUsername);
-        this.button.prop("disabled", newuserExists || !!this.userUtilities.backupRequested);
+        const def = this.userUtilities.defaultUsername;
+        const newuserExists = Object.keys(localStorage).includes(def);
+        const isDefault = data.value(data.tierIds(0)[0], "username") == def;
+        this.button.prop("disabled", isDefault || newuserExists || !!this.userUtilities.backupRequested);
     }
 
     reset() {
