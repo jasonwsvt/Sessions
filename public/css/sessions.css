@@ -301,6 +301,8 @@
 
 #cursor {
     animation:blinkingText 1.2s infinite;
+    vertical-align: middle;
+    height: 30px !important;
 }
 @keyframes blinkingText {
     0%{     color: #000;      }
@@ -315,7 +317,7 @@
     flex-direction: column;
     flex: 0 0 auto;
     width: auto;
-    height: 368px;
+    height: 380px;
     overflow-y: auto;
     background-color: #eee;
 }
@@ -326,7 +328,6 @@
     padding: 0px 5px 0px 5px;
     justify-content: start;
     width: auto;
-    height: 46px !important;
     flex-wrap: wrap;
     vertical-align: middle;
 }

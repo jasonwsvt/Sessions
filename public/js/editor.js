@@ -22,7 +22,8 @@ class Editor {
 
     get buttons()         { return this.app.buttons; }
     get session()         { return this.app.data.record(this.current); }
-    get lineHeight()      { return this.lines.div.children().eq(0).height(); }
+    //get lineHeight()      { return this.lines.div.children().eq(0).height(); }
+    get lineHeight()      { return this.lines.div.find("button").eq(0).outerHeight(); }
     get height()          { return parseInt(this.lines.div.css("height")); }
     set height(height)    { this.lines.div.css("height", String(height) + "px"); }
     get numVisibleLines() { return this.height / this.lineHeight; }

@@ -6,7 +6,7 @@ class Cursor {
         const self = this;
         this._editor = editor;
         this._cursorID = "cursor";
-        this._cursorCode = "<h2 id = '" + this._cursorID + "'>|</h2>";
+        this._cursorCode = "<h4 id = '" + this._cursorID + "'>|</h4>";
         this._typedElementCode = "<button type='button' class='btn btn-light typed'></button>";
         this._indent = 50;
         this.checkForCursor();

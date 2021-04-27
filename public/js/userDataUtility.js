@@ -1144,7 +1144,7 @@ class UserDataUtility {
                       : (option.startsWith("identical"))  ? this.allIdenticalRowIds
                       : (option.startsWith("selected"))   ? this.allSelectedRowIds
                       : (option.startsWith("unselected")) ? this.allUnselectedRowIds : [];
-//console.log(action, ids);
+            //console.log(action, ids);
             switch (action) {
                 case "expand":   this.expandRows(ids);   break;
                 case "collapse": this.collapseRows(ids); break;
@@ -1154,8 +1154,8 @@ class UserDataUtility {
         }
         else if (action == "select") {
             switch (option) {
-                case "local":     local  = this.localData.ids();                         break;
-                case "loaded":    loaded = this.loadedData.ids();                        break;
+                case "local":     local  = this.localData.ids();                      break;
+                case "loaded":    loaded = this.loadedData.ids();                     break;
                 case "older":     loaded = this.loadedData.older(this.localData);     break;
                 case "newer":     loaded = this.loadedData.newer(this.localData);     break;
                 case "different": loaded = this.loadedData.different(this.localData); break;
