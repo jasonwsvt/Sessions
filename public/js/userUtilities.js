@@ -69,6 +69,8 @@ class UserUtilities {
     requestBackup() {
         console.trace();
         this.backupRequested = true;
+        this.login.manage();
+        this.new.manage();
         if (this.value("localBackupFrequency") != false && !this.localBackupId) {
             this.scheduleLocalBackup();
         }
@@ -84,6 +86,7 @@ class UserUtilities {
             if (!last || timeout <= 0) { this.localBackup(); }
             else {
                 this.localBackupId = setTimeout(this.localBackup.bind(this), timeout * 1000);
+                this.login.manage();
                 this.new.manage();
             }
         }
@@ -92,6 +95,7 @@ class UserUtilities {
     cancelLocalBackup() {
         clearTimeout(this.localBackupId);
         this.localBackupId = null;
+        this.login.manage();
         this.new.manage();
     }
 

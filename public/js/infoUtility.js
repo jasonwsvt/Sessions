@@ -294,7 +294,6 @@ class InfoUtility {
                 name: "Introduction",
                 children: [
                     { name: "Invitation", slide: "introduction/invitation.html" },
-                    { name: "Mind-Body Connection", slide: "introduction/mind_body_connection_article.html" },
                     {
                         name: "Quotes",
                         children: [
@@ -306,6 +305,7 @@ class InfoUtility {
                             { name: "David Hawkins", slide: "introduction/david_hawkins_quote.html" },
                         ]
                     },
+                    { name: "Mind-Body Connection", slide: "introduction/mind_body_connection_article.html" },
                     { name: "What Are Unhealthy Emotions?", slide: "introduction/what_are_unhealthy_emotions.html" },
                     { name: "Energy Healing Techniques", slide: "introduction/energy_healing_techniques.html" },
                     { name: "Why Another Healing Technique?",  slide: "introduction/why_another_healing_technique.html" },
