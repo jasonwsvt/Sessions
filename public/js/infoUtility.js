@@ -7,7 +7,10 @@ class InfoUtility {
         this._infoIcon = "<svg width='1.25em' height='1.25em' viewBox='0 0 16 16' class='bi bi-info-square' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path fill-rule='evenodd' d='M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/><path d='M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z'/><circle cx='8' cy='4.5' r='1'/></svg>";
         this._leftArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-arrow-left' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z'/></svg>";
         this._rightArrow = "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-arrow-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z'/></svg>";
-    
+        this._plus = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16"><path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>';
+        this._minus = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-square" viewBox="0 0 16 16"><path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/></svg>';
+        this._vert_dots = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16"><path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/></svg>';
+        
         this._utilityID = "infoUtility";
         this._buttonID        = this._utilityID + "Button";
         this._divID           = this._utilityID + "Window";
@@ -37,13 +40,15 @@ class InfoUtility {
             $(window).resize(function()          { self.resize(); });
             self.div.on("click", function(e)     { e.stopPropagation(); });
 
-            self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
+            //self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
+            self.mediaDiv.on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
 
             self.pathDiv.on('mousemove', function(e) { self.mouseOut(); });
             self.contentsDiv.on('mousemove', function(e) { self.mouseOut(); });
             self.div.on('mouseout', function(e)  { self.mouseOut(); });
 
-            self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
+            //self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
+            self.mediaDiv.on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
         }); 
     }
 
@@ -72,8 +77,7 @@ class InfoUtility {
 
         const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + infoIcon + "</button>";
         const div = "<div id = '" + this._divID + "' class = 'hidden'></div>";
-        const pathDiv = "<div id = '" + this._pathDivID + "' class = 'btn-group-sm' role = 'group'></div>";
-        const contentsDiv = "<div id = '" + this._contentsDivID + "' class = 'btn-group-sm' role = 'group'></div>";
+        const pathDiv = "<div id = '" + this._pathDivID + "'></div>";
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
         const leftArrowDiv = "<div id = '" + this._leftArrowDivID + "'>" + this._leftArrow + "</div>";
         const rightArrowDiv = "<div id = '" + this._rightArrowDivID + "'>" + this._rightArrow + "</div>";
@@ -82,11 +86,12 @@ class InfoUtility {
 
         this.div.css("left", "0px");
         this.div.css("top", String(this.utilityDiv.position().top + 31) + "px");
+        this.div.append(pathDiv + leftArrowDiv + mediaDiv + rightArrowDiv);
 
-        this.div.append(pathDiv + contentsDiv);
+        //this.div.append(pathDiv + contentsDiv);
 
-        this.div.append("<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
-        this.leftArrowDiv.css("left", "0px");
+        //this.div.append("<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
+        //this.leftArrowDiv.css("left", "0px");
 
         this.resize();
         this.init();
@@ -97,14 +102,13 @@ class InfoUtility {
 
     resize() {
         const windowHeight = $(window).height();
-        const windowWidth = $(window).width();
         const utilitiesHeight = this.utilityDiv.outerHeight(true);
-        const pathHeight = this.pathDiv.outerHeight(true);
-        const contentsHeight = this.contentsDiv.outerHeight(true);
+        const windowWidth = $(window).width();
+        const pathWidth = this.pathDiv.outerWidth(true);
 
         this.div.css("height", String(windowHeight - utilitiesHeight) + "px");
-        this.div.css("width", String(windowWidth) + "px");
-        this.mediaDiv.parent().css("height", String(windowHeight - utilitiesHeight - pathHeight - contentsHeight));
+        this.mediaDiv.css("width", String(windowWidth - pathWidth) + "px");
+        this.mediaDiv.css("height", String(windowHeight - utilitiesHeight) + "px");
     }
 
     manage(picked) {
@@ -136,31 +140,14 @@ class InfoUtility {
 
         //Create all sibling divs for ids in the path.
         this.pathDiv.empty();
+        //console.log(path);
         var media = [];
-        //var title = [];
+        this.buildPath(path);
         path.forEach(id => {
-            this.pathDiv.append("<div id = '" + this.siblingsDivId(id) + "'></div>");
-            data.siblings(id).forEach((sId, index) => {
-                var button = "<button id = '" + this.siblingButtonId(sId) + "' class = 'btn btn-sm ";
-                button += (sId == id) ? "btn-primary" : "btn-secondary";
-                button += "' value = " + sId;
-                if (sId == id) { button += " disabled"; }
-                button += ">";
-                button += data.hasKey(sId, "name") ? data.value(sId, "name") : index + 1;
-                button += "</button>";
-                this.siblingsDiv(id).append(button);
-                this.siblingButton(sId).on("click", function(e) {
-                    console.log("clicked", this.value);
-                    self.manage(parseInt(this.value));
-                    e.stopPropagation();
-                });
-                //if (sId == id) { title.push(data.hasKey(sId, "name") ? data.value(sId, "name") : index + 1); }
-            });
-
             const record = data.record(id);
             media = media.concat(data.keys(id).filter(item => !["id", "children", "name", "creation", "lastOpened", "lastEdited"].includes(item)).map(item => [id, item, record[item]]));
         });
-        console.log(media);
+        //console.log(media);
 
         //Delete all media divs whose id isn't in the path.
         this.mediaDiv.children().each(function() {
@@ -190,9 +177,9 @@ class InfoUtility {
                     //code = "<object data = 'assets/slides/" + value + " '>";
                     break;
             }
-            console.log("id:", id);
-            console.log("item:", item);
-            console.log("value:", value);
+            //console.log("id:", id);
+            //console.log("item:", item);
+            //console.log("value:", value);
             
             //If no item selected, default to first.  Otherwise, hide all unselected items and show selected one.
             this.itemButton(id).on("click", (e) => {
@@ -211,6 +198,36 @@ class InfoUtility {
 
         this.mediaDiv.parent().trigger("mousemove");
         this.resize();
+    }
+
+    buildPath(path) {
+        const self = this;
+        const data = this._data;       
+        const id = path[0];
+        data.siblings(id).forEach((sId, index) => {
+            var button = "<div>";
+            if (data.hasChildren(sId)) {
+                if (sId == id) { button += this._minus; }
+                else { button += this._plus; }
+            }
+            else { button += this._vert_dots; }
+            button += "<button id = '" + this.siblingButtonId(sId) + "'";
+            button += " class = 'btn btn-sm ";
+            button += (sId == id && path.length == 1) ? "btn-primary" : "btn-link";
+            button += "' value = " + sId;
+            if (sId == id) { button += " disabled"; }
+            button += ">";
+            button += data.hasKey(sId, "name") ? data.value(sId, "name") : index + 1;
+            button += "</button></div>";
+            this.pathDiv.append(button);
+            this.siblingButton(sId).parent().css("padding-left", (25 * (data.tier(sId) - 1)) + 5);
+            if (sId == id && path.length > 1) { this.buildPath(path.slice(1)); }
+            this.siblingButton(sId).on("click", function(e) {
+                //console.log("clicked", this.value);
+                self.manage(parseInt(this.value));
+                e.stopPropagation();
+            });
+        });
     }
 
     mouseMove(pageX, pageY) {
@@ -245,7 +262,7 @@ class InfoUtility {
     }
 
     mouseInThird(pageX, pageY) {
-        const div = this.div.not("#" + this._pathDivID, "#" + this._contentsDivID);
+        const div = this.mediaDiv;
         const xPos = pageX - div.position().left;
         const yPos = pageY - div.position().top;
         const width = div.outerWidth(true);
@@ -274,7 +291,7 @@ class InfoUtility {
         const data = this._data;
         const current = parseInt(this.mediaDiv.children().not(".hidden").attr("id").split("_")[1]);
         const ids = data.sortByCreation(data.descendants(data.tierIds(0)[0]));
-        console.log(current, ids);
+        //console.log(current, ids);
         const index = ids.findIndex(id => id == current);
         return index == ids.length - 1 ? ids[0] : ids[index + 1];
     }
@@ -407,8 +424,7 @@ class InfoUtility {
                                     { name: "Process", slide: "beginner/determination/binary_search_method.html" },
                                     { name: "Example", slide: "beginner/determination/binary_search_method_2.html" }
                                 ]
-                            },
-                            { name: "Review", slide: "beginner/determination/psychological_reversals/review.html" }
+                            }
                         ]
                     },
                     {
