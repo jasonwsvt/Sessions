@@ -222,6 +222,18 @@
     flex-direction: column !important;
 }
 
+#infoUtility_prev, #infoUtility_next {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+}
+
+#infoUtility_prev:hover, #infoUtility_next:hover {
+    opacity: 1;
+}
+
 #infoUtility_path {
     display: flex;
     text-align: left !important;

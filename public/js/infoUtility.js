@@ -38,18 +38,14 @@ class InfoUtility {
             $(window).resize(function()          { self.resize(); });
             self.div.on("click", function(e)     { e.stopPropagation(); });
 
-            //self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
-            //self.mediaDiv.on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
-            //self.pathDiv.on('mousemove', function(e) { self.mouseOut(); });
-            //self.contentsDiv.on('mousemove', function(e) { self.mouseOut(); });
-            //self.div.on('mouseout', function(e)  { self.mouseOut(); });
-            //self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
-            //self.mediaDiv.on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
+            self.leftArrowDiv.on("click", function(e)      { self.manage(self.previous()); });
 
-            self.arrowsArea.on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
-            self.arrowsArea.on('mouseout', function(e)  { self.mouseOut(); });
-            self.arrowsArea.on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
-        }); 
+            self.leftArrowDiv.on("mousedown", function(e)  { e.preventDefault(); });
+
+            self.rightArrowDiv.on("click", function(e)     { self.manage(self.next()); });
+
+            self.rightArrowDiv.on("mousedown", function(e) { e.preventDefault(); });
+        });
     }
 
     get app()                { return this._utilities.app; }
@@ -70,7 +66,7 @@ class InfoUtility {
     itemButton(id, item)     { return $("#" + this.itemButtonId(id, item)); }
     get leftArrowDiv()       { return $("#" + this._leftArrowDivID); }
     get rightArrowDiv()      { return $("#" + this._rightArrowDivID); }
-    get arrowsArea()         { return $("#" + this._mediaDivID + ", #" + this._leftArrowDivID + ", #" + this._rightArrowDivID).not("#" + this._mediaDivID + " a"); }
+    get arrowsArea()         { return $("#" + this._leftArrowDivID + ", #" + this._mediaDivID + ", #" + this._rightArrowDivID); }
 
     _build() {
         const infoIcon = this._infoIcon;
@@ -95,7 +91,6 @@ class InfoUtility {
 
         this.resize();
         this.init();
-        this.mouseOut();
         
         this.manage(this._data.tierIds(0)[0]);
     }
@@ -230,55 +225,6 @@ class InfoUtility {
         });
     }
 
-    mouseMove(pageX, pageY) {
-        switch (this.mouseInThird(pageX, pageY)) {
-            case -1:
-                if (this.leftArrowDiv.find("svg").hasClass("invisible")) {
-                    this.leftArrowDiv.find("svg").removeClass("invisible");
-                }
-                break;
-            case 0:
-                this.mouseOut();
-                break;
-            case 1: 
-                if (this.rightArrowDiv.find("svg").hasClass("invisible")) {
-                    this.rightArrowDiv.find("svg").removeClass("invisible");
-                }
-                break;
-        }
-    }
-
-    mouseClick(pageX, pageY) {
-        switch (this.mouseInThird(pageX, pageY)) {
-            case -1:
-                this.manage(this.previous());
-                break;
-            case 0:
-                break;
-            case 1: 
-                this.manage(this.next());
-                break;
-        }
-    }
-
-    mouseInThird(pageX, pageY) {
-        const div = this.arrowsArea;
-        const xPos = pageX - div.position().left;
-        const yPos = pageY - div.position().top;
-        const width = div.outerWidth(true);
-        const third = width / 3;
-        const height = div.outerHeight(true);
-        const betweenTopAndBottom = yPos >= 0 && yPos <= height;
-        const inLeftThird = (xPos >= 0 && xPos <= third && betweenTopAndBottom);
-        const inRightThird = (xPos <= width && xPos >= (width - third) && betweenTopAndBottom);
-        return inLeftThird ? -1 : inRightThird ? 1 : 0;
-    }
-
-    mouseOut() {
-        this.leftArrowDiv.find("svg").addClass("invisible");
-        this.rightArrowDiv.find("svg").addClass("invisible");
-    }
-
     previous() {
         const data = this._data;
         const current = parseInt(this.mediaDiv.children().not(".hidden").attr("id").split("_")[1]);
@@ -291,7 +237,6 @@ class InfoUtility {
         const data = this._data;
         const current = parseInt(this.mediaDiv.children().not(".hidden").attr("id").split("_")[1]);
         const ids = data.sortByCreation(data.descendants(data.tierIds(0)[0]));
-        //console.log(current, ids);
         const index = ids.findIndex(id => id == current);
         return index == ids.length - 1 ? ids[0] : ids[index + 1];
     }
