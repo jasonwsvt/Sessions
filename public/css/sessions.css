@@ -227,6 +227,7 @@
     text-align: left !important;
     flex-direction: column;
     flex: 0 0 auto;
+    overflow-y: auto;
 }
 
 #infoUtility_path > button {

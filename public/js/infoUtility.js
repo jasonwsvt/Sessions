@@ -14,9 +14,7 @@ class InfoUtility {
         this._utilityID = "infoUtility";
         this._buttonID        = this._utilityID + "Button";
         this._divID           = this._utilityID + "Window";
-        this._contentsDivID   = this._utilityID + "_contents";
         this._pathDivID       = this._utilityID + "_path";
-        this._contentsDivID   = this._utilityID + "_contents";
         this._mediaDivID      = this._utilityID + "_media";
         this._leftArrowDivID  = this._utilityID + "_prev";
         this._rightArrowDivID = this._utilityID + "_next";
@@ -41,14 +39,16 @@ class InfoUtility {
             self.div.on("click", function(e)     { e.stopPropagation(); });
 
             //self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
-            self.mediaDiv.on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
-
-            self.pathDiv.on('mousemove', function(e) { self.mouseOut(); });
-            self.contentsDiv.on('mousemove', function(e) { self.mouseOut(); });
-            self.div.on('mouseout', function(e)  { self.mouseOut(); });
-
+            //self.mediaDiv.on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
+            //self.pathDiv.on('mousemove', function(e) { self.mouseOut(); });
+            //self.contentsDiv.on('mousemove', function(e) { self.mouseOut(); });
+            //self.div.on('mouseout', function(e)  { self.mouseOut(); });
             //self.div.not("#" + this._pathDivID, "#" + this._contentsDivID).on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
-            self.mediaDiv.on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
+            //self.mediaDiv.on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
+
+            self.arrowsArea.on('mousemove', function(e) { self.mouseMove(e.pageX, e.pageY); });
+            self.arrowsArea.on('mouseout', function(e)  { self.mouseOut(); });
+            self.arrowsArea.on("click", function(e)     { self.mouseClick(e.pageX, e.pageY); });
         }); 
     }
 
@@ -59,7 +59,6 @@ class InfoUtility {
     get div()                { return $("#" + this._divID); }
     get contentsDiv()        { return $("#" + this._contentsDivID); }
     get pathDiv()            { return $("#" + this._pathDivID); }
-    get contentsDiv()        { return $("#" + this._contentsDivID); } 
     get mediaDiv()           { return $("#" + this._mediaDivID); }
     siblingsDivId(id)        { return this._utilityID + "_" + id + "_siblings"; }
     siblingsDiv(id)          { return $("#" + this.siblingsDivId(id)); }
@@ -71,6 +70,7 @@ class InfoUtility {
     itemButton(id, item)     { return $("#" + this.itemButtonId(id, item)); }
     get leftArrowDiv()       { return $("#" + this._leftArrowDivID); }
     get rightArrowDiv()      { return $("#" + this._rightArrowDivID); }
+    get arrowsArea()         { return $("#" + this._mediaDivID + ", #" + this._leftArrowDivID + ", #" + this._rightArrowDivID).not("#" + this._mediaDivID + " a"); }
 
     _build() {
         const infoIcon = this._infoIcon;
@@ -262,7 +262,7 @@ class InfoUtility {
     }
 
     mouseInThird(pageX, pageY) {
-        const div = this.mediaDiv;
+        const div = this.arrowsArea;
         const xPos = pageX - div.position().left;
         const yPos = pageY - div.position().top;
         const width = div.outerWidth(true);
