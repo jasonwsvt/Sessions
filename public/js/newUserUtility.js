@@ -56,7 +56,7 @@ class NewUserUtility {
     init() {
         const data = this.app.data;
         if (data.isEmpty()) {
-            data.addChild(data.addChild(data.addChild(data.import({ username: "newuser" }), { name: "Self" }), { name: "New Issue" }));
+            data.addChild(data.addChild(data.addChild(data.import({ username: "newuser" }), { name: "Self" }), { name: "New Issue" }), { lines: ['<div><button type="button" class="btn btn-light space">Click the "i" in the top right corner of the page for the instructions!  Press backspace to remove this text.</button><h4 id="cursor">|</h4></div>']});
         }
         this.manage();
     }

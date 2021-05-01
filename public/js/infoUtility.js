@@ -67,7 +67,7 @@ class InfoUtility {
     _build() {
         const infoIcon = this._infoIcon;
 
-        const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-warning btn-sm'>" + infoIcon + "</button>";
+        const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-success btn-sm'>" + infoIcon + "</button>";
         const div = "<div id = '" + this._divID + "' class = 'hidden'></div>";
         const pathDiv = "<div id = '" + this._pathDivID + "'></div>";
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
