@@ -35,15 +35,11 @@ class InfoUtility {
                 e.stopPropagation();
             });
 
-            $(window).resize(function()          { self.resize(); });
-            self.div.on("click", function(e)     { e.stopPropagation(); });
-
+            $(window).resize(function()                    { self.resize(); });
+            self.div.on("click", function(e)               { e.stopPropagation(); });
             self.leftArrowDiv.on("click", function(e)      { self.manage(self.previous()); });
-
             self.leftArrowDiv.on("mousedown", function(e)  { e.preventDefault(); });
-
             self.rightArrowDiv.on("click", function(e)     { self.manage(self.next()); });
-
             self.rightArrowDiv.on("mousedown", function(e) { e.preventDefault(); });
         });
     }
@@ -56,8 +52,8 @@ class InfoUtility {
     get contentsDiv()        { return $("#" + this._contentsDivID); }
     get pathDiv()            { return $("#" + this._pathDivID); }
     get mediaDiv()           { return $("#" + this._mediaDivID); }
-    siblingsDivId(id)        { return this._utilityID + "_" + id + "_siblings"; }
-    siblingsDiv(id)          { return $("#" + this.siblingsDivId(id)); }
+//    siblingsDivId(id)        { return this._utilityID + "_" + id + "_siblings"; }
+//    siblingsDiv(id)          { return $("#" + this.siblingsDivId(id)); }
     siblingButtonId(id)      { return this._utilityID + "_" + id + "_button"; }
     siblingButton(id)        { return $("#" + this.siblingButtonId(id)); }
     itemDivId(id, item)      { return this._utilityID + "_"  + id + "_" + item; }

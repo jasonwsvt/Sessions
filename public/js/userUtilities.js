@@ -67,7 +67,7 @@ class UserUtilities {
     }
 
     requestBackup() {
-        console.trace();
+        //console.trace();
         this.backupRequested = true;
         this.login.manage();
         this.new.manage();

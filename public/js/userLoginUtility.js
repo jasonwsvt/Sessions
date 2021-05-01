@@ -128,7 +128,7 @@ class UserLoginUtility {
 
     manage() {
         const backupRequested = !!this.userUtilities.backupRequested;
-        console.log("switching login button disabled to", backupRequested);
+        //console.log("switching login button disabled to", backupRequested);
         this.button.prop("disabled", backupRequested);
     }
 

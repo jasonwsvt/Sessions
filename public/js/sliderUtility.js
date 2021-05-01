@@ -25,6 +25,7 @@ class SliderUtility {
 
             Mousetrap.bind(['ctrl+up'], function(e) {
                 self.editor.reduceVisibleLines();
+                e.stopPropagation();
                 return false;
             });
 
@@ -36,6 +37,7 @@ class SliderUtility {
 
             Mousetrap.bind(['ctrl+down'], function(e) {
                 self.editor.increaseVisibleLines();
+                e.stopPropagation();
                 return false;
             });
         }); 
