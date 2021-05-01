@@ -67,7 +67,7 @@ class InfoUtility {
     _build() {
         const infoIcon = this._infoIcon;
 
-        const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-dark btn-sm'>" + infoIcon + "</button>";
+        const button = "<button id = '" + this._buttonID + "' type = 'button' class = 'btn btn-warning btn-sm'>" + infoIcon + "</button>";
         const div = "<div id = '" + this._divID + "' class = 'hidden'></div>";
         const pathDiv = "<div id = '" + this._pathDivID + "'></div>";
         const mediaDiv = "<div id = '" + this._mediaDivID + "'></div>";
@@ -79,11 +79,6 @@ class InfoUtility {
         this.div.css("left", "0px");
         this.div.css("top", String(this.utilityDiv.position().top + 31) + "px");
         this.div.append(pathDiv + leftArrowDiv + mediaDiv + rightArrowDiv);
-
-        //this.div.append(pathDiv + contentsDiv);
-
-        //this.div.append("<div>" + leftArrowDiv + mediaDiv + rightArrowDiv + "</div>");
-        //this.leftArrowDiv.css("left", "0px");
 
         this.resize();
         this.init();

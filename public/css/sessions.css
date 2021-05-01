@@ -21,6 +21,12 @@
     flex-direction: row;
 }
 
+#utilities div div:not(:last-of-type) {
+    padding-right: 1px !important;
+}
+
+#utilities > div
+
 .userMenu {
     z-index: 2;
     position: absolute;
