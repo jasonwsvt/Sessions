@@ -1204,7 +1204,12 @@ class UserDataUtility {
         else if (action == "import") {
             const data = (option == "local") ? this.localData : this.loadedData;
             this.data.import(data.export());
-            this.utilities.manage();
+            if (data == "loaded") {
+                this.localData.import(data.export());
+                this.reset();
+                this._buildRecordList();
+            }
+            this.app.reset();
             this.userUtilities.requestBackup();            
         }
         else if (action == "delete") {
@@ -1214,7 +1219,6 @@ class UserDataUtility {
                 switch (option) {
                     case "local":
                         local = this.localData.tierIds(0);
-                        if (local.length) { this.localDataHasChanged = true; }
                         break;
                     case "loaded":
                         loaded = this.loadedData.tierIds(0);
@@ -1229,7 +1233,6 @@ class UserDataUtility {
                             if (!this.loadedData.has(id) || !newerIds.includes(id)) { local.push(id); }
                             else { loaded.push(id); }
                         });
-                        if (local.length) { this.localDataHasChanged = true; }
                         break;
                     case "older":
                         const olderIds = this.loadedData.older(this.localData);
@@ -1237,9 +1240,9 @@ class UserDataUtility {
                             if (!this.loadedData.has(id) || !olderIds.includes(id)) { local.push(id); }
                             else { loaded.push(id); }
                         });
-                        if (local.length) { this.localDataHasChanged = true; }
                         break;
                 }
+                if (local.length) { this.localDataHasChanged = true; }
                 this.deleteRecords(local, loaded);
             }
             this._buildRecordList();

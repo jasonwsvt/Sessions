@@ -6,6 +6,10 @@ class App {
         this.buttons = new Buttons(this);
 
         this.utilities.init();
+        this.reset();
+    }
+
+    reset() {
         this.editor.init();
         this.utilities.user.reset();
         this.utilities.manage(0);
