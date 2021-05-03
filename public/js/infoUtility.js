@@ -527,15 +527,13 @@ class InfoUtility {
                             },
                             { name: "Low-Level Energies", slide: "advanced/determination/low_level_energies.html" },
                             { name: "Ascended Masters", slide: "advanced/determination/ascended_masters.html" },
-//                            { name: "Source Creator System", slide: "advanced/determination/source_creator_system.html" },
-//                            {
-//                                name: "Planar Witness System",
-//                                children: [
-//                                    { name: "Chakras", slide: "advanced/determination/energy_system/chakras.html" },
-//                                    { name: "Discussion", slide: "advanced/determination/energy_system/chart_notes.html" },
-//                                    { name: "Chart", slide: "advanced/determination/energy_system/planar_witness_system.html" },
-//                                ]
-//                            },
+                            {
+                                name: "Intention / Attraction System",
+                                children: [
+                                    { name: "Overview", slide: "advanced/determination/intention_attraction_system.html" },
+                                    { name: "Chart", slide: "advanced/determination/intention_attraction_system_chart.html" },
+                                ]
+                            },
                             { name: "States", slide: "advanced/determination/states.html" },
                             { name: "Conjunctions", slide: "advanced/determination/conjunctions.html" },
                         ]
