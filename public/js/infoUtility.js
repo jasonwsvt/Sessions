@@ -530,8 +530,9 @@ class InfoUtility {
                             {
                                 name: "Intention / Attraction System",
                                 children: [
-                                    { name: "Overview", slide: "advanced/determination/intention_attraction_system.html" },
-                                    { name: "Chart", slide: "advanced/determination/intention_attraction_system_chart.html" },
+                                    { name: "Overview", slide: "advanced/determination/intention_attraction_system/overview.html" },
+                                    { name: "Observations", slide: "advanced/determination/intention_attraction_system/observations.html" },
+                                    { name: "Chart", slide: "advanced/determination/intention_attraction_system/chart.html" },
                                 ]
                             },
                             { name: "States", slide: "advanced/determination/states.html" },
