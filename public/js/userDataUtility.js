@@ -477,7 +477,7 @@ class UserDataUtility {
             if (option == "All"      &&  loaded)              { button.text("Local"); }
             if (action == "import" && ["All", "Local"].includes(option))  { if (!this.localDataHasChanged) { button.hide(); } else { button.show(); } }
 //            if (action == "import" && option == "Loaded") { if (!loaded)                    { button.hide(); } else { button.show(); } }
-            if (action == "merge")                { if (!loaded)                          { button.hide(); } else { button.show(); } }
+            if (action == "merge")                { if (!loaded || !loaded.common(local)) { button.hide(); } else { button.show(); } }
             if (option == "Loaded")               { if (!loaded)                          { button.hide(); } else { button.show(); } }
             if (option == "Older")                { if (!loaded || !older)                { button.hide(); } else { button.show(); } }
             if (option == "Newer")                { if (!loaded || !newer)                { button.hide(); } else { button.show(); } }
@@ -1218,10 +1218,10 @@ class UserDataUtility {
                 var local = [], loaded = [];
                 switch (option) {
                     case "local":
-                        local = this.localData.tierIds(0);
+                        local = this.localData.ids();
                         break;
                     case "loaded":
-                        loaded = this.loadedData.tierIds(0);
+                        loaded = this.loadedData.ids();
                         break;
                     case "selected":
                         local = this.localData.selected();
@@ -1242,8 +1242,8 @@ class UserDataUtility {
                         });
                         break;
                 }
-                if (local.length) { this.localDataHasChanged = true; }
                 this.deleteRecords(local, loaded);
+                if (local.length) { this.localDataHasChanged = true; }
             }
             this._buildRecordList();
         }

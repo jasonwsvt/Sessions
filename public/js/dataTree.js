@@ -320,7 +320,6 @@ class DataTree {
     lastCreated(ids)  { return this.sortByCreation(ids).reverse()[0]; }
     lastEdited(ids)   { return this.sortByLastEdited(ids).reverse()[0]; }
     lastOpened(ids)   { return this.sortByLastOpened(ids).reverse()[0]; }
-    
 
     select(ids) {
         ids = smoothArray(ids);
@@ -378,12 +377,12 @@ class DataTree {
         return ids.filter(id => compareFunc(this._record(id), dataTree.record(id, false)));
     }
 
-    //symbol        lt, gt, lte, gte, ne, e  defaults to "e"
-    //creation      true or false            defaults to true
-    //edited        true or false            defaults to true
-    //opened        true or false            defaults to true
-    //ifNotExistsI  true or false            defaults to false
-    //ifNotExistsE  true or false            defaults to true
+    //symbol        <, >, <=, >=, !=, ==  defaults to "=="
+    //creation      true or false         defaults to true
+    //edited        true or false         defaults to true
+    //opened        true or false         defaults to true
+    //ifNotExistsI  true or false         defaults to false
+    //ifNotExistsE  true or false         defaults to true
     compareTimestamps(dataTree, ids, symbol = "==", creation = true, edited = true, opened = true, ifNotExistsI = false, ifNotExistsE = true) {
         if ([ifNotExistsI, ifNotExistsE, creation, edited, opened].find(arg => !isBoolean(arg)) ||
             !["<", ">", "<=", ">=", "!=", "=="].includes(symbol)) { return; }
