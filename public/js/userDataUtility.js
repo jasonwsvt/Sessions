@@ -1203,14 +1203,19 @@ class UserDataUtility {
         }
         else if (action == "import") {
             const data = (option == "local") ? this.localData : this.loadedData;
+            var ids = data.ids();
+            if (ids.length == 0) { this.userUtilities.new.init(); }
+            else {
+            }
             this.data.import(data.export());
+
             if (data == "loaded") {
                 this.localData.import(data.export());
                 this.reset();
-                this._buildRecordList();
             }
             this.app.reset();
             this.userUtilities.requestBackup();            
+            this._buildRecordList();
         }
         else if (action == "delete") {
             if (option == "undo") { this.undoDelete(); }
@@ -1243,11 +1248,31 @@ class UserDataUtility {
                         break;
                 }
                 this.deleteRecords(local, loaded);
-                if (local.length) { this.localDataHasChanged = true; }
+                if (local.length) {
+                    this.fillOutData(this.localData);
+                    this.localDataHasChanged = true;
+                }
+                if (loaded.length) {
+                    this.fillOutData(this.loadedData);
+                }
             }
             this._buildRecordList();
         }
         this._manageButtons();
+    }
+
+    fillOutData(data) {
+        var ids = data.ids().filter(id => !data.hasChildren(id) && data.tier(id) <= 2);
+        if (ids.length == 0) {
+            ids = [data.import({ username: this.userUtilities.defaultUsername })];
+        }
+        ids.forEach(id => {
+            switch (data.tier(id)) {
+                case 0: id = data.addChild(id, { name: "Self" });
+                case 1: id = data.addChild(id, { name: "New Issue" });
+                case 2: id = data.addChild(id);
+            }
+        });
     }
 
     parseDate(ts) {

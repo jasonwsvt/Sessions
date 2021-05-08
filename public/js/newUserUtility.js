@@ -58,7 +58,7 @@ class NewUserUtility {
         const infoIcon = this._infoIcon;
         const data = this.app.data;
         if (data.isEmpty()) {
-            data.addChild(data.addChild(data.addChild(data.import({ username: "newuser" }), { name: "Self" }), { name: "New Issue" }), { lines: ['<div><button type="button" class="btn btn-light space">Click the ' + infoIcon + ' in the top right corner of the page for the instructions!  Press backspace to remove this text.</button><h4 id="cursor">|</h4></div>']});
+            data.addChild(data.addChild(data.addChild(data.import({ username: this.userUtilities.defaultUsername }), { name: "Self" }), { name: "New Issue" }), { lines: ['<div><button type="button" class="btn btn-light space">Click the ' + infoIcon + ' in the top right corner of the page for the instructions!  Press backspace to remove this text.</button><h4 id="cursor">|</h4></div>']});
         }
         this.manage();
     }

@@ -545,14 +545,14 @@ class InfoUtility {
                     {
                         name: "Real Health",
                         children: [
-                            { slide: "final_thoughts/closing_remarks_1.html" },
-                            { slide: "final_thoughts/closing_remarks_2.html" },
-                            { slide: "final_thoughts/closing_remarks_3.html" },
-                            { slide: "final_thoughts/closing_remarks_4.html" },
-                            { slide: "final_thoughts/closing_remarks_5.html" }
+                            { slide: "advanced/real_health/closing_remarks_1.html" },
+                            { slide: "advanced/real_health/closing_remarks_2.html" },
+                            { slide: "advanced/real_health/closing_remarks_3.html" },
+                            { slide: "advanced/real_health/closing_remarks_4.html" },
+                            { slide: "advanced/real_health/closing_remarks_5.html" }
                         ]
                     },
-                    { name: "MLK Quote", slide: "final_thoughts/martin_luther_king_jr_quote.html" },
+                    { name: "MLK Quote", slide: "advanced/martin_luther_king_jr_quote.html" },
                 ]
             },
             { name: "Legal Stuff", slide: "legal_stuff.html" },
