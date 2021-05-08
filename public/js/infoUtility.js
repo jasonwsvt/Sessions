@@ -294,8 +294,7 @@ class InfoUtility {
                             { name: "Overview", slide: "beginner/issues/overview.html" },
                             { name: "Internal Conflict", slide: "beginner/issues/internal_conflict.html" },
                             { name: "Symptoms and Aspirations", slide: "beginner/issues/symptoms_and_aspirations.html" },
-                            { name: "Resistance", slide: "beginner/issues/resistance.html" },
-                            { name: "Components", slide: "beginner/issues/components.html" }
+                            { name: "Resistance", slide: "beginner/issues/resistance.html" }
                         ]
                     },
                     {
