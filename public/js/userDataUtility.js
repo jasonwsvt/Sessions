@@ -53,7 +53,6 @@ class UserDataUtility {
                 self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
-                    this.blur();
                     self.localData.import(self.data.export());
                     self.localDataHasChanged = false;
                     self._buildRecordList();
@@ -61,6 +60,7 @@ class UserDataUtility {
                 else {
                     self.close();
                 }
+                this.blur();
                 e.stopPropagation();
             });
 

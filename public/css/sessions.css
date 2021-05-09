@@ -187,7 +187,13 @@
     width: auto;
     overflow-y: auto;
     background-color: #eee;
-    opacity: 1;
+    height: 100%;
+}
+
+.utilityScrollDiv {
+    clear: both;
+    overflow-y: auto;
+    height: 100%;
 }
 
 #infoUtilityWindow {

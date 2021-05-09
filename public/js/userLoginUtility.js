@@ -23,13 +23,13 @@ class UserLoginUtility {
                 self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
                     self.div.removeClass("hidden");
-                    this.blur();
                     self.determineStage();
                     self.username.focus();
                 }
                 else {
                     self.close();
                 }
+                this.blur();
                 e.stopPropagation();
             });
 

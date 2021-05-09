@@ -46,7 +46,7 @@ class Utility {
                         self.pickerDiv.css("top", String($(this).position().top + 32) + "px");
                         self.pickerDiv.addClass("utilityMenu");
                         self.pickerSearchInput.focus();
-                        }
+                    }
                     else {
                         self.close();
                     }
@@ -253,7 +253,7 @@ class Utility {
         const pickerButton = "<button id = '" + this._pickerButtonID + "' type = 'button' class = 'btn btn-dark btn-sm'></button>";
         const pickerDiv = "<div id = '" + this._pickerDivID + "' class = 'hidden'></div>";
         const pickerSearchInput = "<input id = '" + this._pickerSearchInputID + "' placeholder = 'search'>";
-        const pickerScrollDiv = "<div id = '" + this._pickerScrollDivID + "'></div>";
+        const pickerScrollDiv = "<div id = '" + this._pickerScrollDivID + "' class = 'utilityScrollDiv'></div>";
         const pickerSort = "<div id = '" + this._pickerSortID + "' class='btn-group btn-group-sm' role='group'></div>";
         const pickerSort1 = "<button type = 'button' class = 'btn btn-secondary' value = 'name'>A-Z</button>";
         const pickerSort2 = "<button type = 'button' class = 'btn btn-secondary' value = 'creation'>Creation</button>";
