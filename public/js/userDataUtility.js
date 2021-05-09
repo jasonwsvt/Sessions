@@ -52,10 +52,7 @@ class UserDataUtility {
             self.button.on("click", function(e) {
                 self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
-                    self.div.removeClass("hidden");
-                    self.localData.import(self.data.export());
-                    self.localDataHasChanged = false;
-                    self._buildRecordList();
+                    self.open();
                 }
                 else {
                     self.close();
@@ -1360,10 +1357,21 @@ class UserDataUtility {
             return values;
         }
     }
+    
+    open() {
+        this.button.removeClass("btn-dark");
+        this.button.addClass("btn-secondary");
+        this.div.removeClass("hidden");
+        this.localData.import(this.data.export());
+        this.localDataHasChanged = false;
+        this._buildRecordList();
+    }
 
     close(except) {
         if (except != this._buttonID)   {
             this.div.addClass("hidden");
+            this.button.removeClass("btn-secondary");
+            this.button.addClass("btn-dark");
             this.button.blur();
         }
     }

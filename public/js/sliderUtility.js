@@ -14,7 +14,7 @@ class SliderUtility {
         this._slideDownButtonID = "slideDownButton";
     
         this._build();
-        this.manage();
+//        this.manage();
 
         $(document).ready(function() {
             self._slideUpButton.on("click", function() {
@@ -63,29 +63,6 @@ class SliderUtility {
         this.div.append(slideUpButton + slideDownButton);
     }
 
-    manage() {
-    }
-
-    closeMenus(except) {
-        if (except != this._issuePickerButtonID)   {
-            this._issuePickerDiv.addClass("hidden");
-            this._issuePickerDiv.removeClass("popUpMenu");
-            this._issuePickerButton.focusout();
-        }
-        if (except != this._issueRenameButtonID)   { 
-            this._issueRenameDiv.addClass("hidden");
-            this._issueRenameDiv.removeClass("popUpMenu");
-            this._issueRenameButton.focusout();
-        }
-        if (except != this._issueAddButtonID)      { 
-            this._issueAddDiv.addClass("hidden");
-            this._issueAddDiv.removeClass("popUpMenu");
-            this._issueAddButton.focusout();
-        }
-        if (except != this._sessionPickerButtonID) { 
-            this._sessionPickerDiv.addClass("hidden");
-            this._sessionPickerDiv.removeClass("popUpMenu");
-            this._sessionPickerButton.focusout();
-        }
-    }
+//    manage() {
+//    }
 }

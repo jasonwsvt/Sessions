@@ -22,9 +22,7 @@ class UserLoginUtility {
             self.button.on("click", function (e) {
                 self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
-                    self.div.removeClass("hidden");
-                    self.determineStage();
-                    self.username.focus();
+                    self.open();
                 }
                 else {
                     self.close();
@@ -254,9 +252,19 @@ class UserLoginUtility {
         return "hashed " + password;
     }
 
+    open() {
+        this.button.removeClass("btn-dark");
+        this.button.addClass("btn-secondary");
+        this.div.removeClass("hidden");
+        this.determineStage();
+        this.username.focus();
+    }
+
     close(except) {
         if (except != this._buttonID) {
             this.div.addClass("hidden");
+            this.button.removeClass("btn-secondary");
+            this.button.addClass("btn-dark");
             this.button.blur();
         }
     }

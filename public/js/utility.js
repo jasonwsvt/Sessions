@@ -34,23 +34,13 @@ class Utility {
                 self.utilities.close(self._pickerButtonID);
                 if (self.numSiblings > 1) {
                     if (self.pickerDiv.hasClass("hidden")) {
-                        if (self.numSiblings > 1) {
-                            $(this).html(self.name + " " + self._caretUpIcon);
-                        }
-                        if (self.numSiblings == 1) {
-                            $(this).html(self.name);
-                        }
-                        self.pickerDiv.removeClass("hidden");
-                        this.blur();
-                        self.pickerDiv.css("left", String(self.pickerButton.position().left) + "px");
-                        self.pickerDiv.css("top", String($(this).position().top + 32) + "px");
-                        self.pickerDiv.addClass("utilityMenu");
-                        self.pickerSearchInput.focus();
+                        self.openPicker();
                     }
                     else {
                         self.close();
                     }
                 }
+                this.blur();
                 e.stopPropagation();
             });
 
@@ -86,21 +76,12 @@ class Utility {
                 self.pickerButtons(this.value);
                 e.stopPropagation();
             });
-//
-//            self.pickerDiv.on("focusout", function() {
-//            });
 
             if (self._naming) {
                 self.renameButton.on("click", function (e) {
                     self.utilities.close(self._renameButtonID);
                     if (self.renameDiv.hasClass("hidden")) {
-                        self.renameDiv.removeClass("hidden");
-                        this.blur();
-                        self.renameDiv.css("left", String(self.pickerButton.position().left) + "px");
-                        self.renameDiv.css("top", String($(this).position().top + 32) + "px");
-                        self.renameDiv.addClass("utilityMenu");
-                        self.renameInput.val(self.name);
-                        self.renameInput.focus();
+                        self.openRename();
                     }
                     else {
                         self.close();
@@ -389,11 +370,43 @@ class Utility {
         return `${year}/${month}/${day} ${hour}:${minute}:${second}${ampm}`;
     }
 
+    openPicker() {
+        if (this.numSiblings > 1) {
+            this.pickerButton.html(this.name + " " + this._caretUpIcon);
+        }
+        if (this.numSiblings == 1) {
+            this.pickerButton.html(this.name);
+        }
+        this.pickerDiv.removeClass("hidden");
+        this.pickerButton.removeClass("btn-dark");
+        this.pickerButton.addClass("btn-secondary");
+        this.pickerDiv.css("left", String(this.pickerButton.position().left) + "px");
+        this.pickerDiv.css("top", String(this.pickerButton.position().top + 32) + "px");
+        this.pickerDiv.addClass("utilityMenu");
+        this.pickerSearchInput.focus();
+    }
+
+    openRename() {
+        this.renameDiv.removeClass("hidden");
+        this.renameButton.removeClass("btn-dark");
+        this.renameButton.addClass("btn-secondary");
+        this.renameButton.blur();
+        this.renameDiv.css("left", String(this.pickerButton.position().left) + "px");
+        this.renameDiv.css("top", String(this.renameButton.position().top + 32) + "px");
+        this.renameDiv.addClass("utilityMenu");
+        this.renameInput.val(this.name);
+        this.renameInput.focus();
+    }
+
     close(except) {
         if (except != this._pickerButtonID)   {
             this.pickerDiv.addClass("hidden");
             this.pickerDiv.removeClass("utilityMenu");
             this.pickerDiv.blur();
+            this.pickerButton.removeClass("btn-secondary");
+            this.pickerButton.addClass("btn-dark");
+            this.renameButton.removeClass("btn-secondary");
+            this.renameButton.addClass("btn-dark");
             //console.log(this._tier, this.numSiblings)
             if (this.numSiblings > 1) { this.pickerButton.html(this.name + " " + this._caretDownIcon); }
             else { this.pickerButton.html(this.name); }

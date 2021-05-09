@@ -38,9 +38,7 @@ class UserSettingsUtility {
             self.button.on("click", function (e) {
                 self.utilities.close(self._buttonID);
                 if (self.div.hasClass("hidden")) {
-                    self.div.removeClass("hidden");
-                    this.blur();
-                    self.manage();
+                    self.open();
                 }
                 else {
                     self.close();
@@ -504,8 +502,18 @@ class UserSettingsUtility {
                                     `${seconds / 3600} hours`;
     }
 
+    open() {
+        this.button.removeClass("btn-dark");
+        this.button.addClass("btn-secondary");
+        this.div.removeClass("hidden");
+        this.button.blur();
+        this.manage();
+    }
+
     close(except) {
         if (except != this._buttonID) {
+            this.button.removeClass("btn-secondary");
+            this.button.addClass("btn-dark");
             this.div.addClass("hidden");
             this.button.blur();
         }
