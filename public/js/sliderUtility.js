@@ -14,7 +14,6 @@ class SliderUtility {
         this._slideDownButtonID = "slideDownButton";
     
         this._build();
-//        this.manage();
 
         $(document).ready(function() {
             self._slideUpButton.on("click", function() {
@@ -62,7 +61,4 @@ class SliderUtility {
         this.div.attr("role", "group");
         this.div.append(slideUpButton + slideDownButton);
     }
-
-//    manage() {
-//    }
 }
