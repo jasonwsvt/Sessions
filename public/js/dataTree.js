@@ -29,8 +29,8 @@ class DataTree {
     sessionExport(name, when, ms) {
         if (Object.keys(sessionStorage).includes(name)) {
             if (when == undefined) { sessionStorage.setItem(name, this.exportJSON()); }
-            if (when == 1 && isInteger(ms)) { setTimeout(sessionExport, ms, name); }
-            if (when == 2 && isInteger(ms)) { setInterval(sessionExport, ms, name); }
+            if (when == 1 && isInteger(ms)) { setTimeout(this.sessionExport, ms, name); }
+            if (when == 2 && isInteger(ms)) { setInterval(this.sessionExport, ms, name); }
         }
     }
 
@@ -439,7 +439,7 @@ class DataTree {
             const iKeys = (internal) ? Object.keys(internal).filter(key => !["lastOpened", "lastEdited", "children"].includes(key)) : [];
             const eKeys = (external) ? Object.keys(external).filter(key => !["lastOpened", "lastEdited", "children"].includes(key)) : [];
             if (iKeys.length != eKeys.length) { return true; }
-            if (key = iKeys.find(key => !eKeys.includes(key))) { return true; }
+            if (key == iKeys.find(key => !eKeys.includes(key))) { return true; }
             if (iKeys.find(key => isArray(internal[key] && isArray(external[key]) &&
                                   internal[key].find((val, index) => val != external[key][index])))) { return true; }
             if (iKeys.find(key => !["lastEdited", "lastOpened"].includes(key) && internal[key] != external[key])) { return true; }
@@ -474,7 +474,7 @@ class DataTree {
     mergeSelected(dataTree)  { this.merge(dataTree, dataTree.selected()); }
 
     delete(ids)  {
-        var ids = smoothArray(ids);
+        ids = smoothArray(ids);
         throwError(isArrayOfIntegers, ids);
         ids = ids.filter(id => this.has(id));
         if (ids.length == 0) { return; }

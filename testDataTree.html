@@ -5,22 +5,37 @@
 <script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\list.js"></script>
 <script type="text/javascript" src="C:\Users\jason\Documents\GitHub\Sessions\public\js\dataTree.js"></script>
 <script type="text/javascript">
-a = new DataTree();
-a.import({"username":"Jason","id":290091194489799,"creation":1614354136,"children":[{"name":"Self","id":8714634300654,"creation":1614354136,"children":[{"name":"New Issue","id":287991286141944,"creation":1614354136,"children":[{"id":194191274328563,"creation":1614354136,"lastOpened":1614988362,"lines":["<div><button type=\"button\" class=\"btn btn-light typed space\">New</button><button type=\"button\" class=\"btn btn-light typed space\">Issue</button><button type=\"button\" class=\"btn btn-light typed\">16</button><h2 id=\"cursor\">|</h2></div>"],"lastEdited":1614957941},{"id":209296981468571,"creation":1614374314,"lastOpened":1614988362,"lines":["<div><button type=\"button\" class=\"btn btn-light typed space\">Jason</button><button type=\"button\" class=\"btn btn-light typed space\">Self</button><h2 id=\"cursor\">|</h2><button type=\"button\" class=\"btn btn-light typed space\">New</button><button type=\"button\" class=\"btn btn-light typed space\">Issue</button><button type=\"button\" class=\"btn btn-light typed\">34</button></div>"],"lastEdited":1614871624}],"lastOpened":1614988362}],"lastOpened":1614988362}],"localBackupLocation":"localStorage","lastEdited":1614636473,"localBackupFrequency":5,"rememberMe":true,"lastOpened":1614988362});
-d = new DataTree();
-d.import({"username":"Jason","id":290091194489799,"creation":1614354136,"children":[{"name":"Self","id":8714634300654,"creation":1614354136,"children":[{"name":"New Issue","id":287991286141944,"creation":1614354136,"children":[{"id":194191274328563,"creation":1614354136,"lastOpened":1614957914,"lines":["<div><button type=\"button\" class=\"btn btn-light typed space\">New</button><button type=\"button\" class=\"btn btn-light typed space\">Issue</button><button type=\"button\" class=\"btn btn-light typed space\">16</button><button type=\"button\" class=\"btn btn-light typed\">new</button><h2 id=\"cursor\">|</h2></div>"],"lastEdited":1614957565},{"id":209296981468571,"creation":1614374314,"lastOpened":1614889607,"lines":["<div><button type=\"button\" class=\"btn btn-light typed space\">Jason</button><button type=\"button\" class=\"btn btn-light typed space\">Self</button><h2 id=\"cursor\">|</h2><button type=\"button\" class=\"btn btn-light typed space\">New</button><button type=\"button\" class=\"btn btn-light typed space\">Issue</button><button type=\"button\" class=\"btn btn-light typed\">34</button></div>"],"lastEdited":1614871624}]}]}],"localBackupLocation":"localStorage","lastEdited":1614636473,"localBackupFrequency":5,"rememberMe":true});
-a.ids().forEach(id => {
-	if (a.different(d, [id]).length == 1) {
-		console.log("Different:", id);
-		console.log(JSON.stringify(a.record(id), null, "\t"));
-		console.log(JSON.stringify(d.record(id), null, "\t"));
-	}
-	if (a.identical(d, [id]).length == 1) {
-		console.log("Identical:", id);
-		console.log(JSON.stringify(a.record(id), null, "\t"));
-		console.log(JSON.stringify(d.record(id), null, "\t"));
-	}
-});
+a = new DataTree()
+a.import({ id: 1, value: 'A1' })
+a.addChild(1, { id: 11, value: 'A11' })
+a.addChild(1, { id: 12, value: 'A12' })
+a.addChild(11, { id: 111, value: 'A111' })
+a.addChild(11, { id: 112, value: 'A112' })
+a.addChild(12, { id: 121, value: 'A121' })
+a.addChild(12, { id: 122, value: 'A122' })
+
+b = new DataTree()
+b.import({ id: 1, value: 'B1' })
+b.addChild(1, { id: 11, value: 'B11' })
+b.addChild(1, { id: 12, value: 'B12' })
+b.addChild(1, { id: 13, value: 'B13' })
+b.addChild(1, { id: 14, value: 'B14' })
+b.addChild(11, { id: 111, value: 'B111' })
+b.addChild(11, { id: 112, value: 'B112' })
+b.addChild(12, { id: 121, value: 'B121' })
+b.addChild(12, { id: 122, value: 'B122' })
+b.addChild(12, { id: 123, value: 'B123' })
+b.addChild(13, { id: 131, value: 'B131' })
+b.addChild(13, { id: 132, value: 'B132' })
+b.addChild(13, { id: 133, value: 'B133' })
+b.addChild(14, { id: 141, value: 'B141' })
+b.addChild(14, { id: 142, value: 'B142' })
+b.addChild(14, { id: 143, value: 'B143' })
+
+a.mergeUnique(b)
+
+console.log(a.exportJSON('\t'))
+console.log(b.exportJSON('\t'))
 </script>
 </body>
 </html>
